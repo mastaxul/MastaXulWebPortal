@@ -5,4 +5,9 @@ Allow: /
 Disallow: /draqualinine/
 Disallow: /tools/kulit/
 
-Sitemap: https://mastaxul.my/sitemap.xml
+Allow: /edugame/beli.html
+Allow: /edugame/og-image.jpg
+# Halaman game berbayar tidak perlu diindeks
+Disallow: /edugame/Game5/
+
+Sitemap: https://www.mastaxul.my/sitemap.xml
