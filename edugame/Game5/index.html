@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
 <script>(function(){try{var t=localStorage.getItem('jomBelajar_theme')||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <title>Jom Belajar! 🌈 - Rumi • Jawi • Nombor • Permainan</title>
 <style>
@@ -277,6 +278,79 @@ input:focus, select:focus { border-color:var(--accent); }
 .dots i { width:9px; height:9px; border-radius:50%; background:var(--track); }
 .dots i.on { background:var(--accent); }
 .back-link { margin-top:10px; width:100%; }
+/* ===== V5: ANIMASI ===== */
+@keyframes screenIn { from { opacity:0; transform:translateY(18px) scale(.98); } to { opacity:1; transform:none; } }
+.enter { animation:screenIn .45s cubic-bezier(.34,1.2,.64,1) backwards; }
+@keyframes qSlide { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+.qin > * { animation:qSlide .38s ease backwards; }
+.qin > *:nth-child(2) { animation-delay:.06s; } .qin > *:nth-child(3) { animation-delay:.12s; } .qin > *:nth-child(4) { animation-delay:.18s; }
+@keyframes popIn2 { 0% { transform:scale(.4); opacity:0; } 65% { transform:scale(1.08); opacity:1; } 100% { transform:scale(1); } }
+.options .option { animation:popIn2 .4s backwards; }
+.options .option:nth-child(1) { animation-delay:.14s; } .options .option:nth-child(2) { animation-delay:.22s; } .options .option:nth-child(3) { animation-delay:.3s; } .options .option:nth-child(4) { animation-delay:.38s; }
+@keyframes bigPop { 0% { transform:scale(.3) rotate(-8deg); opacity:0; } 60% { transform:scale(1.12) rotate(3deg); opacity:1; } 100% { transform:none; } }
+.big-letter { animation:bigPop .55s .05s backwards; }
+@keyframes okBounce { 0%,100% { transform:scale(1); } 30% { transform:scale(1.16); } 60% { transform:scale(.96); } }
+.option.correct { animation:okBounce .55s; }
+.option.wrong { animation:shake .4s; }
+@keyframes fbPop { 0% { transform:scale(.6); opacity:0; } 60% { transform:scale(1.12); opacity:1; } 100% { transform:scale(1); } }
+.fbpop { animation:fbPop .45s; }
+@keyframes bump { 0%,100% { transform:scale(1); } 40% { transform:scale(1.18); } }
+.bump { animation:bump .45s; }
+@keyframes warnPulse { 50% { background:var(--bad-bg); transform:scale(1.06); } }
+.info-box.warn { animation:warnPulse .8s infinite; }
+.progress-fill { position:relative; overflow:hidden; }
+.progress-fill::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent); animation:shim 2.2s infinite; }
+@keyframes shim { from { transform:translateX(-100%); } to { transform:translateX(100%); } }
+header { background-size:200% 200%; animation:hdr 10s ease infinite; }
+@keyframes hdr { 0%,100% { background-position:0 50%; } 50% { background-position:100% 50%; } }
+header h1 { display:inline-block; animation:h1Float 4s ease-in-out infinite; }
+@keyframes h1Float { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-3px); } }
+@keyframes logoBob { 0%,100% { transform:translateY(0) rotate(-3deg); } 50% { transform:translateY(-8px) rotate(3deg); } }
+.logo { display:inline-block; animation:logoBob 3.2s ease-in-out infinite; }
+.hub-grid .hbtn, .area, .starter { animation:popIn2 .45s backwards; }
+.hub-grid .hbtn:nth-child(1) { animation-delay:.04s; } .hub-grid .hbtn:nth-child(2) { animation-delay:.09s; } .hub-grid .hbtn:nth-child(3) { animation-delay:.14s; } .hub-grid .hbtn:nth-child(4) { animation-delay:.19s; }
+.hub-grid .hbtn:nth-child(5) { animation-delay:.24s; } .hub-grid .hbtn:nth-child(6) { animation-delay:.29s; } .hub-grid .hbtn:nth-child(7) { animation-delay:.34s; } .hub-grid .hbtn:nth-child(8) { animation-delay:.39s; } .hub-grid .hbtn:nth-child(9) { animation-delay:.44s; }
+.area:nth-child(odd), .starter:nth-child(odd) { animation-delay:.05s; } .area:nth-child(even), .starter:nth-child(even) { animation-delay:.12s; }
+.hbtn, .area, .starter, .chip { transition:transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; }
+.hbtn:hover, .area:hover, .starter:hover { transform:translateY(-4px) scale(1.02); }
+.hbtn .ic { transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+.hbtn:hover .ic { transform:scale(1.25) rotate(-8deg); }
+@keyframes flame { 0%,100% { transform:scale(1) rotate(-4deg); } 50% { transform:scale(1.2) rotate(5deg); } }
+.flame { display:inline-block; animation:flame .9s ease-in-out infinite; }
+.pet-stage::after { content:""; position:absolute; bottom:2px; width:90px; height:14px; border-radius:50%; background:radial-gradient(ellipse,rgba(0,0,0,.2),transparent 70%); animation:shadowPulse 2.8s ease-in-out infinite; }
+@keyframes shadowPulse { 50% { transform:scaleX(.8); opacity:.6; } }
+@keyframes spinY { to { transform:rotateY(360deg); } }
+.pet-stage.spin .pet-svg { animation:spinY .9s ease; }
+.pet-stage.hop .p-body { animation:pHappy .8s ease; }
+.pet-stage.wave .p-wl, .pet-stage.wave .p-wr { animation-duration:.22s; }
+.bgfx { position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+.bgfx span { position:absolute; bottom:-40px; opacity:.2; animation:drift linear infinite; }
+@keyframes drift { to { transform:translateY(-115vh) rotate(360deg); } }
+.container { position:relative; z-index:1; }
+.result > div:first-child { animation:trophy 1.1s ease; }
+@keyframes trophy { 0% { transform:scale(0) rotate(-30deg); } 60% { transform:scale(1.25) rotate(8deg); } 100% { transform:none; } }
+.result-stars span { display:inline-block; animation:starIn .6s backwards; }
+@keyframes starIn { 0% { transform:scale(0) rotate(-200deg); } 70% { transform:scale(1.4) rotate(15deg); } 100% { transform:none; } }
+.stk { display:inline-block; animation:stkPop .7s backwards; }
+@keyframes stkPop { 0% { transform:scale(0) rotate(-180deg); } 70% { transform:scale(1.3) rotate(15deg); } 100% { transform:none; } }
+.conf { position:absolute; top:-20px; border-radius:2px; animation:confFall linear forwards; }
+@keyframes confFall { to { transform:translateY(105vh) rotate(720deg); opacity:.85; } }
+@keyframes flipIn { 0% { transform:rotateY(90deg); } 100% { transform:rotateY(0); } }
+.mcard.up, .mcard.done { animation:flipIn .35s; }
+@keyframes hintWiggle { 0%,86%,100% { transform:rotate(0); } 90% { transform:rotate(-5deg); } 94% { transform:rotate(5deg); } }
+.drag-item:not(.dragging) { animation:hintWiggle 2.6s ease-in-out infinite; }
+.drag-item.dragging { animation:none; }
+.match-item, .hcell, .tile, .slot, .key { transition:transform .15s; }
+.match-item:hover, .tile:hover:not(:disabled) { transform:scale(1.06); }
+@keyframes dotPop { 0% { transform:scale(.4); } 70% { transform:scale(1.5); } 100% { transform:scale(1); } }
+.dots i.on:last-of-type { animation:dotPop .35s; }
+.paytok:hover, .foodbtn:hover { transform:translateY(-3px) scale(1.06); }
+.foodbtn, .paytok { transition:transform .2s cubic-bezier(.34,1.56,.64,1); }
+.bubble { animation:qSlide .4s backwards; }
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+    .bgfx { display:none; }
+}
 </style>
 </head>
 <body>
@@ -466,7 +540,7 @@ input:focus, select:focus { border-color:var(--accent); }
             <div class="hub-top">
                 <button class="chip" onclick="switchStudent()">👧 <span id="hubName"></span> ▾</button>
                 <span class="chip">⭐ <b id="hubStars">0</b></span>
-                <span class="chip">🔥 <b id="hubStreak">0</b> hari</span>
+                <span class="chip"><span class="flame">🔥</span> <b id="hubStreak">0</b> hari</span>
             </div>
             <div class="pet-stage" id="hubStage"></div>
             <div style="font-weight:bold;color:var(--accent2)" id="hubPetName"></div>
@@ -537,11 +611,7 @@ input:focus, select:focus { border-color:var(--accent); }
     <div id="storyScreen" class="card start-screen hidden">
         <div class="hub-top"><button class="chip" onclick="goHome()">⬅️ Rumah</button></div>
         <h2 style="margin-top:10px">📖 Cerita Bersuara</h2>
-        <div id="storyCats">
-            <button class="hbtn row" onclick="showStoryList('dongeng')"><span class="ic">🦌</span><span>Dongeng Haiwan</span></button>
-            <button class="hbtn row" onclick="showStoryList('pahlawan')"><span class="ic">⚔️</span><span>Pahlawan Melayu</span></button>
-            <button class="hbtn row" onclick="showStoryList('teladan')"><span class="ic">💝</span><span>Cerita Teladan</span></button>
-        </div>
+        <div id="storyCats"></div>
         <div id="storyList" class="hidden"></div>
         <div id="storyPlayer" class="hidden">
             <div class="story-emoji" id="storyEmoji"></div>
@@ -960,6 +1030,76 @@ function genV2(add, ch) {
 }
 
 /* ============================================================
+   KANDUNGAN TAMBAHAN V5 (kurangkan soalan berulang)
+============================================================ */
+WORDS.push(["KEJU","🧀"],["PIZA","🍕"],["DONAT","🍩"],["COKLAT","🍫"],["BISKUT","🍪"],["LABU","🎃"],["KACANG","🥜"],["CENDAWAN","🍄"],["KAKTUS","🌵"],
+    ["RUMPUT","🌿"],["DAUN","🍃"],["PETIR","⚡"],["SALJI","❄️"],["PULAU","🏝️"],["KOMPUTER","💻"],["LOCENG","🔔"],["BENDERA","🚩"],["PIANO","🎹"],
+    ["BIOLA","🎻"],["TINGKAP","🪟"],["TREN","🚆"],["MAGNET","🧲"],["BATERI","🔋"],["GELAS","🥤"],["PINGGAN","🍽️"],["MANGKUK","🥣"],["TOPENG","🎭"],
+    ["SIPUT","🐌"],["ULAT","🐛"],["PAUS","🐋"],["GURITA","🐙"],["NYAMUK","🦟"]);
+ISLAM_QA.push(
+    ["Apa yang kita buat sebelum solat?", "Berwuduk", ["Berlari", "Tidur"]],
+    ["Apa yang kita baca sebelum tidur?", "Doa tidur", ["Lagu rock", "Berita"]],
+    ["Siapakah yang perlu kita hormati di rumah?", "Ibu dan ayah", ["Orang asing", "Tiada siapa"]],
+    ["Pada hari apakah umat Islam solat Jumaat?", "Jumaat", ["Isnin", "Sabtu"]],
+    ["Apakah rukun Islam yang pertama?", "Mengucap dua kalimah syahadah", ["Berpuasa", "Mengeluarkan zakat"]],
+    ["Ke mana umat Islam pergi untuk menunaikan haji?", "Mekah", ["Melaka", "Kuala Lumpur"]],
+    ["Apa yang kita buat dengan Al-Quran?", "Membaca dengan hormat", ["Mencampak", "Memijak"]],
+    ["Apa kita sebut selepas menerima hadiah atau makanan?", "Terima kasih dan Alhamdulillah", ["Tiada apa", "Pergi"]]);
+MY_QA.push(
+    ["Berapa jalur pada bendera Malaysia?", "14", ["10", "7"]],
+    ["Apa yang ada di sudut kiri atas bendera Malaysia?", "Bulan sabit dan bintang", ["Matahari", "Hati"]],
+    ["Pulau terkenal di negeri Kedah ialah?", "Langkawi", ["Redang", "Sipadan"]],
+    ["Gunung tertinggi di Malaysia?", "Gunung Kinabalu", ["Gunung Jerai", "Bukit Bintang"]],
+    ["Apakah ucapan pada Hari Raya?", "Selamat Hari Raya Aidilfitri", ["Selamat Pagi", "Selamat Tinggal"]],
+    ["Alat muzik tradisional Melayu yang dipukul?", "Gendang", ["Piano", "Gitar"]],
+    ["Tarian tradisional Melayu?", "Joget", ["Balet", "Tango"]],
+    ["Kuih tradisional yang berlapis-lapis dan berwarna-warni?", "Kuih lapis", ["Piza", "Burger"]]);
+SAINS_QA.push(
+    ["Selepas kilat kita dengar bunyi?", "Guruh", ["Loceng", "Siren"]],
+    ["Pokok mengambil air melalui?", "Akar", ["Daun", "Bunga"]],
+    ["Rama-rama berasal daripada?", "Ulat", ["Ikan", "Burung"]],
+    ["Anak katak dipanggil?", "Berudu", ["Anak ikan", "Ulat"]],
+    ["Madu dihasilkan oleh?", "Lebah", ["Semut", "Rama-rama"]],
+    ["Telur ayam menetas menjadi?", "Anak ayam", ["Anak itik", "Ikan"]],
+    ["Bulan kelihatan bersinar kerana?", "Memantulkan cahaya matahari", ["Ada lampu", "Terbakar"]],
+    ["Air laut rasanya?", "Masin", ["Manis", "Masam"]]);
+HYGIENE_QA.push(
+    ["Bila kita patut menukar baju?", "Apabila kotor atau berpeluh", ["Tidak perlu", "Setahun sekali"]],
+    ["Kita tutup mulut dengan apa apabila menguap?", "Tangan", ["Kasut", "Buku"]],
+    ["Selepas ke tandas kita patut?", "Basuh tangan", ["Terus makan", "Tidur"]],
+    ["Kuku yang panjang perlu?", "Dipotong", ["Digigit", "Dibiarkan"]],
+    ["Berus gigi dipakai oleh?", "Seorang sahaja", ["Seluruh keluarga", "Haiwan"]]);
+SITUASI.push(
+    ["Rama-rama hinggap di tangan Nina. Dia rasa?", "Gembira"],
+    ["Ali tidak dapat membuka botol. Apa patut dia buat?", "Minta tolong", ["Mengamuk", "Membaling botol"]],
+    ["Adik menangis kerana jatuh. Kita patut?", "Bantu dan pujuk", ["Ketawa", "Tinggalkan"]],
+    ["Hendak masuk bilik ibu. Kita patut?", "Ketuk pintu", ["Terjah", "Tendang pintu"]],
+    ["Kita nampak sampah di lantai. Kita patut?", "Kutip dan buang", ["Biarkan", "Tendang"]],
+    ["Mahu bermain mainan kawan. Kita cakap?", "Boleh saya main?", ["Aku nak!", "Rampas"]]);
+TIME_DAY_QA.push(
+    ["Sarapan dimakan pada waktu?", "Pagi", ["Malam", "Tengah malam"]],
+    ["Makan malam dimakan pada waktu?", "Malam", ["Pagi", "Tengah hari"]],
+    ["Burung paling banyak berkicau pada waktu?", "Pagi", ["Tengah malam", "Malam"]]);
+MONEY_QA.push(
+    ["Kita beli barang di?", "Kedai", ["Sungai", "Awan"]],
+    ["Wang yang tidak digunakan kita patut?", "Simpan", ["Buang", "Bakar"]],
+    ["Berapa 50 sen + 50 sen?", "RM1", ["50 sen", "RM5"]],
+    ["Mana lebih murah, RM2 atau RM5?", "RM2", ["RM5", "Sama sahaja"]]);
+
+function genV5(add, ch) {
+    const N10 = Array.from({ length:10 }, (_, i) => String(i + 1));
+    add("nombor", 150, () => { const c = 11 + rnd(10), e = pick(COUNT_EMOJI); return ch("Berapa banyak?", e.repeat(c), c, Array.from({ length:12 }, (_, i) => String(10 + i))); });
+    add("nombor", 150, () => { const a = 1 + rnd(10), b = 1 + rnd(10); return ch("Berapa jumlahnya?", a + " + " + b, a + b, Array.from({ length:20 }, (_, i) => String(i + 2))); });
+    add("nombor", 150, () => { const a = 10 + rnd(11), b = 1 + rnd(9); return ch("Berapa bakinya?", a + " − " + b, a - b, Array.from({ length:20 }, (_, i) => String(i + 1))); });
+    add("rumi", 100, () => { const l = pick(RUMI); return ch("Dengar dan pilih huruf yang betul", "🔊", l, RUMI, { speak:l }); });
+    add("rumi", 120, () => { const t = pick(RUMI), c = 2 + rnd(3);
+        return { type:"hidden", question:"Cari " + c + " huruf " + t + "!", target:t, count:c, noise:pickWrong(t, RUMI, 5) }; });
+    add("nombor", 40, () => { const n = pick(N10); return ch("Dengar dan pilih nombor yang betul", "🔊", n, N10, { speak:n }); });
+    add("nombor", 60, () => { const t = pick(N10), c = 2 + rnd(3);
+        return { type:"hidden", question:"Cari " + c + " nombor " + t + "!", target:t, count:c, noise:pickWrong(t, N10, 5) }; });
+}
+
+/* ============================================================
    GENERATOR SOALAN
    - Hanya soalan unik dijana (tiada pendua)
    - Setiap soalan ada "ck" (kunci kandungan) untuk elak soalan sama dalam satu sesi
@@ -1310,6 +1450,7 @@ function generateQuestions() {
     add("rutin", 20, qaGen(HYGIENE_QA, "🧼"));
 
     genV2(add, ch);
+    genV5(add, ch);
     return shuffle(qs);
 }
 const ALL_QUESTIONS = generateQuestions();
@@ -1317,6 +1458,7 @@ console.log("Jumlah soalan:", ALL_QUESTIONS.length, "| kandungan berbeza:", new 
 
 /* Bina senarai soalan satu sesi: gilir antara topik, elak kandungan sama,
    utamakan soalan yang belum pernah dilihat murid ini */
+function subjOf(q) { return String(q.answer || q.target || q.glyph || (q.pairs && q.pairs[0] && q.pairs[0][0]) || q.emoji || q.draw || q.question).toLowerCase(); }
 function buildSession(pool, seen) {
     const by = {};
     shuffle(pool).forEach(q => { (by[q.category] = by[q.category] || new Map()); if (!by[q.category].has(q.ck)) by[q.category].set(q.ck, q); });
@@ -1326,7 +1468,18 @@ function buildSession(pool, seen) {
         any = false;
         lists.forEach(l => { if (i < l.length) { out.push(l[i]); used.add(l[i]); any = true; } });
     }
-    return out.concat(shuffle(pool.filter(q => !used.has(q))));   // variasi lain selepas semua kandungan unik habis
+    // jarakkan subjek yang sama: elak huruf/nombor/gambar yang sama muncul berdekatan atau lebih 2 kali
+    const rest = out.slice(0, 500), res = [], cnt = {}, recent = [];
+    while (rest.length) {
+        let idx = 0;
+        for (let i = 0; i < Math.min(rest.length, 90); i++) {
+            const s = rest[i].category + "|" + subjOf(rest[i]);
+            if (!recent.includes(s) && (cnt[s] || 0) < 2) { idx = i; break; }
+        }
+        const q = rest.splice(idx, 1)[0], s = q.category + "|" + subjOf(q);
+        res.push(q); cnt[s] = (cnt[s] || 0) + 1; recent.push(s); if (recent.length > 14) recent.shift();
+    }
+    return res.concat(out.slice(500), shuffle(pool.filter(q => !used.has(q))));   // variasi lain selepas semua kandungan unik habis
 }
 
 /* ============================================================
@@ -1341,6 +1494,8 @@ const SCREENS = ["tokenScreen", "startScreen", "gameScreen", "resultScreen", "al
 function showScreen(id) {
     SCREENS.forEach(s => $(s).classList.add("hidden"));
     $(id).classList.remove("hidden");
+    reAnim($(id), "enter"); window.scrollTo(0, 0);
+    if (id === "hubScreen") startPetIdle("hubStage"); else if (id === "careScreen") startPetIdle("careStage"); else stopPetIdle();
 }
 
 function generateDeviceId() {
@@ -1586,6 +1741,7 @@ function startTimer() {
     }, 1000);
 }
 function updateTimer() {
+    const tb = $("timer"); if (tb && tb.parentElement) tb.parentElement.classList.toggle("warn", totalSeconds <= 30 && totalSeconds > 0);
     const m = Math.floor(totalSeconds / 60), s = totalSeconds % 60;
     $("timer").textContent = String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
 }
@@ -1608,6 +1764,7 @@ function showQuestion() {
        pay:showPay, maze:showMaze, hidden:showHidden, catch:showCatch })[q.type](q, area);
     curSpeech = q.question + (q.speak ? ". " + q.speak : "");
     curLang = q.lang || "ms-MY";
+    reAnim($("questionArea"), "qin");
     speak(curSpeech, false, curLang);
 }
 
@@ -2002,114 +2159,6 @@ function reportData(p) {
     const enough = rows.filter(r => r.t >= 5);
     return { T, C, rows, strong:enough[0] || null, weak:enough.length > 1 ? enough[enough.length - 1] : null,
         stickers:STICKERS.filter(s => p.stickers[s]).length, sessions:(p.sessions || []).slice(-8).reverse() };
-}
-
-function buildReportPDF(p) {
-    const W = 595, H = 842, M = 40;
-    const d = reportData(p);
-    const f = v => (+v).toFixed(2);
-    const esc = s => String(s).replace(/[\\()]/g, m => "\\" + m);
-    const clean = s => String(s).replace(/[^\x20-\x7E\xA0-\xFF]/g, "").replace(/\s+/g, " ").trim();
-    const col = h => { const n = parseInt(h.slice(1), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255].map(v => v.toFixed(3)).join(" "); };
-    const pages = []; let c = null, y = 0;
-    const T = (x, yy, s, size, bold, color) => c.push(`BT /${bold ? "F2" : "F1"} ${size} Tf ${col(color || "#263238")} rg ${f(x)} ${f(H - yy)} Td (${esc(clean(s))}) Tj ET`);
-    const R = (x, yy, w, h, color) => c.push(`${col(color)} rg ${f(x)} ${f(H - yy - h)} ${f(w)} ${f(h)} re f`);
-    const newPage = first => {
-        c = []; pages.push(c);
-        c.push(`q /GS2 gs ${col("#5b50d6")} rg BT /F2 80 Tf 0.819 0.574 -0.574 0.819 100 250 Tm (mastaxul.my) Tj ET Q`);   // tera air halus
-        if (first) {
-            R(0, 0, W, 78, "#5b50d6");
-            T(M, 40, "Laporan Ibu Bapa", 24, true, "#ffffff");
-            T(M, 62, "Jom Belajar! - Rumi, Jawi, Nombor & Permainan", 11, false, "#e6e3ff");
-            T(W - M - 78, 62, "mastaxul.my", 12, true, "#ffffff");
-            y = 108;
-        } else y = 60;
-    };
-    const ensure = h => { if (y + h > H - 60) newPage(false); };
-    const wrap = (s, max) => { const out = []; let line = ""; s.split(" ").forEach(w => { if ((line + " " + w).trim().length > max) { out.push(line); line = w; } else line = (line + " " + w).trim(); }); if (line) out.push(line); return out; };
-    const now = new Date(), dt = String(now.getDate()).padStart(2, "0") + "/" + String(now.getMonth() + 1).padStart(2, "0") + "/" + now.getFullYear();
-
-    newPage(true);
-    T(M, y, "Nama murid: " + p.name, 15, true); y += 20;
-    T(M, y, "Tarikh laporan: " + dt, 10.5, false, "#555555"); y += 24;
-
-    const bw = (W - 2 * M - 20) / 3;
-    [["Soalan dijawab", String(d.T)], ["Betul percubaan pertama", (d.T ? Math.round(d.C / d.T * 100) : 0) + "%"], ["Stiker dikumpul", d.stickers + "/" + STICKERS.length]].forEach((b, i) => {
-        const x = M + i * (bw + 10);
-        R(x, y, bw, 58, "#f1efff");
-        T(x + 10, y + 18, b[0], 9, false, "#666666");
-        T(x + 10, y + 46, b[1], 22, true, "#5b50d6");
-    });
-    y += 78;
-    if (d.strong) { T(M, y, "Paling kuat: " + CAT_LABEL[d.strong.k] + " (" + d.strong.pct + "%)", 11, false, "#2e7d32"); y += 16; }
-    if (d.weak && d.weak.pct < 75) { T(M, y, "Perlu latihan lagi: " + CAT_LABEL[d.weak.k] + " (" + d.weak.pct + "%)", 11, false, "#c62828"); y += 16; }
-    y += 8;
-
-    T(M, y, "Prestasi mengikut topik", 13, true, "#5b50d6"); y += 18;
-    if (!d.rows.length) { T(M, y, "Belum ada rekod. Main beberapa permainan dahulu.", 10.5); y += 20; }
-    d.rows.forEach(r => {
-        ensure(30);
-        T(M, y, (CAT_LABEL[r.k] || r.k) + "   " + r.pct + "%   (" + r.c + "/" + r.t + ")", 10.5);
-        R(M, y + 6, 300, 8, "#e6e6ee");
-        R(M, y + 6, Math.max(2, 300 * r.pct / 100), 8, r.pct >= 75 ? "#43a047" : r.pct >= 50 ? "#ffa000" : "#e53935");
-        y += 28;
-    });
-
-    if (d.sessions.length) {
-        y += 6; ensure(40);
-        T(M, y, "Sesi terkini", 13, true, "#5b50d6"); y += 18;
-        d.sessions.forEach(s => {
-            ensure(18);
-            const t = new Date(s.d);
-            T(M, y, t.getDate() + "/" + (t.getMonth() + 1) + "/" + t.getFullYear() + "  |  " + s.cat + "  |  markah " + s.score + "  |  betul " + s.c + "/" + s.t, 9.5);
-            y += 16;
-        });
-    }
-    y += 10; ensure(40);
-    wrap("Nota: 'Betul percubaan pertama' bermaksud jawapan betul tanpa tersilap dahulu. Rekod ini disimpan dalam peranti murid dan dijana oleh aplikasi Jom Belajar!", 105)
-        .forEach(l => { T(M, y, l, 8.5, false, "#777777"); y += 12; });
-
-    // Cop mastaxul.my di halaman terakhir
-    ensure(110);
-    const sx = W - M - 100, sy = Math.min(H - 110, Math.max(y + 60, 600));
-    const cs = Math.cos(-12 * Math.PI / 180), sn = Math.sin(-12 * Math.PI / 180);
-    c.push(`q /GS1 gs ${col("#5b50d6")} RG ${col("#5b50d6")} rg 1 0 0 1 ${f(sx)} ${f(H - sy)} cm ${f(cs)} ${f(sn)} ${f(-sn)} ${f(cs)} 0 0 cm 3 w -80 -36 160 72 re S 1.2 w -74 -30 148 60 re S ` +
-        `BT /F2 8 Tf -38 18 Td (LAPORAN KEMAJUAN) Tj ET BT /F2 20 Tf -62 -2 Td (mastaxul.my) Tj ET BT /F2 9 Tf -33 -17 Td (JOM BELAJAR!) Tj ET BT /F1 8 Tf -24 -27 Td (${dt}) Tj ET Q`);
-
-    pages.forEach((pg, i) => {
-        c = pg;
-        T(M, H - 24, "Dijana oleh Jom Belajar!  |  mastaxul.my  |  Halaman " + (i + 1) + "/" + pages.length, 8, false, "#888888");
-    });
-
-    let pdf = "%PDF-1.4\n"; const offs = [];
-    const obj = (id, body) => { offs[id] = pdf.length; pdf += id + " 0 obj\n" + body + "\nendobj\n"; };
-    obj(1, "<< /Type /Catalog /Pages 2 0 R >>");
-    obj(2, `<< /Type /Pages /Kids [${pages.map((_, i) => (7 + 2 * i) + " 0 R").join(" ")}] /Count ${pages.length} >>`);
-    obj(3, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
-    obj(4, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
-    obj(5, "<< /Type /ExtGState /ca 0.65 /CA 0.65 >>");
-    obj(6, "<< /Type /ExtGState /ca 0.07 /CA 0.07 >>");
-    pages.forEach((pg, i) => {
-        const s = pg.join("\n");
-        obj(7 + 2 * i, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> /ExtGState << /GS1 5 0 R /GS2 6 0 R >> >> /Contents ${8 + 2 * i} 0 R >>`);
-        obj(8 + 2 * i, `<< /Length ${s.length} >>\nstream\n${s}\nendstream`);
-    });
-    const n = 7 + 2 * pages.length, xref = pdf.length;
-    pdf += `xref\n0 ${n}\n0000000000 65535 f \n`;
-    for (let i = 1; i < n; i++) pdf += String(offs[i]).padStart(10, "0") + " 00000 n \n";
-    pdf += `trailer\n<< /Size ${n} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
-    return Uint8Array.from(pdf, ch => ch.charCodeAt(0) & 255);
-}
-
-function downloadReportPDF() {
-    const n = $("repSel").value;
-    if (!n) { alert("Belum ada rekod murid. Main dulu ya!"); return; }
-    const bytes = buildReportPDF(loadProfile(n));
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([bytes], { type:"application/pdf" }));
-    a.download = "Laporan-JomBelajar-" + n.replace(/[^\w\-]+/g, "_") + ".pdf";
-    document.body.appendChild(a); a.click();
-    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 5000);
 }
 
 /* ---------- CROSSWORD ---------- */
@@ -2662,7 +2711,7 @@ function renderHub() {
     if (!profile.pet.active) { profile.pet.active = "nunu"; profile.pet.animals.nunu = newStatus(); }
     tickPet();
     const P = profile.pet, s = curStatus(), info = petInfo(P.active);
-    $("hubName").textContent = n; $("hubStars").textContent = P.stars; $("hubStreak").textContent = P.streak.count;
+    $("hubName").textContent = n; countTo($("hubStars"), P.stars); countTo($("hubStreak"), P.streak.count);
     $("hubStage").innerHTML = petSVG(P.active);
     $("hubStage").onclick = () => petTap($("hubStage"), "hubBubble");
     $("hubPetName").textContent = info.name + " • Tahap " + s.level;
@@ -2694,7 +2743,7 @@ function renderCare() {
     if (P.daily.d !== ymd(new Date())) P.daily = { d:ymd(new Date()), feed:0, drink:0 };
     $("careStage").innerHTML = petSVG(P.active);
     $("careStage").onclick = () => petTap($("careStage"), "careBubble");
-    $("careStars").textContent = P.stars;
+    countTo($("careStars"), P.stars);
     $("careName").textContent = info.name + " • Tahap " + s.level;
     $("careBubble").textContent = pick(PET_LINES[petMood(s)]);
     petBars($("careBars"), s);
@@ -2869,8 +2918,208 @@ const STORIES = {
           moral:"Menjaga kebersihan diri membuat kita sihat.", quiz:["Apa yang Mira buat sebelum makan?", "Basuh tangan", ["Terus makan", "Tidur"]] }
     ]
 };
+/* ============================================================
+   CERITA TAMBAHAN (lebih panjang, siri dan sebelum tidur)
+============================================================ */
+const STORIES_EXTRA = {
+    dongeng: [
+        { id:"kancil-buaya-2", emoji:"🐊", title:"Sang Kancil dan Buaya Berbaik Semula", scenes:[
+            "Beberapa hari kemudian, Sang Kancil mahu pulang ke kampungnya.", "Sungai itu masih ada, dan buaya-buaya masih berjemur di tebing.",
+            "Buaya ketua berkata, \"Kamu pernah menipu kami, Kancil!\"", "Kancil menundukkan kepala. \"Maafkan saya. Saya takut hari itu.\"",
+            "Buaya ketua diam sebentar. Dia melihat mata Kancil yang jujur.", "\"Baiklah,\" katanya. \"Tetapi kali ini, jangan menipu lagi.\"",
+            "Kancil berjanji. \"Saya benar-benar mahu menyeberang. Boleh tolong?\"", "Seekor buaya muda berkata, \"Naiklah ke belakang saya.\"",
+            "Kancil naik dengan berhati-hati dan mengucapkan terima kasih berkali-kali.", "Di tengah sungai, Kancil berkongsi buah yang dibawanya.",
+            "Buaya muda mencuba dan tersenyum. \"Manisnya!\"", "Sampai di seberang, mereka sudah menjadi kawan.",
+            "Mereka berjanji akan saling menolong dan tidak menipu lagi.", "Sejak hari itu, hutan dan sungai menjadi lebih aman."],
+          moral:"Meminta maaf dan bercakap benar memulihkan persahabatan.", quiz:["Apa yang Kancil buat kepada buaya?", "Meminta maaf", ["Menipu lagi", "Melarikan diri"]] },
+        { id:"kancil-gajah", emoji:"🐘", title:"Sang Kancil dan Gajah yang Sombong", scenes:[
+            "Di tengah hutan hiduplah seekor gajah yang sangat besar dan sombong.", "Setiap hari dia berkata, \"Akulah yang paling kuat di hutan ini!\"",
+            "Haiwan-haiwan kecil takut kepadanya. Mereka tidak berani bermain berhampiran.", "Suatu hari, Gajah menghalang jalan ke telaga sehingga haiwan lain tidak dapat minum.",
+            "Sang Kancil datang dan berkata, \"Wahai Gajah, boleh saya tanya sesuatu?\"", "\"Apa dia? Cepat sedikit,\" kata Gajah dengan angkuh.",
+            "\"Kamu sungguh kuat. Boleh kamu cabut pokok besar itu?\" tanya Kancil.", "Gajah menarik sekuat hati, tetapi akar pokok itu terlalu dalam.",
+            "Dia mencuba lagi dan lagi sehingga berpeluh dan penat.", "Kancil berkata, \"Tidak mengapa. Tiada siapa yang boleh melakukan segala-galanya.\"",
+            "Gajah merasa malu. Dia sedar kekuatannya ada batas.", "\"Maafkan aku kerana menghalang jalan,\" kata Gajah kepada semua.",
+            "Dia mengangkat batang pokok yang jatuh dan membuka jalan ke telaga.", "Sejak itu, Gajah menjadi baik hati dan sentiasa menolong kawan-kawan."],
+          moral:"Jangan sombong. Kekuatan digunakan untuk menolong orang lain.", quiz:["Kenapa Gajah berubah menjadi baik?", "Dia sedar kekuatannya ada batas", ["Dia takut Harimau", "Dia lapar"]] },
+        { id:"semut-merpati", emoji:"🐜", title:"Semut dan Burung Merpati", scenes:[
+            "Seekor semut kecil minum air di tepi sungai.", "Tiba-tiba, dia tergelincir dan jatuh ke dalam air.",
+            "\"Tolong! Tolong!\" jerit Semut sambil dihanyutkan arus.", "Di atas pokok, Burung Merpati terdengar jeritan itu.",
+            "Merpati segera memetik sehelai daun lalu menjatuhkannya ke dalam sungai.", "Semut memanjat ke atas daun itu dan terapung dengan selamat.",
+            "Daun itu dihanyutkan ke tebing. Semut mendarat dengan gembira.", "\"Terima kasih, Merpati! Awak menyelamatkan saya,\" kata Semut.",
+            "Beberapa hari kemudian, seorang pemburu cuba menangkap Merpati dengan jaring.", "Semut ternampak lalu cepat berlari ke kaki pemburu itu.",
+            "Dia menggigit kaki pemburu dengan kuat. \"Aduh!\" jerit pemburu itu.", "Jaring itu terlepas dan Merpati terbang pergi dengan selamat.",
+            "\"Terima kasih, Semut!\" kata Merpati. \"Kita saling menolong.\"", "Walaupun kecil, Semut membuktikan bahawa kebaikan akan dibalas."],
+          moral:"Kebaikan kecil akan dibalas dengan kebaikan.", quiz:["Apa yang Merpati jatuhkan untuk menolong Semut?", "Sehelai daun", ["Batu", "Ranting besar"]] },
+        { id:"singa-tikus", emoji:"🦁", title:"Singa dan Tikus Kecil", scenes:[
+            "Seekor singa sedang tidur nyenyak di bawah pokok besar.", "Seekor tikus kecil berlari-lari lalu terpijak badan Singa.",
+            "Singa terjaga dan menangkap Tikus dengan cakarnya. \"Siapa berani mengganggu aku?\"", "\"Maafkan saya, Tuan Singa,\" rayu Tikus. \"Saya tidak sengaja.\"",
+            "\"Lepaskan saya, dan suatu hari nanti saya akan menolong tuan,\" kata Tikus.", "Singa ketawa. \"Kamu begitu kecil, bagaimana boleh menolong aku?\"",
+            "Namun, Singa melepaskan Tikus kerana kasihan.", "Beberapa hari kemudian, Singa terperangkap dalam jaring pemburu.",
+            "Dia mengaum kuat tetapi tidak dapat melepaskan diri.", "Tikus terdengar aum itu lalu berlari ke tempat Singa.",
+            "\"Jangan risau, tuan. Saya akan membantu,\" kata Tikus.", "Tikus menggigit tali jaring itu satu demi satu.",
+            "Akhirnya jaring itu koyak dan Singa bebas.", "\"Terima kasih, Tikus. Aku silap kerana memandang rendah kepadamu,\" kata Singa."],
+          moral:"Jangan memandang rendah pada sesiapa. Yang kecil pun boleh menolong.", quiz:["Siapa yang menolong Singa?", "Tikus kecil", ["Gajah", "Pemburu"]] },
+        { id:"ayam-gandum", emoji:"🐔", title:"Ayam Kecil Menanam Gandum", scenes:[
+            "Ayam Kecil menemui sebiji gandum di dalam kebun.", "\"Siapa mahu membantu saya menanamnya?\" tanya Ayam Kecil.",
+            "\"Bukan saya,\" kata Itik. \"Bukan saya,\" kata Kucing. \"Bukan saya,\" kata Anjing.", "\"Baiklah, saya tanam sendiri,\" kata Ayam Kecil.",
+            "Dia menanam gandum itu dan menyiramnya setiap hari.", "Gandum tumbuh tinggi dan menguning. \"Siapa mahu membantu menuainya?\"",
+            "\"Bukan saya,\" kata semua kawannya lagi.", "Ayam Kecil menuai gandum itu sendiri.", "Kemudian dia membawa gandum ke kilang untuk dikisar menjadi tepung.",
+            "\"Siapa mahu membantu membuat roti?\" tanyanya lagi.", "Sekali lagi, semua kawannya menggeleng kepala.", "Ayam Kecil membuat roti yang harum dan lazat.",
+            "\"Siapa mahu makan roti ini?\" tanya Ayam Kecil. \"Saya! Saya!\" jawab semua.", "\"Tidak,\" kata Ayam Kecil. \"Hanya yang rajin yang boleh makan.\"",
+            "Kawan-kawannya malu. Mereka berjanji akan membantu pada kali berikutnya.", "Kali berikutnya, semua bekerja bersama dan makan roti dengan gembira."],
+          moral:"Rajin bekerja dan bantu-membantu membawa kebaikan.", quiz:["Siapa yang menanam gandum?", "Ayam Kecil", ["Itik", "Kucing"]] },
+        { id:"anak-itik", emoji:"🦆", title:"Anak Itik yang Berbeza", scenes:[
+            "Di tepi kolam, seekor ibu itik mengeram telurnya dengan sabar.", "Satu per satu telur itu menetas, dan anak-anak itik berbulu kuning keluar.",
+            "Tetapi ada satu telur yang paling besar dan menetas paling akhir.", "Anak itik yang terakhir itu berbulu kelabu dan kelihatan berbeza.",
+            "\"Kamu buruk!\" ejek adik-beradiknya. \"Pergi dari sini!\"", "Anak itik itu sedih lalu berjalan seorang diri.", "Dia berjumpa ayam, kucing dan angsa, tetapi semua menghalaunya.",
+            "Musim sejuk datang. Dia kesejukan dan kelaparan, namun tidak berputus asa.", "Apabila musim bunga tiba, dia ternampak sekumpulan burung putih yang cantik di kolam.",
+            "\"Mereka angsa,\" bisiknya. \"Mungkin mereka akan menghalau aku juga.\"", "Dia menundukkan kepala dan ternampak bayangnya di air.",
+            "Dia terkejut! Dia bukan lagi anak itik hodoh, tetapi seekor angsa yang cantik.", "Angsa-angsa lain menyambutnya dengan mesra. \"Mari bermain bersama kami!\"",
+            "Anak angsa itu gembira kerana akhirnya dia menemui keluarganya."],
+          moral:"Setiap orang istimewa. Jangan mengejek orang yang berbeza.", quiz:["Apa sebenarnya anak itik itu?", "Seekor angsa", ["Seekor ayam", "Seekor burung hantu"]] }
+    ],
+    pahlawan: [
+        { id:"hang-tuah-2", emoji:"🤝", title:"Hang Tuah dan Kawan-kawan", scenes:[
+            "Hang Tuah dan empat orang kawannya berjalan di pasar yang sibuk.", "Mereka ternampak seorang kanak-kanak menangis kerana buahnya tertumpah.",
+            "Hang Jebat segera membantu mengutip buah-buah itu.", "\"Menolong orang membuat hati kita gembira,\" kata Hang Tuah.",
+            "Mereka menghantar kanak-kanak itu pulang ke rumah ibunya.", "Ibunya memberi mereka kuih sebagai tanda terima kasih.",
+            "Lima sahabat duduk di bawah pokok dan berkongsi kuih itu.", "\"Kita seperti adik-beradik,\" kata Hang Kasturi.",
+            "\"Persahabatan mesti dijaga dengan kejujuran,\" jawab Hang Tuah.", "Pada waktu petang, mereka membantu nelayan menarik jala di pantai.",
+            "Ikan yang ditangkap sangat banyak. Nelayan itu bergembira.", "\"Terima kasih, anak-anak muda!\" katanya.",
+            "Hang Tuah tersenyum. \"Kami hanya membantu apa yang terdaya.\"", "Matahari terbenam, dan lima sahabat itu pulang sambil ketawa."],
+          moral:"Persahabatan yang baik lahir daripada tolong-menolong.", quiz:["Apa yang Hang Tuah dan kawan-kawan buat di pasar?", "Menolong kanak-kanak", ["Membeli kuih", "Tidur"]] },
+        { id:"mat-kilau", emoji:"🛡️", title:"Mat Kilau yang Berani", scenes:[
+            "Mat Kilau seorang pemuda yang sangat sayang akan tanah airnya.", "Dia tinggal di sebuah kampung yang hijau dan aman.",
+            "Ayahnya mengajar, \"Berani itu ialah melakukan yang benar.\"", "Mat Kilau membantu orang tua membawa barang di pasar.",
+            "Dia juga mengajar adik-adik membaca dan mengira di bawah pokok.", "Apabila ada yang susah, Mat Kilau cepat datang membantu.",
+            "Dia tidak takut bercakap benar walaupun suaranya menggeletar.", "Kawan-kawan berkata, \"Kamu sungguh berani, Mat Kilau.\"",
+            "Dia menjawab, \"Berani bukan bermakna tidak takut. Berani ialah membuat yang betul.\"", "Pada suatu hari, seekor anak kucing tersangkut di atas pokok tinggi.",
+            "Mat Kilau memanjat dengan berhati-hati dan menyelamatkannya.", "Semua orang bertepuk tangan, dan pipi Mat Kilau menjadi merah.",
+            "Kanak-kanak kampung menyanyikan lagu tentang keberanian yang baik.", "Semangat Mat Kilau diingati: cinta tanah air dan menolong sesama."],
+          moral:"Keberanian yang baik ialah berani menolong dan berkata benar.", quiz:["Apa maksud berani bagi Mat Kilau?", "Membuat yang betul", ["Tidak takut apa-apa", "Bergaduh"]] },
+        { id:"tun-perak-2", emoji:"🏛️", title:"Tun Perak dan Pasar Melaka", scenes:[
+            "Di pasar Melaka, pedagang dari jauh datang menjual pelbagai barang.", "Ada yang menjual kain, ada yang menjual rempah, ada yang menjual buah.",
+            "Suatu hari, dua orang pedagang bergaduh tentang harga.", "Suara mereka kuat dan kanak-kanak menjadi takut.",
+            "Tun Perak datang. Dia mengangkat tangan dengan perlahan. \"Mari bercakap baik-baik.\"", "Dia mengajak mereka minum air dan duduk di tempat teduh.",
+            "Selepas tenang, kedua-duanya menceritakan masalah masing-masing.", "Tun Perak mendengar dengan sabar tanpa menyampuk.",
+            "Kemudian dia membantu mereka bersetuju dengan harga yang adil.", "Kedua-dua pedagang bersalaman, dan pasar kembali riuh dengan gembira.",
+            "Seorang kanak-kanak bertanya, \"Kenapa Tun Perak tidak marah?\"", "Tun Perak tersenyum. \"Marah tidak menyelesaikan masalah. Bicara yang baik lebih berguna.\"",
+            "Kanak-kanak itu mengangguk dan mengingati kata-kata itu.", "Petang itu, pasar penuh dengan senyuman dan orang berjual beli dengan aman."],
+          moral:"Kata-kata yang lembut dan adil membawa kedamaian.", quiz:["Apa yang Tun Perak buat bila pedagang bergaduh?", "Mengajak bercakap baik-baik", ["Marah", "Pergi"]] }
+    ],
+    teladan: [
+        { id:"hormat-ibu-bapa", emoji:"👨‍👩‍👧", title:"Danial Menghormati Ibu Bapa", scenes:[
+            "Pagi-pagi lagi, ibu sedang memasak sarapan. Bau roti memenuhi rumah.", "Danial bangun lalu berkata, \"Selamat pagi, ibu! Terima kasih!\"",
+            "Ibu tersenyum. \"Selamat pagi, sayang.\"", "Danial membantu menyusun pinggan tanpa disuruh.", "Ayah pulang dari kerja pada waktu petang.",
+            "Danial membuka pintu dan memeluk ayah. \"Bagaimana hari ayah?\"", "Ayah gembira kerana ada yang bertanya. Mereka bercerita bersama-sama.",
+            "Selepas makan malam, Danial mencuci pinggannya sendiri.", "Sebelum tidur, dia mencium tangan ibu dan ayah.", "\"Kamu anak yang beradab,\" kata ibu.",
+            "Keesokan hari, Danial menyapu lantai selepas bermain.", "Ayah memuji, \"Kerja kecil pun sangat bermakna.\"",
+            "Danial menulis nota: \"Saya sayang ibu dan ayah.\" Dia meletakkannya di atas meja.", "Ibu terharu apabila menjumpai nota itu."],
+          moral:"Menghormati ibu bapa tanda kasih sayang.", quiz:["Apa yang Danial tulis dalam nota?", "Saya sayang ibu dan ayah", ["Saya mahu mainan", "Saya lapar"]] },
+        { id:"tidak-mengejek", emoji:"🤗", title:"Adele dan Kawan Baharu", scenes:[
+            "Di taman permainan, Adele ternampak seorang kawan baharu memakai cermin mata.", "Seorang kanak-kanak ketawa, \"Cermin mata itu macam katak!\"",
+            "Kawan baharu itu menundukkan kepala. Dia berasa sedih.", "Adele tidak ketawa. Dia pergi menghampiri kawan itu.",
+            "\"Hai, nama saya Adele. Cermin mata kamu cantik.\"", "Kawan itu mengangkat muka. \"Betulkah? Nama saya Faris.\"",
+            "Mereka bermain buaian bersama-sama, dan Faris mula ketawa.", "Adele berkata kepada kanak-kanak tadi, \"Kata-kata boleh menyakitkan hati.\"",
+            "Kanak-kanak itu diam. Kemudian dia berkata, \"Maaf, Faris.\"", "Faris menerima maaf itu dengan senyuman.", "Mereka bertiga bermain bola bersama.",
+            "Cikgu melihat dan tersenyum. \"Kebaikan itu berjangkit.\"", "Pulang ke rumah, Adele bercerita kepada ibunya.", "Ibu berkata, \"Kamu memilih menjadi kawan yang baik. Ibu bangga.\""],
+          moral:"Jangan mengejek. Pilih kata-kata yang baik.", quiz:["Apa yang Adele buat?", "Menjadi kawan yang baik", ["Ketawa", "Pergi"]] },
+        { id:"kerjasama-atap", emoji:"🏠", title:"Bekerjasama Membaiki Atap", scenes:[
+            "Di Kampung Awan, angin kencang meniup atap sebuah pondok kecil.", "Awan, Nunu, Bumi dan Tutu datang melihat.", "\"Atap ini perlu dibaiki,\" kata Bumi.",
+            "Tetapi seorang sahaja tidak cukup kuat. Kayu itu terlalu berat.", "Awan terbang membawa tali. Nunu memegang kayu.", "Bumi memberi semangat dari bawah.",
+            "Tutu memastikan setiap paku dipasang dengan kemas.", "Mereka mengira bersama, \"Satu, dua, tiga, angkat!\"", "Atap itu terpasang. Pondok itu selamat semula.",
+            "Penduduk kampung bertepuk tangan. \"Terima kasih, kawan-kawan!\"", "Mereka minum air kelapa bersama di bawah pokok.",
+            "Nunu berkata, \"Kalau seorang, susah. Kalau bersama, senang.\"", "Semua mengangguk. Kerjasama menjadikan kerja berat terasa ringan.",
+            "Mereka berjanji akan menolong kampung lagi apabila perlu."],
+          moral:"Bekerjasama menjadikan kerja berat terasa ringan.", quiz:["Bagaimana mereka membaiki atap?", "Bekerjasama", ["Seorang sahaja", "Meninggalkannya"]] },
+        { id:"sabar-rusa", emoji:"🏃", title:"Bintang Rusa Belajar Melompat", scenes:[
+            "Bintang si rusa mahu belajar melompat tinggi.", "Kali pertama dia melompat, dia terjatuh. \"Aduh!\"", "Dia mahu berhenti, tetapi tanduknya seolah-olah berbisik, \"Cuba lagi.\"",
+            "Kali kedua, lompatannya lebih jauh sedikit, tetapi dia masih jatuh.", "Kawan-kawan datang. \"Kami sokong kamu, Bintang!\"", "Mereka bertepuk tangan setiap kali Bintang mencuba.",
+            "Kali ketiga, keempat, dan kelima, Bintang terus mencuba.", "Pada percubaan keenam, dia melompat tinggi dan mendarat dengan kemas.",
+            "\"Saya berjaya!\" Bintang berpusing gembira.", "Nunu berkata, \"Kerana kamu tidak berputus asa.\"", "Bintang mengajar kawan-kawan caranya: cuba, jatuh, bangun, cuba lagi.",
+            "Semua belajar melompat bersama-sama, dan hutan penuh dengan ketawa.", "Malam itu Bintang memandang bintang di langit dan tersenyum.", "Usaha yang berterusan menjadikan impian benar."],
+          moral:"Bersabar dan berusaha berulang kali membawa kejayaan.", quiz:["Kenapa Bintang berjaya?", "Tidak berputus asa", ["Bernasib baik", "Tidur"]] },
+        { id:"hormat-guru", emoji:"👩‍🏫", title:"Menghormati Cikgu", scenes:[
+            "Di Akademi Ilmu, loceng berbunyi. Kelas akan bermula.", "Murid-murid duduk dengan kemas dan menunggu cikgu dengan tenang.",
+            "Cikgu masuk. Semua memberi salam dan tersenyum.", "\"Selamat pagi, anak-anak yang pandai!\" jawab cikgu.", "Hari itu mereka belajar huruf dan nombor.",
+            "Apabila tidak faham, murid mengangkat tangan dan bertanya dengan sopan.", "Cikgu menerangkan sekali lagi dengan sabar.", "Selepas kelas, murid-murid berkata, \"Terima kasih, cikgu!\"",
+            "Cikgu gembira. \"Kamu semua beradab. Cikgu bangga.\"", "Di luar kelas, seorang murid menolong membawa buku cikgu.", "Cikgu mengucapkan terima kasih, dan murid itu berasa hangat di hati.",
+            "Di rumah, murid itu bercerita kepada ibunya tentang pelajaran hari itu.", "Ibu berkata, \"Menghormati guru sama seperti menghormati ibu bapa.\"", "Murid itu mahu menjadi murid yang baik setiap hari."],
+          moral:"Menghormati guru membuka pintu ilmu dengan lebih luas.", quiz:["Apa yang murid buat apabila cikgu masuk?", "Memberi salam", ["Berlari", "Ketawa"]] }
+    ],
+    fantasia: [
+        { id:"nunu-gelembung", emoji:"🫧", title:"Nunu dan Gelembung Nombor", scenes:[
+            "Naga Nunu suka meniup gelembung setiap pagi.", "Suatu hari, Cikgu di Akademi Ilmu berkata, \"Hari ini kita belajar nombor!\"", "Nunu meniup satu gelembung. \"Ini satu!\"",
+            "Dia meniup dua gelembung. \"Ini dua!\"", "Tiga, empat, lima... gelembung-gelembung itu terbang ke langit.", "Awan datang dan bertanya, \"Boleh saya mengira bersama?\"",
+            "Mereka mengira bersama: enam, tujuh, lapan, sembilan, sepuluh!", "Nunu gembira. \"Nombor sungguh seronok!\"", "Kemudian angin kuat bertiup. Gelembung-gelembung itu pecah satu demi satu.",
+            "Nunu berasa sedih. \"Gelembung saya hilang.\"", "Awan berkata, \"Tidak mengapa. Kita boleh meniup lagi.\"", "Mereka meniup semula, dan Nunu mengira dengan lebih yakin.",
+            "Cikgu memuji, \"Pandainya! Kamu sudah kenal nombor satu hingga sepuluh.\"", "Malam itu Nunu bermimpi tentang gelembung nombor yang bercahaya."],
+          moral:"Belajar sambil bermain membuat kita gembira dan pandai.", quiz:["Apa yang Nunu guna untuk belajar nombor?", "Gelembung", ["Batu", "Kayu"]] },
+        { id:"seri-jawi", emoji:"🧚", title:"Seri Belajar Huruf Jawi", scenes:[
+            "Di Taman Peri, Seri si pari-pari sangat suka huruf yang cantik.", "Cikgu membawa papan tulis. \"Hari ini kita belajar huruf Alif.\"",
+            "Seri melihat huruf ا dan berkata, \"Alif seperti sebatang tiang!\"", "Kemudian mereka belajar huruf ب. \"Ba ada satu titik di bawah,\" kata Cikgu.",
+            "Seri terbang dari satu huruf ke satu huruf sambil menyebut namanya.", "Kawan-kawan peri turut menyanyikan nama-nama huruf itu.",
+            "Seri tersilap. Dia menyebut Ba sebagai Ta.", "Cikgu berkata, \"Tidak mengapa. Cuba lagi dengan tenang.\"", "Seri menarik nafas dan mencuba semula. Kali ini betul!",
+            "Semua bertepuk tangan, dan pipi Seri menjadi merah kerana gembira.", "Mereka menulis perkataan mudah seperti با dan ما.", "Seri membaca \"ba-ba\" dan semua ketawa kerana bunyinya comel.",
+            "Pulang ke rumah, Seri mengajar adiknya huruf Alif dan Ba.", "Seri tidur dengan senyuman. Esok dia mahu belajar lagi."],
+          moral:"Belajar huruf membuka pintu ilmu. Kesilapan ialah sebahagian daripada belajar.", quiz:["Huruf Jawi pertama yang Seri belajar?", "Alif", ["Ba", "Ya"]] },
+        { id:"bara-pelangi", emoji:"🌈", title:"Bara dan Warna Pelangi", scenes:[
+            "Bara si burung api tinggal di Lembah Api. Bulunya berwarna merah menyala.", "Suatu petang, hujan turun dengan renyai-renyai.",
+            "Selepas hujan, matahari muncul dan sebuah pelangi besar terbentang di langit.", "\"Wah, cantiknya!\" kata Bara. \"Warna apakah itu?\"", "Awan terbang mendekati. \"Mari saya ajar.\"",
+            "\"Yang paling atas berwarna merah, seperti buluku,\" kata Bara dengan bangga.", "\"Di bawahnya jingga, seperti buah oren,\" kata Awan.",
+            "\"Kemudian kuning seperti matahari, dan hijau seperti daun,\" sambung Seri.", "\"Biru seperti laut, dan ungu seperti buah anggur,\" kata Ombak.",
+            "Bara mencuba menyebut semua warna dari atas ke bawah.", "Dia tersilap pada warna jingga, tetapi kawan-kawan membantunya.", "Mereka mengulang-ulang sehingga Bara hafal semuanya.",
+            "Bara terbang melalui pelangi, dan bulunya berkilau dengan pelbagai warna.", "\"Dunia ini penuh warna,\" kata Bara dengan gembira."],
+          moral:"Dunia penuh dengan warna yang indah. Belajar bersama-sama lebih mudah.", quiz:["Warna apakah yang paling atas pada pelangi dalam cerita?", "Merah", ["Biru", "Hijau"]] },
+        { id:"garuda-anak-burung", emoji:"🦅", title:"Garuda Menyelamatkan Anak Burung", scenes:[
+            "Garuda Jaya terbang tinggi di atas Gunung Naga setiap pagi.", "Dia suka melihat kampung dan hutan dari atas langit.", "Suatu hari, dia mendengar bunyi tangisan yang halus.",
+            "Seekor anak burung terjatuh dari sarang dan tersangkut di dahan yang rapuh.", "Di bawahnya, sungai mengalir deras dan dalam.", "Garuda berasa takut kerana dahan itu sangat nipis.",
+            "Tetapi dia teringat, \"Berani bermaksud menolong, walaupun kita takut.\"", "Garuda menarik nafas panjang dan terbang perlahan-lahan mendekati anak burung itu.",
+            "Dia menghulurkan sayapnya dengan lembut. \"Jangan takut, naiklah.\"", "Anak burung itu memegang sayap Garuda dengan erat.", "Dahan itu patah, tetapi Garuda sudah terbang tinggi.",
+            "Dia menghantar anak burung itu pulang ke sarang di atas pokok besar.", "Ibu burung menangis kegembiraan. \"Terima kasih, Garuda!\"", "Garuda tersenyum. Hari itu dia merasa menjadi pahlawan yang sebenar."],
+          moral:"Keberanian yang baik ialah berani menolong orang lain.", quiz:["Siapa yang Garuda selamatkan?", "Anak burung", ["Anak kucing", "Ikan"]] },
+        { id:"bumi-pokok", emoji:"🌱", title:"Bumi Menanam Pokok Ajaib", scenes:[
+            "Naga Bumi tinggal di Hutan Ajaib. Badannya hijau seperti rumput.", "Suatu hari, dia menemui sebiji benih kecil yang bercahaya.", "\"Benih apakah ini?\" tanyanya. \"Mungkin pokok yang ajaib!\"",
+            "Bumi menggali tanah dengan cakar kecilnya dan meletakkan benih itu.", "Dia menutup benih dengan tanah dan menyiramnya dengan air.", "Pada hari pertama, tiada apa-apa yang tumbuh.",
+            "Bumi berasa sedikit sedih, tetapi dia terus menyiram setiap hari.", "Pada hari kelima, sebatang tunas hijau muncul dari dalam tanah.", "\"Yeay!\" Bumi melompat gembira.",
+            "Tunas itu tumbuh menjadi pokok kecil, kemudian pokok yang tinggi.", "Awan datang bermain di dahan, dan burung-burung membuat sarang.", "Pokok itu berbuah dengan buah yang manis dan berkilau.",
+            "Bumi berkongsi buah itu dengan semua kawan di hutan.", "\"Kesabaran menanam, kesabaran menunggu,\" kata Bumi. \"Hasilnya sungguh manis.\""],
+          moral:"Bersabar dan menjaga dengan kasih sayang membuahkan hasil yang manis.", quiz:["Apa yang Bumi tanam?", "Sebiji benih", ["Sebiji batu", "Sebiji bola"]] }
+    ],
+    tidur: [
+        { id:"bintang-mengantuk", emoji:"🌟", title:"Bintang Kecil yang Mengantuk", scenes:[
+            "Malam sudah tiba, dan langit menjadi gelap dan tenang.", "Di atas sana, ada seorang bintang kecil yang sedang menguap.", "\"Aaah... saya mengantuk,\" katanya perlahan.",
+            "Bulan tersenyum. \"Mari saya selimutkan dengan awan lembut.\"", "Awan putih melingkar seperti selimut yang hangat.", "Bintang kecil menutup matanya sedikit demi sedikit.",
+            "Di bawah, ayam dan itik sudah tidur di reban mereka.", "Kucing meringkuk di atas tikar yang lembut.", "Angin bertiup perlahan, bersenandung lagu yang tenang.",
+            "Bintang kecil bermimpi tentang taman yang penuh dengan bunga bercahaya.", "Dia tersenyum dalam tidurnya.", "Bulan berbisik, \"Selamat malam, bintang kecil.\"",
+            "Dan kamu juga, tutup mata perlahan-lahan dan bermimpi indah.", "Selamat malam."],
+          moral:"Tidur yang cukup menjadikan kita sihat dan ceria.", quiz:["Siapa yang menyelimutkan bintang kecil?", "Bulan", ["Matahari", "Kucing"]] },
+        { id:"awan-mimpi", emoji:"☁️", title:"Awan Kapas dan Mimpi Indah", scenes:[
+            "Di langit biru, ada seketul awan kapas yang sangat lembut.", "Awan kapas suka menjemput kanak-kanak ke dalam mimpi yang indah.", "Malam itu, dia singgah di tingkap seorang kanak-kanak.",
+            "\"Sudah gosok gigi?\" tanya Awan. \"Sudah!\" jawab kanak-kanak itu.", "\"Sudah baca doa?\" \"Sudah!\" Awan tersenyum.", "Awan membawa kanak-kanak itu terbang perlahan-lahan.",
+            "Mereka melalui taman yang penuh kupu-kupu bercahaya.", "Mereka menjumpai sungai yang mengalir dengan susu yang hangat.", "Seekor naga kecil melambai dan mengajak bermain buaian pelangi.",
+            "Semuanya begitu tenang dan lembut.", "Apabila kanak-kanak itu menguap, Awan membawanya pulang ke katil.", "Dia diselimutkan dengan sayap yang hangat.",
+            "\"Tidurlah, sayang. Esok kita bermain lagi,\" bisik Awan.", "Dan kanak-kanak itu tidur dengan senyuman."],
+          moral:"Gosok gigi dan berdoa sebelum tidur membuat mimpi lebih indah.", quiz:["Apa yang kanak-kanak buat sebelum tidur?", "Gosok gigi dan berdoa", ["Bermain bola", "Makan banyak"]] },
+        { id:"selamat-malam-bulan", emoji:"🌙", title:"Selamat Malam, Bulan", scenes:[
+            "Hari sudah senja. Matahari perlahan-lahan turun di sebalik bukit.", "Burung-burung pulang ke sarang mereka.", "Seorang kanak-kanak duduk di tepi tingkap sambil memandang langit.",
+            "\"Selamat petang, matahari. Terima kasih kerana menyinari hari ini,\" katanya.", "Tidak lama kemudian, bulan muncul dengan wajah yang bulat dan lembut.", "\"Selamat malam, bulan,\" sapa kanak-kanak itu.",
+            "Bulan bersinar dengan cahaya yang perak dan tenang.", "Kanak-kanak itu mengira bintang. \"Satu, dua, tiga, empat, lima...\"", "Dia bersyukur atas makanan yang dimakannya hari ini.",
+            "Dia bersyukur kerana ada ibu, ayah dan rumah yang selesa.", "Dia membaca doa sebelum tidur dengan perlahan.", "Ibu menyelimutkannya dan mencium dahinya.",
+            "\"Selamat malam, sayang,\" bisik ibu.", "Bulan terus menjaga dari langit sehingga pagi tiba."],
+          moral:"Bersyukur atas segala nikmat sebelum tidur.", quiz:["Apa yang kanak-kanak ucapkan kepada bulan?", "Selamat malam", ["Selamat pagi", "Selamat tinggal"]] }
+    ]
+};
+const STORY_CATS = { dongeng:["🦌", "Dongeng Haiwan"], pahlawan:["⚔️", "Pahlawan Melayu"], teladan:["💝", "Cerita Teladan"], fantasia:["🐲", "Sahabat Fantasia"], tidur:["🌙", "Cerita Sebelum Tidur"] };
+Object.keys(STORIES_EXTRA).forEach(k => { STORIES[k] = (STORIES[k] || []).concat(STORIES_EXTRA[k]); });
+function openStories() {
+    $("storyCats").innerHTML = Object.keys(STORY_CATS).map(k => `<button class="hbtn row" data-k="${k}"><span class="ic">${STORY_CATS[k][0]}</span><span>${STORY_CATS[k][1]} <small>(${STORIES[k].length} cerita)</small></span></button>`).join("");
+    $("storyCats").querySelectorAll("button").forEach(b => b.onclick = () => showStoryList(b.dataset.k));
+    $("storyCats").classList.remove("hidden"); $("storyList").classList.add("hidden"); $("storyPlayer").classList.add("hidden");
+    showScreen("storyScreen");
+}
+
 let curStory = null, storyIdx = 0;
-function openStories() { $("storyCats").classList.remove("hidden"); $("storyList").classList.add("hidden"); $("storyPlayer").classList.add("hidden"); showScreen("storyScreen"); }
 function showStoryList(cat) {
     $("storyCats").classList.add("hidden"); $("storyList").classList.remove("hidden");
     profile = loadProfile(curName());
@@ -2887,7 +3136,7 @@ function renderScene() {
     $("storyTitle").textContent = s.title; $("storyEmoji").textContent = s.emoji;
     $("storyDots").innerHTML = s.scenes.map((_, i) => `<i class="${i <= storyIdx ? "on" : ""}"></i>`).join("");
     if (storyIdx < n) {
-        $("storyText").textContent = s.scenes[storyIdx]; $("storyEnd").classList.add("hidden"); speak(s.scenes[storyIdx]);
+        $("storyText").textContent = s.scenes[storyIdx]; reAnim($("storyText"), "fbpop"); $("storyEnd").classList.add("hidden"); speak(s.scenes[storyIdx]);
     } else {
         $("storyText").textContent = "Tamat cerita! 🎉"; $("storyEnd").classList.remove("hidden");
         $("storyMoral").textContent = "💡 " + s.moral;
@@ -2906,27 +3155,81 @@ function renderScene() {
 }
 
 /* ============================================================
-   PENJANA PDF RINGAN (tiada pustaka luar)
+   PENJANA PDF RINGAN (tiada pustaka luar) + LOGO mastaxul
 ============================================================ */
-function PDFB(landscape) {
+const LOGO_URL = "https://i.ibb.co/4RNdnWfw/8-C91-AD94-DDE3-42-BD-BA89-12-D3-CCE6-D82-D.jpg";
+let LOGO = null, logoBusy = null;
+
+function parseJPEG(b) {
+    let i = 2;
+    while (i < b.length - 9) {
+        if (b[i] !== 0xFF) { i++; continue; }
+        const m = b[i + 1];
+        if (m >= 0xC0 && m <= 0xCF && m !== 0xC4 && m !== 0xC8 && m !== 0xCC) return { h:b[i + 5] << 8 | b[i + 6], w:b[i + 7] << 8 | b[i + 8], n:b[i + 9] };
+        i += 2 + (b[i + 2] << 8 | b[i + 3]);
+    }
+    return null;
+}
+/* Muat turun logo sekali, tukar kepada JPEG RGB (latar putih) supaya selamat dimasukkan ke dalam PDF */
+function ensureLogo() {
+    if (LOGO) return Promise.resolve(LOGO);
+    if (logoBusy) return logoBusy;
+    logoBusy = (async () => {
+        try {
+            const ctrl = new AbortController(), t = setTimeout(() => ctrl.abort(), 6000);
+            const r = await fetch(LOGO_URL, { mode:"cors", signal:ctrl.signal }); clearTimeout(t);
+            if (!r.ok) throw new Error("logo");
+            const bmp = await createImageBitmap(await r.blob());
+            const cv = document.createElement("canvas");
+            cv.width = bmp.width; cv.height = bmp.height;
+            const cx = cv.getContext("2d"); cx.fillStyle = "#fff"; cx.fillRect(0, 0, cv.width, cv.height); cx.drawImage(bmp, 0, 0);
+            const blob = await new Promise(res => cv.toBlob(res, "image/jpeg", 0.92));
+            const bytes = new Uint8Array(await blob.arrayBuffer()), info = parseJPEG(bytes);
+            if (info && info.n === 3) LOGO = { bytes, w:info.w, h:info.h };
+        } catch (e) { LOGO = null; }
+        logoBusy = null;
+        return LOGO;
+    })();
+    return logoBusy;
+}
+
+// Lebar aksara Helvetica (per 1000 unit) untuk penjajaran tengah yang tepat
+const HW = { " ":278, a:556, b:556, c:500, d:556, e:556, f:278, g:556, h:556, i:222, j:222, k:500, l:222, m:833, n:556, o:556, p:556, q:556, r:333, s:500, t:278, u:556, v:500, w:722, x:500, y:500, z:500,
+    A:667, B:667, C:722, D:722, E:667, F:611, G:778, H:722, I:278, J:500, K:667, L:556, M:833, N:722, O:778, P:667, Q:778, R:722, S:667, T:611, U:722, V:667, W:944, X:667, Y:667, Z:611,
+    ".":278, ",":278, ":":278, ";":278, "!":278, "?":556, "-":333, "(":333, ")":333, "/":278, "%":889, "&":667, "'":191, "\"":355, "+":584, "=":584, "|":260 };
+const HWB = { a:556, b:611, c:556, d:611, e:556, f:333, g:611, h:611, i:278, j:278, k:556, l:278, m:889, n:611, o:611, p:611, q:611, r:389, s:556, t:333, u:611, v:556, w:778, x:556, y:556, z:500,
+    A:722, B:722, C:722, D:722, E:667, F:611, G:778, H:722, I:278, J:556, K:722, L:611, M:833, N:722, O:778, P:667, Q:778, R:722, S:667, T:611, U:722, V:667, W:944, X:667, Y:667, Z:611 };
+
+function PDFB(landscape, noFooter) {
     const W = landscape ? 842 : 595, H = landscape ? 595 : 842, pages = [];
     let c = null;
     const f = v => (+v).toFixed(2);
     const esc = s => String(s).replace(/[\\()]/g, m => "\\" + m);
     const clean = s => String(s).replace(/[^\x20-\x7E\xA0-\xFF]/g, "").replace(/\s+/g, " ").trim();
     const col = h => { const n = parseInt(h.slice(1), 16); return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255].map(v => v.toFixed(3)).join(" "); };
+    const mix = (a, b, t) => { const x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16), g = (s) => [(s >> 16) & 255, (s >> 8) & 255, s & 255]; const A = g(x), B = g(y); return "#" + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, "0")).join(""); };
     const o = {
-        W, H,
-        page() { c = []; pages.push(c); c.push(`q /GS2 gs ${col("#5b50d6")} rg BT /F2 ${landscape ? 100 : 80} Tf 0.819 0.574 -0.574 0.819 ${landscape ? 170 : 100} ${landscape ? 130 : 250} Tm (mastaxul.my) Tj ET Q`); return o; },
+        W, H, mix,
+        page() { c = []; pages.push(c); return o; },
         T(x, y, s, size, bold, color) { c.push(`BT /${bold ? "F2" : "F1"} ${size} Tf ${col(color || "#263238")} rg ${f(x)} ${f(H - y)} Td (${esc(clean(s))}) Tj ET`); },
         TO(x, y, s, size, color) { c.push(`q BT /F1 ${size} Tf 1 Tr ${col(color || "#9e9e9e")} RG 1.2 w [3 3] 0 d ${f(x)} ${f(H - y)} Td (${esc(clean(s))}) Tj ET Q`); },
-        tw(s, size, bold) { return clean(s).length * size * (bold ? 0.58 : 0.52); },
+        tw(s, size, bold) { let w = 0; clean(s).split("").forEach(ch => { w += (bold ? (HWB[ch] || HW[ch]) : HW[ch]) || 556; }); return w * size / 1000; },
+        TC(cx, y, s, size, bold, color) { o.T(cx - o.tw(s, size, bold) / 2, y, s, size, bold, color); },
+        TR(rx, y, s, size, bold, color) { o.T(rx - o.tw(s, size, bold), y, s, size, bold, color); },
         R(x, y, w, h, color) { c.push(`${col(color)} rg ${f(x)} ${f(H - y - h)} ${f(w)} ${f(h)} re f`); },
         RS(x, y, w, h, color, lw) { c.push(`${col(color)} RG ${lw || 1} w ${f(x)} ${f(H - y - h)} ${f(w)} ${f(h)} re S`); },
+        RR(x, y, w, h, r, color, fill, lw) {
+            r = Math.min(r, w / 2, h / 2); const k = r * 0.5523, X = x, Y = H - y - h;
+            const p = [`${f(X + r)} ${f(Y)} m`, `${f(X + w - r)} ${f(Y)} l`, `${f(X + w - r + k)} ${f(Y)} ${f(X + w)} ${f(Y + r - k)} ${f(X + w)} ${f(Y + r)} c`, `${f(X + w)} ${f(Y + h - r)} l`,
+                `${f(X + w)} ${f(Y + h - r + k)} ${f(X + w - r + k)} ${f(Y + h)} ${f(X + w - r)} ${f(Y + h)} c`, `${f(X + r)} ${f(Y + h)} l`,
+                `${f(X + r - k)} ${f(Y + h)} ${f(X)} ${f(Y + h - r + k)} ${f(X)} ${f(Y + h - r)} c`, `${f(X)} ${f(Y + r)} l`, `${f(X)} ${f(Y + r - k)} ${f(X + r - k)} ${f(Y)} ${f(X + r)} ${f(Y)} c`, "h"].join(" ");
+            c.push(`${fill ? col(color) + " rg" : col(color) + " RG " + (lw || 1) + " w"} ${p} ${fill ? "f" : "S"}`);
+        },
+        GRAD(x, y, w, h, c1, c2, steps) { steps = steps || 28; for (let i = 0; i < steps; i++) o.R(x + w * i / steps, y, w / steps + 0.6, h, mix(c1, c2, i / (steps - 1))); },
         L(x1, y1, x2, y2, color, lw, dash) { c.push(`q ${col(color || "#999999")} RG ${lw || 1} w ${dash ? "[" + dash + "] 0 d " : ""}${f(x1)} ${f(H - y1)} m ${f(x2)} ${f(H - y2)} l S Q`); },
-        C(cx, cy, r, color, fill) {
+        C(cx, cy, r, color, fill, lw) {
             const k = r * 0.5523, X = cx, Y = H - cy;
-            c.push(`${fill ? col(color) + " rg" : col(color) + " RG 1.5 w"} ${f(X + r)} ${f(Y)} m ${f(X + r)} ${f(Y + k)} ${f(X + k)} ${f(Y + r)} ${f(X)} ${f(Y + r)} c ${f(X - k)} ${f(Y + r)} ${f(X - r)} ${f(Y + k)} ${f(X - r)} ${f(Y)} c ${f(X - r)} ${f(Y - k)} ${f(X - k)} ${f(Y - r)} ${f(X)} ${f(Y - r)} c ${f(X + k)} ${f(Y - r)} ${f(X + r)} ${f(Y - k)} ${f(X + r)} ${f(Y)} c ${fill ? "f" : "S"}`);
+            c.push(`${fill ? col(color) + " rg" : col(color) + " RG " + (lw || 1.5) + " w"} ${f(X + r)} ${f(Y)} m ${f(X + r)} ${f(Y + k)} ${f(X + k)} ${f(Y + r)} ${f(X)} ${f(Y + r)} c ${f(X - k)} ${f(Y + r)} ${f(X - r)} ${f(Y + k)} ${f(X - r)} ${f(Y)} c ${f(X - r)} ${f(Y - k)} ${f(X - k)} ${f(Y - r)} ${f(X)} ${f(Y - r)} c ${f(X + k)} ${f(Y - r)} ${f(X + r)} ${f(Y - k)} ${f(X + r)} ${f(Y)} c ${fill ? "f" : "S"}`);
         },
         POLY(pts, color, lw, fill) {
             const p = pts.map((q, i) => `${f(q[0])} ${f(H - q[1])} ${i ? "l" : "m"}`).join(" ");
@@ -2936,26 +3239,35 @@ function PDFB(landscape) {
             const pts = []; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? R * 0.42 : R; pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); }
             o.POLY(pts, color, 2, fill !== false);
         },
-        stamp(x, y, dt) {
-            const cs = Math.cos(-12 * Math.PI / 180), sn = Math.sin(-12 * Math.PI / 180);
-            c.push(`q /GS1 gs ${col("#5b50d6")} RG ${col("#5b50d6")} rg 1 0 0 1 ${f(x)} ${f(H - y)} cm ${f(cs)} ${f(sn)} ${f(-sn)} ${f(cs)} 0 0 cm 3 w -80 -36 160 72 re S 1.2 w -74 -30 148 60 re S BT /F2 8 Tf -38 18 Td (JOM BELAJAR!) Tj ET BT /F2 20 Tf -62 -2 Td (mastaxul.my) Tj ET BT /F2 9 Tf -30 -17 Td (DISAHKAN) Tj ET BT /F1 8 Tf -24 -27 Td (${dt}) Tj ET Q`);
+        /* Logo mastaxul di kanan (hujung kanan = rx). Jika logo tidak dapat dimuat, guna tulisan. */
+        logo(rx, y, maxW, maxH) {
+            if (LOGO) {
+                const s = Math.min(maxW / LOGO.w, maxH / LOGO.h), w = LOGO.w * s, h = LOGO.h * s;
+                c.push(`q ${f(w)} 0 0 ${f(h)} ${f(rx - w)} ${f(H - y - h)} cm /Im1 Do Q`);
+                return { w, h };
+            }
+            o.TR(rx, y + 16, "mastaxul.my", 16, true, "#5b50d6");
+            return { w:o.tw("mastaxul.my", 16, true), h:20 };
         },
         finish() {
-            pages.forEach((pg, i) => { c = pg; o.T(36, H - 22, "Jom Belajar!  |  mastaxul.my  |  Halaman " + (i + 1) + "/" + pages.length, 8, false, "#888888"); });
+            if (!noFooter) pages.forEach((pg, i) => { c = pg; o.L(40, H - 34, W - 40, H - 34, "#e3e0f5", 0.8); o.T(40, H - 20, "Jom Belajar!  •  mastaxul.my", 8.5, false, "#8a85b5"); o.TR(W - 40, H - 20, "Halaman " + (i + 1) + " / " + pages.length, 8.5, false, "#8a85b5"); });
+            const b2s = bytes => { let s = ""; for (let i = 0; i < bytes.length; i += 8192) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192)); return s; };
             let pdf = "%PDF-1.4\n"; const offs = [];
             const obj = (id, body) => { offs[id] = pdf.length; pdf += id + " 0 obj\n" + body + "\nendobj\n"; };
+            const base = LOGO ? 8 : 7;
             obj(1, "<< /Type /Catalog /Pages 2 0 R >>");
-            obj(2, `<< /Type /Pages /Kids [${pages.map((_, i) => (7 + 2 * i) + " 0 R").join(" ")}] /Count ${pages.length} >>`);
+            obj(2, `<< /Type /Pages /Kids [${pages.map((_, i) => (base + 2 * i) + " 0 R").join(" ")}] /Count ${pages.length} >>`);
             obj(3, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
             obj(4, "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
-            obj(5, "<< /Type /ExtGState /ca 0.65 /CA 0.65 >>");
-            obj(6, "<< /Type /ExtGState /ca 0.07 /CA 0.07 >>");
+            obj(5, "<< /Type /ExtGState /ca 0.5 /CA 0.5 >>");
+            obj(6, "<< /Type /ExtGState /ca 0.1 /CA 0.1 >>");
+            if (LOGO) obj(7, `<< /Type /XObject /Subtype /Image /Width ${LOGO.w} /Height ${LOGO.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${LOGO.bytes.length} >>\nstream\n${b2s(LOGO.bytes)}\nendstream`);
             pages.forEach((pg, i) => {
                 const s = pg.join("\n");
-                obj(7 + 2 * i, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> /ExtGState << /GS1 5 0 R /GS2 6 0 R >> >> /Contents ${8 + 2 * i} 0 R >>`);
-                obj(8 + 2 * i, `<< /Length ${s.length} >>\nstream\n${s}\nendstream`);
+                obj(base + 2 * i, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> /ExtGState << /GS1 5 0 R /GS2 6 0 R >>${LOGO ? " /XObject << /Im1 7 0 R >>" : ""} >> /Contents ${base + 2 * i + 1} 0 R >>`);
+                obj(base + 2 * i + 1, `<< /Length ${s.length} >>\nstream\n${s}\nendstream`);
             });
-            const n = 7 + 2 * pages.length, xref = pdf.length;
+            const n = base + 2 * pages.length, xref = pdf.length;
             pdf += `xref\n0 ${n}\n0000000000 65535 f \n`;
             for (let i = 1; i < n; i++) pdf += String(offs[i]).padStart(10, "0") + " 00000 n \n";
             pdf += `trailer\n<< /Size ${n} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
@@ -2973,13 +3285,107 @@ function savePDF(bytes, name) {
 }
 const dtStr = () => { const d = new Date(); return String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0") + "/" + d.getFullYear(); };
 
+/* Pengepala seragam: latar putih, tajuk ungu, logo kanan atas, garis gradien */
+function pdfHead(p, title, sub) {
+    p.R(0, 0, p.W, p.H, "#ffffff");
+    const lg = p.logo(p.W - 40, 22, 140, 52);
+    p.T(40, 46, title, 24, true, "#5b50d6");
+    if (sub) p.T(40, 66, sub, 11, false, "#8a85b5");
+    p.GRAD(0, 86, p.W, 4, "#6c63ff", "#ff6b9d", 40);
+    return 108;
+}
+
+/* ============================================================
+   LAPORAN IBU BAPA (PDF)
+============================================================ */
+function buildReportPDF(prof) {
+    const d = reportData(prof), P = prof.pet || newPet(), rk = rankOf(d.C).r[0];
+    const p = PDFB(false), W = p.W, M = 40;
+    let y = 0;
+    const newPage = () => { p.page(); y = pdfHead(p, "Laporan Kemajuan Belajar", "Laporan Ibu Bapa  •  Jom Belajar!"); };
+    const ensure = h => { if (y + h > p.H - 50) newPage(); };
+    newPage();
+
+    // Kad murid
+    p.RR(M, y, W - 2 * M, 78, 16, "#f4f2ff", true);
+    p.C(M + 42, y + 39, 27, "#5b50d6", true);
+    p.TC(M + 42, y + 49, (prof.name || "?").trim().charAt(0).toUpperCase(), 28, true, "#ffffff");
+    p.T(M + 84, y + 34, prof.name, 20, true, "#263238");
+    p.T(M + 84, y + 53, "Gelaran: " + rk + "    |    Tarikh laporan: " + dtStr(), 10.5, false, "#666666");
+    p.T(M + 84, y + 68, "Streak terbaik: " + P.streak.best + " hari    |    Cerita dibaca: " + P.stories.length, 10.5, false, "#666666");
+    y += 96;
+
+    // Kad statistik
+    const cw = (W - 2 * M - 30) / 4;
+    [["Soalan dijawab", String(d.T), "#6c63ff"], ["Betul percubaan pertama", (d.T ? Math.round(d.C / d.T * 100) : 0) + "%", "#43a047"],
+     ["Bintang sahabat", String(P.stars), "#f5a623"], ["Stiker dikumpul", d.stickers + "/" + STICKERS.length, "#ff6b9d"]].forEach((s, i) => {
+        const x = M + i * (cw + 10);
+        p.RR(x, y, cw, 64, 12, "#ffffff", false, 1); p.RR(x, y, cw, 64, 12, "#ece9fb", false, 1);
+        p.R(x + 12, y + 12, 22, 4, s[2]);
+        p.T(x + 12, y + 30, s[0], 8.5, false, "#777777");
+        p.T(x + 12, y + 54, s[1], 22, true, s[2]);
+    });
+    y += 84;
+
+    // Ringkasan
+    if (d.strong) { p.C(M + 6, y - 4, 4, "#43a047", true); p.T(M + 18, y, "Paling kuat: " + CAT_LABEL[d.strong.k] + " (" + d.strong.pct + "%)", 11, false, "#2e7d32"); y += 18; }
+    if (d.weak && d.weak.pct < 75) { p.C(M + 6, y - 4, 4, "#e53935", true); p.T(M + 18, y, "Perlu latihan lagi: " + CAT_LABEL[d.weak.k] + " (" + d.weak.pct + "%)", 11, false, "#c62828"); y += 18; }
+    y += 10;
+
+    // Prestasi topik
+    p.T(M, y, "Prestasi mengikut topik", 14, true, "#5b50d6"); y += 16;
+    if (!d.rows.length) { p.T(M, y + 10, "Belum ada rekod. Main beberapa permainan dahulu.", 10.5, false, "#777777"); y += 30; }
+    d.rows.forEach(r => {
+        ensure(34);
+        const colr = r.pct >= 75 ? "#43a047" : r.pct >= 50 ? "#ffa000" : "#e53935";
+        p.T(M, y + 10, CAT_LABEL[r.k] || r.k, 10.5, false, "#263238");
+        p.TR(W - M, y + 10, r.pct + "%   (" + r.c + "/" + r.t + ")", 10, true, colr);
+        p.RR(M, y + 16, W - 2 * M, 8, 4, "#ece9fb", true);
+        p.RR(M, y + 16, Math.max(8, (W - 2 * M) * r.pct / 100), 8, 4, colr, true);
+        y += 34;
+    });
+
+    // Sesi terkini
+    if (d.sessions.length) {
+        ensure(60); y += 6;
+        p.T(M, y, "Sesi terkini", 14, true, "#5b50d6"); y += 12;
+        p.RR(M, y, W - 2 * M, 22, 6, "#5b50d6", true);
+        [["Tarikh", M + 12], ["Topik", M + 90], ["Markah", W - M - 150], ["Betul", W - M - 70]].forEach(h => p.T(h[1], y + 15, h[0], 9.5, true, "#ffffff"));
+        y += 24;
+        d.sessions.forEach((s, i) => {
+            ensure(24);
+            if (i % 2 === 0) p.RR(M, y, W - 2 * M, 22, 5, "#f7f6ff", true);
+            const t = new Date(s.d);
+            p.T(M + 12, y + 15, t.getDate() + "/" + (t.getMonth() + 1) + "/" + t.getFullYear(), 9.5, false);
+            p.T(M + 90, y + 15, s.cat, 9.5, false);
+            p.T(W - M - 150, y + 15, String(s.score), 9.5, false);
+            p.T(W - M - 70, y + 15, s.c + " / " + s.t, 9.5, false);
+            y += 22;
+        });
+    }
+    ensure(50); y += 14;
+    p.RR(M, y, W - 2 * M, 38, 10, "#fff8e1", true);
+    p.T(M + 12, y + 16, "Nota: 'Betul percubaan pertama' bermaksud jawapan betul tanpa tersilap dahulu.", 8.5, false, "#8a6d00");
+    p.T(M + 12, y + 29, "Rekod disimpan dalam peranti murid dan dijana oleh Jom Belajar! (mastaxul.my).", 8.5, false, "#8a6d00");
+    return p.finish();
+}
+async function downloadReportPDF() {
+    const n = $("repSel").value;
+    if (!n) { alert("Belum ada rekod murid. Main dulu ya!"); return; }
+    await ensureLogo();
+    savePDF(buildReportPDF(loadProfile(n)), "Laporan-JomBelajar-" + n.replace(/[^\w\-]+/g, "_") + ".pdf");
+}
+
 /* ============================================================
    LEMBARAN KERJA BOLEH CETAK
 ============================================================ */
 function wsHeader(p, title) {
-    p.R(0, 0, p.W, 56, "#5b50d6");
-    p.T(36, 36, title, 20, true, "#ffffff"); p.T(p.W - 120, 36, "mastaxul.my", 12, true, "#ffffff");
-    p.T(36, 82, "Nama: ______________________________", 12); p.T(p.W - 230, 82, "Tarikh: ________________", 12);
+    p.R(0, 0, p.W, p.H, "#ffffff");
+    p.logo(p.W - 36, 12, 120, 40);
+    p.T(36, 40, title, 21, true, "#5b50d6");
+    p.GRAD(0, 60, p.W, 3, "#6c63ff", "#ff6b9d", 40);
+    p.RR(36, 70, 290, 22, 6, "#f4f2ff", true); p.T(44, 85, "Nama:", 11, true, "#5b50d6");
+    p.RR(p.W - 220, 70, 184, 22, 6, "#f4f2ff", true); p.T(p.W - 212, 85, "Tarikh:", 11, true, "#5b50d6");
 }
 function wsLetters(p) {
     for (let i = 0; i < RUMI.length; i += 6) {
@@ -3012,44 +3418,44 @@ function wsMath(p) {
     while (sub.length < 20) { const a = 1 + rnd(10), b = rnd(a + 1); sub.push([a, b]); }
     [["Tambah", add, "+"], ["Tolak", sub, "-"]].forEach(([title, list, op]) => {
         p.page(); wsHeader(p, title + " (sehingga 10)");
-        list.forEach((q, i) => { const col = i % 2, row = Math.floor(i / 2); p.T(60 + col * 270, 140 + row * 62, q[0] + "  " + op + "  " + q[1] + "  =  ______", 20); });
+        list.forEach((q, i) => { const cl = i % 2, row = Math.floor(i / 2); p.T(60 + cl * 270, 150 + row * 62, q[0] + "  " + op + "  " + q[1] + "  =  ______", 20); });
     });
     p.page(); wsHeader(p, "Jawapan (untuk ibu bapa)");
-    p.T(36, 120, "Tambah:", 13, true, "#5b50d6");
-    add.forEach((q, i) => p.T(36 + (i % 4) * 130, 145 + Math.floor(i / 4) * 22, q[0] + " + " + q[1] + " = " + (q[0] + q[1]), 12));
-    p.T(36, 290, "Tolak:", 13, true, "#5b50d6");
-    sub.forEach((q, i) => p.T(36 + (i % 4) * 130, 315 + Math.floor(i / 4) * 22, q[0] + " - " + q[1] + " = " + (q[0] - q[1]), 12));
+    p.T(36, 130, "Tambah:", 13, true, "#5b50d6");
+    add.forEach((q, i) => p.T(36 + (i % 4) * 130, 155 + Math.floor(i / 4) * 22, q[0] + " + " + q[1] + " = " + (q[0] + q[1]), 12));
+    p.T(36, 300, "Tolak:", 13, true, "#5b50d6");
+    sub.forEach((q, i) => p.T(36 + (i % 4) * 130, 325 + Math.floor(i / 4) * 22, q[0] + " - " + q[1] + " = " + (q[0] - q[1]), 12));
 }
 function wsCount(p) {
     const COL = ["#e53935", "#43a047", "#1e88e5", "#fb8c00", "#8e24aa"];
     p.page(); wsHeader(p, "Kira dan Tulis Nombor");
     for (let r = 0; r < 7; r++) {
-        const n = 1 + rnd(10), y = 135 + r * 85, shape = r % 3, color = COL[r % 5];
+        const n = 1 + rnd(10), y = 145 + r * 88, shape = r % 3, color = COL[r % 5];
         for (let k = 0; k < n; k++) {
             const x = 56 + k * (n > 8 ? 31 : 40);
             if (shape === 0) p.C(x, y, 14, color, true); else if (shape === 1) p.STAR(x, y, 16, color, true); else p.R(x - 13, y - 13, 26, 26, color);
         }
-        p.RS(470, y - 28, 90, 56, "#888888", 1.5); p.T(366, y + 6, "Ada berapa?", 14);
+        p.T(380, y + 6, "Ada berapa?", 14, false, "#555555"); p.RR(478, y - 28, 80, 56, 10, "#5b50d6", false, 1.8);
     }
 }
 function wsMatch(p) {
     p.page(); wsHeader(p, "Padankan");
-    p.T(36, 120, "1. Padankan huruf besar dengan huruf kecil (tarik garisan)", 13, true, "#5b50d6");
+    p.T(36, 125, "1. Padankan huruf besar dengan huruf kecil (tarik garisan)", 13, true, "#5b50d6");
     const L = shuffle(RUMI).slice(0, 7), R = shuffle(L);
-    L.forEach((l, i) => { p.T(110, 170 + i * 36, l, 24, true); p.C(160, 162 + i * 36, 5, "#5b50d6", true); p.C(430, 162 + i * 36, 5, "#5b50d6", true); });
-    R.forEach((l, i) => p.T(460, 170 + i * 36, l.toLowerCase(), 24, true));
-    p.T(36, 460, "2. Padankan nombor dengan bilangan bulatan", 13, true, "#5b50d6");
-    const N = shuffle([1, 2, 3, 4]).concat([]), M = shuffle(N);
-    N.forEach((n, i) => { p.T(110, 505 + i * 46, String(n), 24, true); p.C(160, 497 + i * 46, 5, "#5b50d6", true); p.C(430, 497 + i * 46, 5, "#5b50d6", true); for (let k = 0; k < M[i]; k++) p.C(465 + k * 22, 497 + i * 46, 8, "#e57373", true); });
+    L.forEach((l, i) => { p.T(110, 175 + i * 36, l, 24, true); p.C(160, 167 + i * 36, 5, "#5b50d6", true); p.C(430, 167 + i * 36, 5, "#5b50d6", true); });
+    R.forEach((l, i) => p.T(460, 175 + i * 36, l.toLowerCase(), 24, true));
+    p.T(36, 470, "2. Padankan nombor dengan bilangan bulatan", 13, true, "#5b50d6");
+    const N = shuffle([1, 2, 3, 4]), M = shuffle(N);
+    N.forEach((n, i) => { p.T(110, 520 + i * 46, String(n), 24, true); p.C(160, 512 + i * 46, 5, "#5b50d6", true); p.C(430, 512 + i * 46, 5, "#5b50d6", true); for (let k = 0; k < M[i]; k++) p.C(465 + k * 22, 512 + i * 46, 8, "#e57373", true); });
 }
 function wsColor(p) {
     p.page(); wsHeader(p, "Warnakan Bentuk");
-    p.T(36, 120, "Warnakan setiap bentuk dengan cantik!", 13, false, "#555555");
-    p.C(150, 250, 70, "#555555", false); p.T(120, 345, "Bulatan", 14, true);
-    p.RS(370, 180, 140, 140, "#555555", 2.5); p.T(405, 345, "Segi empat", 14, true);
-    p.POLY([[150, 420], [80, 560], [220, 560]], "#555555", 2.5, false); p.T(115, 590, "Segi tiga", 14, true);
-    p.STAR(440, 495, 78, "#555555", false); p.T(410, 590, "Bintang", 14, true);
-    p.T(36, 640, "Warna yang saya guna: ____________________________________", 12);
+    p.T(36, 125, "Warnakan setiap bentuk dengan cantik!", 13, false, "#555555");
+    p.C(150, 255, 70, "#555555", false, 2.5); p.TC(150, 350, "Bulatan", 14, true);
+    p.RS(370, 185, 140, 140, "#555555", 2.5); p.TC(440, 350, "Segi empat", 14, true);
+    p.POLY([[150, 425], [80, 565], [220, 565]], "#555555", 2.5, false); p.TC(150, 595, "Segi tiga", 14, true);
+    p.STAR(440, 500, 78, "#555555", false); p.TC(440, 595, "Bintang", 14, true);
+    p.T(36, 650, "Warna yang saya guna: ____________________________________", 12);
 }
 const WORKSHEETS = {
     jejak:  ["✍️ Jejak Huruf A–Z (5 muka surat)", [wsLetters], "Jejak-Huruf"],
@@ -3060,14 +3466,15 @@ const WORKSHEETS = {
     warna:  ["🎨 Warnakan Bentuk", [wsColor], "Warnakan"],
     semua:  ["📚 Semua lembaran dalam satu fail", [wsLetters, wsNumbers, wsMath, wsCount, wsMatch, wsColor], "Semua-Lembaran"]
 };
-function makeWorksheet(key) {
+async function makeWorksheet(key) {
     const w = WORKSHEETS[key], p = PDFB(false);
+    await ensureLogo();
     w[1].forEach(fn => fn(p));
-    p.stamp(p.W - 110, p.H - 70, dtStr());
     savePDF(p.finish(), "JomBelajar-" + w[2] + ".pdf");
     toast("Lembaran kerja dimuat turun 📄");
 }
 function openWork() {
+    ensureLogo();
     $("workList").innerHTML = Object.keys(WORKSHEETS).map(k => `<button class="hbtn row" data-k="${k}"><span class="ic">📄</span><span>${WORKSHEETS[k][0]}</span></button>`).join("");
     $("workList").querySelectorAll("button").forEach(b => b.onclick = () => makeWorksheet(b.dataset.k));
     showScreen("workScreen");
@@ -3083,6 +3490,7 @@ function certStats(p) {
     return { T, C, stars:p.pet.stars, streak:p.pet.streak.best, stories:p.pet.stories.length, stickers:STICKERS.filter(s => p.stickers[s]).length };
 }
 function openCert() {
+    ensureLogo();
     profile = loadProfile(curName());
     const s = certStats(profile), { r, nx } = rankOf(s.C);
     const pct = nx ? Math.min(100, Math.round((s.C - r[1]) / (nx[1] - r[1]) * 100)) : 100;
@@ -3092,27 +3500,86 @@ function openCert() {
         <div class="rbox">Ganjaran streak: setiap hari main dapat +1 ⭐, dan setiap 3 hari berturut-turut dapat bonus +3 ⭐.</div>`;
     showScreen("certScreen");
 }
-function makeCertificate() {
+async function makeCertificate() {
     const n = curName(), s = certStats(loadProfile(n)), { r } = rankOf(s.C);
-    const p = PDFB(true); p.page();
-    const W = p.W, H = p.H, mid = W / 2;
-    p.RS(18, 18, W - 36, H - 36, "#5b50d6", 6); p.RS(32, 32, W - 64, H - 64, "#f5a623", 2);
-    [[70, 70], [W - 70, 70], [70, H - 70], [W - 70, H - 70]].forEach(q => p.STAR(q[0], q[1], 22, "#ffca28", true));
-    const ctr = (t, y, size, bold, color) => p.T(mid - p.tw(t, size, bold) / 2, y, t, size, bold, color);
-    ctr("SIJIL PENGHARGAAN", 120, 40, true, "#5b50d6");
-    ctr("Jom Belajar! - mastaxul.my", 148, 13, false, "#888888");
-    ctr("Dengan ini disahkan bahawa", 205, 16, false, "#555555");
-    ctr(n, 262, 38, true, "#e65100");
-    p.L(mid - 190, 274, mid + 190, 274, "#e65100", 1.2);
-    ctr("telah menunjukkan semangat belajar yang tinggi dan diberi gelaran", 312, 15, false, "#555555");
-    ctr(r[0].toUpperCase(), 360, 34, true, "#5b50d6");
-    ctr(s.C + " soalan betul   |   " + s.stars + " bintang   |   " + s.stories + " cerita   |   streak terbaik " + s.streak + " hari", 405, 13, false, "#444444");
-    ctr("Tahniah! Teruskan belajar dan bermain.", 440, 14, false, "#555555");
-    p.T(90, 462, "Tarikh: " + dtStr(), 12, false, "#555555");
-    p.L(90, 505, 270, 505, "#888888", 1); p.T(110, 521, "Tandatangan ibu / bapa", 10, false, "#888888");
-    p.stamp(W - 170, 480, dtStr());
+    await ensureLogo();
+    const p = PDFB(true, true); p.page();
+    const W = p.W, H = p.H, mid = W / 2, GOLD = "#e8a317", PUR = "#5b50d6";
+    p.R(0, 0, W, H, "#fffdf7");
+    p.RR(16, 16, W - 32, H - 32, 20, PUR, false, 5); p.RR(27, 27, W - 54, H - 54, 14, GOLD, false, 1.6);
+    [[56, 56], [W - 56, 56], [56, H - 56], [W - 56, H - 56]].forEach(q => { p.C(q[0], q[1], 17, "#fff3d0", true); p.STAR(q[0], q[1], 13, GOLD, true); });
+    p.logo(W - 104, 46, 140, 52);
+    const sp = t => t.split("").join(" "), w1 = sp("SIJIL"), w2 = sp("PENGHARGAAN"), tw1 = p.tw(w1, 34, true), tw2 = p.tw(w2, 34, true), gap = 34, x0 = mid - (tw1 + gap + tw2) / 2;
+    p.T(x0, 118, w1, 34, true, PUR); p.T(x0 + tw1 + gap, 118, w2, 34, true, PUR);
+    p.L(mid - 170, 138, mid - 14, 138, GOLD, 1.4); p.L(mid + 14, 138, mid + 170, 138, GOLD, 1.4); p.STAR(mid, 138, 9, GOLD, true);
+    p.TC(mid, 176, "Dengan ini disahkan bahawa", 14, false, "#666666");
+    p.TC(mid, 228, n, 40, true, "#e65100");
+    p.L(mid - 200, 240, mid + 200, 240, "#e65100", 1.2);
+    p.TC(mid, 270, "telah menunjukkan semangat belajar yang tinggi dan layak dianugerahkan gelaran", 13.5, false, "#555555");
+    const rw = p.tw(r[0].toUpperCase(), 24, true) + 56;
+    p.RR(mid - rw / 2, 288, rw, 44, 22, PUR, true); p.TC(mid, 318, r[0].toUpperCase(), 24, true, "#ffffff");
+    const items = [["Soalan betul", s.C], ["Bintang", s.stars], ["Cerita dibaca", s.stories], ["Streak terbaik", s.streak + " hari"]];
+    items.forEach((it, i) => {
+        const cx = mid - 255 + i * 170;
+        p.RR(cx - 70, 352, 140, 62, 14, "#f4f2ff", true);
+        p.TC(cx, 382, String(it[1]), 22, true, PUR); p.TC(cx, 402, it[0], 9.5, false, "#777777");
+    });
+    // rosette
+    p.POLY([[mid - 22, 452], [mid - 40, 500], [mid - 22, 492], [mid - 8, 506]], "#e53935", 1, true);
+    p.POLY([[mid + 22, 452], [mid + 40, 500], [mid + 22, 492], [mid + 8, 506]], "#c62828", 1, true);
+    p.C(mid, 446, 30, GOLD, true); p.C(mid, 446, 24, "#ffd54f", true); p.C(mid, 446, 20, GOLD, false, 1.4); p.STAR(mid, 446, 15, "#ffffff", true);
+    // tandatangan
+    p.L(84, 500, 264, 500, "#999999", 1); p.TC(174, 516, "Ibu / Bapa", 10, false, "#777777");
+    p.L(W - 264, 500, W - 84, 500, "#999999", 1); p.TC(W - 174, 516, "Jom Belajar!  •  mastaxul.my", 10, false, "#777777");
+    p.TC(mid, 546, "Dikeluarkan pada " + dtStr(), 9.5, false, "#999999");
     savePDF(p.finish(), "Sijil-JomBelajar-" + n.replace(/[^\w\-]+/g, "_") + ".pdf");
     toast("Sijil dimuat turun 🏅");
+}
+
+/* ============================================================
+   ANIMASI V5 (JS)
+============================================================ */
+(function () {
+    const b = document.createElement("div");
+    b.className = "bgfx"; b.setAttribute("aria-hidden", "true");
+    const em = ["✨", "⭐", "🌈", "☁️", "🎈", "🦋", "🌸", "💫"];
+    for (let i = 0; i < 12; i++) {
+        const s = document.createElement("span");
+        s.textContent = em[i % em.length]; s.style.left = (Math.random() * 100) + "%"; s.style.fontSize = (14 + Math.random() * 18) + "px";
+        s.style.animationDuration = (18 + Math.random() * 22) + "s"; s.style.animationDelay = (-Math.random() * 30) + "s";
+        b.appendChild(s);
+    }
+    document.body.prepend(b);
+})();
+function reAnim(el, cls) { if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+function countTo(el, n) {
+    const from = +el._v || 0; el._v = n;
+    if (from === n) { el.textContent = n; return; }
+    const t0 = performance.now(), dur = 600;
+    const step = t => { const k = Math.min(1, (t - t0) / dur); el.textContent = Math.round(from + (n - from) * k); if (k < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+    if (el.parentElement) reAnim(el.parentElement, "bump");
+}
+let idleTimer = null;
+function stopPetIdle() { if (idleTimer) { clearInterval(idleTimer); idleTimer = null; } }
+function startPetIdle(id) {
+    stopPetIdle();
+    idleTimer = setInterval(() => {
+        const st = $(id);
+        if (!st || st.offsetParent === null) return;
+        const c = pick(["hop", "spin", "wave"]);
+        st.classList.add(c); setTimeout(() => st.classList.remove(c), 1000);
+    }, 6500);
+}
+function rain(n) {
+    const box = $("fireworks"), cols = ["#ff5252", "#ffca28", "#42a5f5", "#66bb6a", "#ab47bc", "#ff7043", "#ec407a"];
+    for (let i = 0; i < n; i++) {
+        const d = document.createElement("div");
+        d.className = "conf"; d.style.left = Math.random() * 100 + "%"; d.style.background = pick(cols);
+        d.style.width = (6 + Math.random() * 6) + "px"; d.style.height = (10 + Math.random() * 8) + "px";
+        d.style.animationDuration = (2 + Math.random() * 2) + "s"; d.style.animationDelay = (Math.random() * 0.6) + "s";
+        box.appendChild(d); setTimeout(() => d.remove(), 4800);
+    }
 }
 
 /* ============================================================
@@ -3126,7 +3593,7 @@ function correct() {
     recordStat(curCat(), qMistakes === 0);
     const fb = $("feedback");
     fb.textContent = "🎉 Hebat! Jawapan betul!";
-    fb.className = "feedback correct-text";
+    fb.className = "feedback correct-text"; reAnim(fb, "fbpop"); reAnim($("score").parentElement, "bump");
     fireworks();
 }
 function wrong(msg) {
@@ -3134,13 +3601,13 @@ function wrong(msg) {
     recordStat(curCat(), false);
     const fb = $("feedback");
     fb.textContent = msg || "😊 Tak apa, cuba soalan seterusnya!";
-    fb.className = "feedback wrong-text";
+    fb.className = "feedback wrong-text"; reAnim(fb, "fbpop");
 }
 function tryAgain(msg) {   // salah tapi boleh cuba lagi (dikira kesilapan)
     qMistakes++;
     const fb = $("feedback");
     fb.textContent = msg;
-    fb.className = "feedback wrong-text";
+    fb.className = "feedback wrong-text"; reAnim(fb, "fbpop");
 }
 function hint(msg) {       // mesej sahaja, tidak dikira kesilapan
     const fb = $("feedback");
@@ -3179,7 +3646,8 @@ function finishGame() {
     if (correctAnswers >= target) stars = 3;
     else if (correctAnswers >= Math.ceil(target / 2)) stars = 2;
     else if (correctAnswers >= 1) stars = 1;
-    $("resultStars").textContent = "⭐".repeat(stars) + "☆".repeat(3 - stars);
+    $("resultStars").innerHTML = [0, 1, 2].map(i => `<span style="animation-delay:${0.5 + i * 0.25}s">${i < stars ? "⭐" : "☆"}</span>`).join("");
+    rain(60); fireworks(40);
     $("resultDetail").textContent = `Betul: ${correctAnswers} | Dijawab: ${totalAnswered} soalan`;
 
     const got = awardStickers();
@@ -3198,7 +3666,7 @@ function finishGame() {
         earn += "<br>Jumlah bintang: <b>" + P.stars + "</b>";
     }
     $("petEarn").innerHTML = earn;
-    $("newStickers").innerHTML = got.length ? "🎁 Stiker baru!<br>" + got.join(" ") : "";
+    $("newStickers").innerHTML = got.length ? "🎁 Stiker baru!<br>" + got.map((s, i) => `<span class="stk" style="animation-delay:${1 + i * 0.25}s">${s}</span>`).join(" ") : "";
 }
 function restartGame() { if (adventure) startAdventure(AREAS.find(a => a.id === adventure)); else startGame(); }
 function backToStart() { adventure = null; goHome(); }
@@ -3211,6 +3679,7 @@ function escapeHTML(v) {
    INIT - sentiasa semak semula dengan server (kecuali demo / offline)
 ============================================================ */
 (async function init() {
+    setTimeout(() => { try { ensureLogo(); } catch (e) {} }, 1500);
     applyTheme(document.documentElement.getAttribute("data-theme") || "light");
     if (!("speechSynthesis" in window)) $("speakBtn").style.display = "none";
     const p = getUrlParams();
