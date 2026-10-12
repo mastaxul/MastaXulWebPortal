@@ -1,12 +1,11 @@
 // =========================================================
-// MASTA XUL PORTAL — script.js (upgrade)
+// MASTA XUL PORTAL — script.js
 // =========================================================
 
 // ----- 1. LOADING SCREEN -----
 const loaderOverlay = document.getElementById("loader-overlay");
 const loadingPercent = document.getElementById("loading-percent");
 const progressBar = document.getElementById("progress-bar");
-const mainContent = document.getElementById("main-content");
 
 let progress = 0;
 
@@ -20,7 +19,6 @@ if (loaderOverlay) {
         setTimeout(() => {
           loaderOverlay.style.opacity = "0";
           loaderOverlay.style.visibility = "hidden";
-          if (mainContent) mainContent.classList.add("visible");
           kemaskiniKedudukanAlien();
         }, 500);
       }
@@ -231,6 +229,9 @@ navItems.forEach((item) => {
   });
 });
 
+// Kedudukan alien dikira semula selepas semua aset (font/imej) siap dimuatkan
+window.addEventListener("load", kemaskiniKedudukanAlien);
+
 // ----- 4. BORANG + CAPTCHA -----
 const API_URL =
   "https://script.google.com/macros/s/AKfycbxsWSCyKSOiEx-Syg1dGuNT21U0Qqv_4GPBiFhJgvU-t014SXvbOwKAWL4TZiQk8NJE/exec";
@@ -265,6 +266,7 @@ if (formHubungi) {
 
     const hp = document.getElementById("website");
     if (hp && hp.value.trim() !== "") {
+      // Honeypot diisi — kemungkinan besar bot. Pura-pura berjaya.
       if (msgContainer) {
         msgContainer.className = "msg ok";
         msgContainer.textContent = "Mesej berjaya dihantar. Terima kasih!";
@@ -294,38 +296,30 @@ if (formHubungi) {
       emel: (document.getElementById("emel") || {}).value?.trim() || "",
       telefon: (document.getElementById("telefon") || {}).value?.trim() || "",
       mesej: (document.getElementById("mesej") || {}).value?.trim() || "",
+      // Nilai honeypot turut dihantar supaya Apps Script boleh menyemaknya
+      // di pihak server (jangan bergantung pada semakan klien sahaja)
+      website: hp ? hp.value : "",
       captchaOk: true
     };
 
     try {
-      const res = await fetch(API_URL, {
+      // mode "no-cors": Google Apps Script membuat redirect tanpa header CORS,
+      // jadi fetch biasa akan dianggap gagal walaupun data sudah terhantar.
+      // Dengan no-cors, respons menjadi "opaque" — kita anggap berjaya
+      // selagi tiada exception rangkaian.
+      await fetch(API_URL, {
         method: "POST",
+        mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
       });
 
-      let data = null;
-      try {
-        data = await res.json();
-      } catch (_) {
-        // Apps Script kadang redirect / body kosong — anggap berjaya jika status ok
-        data = { ok: res.ok || res.type === "opaque" };
+      if (msgContainer) {
+        msgContainer.className = "msg ok";
+        msgContainer.textContent = "Mesej berjaya dihantar!";
       }
-
-      if (data && data.ok !== false) {
-        if (msgContainer) {
-          msgContainer.className = "msg ok";
-          msgContainer.textContent = data.message || "Mesej berjaya dihantar!";
-        }
-        formHubungi.reset();
-        buatCaptcha();
-      } else {
-        if (msgContainer) {
-          msgContainer.className = "msg err";
-          msgContainer.textContent = (data && data.message) || "Gagal menghantar mesej.";
-        }
-        buatCaptcha();
-      }
+      formHubungi.reset();
+      buatCaptcha();
     } catch (err) {
       if (msgContainer) {
         msgContainer.className = "msg err";
@@ -342,59 +336,136 @@ if (formHubungi) {
   });
 }
 
-// ----- 5. MUZIK -----
-const bgMusic = document.getElementById("bgMusic");
-const btnMusicToggle = document.getElementById("btnMusicToggle");
-const musicIcon = document.getElementById("musicIcon");
+// ----- 5. CAROUSEL 3D — SERET DENGAN MOUSE / JARI -----
+(function () {
+  const container = document.querySelector(".carousel-container");
+  const spinner = document.querySelector(".carousel-spinner");
+  if (!container || !spinner) return;
 
-if (bgMusic && btnMusicToggle) {
-  bgMusic.volume = 0.3;
+  const KELAJUAN_AUTO = 360 / 28; // deg/saat — sama dengan animasi CSS
+  const SENSITIVITI = 0.25;       // deg per piksel seretan
 
-  function kemaskiniUIMuzik(isPlaying) {
-    if (isPlaying) {
-      btnMusicToggle.classList.add("playing");
-      if (musicIcon) musicIcon.className = "fas fa-pause";
-    } else {
-      btnMusicToggle.classList.remove("playing");
-      if (musicIcon) musicIcon.className = "fas fa-music";
+  let sudut = 0;
+  let kawalanJS = false;   // true selepas pengguna mula menyeret
+  let sedangSeret = false;
+  let hovering = false;
+  let mulaX = 0;
+  let sudutMula = 0;
+  let sudutSebelum = 0;
+  let halaju = 0;          // momentum (deg per frame ~60fps)
+  let jumlahGerakan = 0;
+  let halangKlik = false;
+  let frameSebelum = null;
+
+  // Baca sudut semasa daripada matrix transform animasi CSS,
+  // supaya peralihan CSS -> JS berlaku tanpa lompatan visual
+  function dapatkanSudutCSS() {
+    const t = getComputedStyle(spinner).transform;
+    if (!t || t === "none") return 0;
+    const m3 = t.match(/matrix3d\(([^)]+)\)/);
+    if (m3) {
+      const v = m3[1].split(",").map(Number);
+      return Math.atan2(-v[2], v[0]) * 180 / Math.PI; // rotateY
     }
-  }
-
-  function bersihkanListener() {
-    window.removeEventListener("click", mulaMuzikAtasInteraksi);
-    window.removeEventListener("touchstart", mulaMuzikAtasInteraksi);
-    window.removeEventListener("scroll", mulaMuzikAtasInteraksi);
-  }
-
-  function mulaMuzikAtasInteraksi() {
-    bgMusic
-      .play()
-      .then(() => {
-        kemaskiniUIMuzik(true);
-        bersihkanListener();
-      })
-      .catch(() => {});
-  }
-
-  bgMusic
-    .play()
-    .then(() => kemaskiniUIMuzik(true))
-    .catch(() => {
-      kemaskiniUIMuzik(false);
-      window.addEventListener("click", mulaMuzikAtasInteraksi);
-      window.addEventListener("touchstart", mulaMuzikAtasInteraksi);
-      window.addEventListener("scroll", mulaMuzikAtasInteraksi, { once: true });
-    });
-
-  btnMusicToggle.addEventListener("click", (e) => {
-    e.stopPropagation();
-    bersihkanListener();
-    if (bgMusic.paused) {
-      bgMusic.play();
-      kemaskiniUIMuzik(true);
-    } else {
-      bgMusic.pause();
-      kemaskiniUIMuzik(false);
+    const m2 = t.match(/matrix\(([^)]+)\)/);
+    if (m2) {
+      const v = m2[1].split(",").map(Number);
+      return Math.atan2(v[1], v[0]) * 180 / Math.PI;
     }
+    return 0;
+  }
+
+  function terapkan() {
+    spinner.style.transform = "rotateY(" + sudut + "deg)";
+  }
+
+  function ambilAlihKawalan() {
+    if (kawalanJS) return;
+    kawalanJS = true;
+    sudut = dapatkanSudutCSS();
+    spinner.style.animation = "none";
+    terapkan();
+  }
+
+  function tickCarousel(now) {
+    if (kawalanJS) {
+      if (frameSebelum === null) frameSebelum = now;
+      const dt = (now - frameSebelum) / 1000;
+      const bingkai = dt * 60; // normal kepada unit "per frame" 60fps
+      frameSebelum = now;
+
+      if (sedangSeret) {
+        // Rekod halaju daripada perubahan sudut untuk momentum lepas seretan
+        halaju = halaju * 0.7 + (sudut - sudutSebelum) * 0.3;
+        sudutSebelum = sudut;
+      } else if (Math.abs(halaju) > 0.3) {
+        // Momentum: pusingan merayap perlahan-lahan
+        sudut += halaju * bingkai;
+        halaju *= Math.pow(0.93, bingkai);
+        terapkan();
+      } else if (!hovering && !preferReduced) {
+        // Auto-putar seperti biasa (berhenti semasa kursor atas carousel)
+        sudut += KELAJUAN_AUTO * dt;
+        terapkan();
+      }
+    }
+    requestAnimationFrame(tickCarousel);
+  }
+  requestAnimationFrame(tickCarousel);
+
+  spinner.addEventListener("pointerdown", function (e) {
+    if (e.button !== undefined && e.button !== 0) return; // tetikus kiri sahaja
+    ambilAlihKawalan();
+    sedangSeret = true;
+    hovering = false;
+    mulaX = e.clientX;
+    jumlahGerakan = 0;
+    sudutMula = sudut;
+    sudutSebelum = sudut;
+    halaju = 0;
+    frameSebelum = null;
+    container.classList.add("dragging");
   });
-}
+
+  window.addEventListener("pointermove", function (e) {
+    if (!sedangSeret) return;
+    const dx = e.clientX - mulaX;
+    jumlahGerakan = Math.max(jumlahGerakan, Math.abs(dx));
+    // Seret ke kiri (dx negatif) = carousel berpusing ke kiri
+    sudut = sudutMula - dx * SENSITIVITI;
+    terapkan();
+  });
+
+  function tamatSeretan() {
+    if (!sedangSeret) return;
+    sedangSeret = false;
+    container.classList.remove("dragging");
+    if (jumlahGerakan > 8) {
+      // Ini seretan, bukan ketukan — halang pautan daripada terbuka
+      halangKlik = true;
+      setTimeout(function () { halangKlik = false; }, 120);
+    }
+  }
+
+  window.addEventListener("pointerup", tamatSeretan);
+  window.addEventListener("pointercancel", tamatSeretan);
+
+  container.addEventListener("click", function (e) {
+    if (halangKlik) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, true);
+
+  // Berhenti auto-putar bila kursor berada atas carousel (desktop)
+  container.addEventListener("pointerenter", function () {
+    if (!sedangSeret) hovering = true;
+  });
+  container.addEventListener("pointerleave", function () {
+    hovering = false;
+  });
+})();
+
+// ----- 6. TAHUN FOOTER -----
+const tahunEl = document.getElementById("tahun");
+if (tahunEl) tahunEl.textContent = new Date().getFullYear();
