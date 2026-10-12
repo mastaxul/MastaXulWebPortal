@@ -23,6 +23,15 @@ body {
   position: relative;
 }
 
+/* Fokus kelihatan untuk navigasi papan kekunci */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 3px;
+}
+
 /* =========================================================
    1. LOADING SCREEN & ANIMASI UFO TERBANG
    ========================================================= */
@@ -493,7 +502,7 @@ body {
 }
 
 /* =========================================================
-   5. 3D ROTATING GALLERY
+   5. 3D ROTATING GALLERY (dengan sokongan seret)
    ========================================================= */
 .gallery-subtitle {
   text-align: center;
@@ -512,6 +521,14 @@ body {
   justify-content: center;
   overflow: hidden;
   padding: 20px 0;
+  /* pan-y: seretan melintang (horizontal) diambil oleh JS untuk memutar
+     carousel, manakala skrol menegak halaman masih berfungsi seperti biasa */
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.carousel-container.dragging {
+  cursor: grabbing;
 }
 
 .carousel-spinner {
@@ -519,6 +536,8 @@ body {
   height: 200px;
   position: absolute;
   transform-style: preserve-3d;
+  /* Animasi CSS ini menjadi fallback sekiranya JS tidak dimuatkan;
+     setelah pengguna mula menyeret, JS mengambil alih kawalan penuh */
   animation: rotate3d 28s infinite linear;
 }
 
@@ -542,6 +561,9 @@ body {
   transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
   -webkit-backface-visibility: visible;
   backface-visibility: visible;
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .carousel-card img {
@@ -550,6 +572,7 @@ body {
   object-fit: cover;
   display: block;
   transition: transform 0.4s ease;
+  pointer-events: none;
 }
 
 .card-info {
@@ -792,68 +815,8 @@ body {
 }
 
 /* =========================================================
-   7. MUSIC PLAYER & RESPONSIVE
+   7. RESPONSIVE
    ========================================================= */
-.music-player-widget {
-  position: fixed;
-  bottom: 25px;
-  left: 25px;
-  z-index: 999;
-}
-
-.music-btn {
-  background: rgba(10, 15, 30, 0.75);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(56, 189, 248, 0.4);
-  color: #38bdf8;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.music-btn.playing {
-  border-color: #4ade80;
-  color: #4ade80;
-  box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
-}
-
-.sound-wave {
-  display: none;
-  align-items: flex-end;
-  gap: 2px;
-  height: 12px;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-}
-
-.music-btn.playing .sound-wave { display: flex; }
-
-.sound-wave span {
-  width: 2px;
-  height: 100%;
-  background: #4ade80;
-  border-radius: 2px;
-  animation: wave 0.8s infinite ease-in-out alternate;
-}
-
-.sound-wave span:nth-child(1) { animation-delay: 0.1s; }
-.sound-wave span:nth-child(2) { animation-delay: 0.3s; }
-.sound-wave span:nth-child(3) { animation-delay: 0.5s; }
-
-@keyframes wave {
-  0% { height: 3px; }
-  100% { height: 12px; }
-}
-
 @media (max-width: 768px) {
   .navbar { flex-direction: column; gap: 12px; padding: 15px; }
   .nav-links { gap: 6px; flex-wrap: wrap; justify-content: center; }
@@ -880,8 +843,7 @@ body {
   .ufo-background-container,
   .carousel-spinner,
   .alien-speech,
-  .alien-mini-svg,
-  .music-btn.playing {
+  .alien-mini-svg {
     animation: none !important;
   }
   .carousel-spinner:hover {
