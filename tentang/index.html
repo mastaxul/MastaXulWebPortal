@@ -110,7 +110,851 @@
     .modal img.preview-big{width:100%;max-height:220px;object-fit:contain;border-radius:10px;background:#000;margin-bottom:10px}
     .quick-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
     .quick-links a{color:var(--cyan);font-size:.82rem;text-decoration:none;border:1px solid var(--line);padding:6px 10px;border-radius:8px}
-  </style>
+  
+    .clock-box{display:flex;flex-direction:column;align-items:flex-end;gap:2px;min-width:140px}
+    .clock-time{font-weight:800;font-size:1.05rem;letter-spacing:.3px;background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .clock-date{font-size:.72rem;color:var(--muted)}
+    .clock-hijri{font-size:.7rem;color:#c4b5fd}
+    .embed-frame{width:100%;min-height:78vh;border:1px solid var(--line);border-radius:14px;background:#0b0f19}
+    .topbar-mid{display:flex;flex-wrap:wrap;align-items:center;gap:12px;flex:1;justify-content:flex-end}
+    @media(max-width:700px){.clock-box{align-items:flex-start;width:100%}.topbar-mid{justify-content:stretch}}
+
+  
+/* ===== MAIL (scoped) ===== */
+
+#panel-mail{--bg:#f3f5f9;--panel:#fff;--ink:#182230;--muted:#667085;--line:#e4e7ec;--brand:#5945d6;--brand2:#eeeaff;--green:#067647;--red:#b42318}
+#panel-mail *{box-sizing:border-box}#panel-mail{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+#panel-mail button, #panel-mail input, #panel-mail textarea{font:inherit}#panel-mail button{cursor:pointer;border:0;border-radius:10px;padding:10px 14px;background:var(--brand);color:white;font-weight:650}#panel-mail button.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}#panel-mail button:disabled{opacity:.5;cursor:not-allowed}
+#panel-mail header{height:68px;background:#101828;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:12px}#panel-mail header .logo{font-size:20px;font-weight:800;letter-spacing:-.4px}#panel-mail header small{color:#d0d5dd}
+#panel-mail .shell{max-width:1280px;margin:22px auto;padding:0 16px;display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px}
+#panel-mail nav, #panel-mail .main, #panel-mail .compose{background:var(--panel);border:1px solid var(--line);border-radius:16px}
+#panel-mail nav{padding:14px;height:max-content}#panel-mail nav button{width:100%;text-align:left;margin:3px 0;background:transparent;color:var(--ink)}#panel-mail nav button.active, #panel-mail nav button:hover{background:var(--brand2);color:var(--brand)}
+#panel-mail .navnote{font-size:12px;color:var(--muted);padding:14px 8px 4px}
+#panel-mail .main{overflow:hidden;min-height:560px}#panel-mail .toolbar{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}#panel-mail .toolbar h1{font-size:21px;margin:0}#panel-mail .search{flex:1;max-width:340px;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+#panel-mail .status{padding:10px 20px;background:#f9fafb;color:var(--muted);font-size:13px;border-bottom:1px solid var(--line)}
+#panel-mail .msg{padding:14px 20px;border-bottom:1px solid #f0f1f4;display:grid;grid-template-columns:minmax(140px,220px) minmax(0,1fr) auto;gap:14px;align-items:center;cursor:pointer}#panel-mail .msg:hover{background:#faf9ff}#panel-mail .msg .from{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#panel-mail .msg .subject{font-weight:650}#panel-mail .msg .snippet{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#panel-mail .msg .date{font-size:12px;color:var(--muted);white-space:nowrap}
+#panel-mail .empty{padding:55px 22px;text-align:center;color:var(--muted)}#panel-mail .detail{padding:24px}#panel-mail .detail h2{margin:8px 0 18px}#panel-mail .detail pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}
+#panel-mail .compose{padding:20px;margin:18px}#panel-mail .compose h2{margin:0 0 15px}#panel-mail .field{display:block;margin:12px 0}#panel-mail .field span{display:block;color:var(--muted);font-size:13px;margin-bottom:5px}#panel-mail .field input, #panel-mail .field textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;color:var(--ink);background:white}#panel-mail .field textarea{min-height:180px;resize:vertical}#panel-mail .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+#panel-mail .notice{margin:16px 20px;padding:12px 14px;border-radius:10px;background:#fffaeb;color:#93370d;font-size:13px}#panel-mail .hidden{display:none!important}#panel-mail .foot{padding:15px 20px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
+@media(max-width:760px){#panel-mail .shell{grid-template-columns:1fr;margin:12px auto}#panel-mail .shell nav{display:flex;gap:6px;overflow:auto;padding:8px}#panel-mail .shell nav button{width:auto;white-space:nowrap;margin:0}#panel-mail .navnote{display:none}#panel-mail .msg{grid-template-columns:minmax(0,1fr) auto;gap:5px}#panel-mail .msg .from{grid-column:1}#panel-mail .msg .subject{grid-column:1}#panel-mail .msg .snippet{grid-column:1}#panel-mail .msg .date{grid-column:2;grid-row:1}#panel-mail .toolbar{padding:15px}#panel-mail .search{max-width:none;order:3;flex-basis:100%}#panel-mail header{padding:0 14px}}
+
+/* ===== WEBMASTER (scoped) ===== */
+
+#panel-webmaster{
+  --bg:#080b12;
+  --panel:#101521;
+  --panel2:#151b28;
+  --panel3:#1b2230;
+  --border:#283244;
+  --text:#edf2f7;
+  --muted:#8f9bad;
+  --primary:#6ea8fe;
+  --primary2:#3d7eff;
+  --green:#39d98a;
+  --yellow:#ffd166;
+  --red:#ff6b6b;
+  --cyan:#54d2ff;
+  --purple:#b58cff;
+  --shadow:0 14px 40px rgba(0,0,0,.28);
+  --radius:16px;
+}
+
+#panel-webmaster *{
+  box-sizing:border-box;
+}
+
+#panel-webmaster{
+  scroll-behavior:smooth;
+}
+
+#panel-webmaster{
+  margin:0;
+  background:
+    radial-gradient(circle at top right,rgba(61,126,255,.10),transparent 30%),
+    radial-gradient(circle at top left,rgba(181,140,255,.07),transparent 25%),
+    var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+
+#panel-webmaster button, #panel-webmaster input, #panel-webmaster select, #panel-webmaster textarea{
+  font:inherit;
+}
+
+#panel-webmaster button{
+  cursor:pointer;
+}
+
+#panel-webmaster a{
+  color:var(--primary);
+}
+
+#panel-webmaster .app{
+  min-height:100vh;
+  display:flex;
+}
+
+#panel-webmaster .sidebar{
+  width:250px;
+  position:fixed;
+  inset:0 auto 0 0;
+  background:rgba(10,14,22,.96);
+  border-right:1px solid var(--border);
+  padding:20px 14px;
+  z-index:50;
+  overflow-y:auto;
+}
+
+#panel-webmaster .logo{
+  padding:6px 10px 20px;
+}
+
+#panel-webmaster .logo-title{
+  font-size:21px;
+  font-weight:800;
+  letter-spacing:-.4px;
+}
+
+#panel-webmaster .logo-sub{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:4px;
+}
+
+#panel-webmaster .nav{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+#panel-webmaster .nav button{
+  border:1px solid transparent;
+  background:transparent;
+  color:#b8c1d0;
+  padding:11px 12px;
+  border-radius:11px;
+  text-align:left;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  transition:.18s;
+}
+
+#panel-webmaster .nav button:hover{
+  background:var(--panel2);
+  color:var(--text);
+}
+
+#panel-webmaster .nav button.active{
+  background:rgba(61,126,255,.14);
+  border-color:rgba(110,168,254,.28);
+  color:#fff;
+}
+
+#panel-webmaster .nav-icon{
+  width:22px;
+  text-align:center;
+}
+
+#panel-webmaster .sidebar-footer{
+  margin-top:24px;
+  padding:12px;
+  border-top:1px solid var(--border);
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+
+#panel-webmaster .main{
+  margin-left:250px;
+  width:calc(100% - 250px);
+  min-width:0;
+}
+
+#panel-webmaster .topbar{
+  position:sticky;
+  top:0;
+  z-index:40;
+  backdrop-filter:blur(18px);
+  background:rgba(8,11,18,.78);
+  border-bottom:1px solid var(--border);
+  padding:13px 22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+
+#panel-webmaster .mobile-menu{
+  display:none;
+}
+
+#panel-webmaster .top-title{
+  font-size:15px;
+  font-weight:700;
+}
+
+#panel-webmaster .top-status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+#panel-webmaster .dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--muted);
+}
+
+#panel-webmaster .dot.green{
+  background:var(--green);
+  box-shadow:0 0 10px rgba(57,217,138,.6);
+}
+
+#panel-webmaster .dot.red{
+  background:var(--red);
+}
+
+#panel-webmaster .content{
+  padding:24px;
+  max-width:1500px;
+  margin:auto;
+}
+
+#panel-webmaster .page{
+  display:none;
+}
+
+#panel-webmaster .page.active{
+  display:block;
+}
+
+#panel-webmaster .page-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+#panel-webmaster .page-head h1{
+  margin:0;
+  font-size:25px;
+  letter-spacing:-.6px;
+}
+
+#panel-webmaster .page-head p{
+  margin:7px 0 0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+#panel-webmaster .actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+#panel-webmaster .btn{
+  border:1px solid var(--border);
+  background:var(--panel2);
+  color:var(--text);
+  border-radius:10px;
+  padding:9px 13px;
+  transition:.18s;
+}
+
+#panel-webmaster .btn:hover{
+  border-color:#3b4a62;
+  transform:translateY(-1px);
+}
+
+#panel-webmaster .btn.primary{
+  background:var(--primary2);
+  border-color:var(--primary2);
+  color:white;
+}
+
+#panel-webmaster .btn.success{
+  background:rgba(57,217,138,.13);
+  border-color:rgba(57,217,138,.35);
+  color:#7df0b3;
+}
+
+#panel-webmaster .btn.warning{
+  background:rgba(255,209,102,.11);
+  border-color:rgba(255,209,102,.3);
+  color:var(--yellow);
+}
+
+#panel-webmaster .btn.danger{
+  background:rgba(255,107,107,.1);
+  border-color:rgba(255,107,107,.3);
+  color:#ff9292;
+}
+
+#panel-webmaster .btn.small{
+  padding:7px 10px;
+  font-size:12px;
+}
+
+#panel-webmaster .btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+}
+
+#panel-webmaster .grid{
+  display:grid;
+  gap:14px;
+}
+
+#panel-webmaster .grid-2{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+#panel-webmaster .grid-3{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+
+#panel-webmaster .grid-4{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+
+#panel-webmaster .card{
+  background:linear-gradient(180deg,rgba(21,27,40,.95),rgba(15,21,32,.95));
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:17px;
+  box-shadow:var(--shadow);
+}
+
+#panel-webmaster .card h2, #panel-webmaster .card h3{
+  margin:0 0 12px;
+}
+
+#panel-webmaster .card h2{
+  font-size:17px;
+}
+
+#panel-webmaster .card h3{
+  font-size:14px;
+}
+
+#panel-webmaster .stat{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+#panel-webmaster .stat-label{
+  color:var(--muted);
+  font-size:12px;
+}
+
+#panel-webmaster .stat-value{
+  margin-top:4px;
+  font-size:25px;
+  font-weight:800;
+}
+
+#panel-webmaster .stat-icon{
+  width:43px;
+  height:43px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  background:rgba(110,168,254,.11);
+  font-size:20px;
+}
+
+#panel-webmaster .form-row{
+  display:flex;
+  gap:9px;
+  align-items:center;
+}
+
+#panel-webmaster .form-row.wrap{
+  flex-wrap:wrap;
+}
+
+#panel-webmaster .form-row > .grow{
+  flex:1;
+}
+
+#panel-webmaster input, #panel-webmaster select, #panel-webmaster textarea{
+  width:100%;
+  background:#0c111a;
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:10px;
+  padding:10px 11px;
+  outline:none;
+}
+
+#panel-webmaster input:focus, #panel-webmaster select:focus, #panel-webmaster textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(61,126,255,.1);
+}
+
+#panel-webmaster textarea{
+  min-height:130px;
+  resize:vertical;
+}
+
+#panel-webmaster label{
+  display:block;
+  color:#b8c1d0;
+  font-size:12px;
+  margin-bottom:6px;
+}
+
+#panel-webmaster .field{
+  margin-bottom:12px;
+}
+
+#panel-webmaster .muted{
+  color:var(--muted);
+}
+
+#panel-webmaster .small-text{
+  font-size:12px;
+}
+
+#panel-webmaster .status-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:11px;
+  border:1px solid var(--border);
+  color:var(--muted);
+}
+
+#panel-webmaster .status-badge.ok{
+  color:#76edb0;
+  background:rgba(57,217,138,.09);
+  border-color:rgba(57,217,138,.28);
+}
+
+#panel-webmaster .status-badge.warn{
+  color:var(--yellow);
+  background:rgba(255,209,102,.08);
+  border-color:rgba(255,209,102,.25);
+}
+
+#panel-webmaster .status-badge.bad{
+  color:#ff9292;
+  background:rgba(255,107,107,.08);
+  border-color:rgba(255,107,107,.25);
+}
+
+#panel-webmaster .score-wrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:180px;
+}
+
+#panel-webmaster .score-ring{
+  width:145px;
+  height:145px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at center,var(--panel) 58%,transparent 59%),
+    conic-gradient(var(--primary) 0deg, var(--primary) 0deg, #273142 0deg);
+  transition:.5s;
+}
+
+#panel-webmaster .score-number{
+  text-align:center;
+}
+
+#panel-webmaster .score-number strong{
+  display:block;
+  font-size:39px;
+}
+
+#panel-webmaster .score-number span{
+  font-size:11px;
+  color:var(--muted);
+}
+
+#panel-webmaster .check-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+#panel-webmaster .check-item{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:10px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:rgba(0,0,0,.1);
+}
+
+#panel-webmaster .check-icon{
+  width:23px;
+  height:23px;
+  flex:0 0 23px;
+  display:grid;
+  place-items:center;
+  border-radius:7px;
+  font-size:12px;
+}
+
+#panel-webmaster .check-pass .check-icon{
+  background:rgba(57,217,138,.13);
+  color:var(--green);
+}
+
+#panel-webmaster .check-warn .check-icon{
+  background:rgba(255,209,102,.13);
+  color:var(--yellow);
+}
+
+#panel-webmaster .check-fail .check-icon{
+  background:rgba(255,107,107,.13);
+  color:var(--red);
+}
+
+#panel-webmaster .check-info .check-icon{
+  background:rgba(84,210,255,.13);
+  color:var(--cyan);
+}
+
+#panel-webmaster .check-title{
+  font-weight:700;
+  font-size:12px;
+}
+
+#panel-webmaster .check-detail{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45;
+  word-break:break-word;
+}
+
+#panel-webmaster .result-box{
+  margin-top:14px;
+}
+
+#panel-webmaster .table-wrap{
+  overflow:auto;
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+
+#panel-webmaster table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:700px;
+}
+
+#panel-webmaster th, #panel-webmaster td{
+  padding:10px 11px;
+  border-bottom:1px solid var(--border);
+  text-align:left;
+  font-size:12px;
+  vertical-align:top;
+}
+
+#panel-webmaster th{
+  color:#aeb9c9;
+  background:#0c111a;
+  position:sticky;
+  top:0;
+}
+
+#panel-webmaster tr:last-child td{
+  border-bottom:0;
+}
+
+#panel-webmaster .url-cell{
+  max-width:400px;
+  word-break:break-all;
+}
+
+#panel-webmaster .progress{
+  height:8px;
+  border-radius:99px;
+  background:#202838;
+  overflow:hidden;
+}
+
+#panel-webmaster .progress > span{
+  display:block;
+  height:100%;
+  width:0;
+  background:var(--primary);
+  transition:.3s;
+}
+
+#panel-webmaster .alert{
+  padding:12px 13px;
+  border-radius:11px;
+  border:1px solid var(--border);
+  margin-bottom:12px;
+  font-size:12px;
+  line-height:1.5;
+}
+
+#panel-webmaster .alert.info{
+  background:rgba(84,210,255,.07);
+  border-color:rgba(84,210,255,.22);
+}
+
+#panel-webmaster .alert.success{
+  background:rgba(57,217,138,.07);
+  border-color:rgba(57,217,138,.22);
+}
+
+#panel-webmaster .alert.warning{
+  background:rgba(255,209,102,.07);
+  border-color:rgba(255,209,102,.22);
+}
+
+#panel-webmaster .alert.error{
+  background:rgba(255,107,107,.07);
+  border-color:rgba(255,107,107,.22);
+}
+
+#panel-webmaster .hidden{
+  display:none !important;
+}
+
+#panel-webmaster .loading{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+}
+
+#panel-webmaster .spinner{
+  width:14px;
+  height:14px;
+  border:2px solid rgba(255,255,255,.18);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+#panel-webmaster .toast-wrap{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:100;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-width:min(420px,calc(100vw - 36px));
+}
+
+#panel-webmaster .toast{
+  padding:12px 14px;
+  background:#151c29;
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  font-size:12px;
+}
+
+#panel-webmaster .toast.success{
+  border-color:rgba(57,217,138,.35);
+}
+
+#panel-webmaster .toast.error{
+  border-color:rgba(255,107,107,.35);
+}
+
+#panel-webmaster .toast.warning{
+  border-color:rgba(255,209,102,.35);
+}
+
+#panel-webmaster .kpi-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+#panel-webmaster .kpi{
+  padding:7px 10px;
+  border-radius:9px;
+  background:#0c111a;
+  border:1px solid var(--border);
+  font-size:11px;
+}
+
+#panel-webmaster .kpi b{
+  color:#fff;
+}
+
+#panel-webmaster .provider{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+#panel-webmaster .provider-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+#panel-webmaster .provider-logo{
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#0c111a;
+  border:1px solid var(--border);
+  font-size:20px;
+}
+
+#panel-webmaster .tabs{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-bottom:15px;
+}
+
+#panel-webmaster .tab-btn{
+  border:1px solid var(--border);
+  background:var(--panel2);
+  color:var(--muted);
+  border-radius:9px;
+  padding:8px 11px;
+  font-size:12px;
+}
+
+#panel-webmaster .tab-btn.active{
+  color:#fff;
+  background:rgba(61,126,255,.13);
+  border-color:rgba(110,168,254,.3);
+}
+
+#panel-webmaster pre{
+  white-space:pre-wrap;
+  word-break:break-word;
+  background:#090d14;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+  max-height:450px;
+  overflow:auto;
+  font-size:11px;
+  color:#b9c4d5;
+}
+
+#panel-webmaster details{
+  border:1px solid var(--border);
+  border-radius:11px;
+  padding:10px 12px;
+  background:rgba(0,0,0,.08);
+}
+
+#panel-webmaster details + details{
+  margin-top:8px;
+}
+
+#panel-webmaster summary{
+  cursor:pointer;
+  color:#dce4ef;
+  font-size:12px;
+  font-weight:700;
+}
+
+#panel-webmaster .footer-note{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:15px;
+  line-height:1.6;
+}
+
+@media(max-width:1050px){
+  #panel-webmaster .grid-4{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  #panel-webmaster .grid-3{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:780px){
+  #panel-webmaster .sidebar{
+    transform:translateX(-100%);
+    transition:.2s;
+  }
+
+  #panel-webmaster .sidebar.open{
+    transform:translateX(0);
+    box-shadow:20px 0 50px rgba(0,0,0,.45);
+  }
+
+  #panel-webmaster .main{
+    margin-left:0;
+    width:100%;
+  }
+
+  #panel-webmaster .mobile-menu{
+    display:block;
+  }
+
+  #panel-webmaster .content{
+    padding:17px;
+  }
+
+  #panel-webmaster .topbar{
+    padding:11px 14px;
+  }
+
+  #panel-webmaster .grid-2, #panel-webmaster .grid-3, #panel-webmaster .grid-4{
+    grid-template-columns:1fr;
+  }
+
+  #panel-webmaster .page-head{
+    flex-direction:column;
+  }
+
+  #panel-webmaster .form-row{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  #panel-webmaster .form-row .btn{
+    width:100%;
+  }
+}
+
+
+#panel-mail.panel.active{display:block}
+#panel-webmaster.panel.active{display:block}
+#panel-mail header{position:relative}
+#panel-webmaster .app{min-height:70vh}
+#panel-webmaster .sidebar{position:relative;inset:auto;width:100%;max-width:250px}
+#panel-webmaster .main{margin-left:0;width:100%}
+@media(min-width:781px){
+  #panel-webmaster .app{display:flex}
+  #panel-webmaster .sidebar{position:sticky;top:0;height:auto;max-height:85vh}
+  #panel-webmaster .main{flex:1;min-width:0}
+}
+</style>
 </head>
 <body>
 <canvas id="galaxyCanvas"></canvas>
@@ -129,7 +973,14 @@
 <div class="app hidden" id="appShell">
   <div class="topbar">
     <h1>Admin Dashboard</h1>
-    <input type="search" class="global-search" id="globalSearch" placeholder="Carian global… (/ )" title="Tekan / untuk fokus">
+    <div class="topbar-mid">
+      <input type="search" class="global-search" id="globalSearch" placeholder="Carian global… (/ )" title="Tekan / untuk fokus">
+      <div class="clock-box" title="Waktu Kuala Lumpur">
+        <div class="clock-time" id="clockTime">--:--:--</div>
+        <div class="clock-date" id="clockDate">—</div>
+        <div class="clock-hijri" id="clockHijri">—</div>
+      </div>
+    </div>
     <div style="display:flex;gap:7px;flex-wrap:wrap">
       <button type="button" class="btn btn-ghost" id="btnRefreshAll">↻ Refresh</button>
       <a class="btn btn-ghost" href="/shop/" style="text-decoration:none">Shop</a>
@@ -145,6 +996,8 @@
     <button type="button" class="tab" data-tab="hubungi">Hubungi <span class="badge-n hidden" id="badgeHubungi">0</span></button>
     <button type="button" class="tab" data-tab="edugame">EduGame <span class="badge-n hidden" id="badgeEdu">0</span></button>
     <button type="button" class="tab" data-tab="log">Log</button>
+    <button type="button" class="tab" data-tab="mail">✉ Mail</button>
+    <button type="button" class="tab" data-tab="webmaster">🔍 Webmaster</button>
   </div>
 
   <section class="panel active" id="panel-overview">
@@ -334,7 +1187,3405 @@
       </div>
     </div>
   </section>
+  <section class="panel" id="panel-mail">
+
+<header><div><div class="logo">✉ MastaXul Mail</div><small>admin@mastaxul.my</small></div><button id="signInBtn">Sambung Gmail</button></header>
+<div class="shell">
+<nav>
+<button class="active" data-view="inbox">📥 Peti masuk</button>
+<button data-view="sent">📤 Dihantar</button>
+<button data-view="compose">✏️ Tulis email</button>
+<button data-view="refresh">↻ Muat semula</button>
+<div class="navnote">Peti masuk disediakan oleh Gmail API. Penghantaran keluar menggunakan Brevo melalui backend selamat.</div>
+</nav>
+<section class="main">
+<div class="toolbar"><h1 id="viewTitle">Peti masuk</h1><input id="search" class="search" placeholder="Cari dalam mesej yang dimuatkan…" aria-label="Cari mesej"><button class="secondary" id="refreshBtn">Muat semula</button></div>
+<div class="status" id="status">Sambungkan akaun Gmail untuk memaparkan mesej. Gunakan akaun yang menerima email Cloudflare.</div>
+<div id="list"></div>
+<div id="detail" class="detail hidden"></div>
+<div id="compose" class="compose hidden">
+<h2>Tulis email</h2>
+<label class="field"><span>Kepada</span><input id="to" type="email" placeholder="penerima@example.com" required></label>
+<label class="field"><span>Subjek</span><input id="subject" placeholder="Subjek email" required></label>
+<label class="field"><span>Mesej</span><textarea id="body" placeholder="Tulis mesej di sini…" required></textarea></label>
+<div class="actions"><button id="sendBtn">Hantar melalui Brevo</button><button class="secondary" id="cancelCompose">Batal</button></div>
+<p class="navnote">Email dihantar sebagai admin@mastaxul.my. Balasan penerima akan dihantar ke alamat Reply-To yang dikonfigurasi.</p>
 </div>
+<div class="foot">MastaXul Mail · Prototaip awal. Jangan gunakan pada akaun awam sehingga autentikasi dan kawalan akses tambahan disemak.</div>
+</section>
+</div>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+/*
+  SETUP: Set GOOGLE_CLIENT_ID in the line below to your Google OAuth Web Client ID.
+  Do not place a Google client secret, Brevo API key, or SMTP key in this file.
+*/
+const GOOGLE_CLIENT_ID = "312318558531-8hidqrfs6e22h1rk7ctr1l9pvbresb3e.apps.googleusercontent.com";
+const SEND_ENDPOINT = "/api/send";
+const GMAIL_API = "https://gmail.googleapis.com/gmail/v1/users/me";
+let tokenClient=null, accessToken="", messages=[], currentView="inbox", currentQuery="";
+const $=id=>document.getElementById(id);
+function status(s){$("status").textContent=s}
+function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function headersOf(m){const h=m.payload?.headers||[];const get=n=>h.find(x=>x.name.toLowerCase()===n.toLowerCase())?.value||"";return {from:get("From"),to:get("To"),subject:get("Subject")||"(Tiada subjek)",date:get("Date"),replyTo:get("Reply-To")}}
+function fmtDate(s){if(!s)return "";let d=new Date(s);return isNaN(d)?s:d.toLocaleString("ms-MY",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}
+function initGoogle(){if(!window.google?.accounts?.oauth2){setTimeout(initGoogle,250);return}
+ if(GOOGLE_CLIENT_ID.includes("PASTE_")){status("Sediakan Google OAuth Client ID dahulu. Ikut README_SETUP_MS.md.");return}
+ tokenClient=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:"https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/userinfo.email",callback:async r=>{if(r.error){status("Login Gmail gagal: "+r.error);return}accessToken=r.access_token; $("signInBtn").textContent="Gmail disambungkan";status("Berjaya disambungkan. Memuatkan peti masuk…");await loadMessages("inbox")}});
+}
+$("signInBtn").addEventListener("click",()=>{if(!tokenClient)initGoogle();if(tokenClient)tokenClient.requestAccessToken({prompt:accessToken?"":"consent"})});
+async function gmailFetch(url){let r=await fetch(url,{headers:{Authorization:"Bearer "+accessToken}});if(!r.ok){let t=await r.text();throw new Error("Gmail API "+r.status+": "+t.slice(0,180))}return r.json()}
+async function loadMessages(view=currentView){if(!accessToken){status("Tekan Sambung Gmail dahulu.");return}
+ currentView=view==="sent"?"sent":"inbox";$("viewTitle").textContent=currentView==="sent"?"Email dihantar":"Peti masuk";$("detail").classList.add("hidden");$("compose").classList.add("hidden");$("list").classList.remove("hidden");status("Memuatkan mesej…");
+ try{const q=currentView==="sent"?"in:sent":"in:anywhere -in:sent";const data=await gmailFetch(`${GMAIL_API}/messages?maxResults=40&q=${encodeURIComponent(q)}`);const ids=data.messages||[];
+ const details=await Promise.all(ids.map(async x=>{try{return await gmailFetch(`${GMAIL_API}/messages/${x.id}?format=full`)}catch(e){return null}}));messages=details.filter(Boolean);renderList();status(`${messages.length} mesej dimuatkan daripada Gmail. Email masuk ke admin@mastaxul.my diteruskan ke akaun Gmail ini oleh Cloudflare.`)
+ }catch(e){status("Tak dapat memuatkan email: "+e.message+" — pastikan Gmail API aktif dan OAuth Client ID betul.")}}
+function renderList(){let filtered=messages.filter(m=>{let h=headersOf(m);let s=[h.from,h.to,h.subject,m.snippet].join(" ").toLowerCase();return s.includes(currentQuery.toLowerCase())});$("list").innerHTML=filtered.length?filtered.map(m=>{let h=headersOf(m);return `<div class="msg" data-id="${escapeHtml(m.id)}"><div class="from">${escapeHtml(h.from)}</div><div><div class="subject">${escapeHtml(h.subject)}</div><div class="snippet">${escapeHtml(m.snippet||"")}</div></div><div class="date">${escapeHtml(fmtDate(h.date))}</div></div>`}).join(""):`<div class="empty">Tiada mesej dipaparkan. Cuba muat semula atau semak sambungan Gmail.</div>`;document.querySelectorAll(".msg").forEach(el=>el.addEventListener("click",()=>openMessage(el.dataset.id)))}
+function decodePart(data){try{let b=data.replace(/-/g,"+").replace(/_/g,"/");return decodeURIComponent(escape(atob(b)))}catch(e){return ""}}
+function extractBody(p){if(p.body?.data)return decodePart(p.body.data);for(const part of (p.parts||[])){let r=extractBody(part);if(r)return r}return ""}
+function openMessage(id){let m=messages.find(x=>x.id===id);if(!m)return;let h=headersOf(m),body=extractBody(m.payload)||m.snippet||"(Kandungan tidak tersedia dalam paparan ringkas.)";$("list").classList.add("hidden");$("detail").classList.remove("hidden");$("detail").innerHTML=`<button class="secondary" id="backList">← Kembali</button><h2>${escapeHtml(h.subject)}</h2><p><b>Daripada:</b> ${escapeHtml(h.from)}</p><p><b>Kepada:</b> ${escapeHtml(h.to)}</p><p><b>Tarikh:</b> ${escapeHtml(h.date)}</p><hr><pre>${escapeHtml(body)}</pre><div class="actions"><button id="replyBtn">Balas</button></div>`;$("backList").onclick=()=>{$("detail").classList.add("hidden");$("list").classList.remove("hidden")};$("replyBtn").onclick=()=>{showCompose();$("to").value=(h.replyTo||h.from).match(/<([^>]+)>/)?.[1]||(h.replyTo||h.from);$("subject").value=h.subject.startsWith("Re:")?h.subject:"Re: "+h.subject;$("body").value="\n\n--- Mesej asal ---\n"+body}}
+function showCompose(){$("list").classList.add("hidden");$("detail").classList.add("hidden");$("compose").classList.remove("hidden");$("viewTitle").textContent="Tulis email";currentView="compose"}
+async function sendEmail(){const to=$("to").value.trim(),subject=$("subject").value.trim(),textContent=$("body").value.trim();if(!to||!subject||!textContent){status("Lengkapkan penerima, subjek dan mesej.");return}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)){status("Alamat penerima tidak sah.");return}
+ $("sendBtn").disabled=true;status("Menghantar melalui Brevo…");try{const r=await fetch(SEND_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({to,subject,textContent})});const data=await r.json();if(!r.ok)throw new Error(data.error||"Penghantaran gagal");status("Permintaan diterima Brevo. ID mesej: "+(data.messageId||"berjaya dihantar")+". Semak folder Inbox/Spam penerima.");$("to").value="";$("subject").value="";$("body").value="";}catch(e){status("Gagal hantar: "+e.message+". Pastikan Cloudflare Worker dan BREVO_API_KEY telah disediakan.")}finally{$("sendBtn").disabled=false}}
+$("sendBtn").addEventListener("click",sendEmail);$("cancelCompose").addEventListener("click",()=>loadMessages(currentView==="sent"?"sent":"inbox"));$("refreshBtn").addEventListener("click",()=>loadMessages(currentView));$("search").addEventListener("input",e=>{currentQuery=e.target.value;renderList()});
+document.querySelectorAll("nav button[data-view]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");let v=b.dataset.view;if(v==="compose")showCompose();else if(v==="refresh")loadMessages(currentView);else loadMessages(v)}));
+window.addEventListener("load",initGoogle);
+</script>
+
+  </section>
+
+  <section class="panel" id="panel-webmaster">
+
+
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <div class="logo-title">MastaXul Webmaster</div>
+    <div class="logo-sub">Manager V4.4.0</div>
+  </div>
+
+  <nav class="nav">
+    <button class="active" data-page="dashboard">
+      <span class="nav-icon">📊</span> Dashboard
+    </button>
+
+    <button data-page="audit">
+      <span class="nav-icon">🔍</span> SEO Audit
+    </button>
+
+    <button data-page="sitemap">
+      <span class="nav-icon">🗺️</span> Sitemap
+    </button>
+
+    <button data-page="bulk">
+      <span class="nav-icon">📦</span> Bulk Audit
+    </button>
+
+    <button data-page="google">
+      <span class="nav-icon">🔎</span> Google Search Console
+    </button>
+
+    <button data-page="bing">
+      <span class="nav-icon">ⓑ</span> Bing Webmaster
+    </button>
+
+    <button data-page="history">
+      <span class="nav-icon">🕘</span> History
+    </button>
+
+    <button data-page="settings">
+      <span class="nav-icon">⚙️</span> Settings
+    </button>
+
+    <button data-page="help">
+      <span class="nav-icon">❔</span> Help
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    MastaXul Webmaster Manager<br>
+    V4.4.0<br><br>
+    Google + Bing + SEO + Sitemap
+  </div>
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="btn small mobile-menu" id="mobileMenu">☰</button>
+    <div class="top-title" id="topTitle">Dashboard</div>
+  </div>
+
+  <div class="top-status">
+    <span class="dot" id="apiDot"></span>
+    <span id="apiStatusText">Checking API...</span>
+  </div>
+</header>
+
+<div class="content">
+
+<!-- DASHBOARD -->
+<section class="page active" id="page-dashboard">
+
+  <div class="page-head">
+    <div>
+      <h1>Webmaster Dashboard</h1>
+      <p>SEO, Sitemap, Google Search Console dan Bing dalam satu tempat.</p>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" onclick="showPage('audit')">🔍 Audit URL</button>
+      <button class="btn" onclick="showPage('google')">Google Search Console</button>
+      <button class="btn" onclick="showPage('bing')">Bing Webmaster</button>
+    </div>
+  </div>
+
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="stat">
+        <div>
+          <div class="stat-label">API Worker</div>
+          <div class="stat-value" id="dashApi">—</div>
+        </div>
+        <div class="stat-icon">⚡</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stat">
+        <div>
+          <div class="stat-label">Google</div>
+          <div class="stat-value" id="dashGoogle">—</div>
+        </div>
+        <div class="stat-icon">🔎</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stat">
+        <div>
+          <div class="stat-label">Bing</div>
+          <div class="stat-value" id="dashBing">—</div>
+        </div>
+        <div class="stat-icon">ⓑ</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="stat">
+        <div>
+          <div class="stat-label">Audit History</div>
+          <div class="stat-value" id="dashHistory">0</div>
+        </div>
+        <div class="stat-icon">🕘</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:14px"></div>
+
+  <div class="grid grid-2">
+
+    <div class="card">
+      <h2>Quick SEO Audit</h2>
+
+      <div class="field">
+        <label>Website URL</label>
+        <input id="dashUrl" placeholder="https://www.mastaxul.my/">
+      </div>
+
+      <button class="btn primary" onclick="runAuditFrom('dashUrl')">
+        🔍 Audit Sekarang
+      </button>
+    </div>
+
+    <div class="card">
+      <h2>Connection Status</h2>
+
+      <div class="provider">
+        <div class="provider-left">
+          <div class="provider-logo">G</div>
+          <div>
+            <strong>Google Search Console</strong>
+            <div class="small-text muted" id="dashGoogleDetail">
+              Checking...
+            </div>
+          </div>
+        </div>
+        <span class="status-badge" id="dashGoogleBadge">—</span>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <div class="provider">
+        <div class="provider-left">
+          <div class="provider-logo">B</div>
+          <div>
+            <strong>Bing Webmaster</strong>
+            <div class="small-text muted" id="dashBingDetail">
+              Checking...
+            </div>
+          </div>
+        </div>
+        <span class="status-badge" id="dashBingBadge">—</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="height:14px"></div>
+
+  <div class="grid grid-3">
+    <div class="card">
+      <h3>SEO Audit</h3>
+      <div class="muted small-text">
+        Semak title, description, canonical, robots, H1,
+        JSON-LD, favicon, Open Graph dan banyak lagi.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Sitemap</h3>
+      <div class="muted small-text">
+        Crawl sitemap XML sehingga 500 URL dan export URL
+        untuk bulk audit.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Search Console</h3>
+      <div class="muted small-text">
+        Property, URL Inspection, sitemap dan Search Analytics
+        melalui Google API.
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- AUDIT -->
+<section class="page" id="page-audit">
+
+  <div class="page-head">
+    <div>
+      <h1>SEO Audit</h1>
+      <p>Audit teknikal satu URL menggunakan MastaXul Webmaster API.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <label>URL</label>
+      <div class="form-row">
+        <div class="grow">
+          <input id="auditUrl" placeholder="https://www.mastaxul.my/">
+        </div>
+        <button class="btn primary" id="auditBtn" onclick="runAudit()">
+          🔍 Audit
+        </button>
+      </div>
+    </div>
+
+    <div id="auditAlert"></div>
+  </div>
+
+  <div id="auditResult" class="result-box hidden">
+
+    <div class="grid grid-4">
+      <div class="card">
+        <div class="stat">
+          <div>
+            <div class="stat-label">SEO Score</div>
+            <div class="stat-value" id="auditScoreStat">—</div>
+          </div>
+          <div class="stat-icon">🎯</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat">
+          <div>
+            <div class="stat-label">Pass</div>
+            <div class="stat-value" id="auditPass">0</div>
+          </div>
+          <div class="stat-icon">✅</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat">
+          <div>
+            <div class="stat-label">Warnings</div>
+            <div class="stat-value" id="auditWarn">0</div>
+          </div>
+          <div class="stat-icon">⚠️</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat">
+          <div>
+            <div class="stat-label">Failures</div>
+            <div class="stat-value" id="auditFail">0</div>
+          </div>
+          <div class="stat-icon">❌</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:14px"></div>
+
+    <div class="grid grid-3">
+
+      <div class="card">
+        <div class="score-wrap">
+          <div class="score-ring" id="scoreRing">
+            <div class="score-number">
+              <strong id="auditScore">0</strong>
+              <span>SEO SCORE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Page Information</h2>
+        <div id="auditMeta"></div>
+      </div>
+
+      <div class="card">
+        <h2>Open Graph</h2>
+        <div id="auditOg"></div>
+      </div>
+
+    </div>
+
+    <div style="height:14px"></div>
+
+    <div class="card">
+      <h2>SEO Checks</h2>
+      <div class="check-list" id="auditChecks"></div>
+    </div>
+
+    <div style="height:14px"></div>
+
+    <div class="card">
+      <h2>Raw Response</h2>
+      <pre id="auditRaw"></pre>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- SITEMAP -->
+<section class="page" id="page-sitemap">
+
+  <div class="page-head">
+    <div>
+      <h1>Sitemap Crawler</h1>
+      <p>Crawl XML sitemap dan sediakan URL untuk bulk audit.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <label>Sitemap URL</label>
+      <div class="form-row">
+        <div class="grow">
+          <input id="sitemapUrl" placeholder="https://www.mastaxul.my/sitemap.xml">
+        </div>
+        <button class="btn primary" onclick="crawlSitemap()">🗺️ Crawl</button>
+      </div>
+    </div>
+
+    <div id="sitemapAlert"></div>
+
+    <div id="sitemapProgressBox" class="hidden">
+      <div class="small-text muted" style="margin-bottom:6px">
+        Processing sitemap...
+      </div>
+      <div class="progress">
+        <span id="sitemapProgress"></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="sitemapResult" class="result-box hidden">
+
+    <div class="grid grid-3">
+
+      <div class="card">
+        <div class="stat">
+          <div>
+            <div class="stat-label">URLs Found</div>
+            <div class="stat-value" id="sitemapCount">0</div>
+          </div>
+          <div class="stat-icon">🔗</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat">
+          <div>
+            <div class="stat-label">Sitemap</div>
+            <div class="stat-value" id="sitemapType">—</div>
+          </div>
+          <div class="stat-icon">🗺️</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat">
+          <div>
+            <div class="stat-label">Limit</div>
+            <div class="stat-value">500</div>
+          </div>
+          <div class="stat-icon">📦</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="height:14px"></div>
+
+    <div class="card">
+      <div class="actions" style="margin-bottom:12px">
+        <button class="btn success" onclick="exportSitemapUrls()">
+          ⬇️ Export URL
+        </button>
+        <button class="btn primary" onclick="sendSitemapToBulk()">
+          📦 Hantar ke Bulk Audit
+        </button>
+      </div>
+
+      <textarea id="sitemapUrlsText" readonly></textarea>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- BULK -->
+<section class="page" id="page-bulk">
+
+  <div class="page-head">
+    <div>
+      <h1>Bulk Audit</h1>
+      <p>Audit sehingga 50 URL dalam satu request.</p>
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="exportBulkCsv()">⬇️ CSV</button>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <div class="field">
+      <label>URLs — satu URL setiap baris</label>
+      <textarea id="bulkUrls" placeholder="https://www.mastaxul.my/
+https://www.mastaxul.my/about/
+https://www.mastaxul.my/contact/"></textarea>
+    </div>
+
+    <div class="form-row wrap">
+      <button class="btn primary" id="bulkBtn" onclick="runBulkAudit()">
+        📦 Audit Semua
+      </button>
+
+      <button class="btn" onclick="clearBulk()">
+        🗑️ Clear
+      </button>
+
+      <span class="status-badge">
+        Maksimum 50 URL
+      </span>
+    </div>
+
+    <div id="bulkAlert" style="margin-top:12px"></div>
+  </div>
+
+  <div id="bulkResult" class="result-box hidden">
+
+    <div class="grid grid-4">
+      <div class="card">
+        <div class="stat">
+          <div>
+            <div class="stat-label">Processed</div>
+            <div class="stat-value" id="bulkProcessed">0</div>
+          </div>
+          <div class="stat-icon">📊</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat">
+          <div>
+            <div class="stat-label">Average Score</div>
+            <div class="stat-value" id="bulkAverage">0</div>
+          </div>
+          <div class="stat-icon">🎯</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat">
+          <div>
+            <div class="stat-label">Passed</div>
+            <div class="stat-value" id="bulkPassed">0</div>
+          </div>
+          <div class="stat-icon">✅</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat">
+          <div>
+            <div class="stat-label">Failed</div>
+            <div class="stat-value" id="bulkFailed">0</div>
+          </div>
+          <div class="stat-icon">❌</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:14px"></div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>URL</th>
+              <th>Status</th>
+              <th>Score</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>HTTPS</th>
+            </tr>
+          </thead>
+          <tbody id="bulkTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- GOOGLE -->
+<section class="page" id="page-google">
+
+  <div class="page-head">
+    <div>
+      <h1>Google Search Console</h1>
+      <p>Google Search Console melalui OAuth + Search Console API.</p>
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="checkGoogleStatus()">↻ Status</button>
+      <button class="btn primary" id="googleConnectBtn" onclick="connectGoogle()">
+        🔐 Connect Google
+      </button>
+    </div>
+  </div>
+
+  <div id="googleAlert"></div>
+
+  <div class="card">
+    <div class="provider">
+      <div class="provider-left">
+        <div class="provider-logo">G</div>
+        <div>
+          <strong>Google Search Console</strong>
+          <div class="small-text muted" id="googleStatusText">
+            Checking connection...
+          </div>
+        </div>
+      </div>
+
+      <span class="status-badge" id="googleStatusBadge">—</span>
+    </div>
+  </div>
+
+  <div style="height:14px"></div>
+
+  <div class="card">
+    <div class="field">
+      <label>Search Console Property</label>
+      <select id="googleSiteSelect">
+        <option value="">— Pilih property —</option>
+      </select>
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="loadGoogleSites()">↻ Refresh Properties</button>
+      <button class="btn danger" onclick="disconnectGoogle()">Disconnect Google</button>
+    </div>
+  </div>
+
+  <div style="height:14px"></div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-google-tab="overview">Overview</button>
+    <button class="tab-btn" data-google-tab="inspect">URL Inspection</button>
+    <button class="tab-btn" data-google-tab="sitemaps">Sitemaps</button>
+    <button class="tab-btn" data-google-tab="analytics">Search Analytics</button>
+  </div>
+
+  <div id="googleTab-overview">
+
+    <div class="grid grid-3">
+
+      <div class="card">
+        <h3>Property</h3>
+        <div id="googleSelectedSite" class="muted small-text">
+          Belum dipilih
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Permission</h3>
+        <div id="googlePermission" class="muted small-text">
+          —
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>API</h3>
+        <div class="status-badge ok">
+          Search Console API
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div id="googleTab-inspect" class="hidden">
+
+    <div class="card">
+      <h2>URL Inspection</h2>
+
+      <div class="field">
+        <label>URL untuk diperiksa</label>
+        <input id="googleInspectUrl" placeholder="https://www.mastaxul.my/">
+      </div>
+
+      <div class="field">
+        <label>Language Code</label>
+        <input id="googleInspectLanguage" value="ms-MY">
+      </div>
+
+      <button class="btn primary" onclick="googleInspect()">
+        🔎 Inspect URL
+      </button>
+
+      <div id="googleInspectAlert" style="margin-top:12px"></div>
+
+      <div id="googleInspectResult" class="hidden" style="margin-top:12px">
+        <pre id="googleInspectRaw"></pre>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="googleTab-sitemaps" class="hidden">
+
+    <div class="card">
+      <div class="page-head" style="margin-bottom:12px">
+        <div>
+          <h2>Google Sitemaps</h2>
+          <p>Senarai sitemap yang diketahui Google untuk property terpilih.</p>
+        </div>
+
+        <button class="btn primary" onclick="loadGoogleSitemaps()">
+          ↻ Load Sitemaps
+        </button>
+      </div>
+
+      <div class="field">
+        <label>Submit Sitemap URL</label>
+        <div class="form-row">
+          <div class="grow">
+            <input id="googleSitemapUrl" placeholder="https://www.mastaxul.my/sitemap.xml">
+          </div>
+          <button class="btn success" onclick="submitGoogleSitemap()">
+            🚀 Submit
+          </button>
+        </div>
+      </div>
+
+      <div id="googleSitemapAlert"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Sitemap</th>
+              <th>Last Submitted</th>
+              <th>Last Downloaded</th>
+              <th>Status</th>
+              <th>Errors</th>
+              <th>Warnings</th>
+            </tr>
+          </thead>
+          <tbody id="googleSitemapTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="googleTab-analytics" class="hidden">
+
+    <div class="card">
+      <h2>Search Analytics</h2>
+
+      <div class="grid grid-3">
+
+        <div class="field">
+          <label>Start Date</label>
+          <input type="date" id="gaStart">
+        </div>
+
+        <div class="field">
+          <label>End Date</label>
+          <input type="date" id="gaEnd">
+        </div>
+
+        <div class="field">
+          <label>Row Limit</label>
+          <input type="number" id="gaLimit" value="25" min="1" max="25000">
+        </div>
+
+      </div>
+
+      <div class="field">
+        <label>Dimensions</label>
+        <div class="form-row wrap">
+          <label style="margin:0">
+            <input type="checkbox" class="gaDimension" value="query" checked style="width:auto">
+            Query
+          </label>
+
+          <label style="margin:0">
+            <input type="checkbox" class="gaDimension" value="page" style="width:auto">
+            Page
+          </label>
+
+          <label style="margin:0">
+            <input type="checkbox" class="gaDimension" value="country" style="width:auto">
+            Country
+          </label>
+
+          <label style="margin:0">
+            <input type="checkbox" class="gaDimension" value="device" style="width:auto">
+            Device
+          </label>
+
+          <label style="margin:0">
+            <input type="checkbox" class="gaDimension" value="date" style="width:auto">
+            Date
+          </label>
+
+          <label style="margin:0">
+            <input type="checkbox" class="gaDimension" value="searchAppearance" style="width:auto">
+            Search Appearance
+          </label>
+        </div>
+      </div>
+
+      <button class="btn primary" onclick="runGoogleAnalytics()">
+        📈 Run Analytics
+      </button>
+
+      <div id="gaAlert" style="margin-top:12px"></div>
+
+      <div id="gaSummary" class="grid grid-4 hidden" style="margin-top:12px">
+        <div class="card">
+          <div class="stat-label">Clicks</div>
+          <div class="stat-value" id="gaClicks">0</div>
+        </div>
+
+        <div class="card">
+          <div class="stat-label">Impressions</div>
+          <div class="stat-value" id="gaImpressions">0</div>
+        </div>
+
+        <div class="card">
+          <div class="stat-label">CTR</div>
+          <div class="stat-value" id="gaCtr">0%</div>
+        </div>
+
+        <div class="card">
+          <div class="stat-label">Position</div>
+          <div class="stat-value" id="gaPosition">0</div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead id="gaHead"></thead>
+          <tbody id="gaBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- BING -->
+<section class="page" id="page-bing">
+
+  <div class="page-head">
+    <div>
+      <h1>Bing Webmaster</h1>
+      <p>Bing OAuth, sites, quota, URL submission dan sitemap.</p>
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="checkBingStatus()">↻ Status</button>
+      <button class="btn primary" onclick="connectBing()">🔐 Connect Bing</button>
+    </div>
+  </div>
+
+  <div id="bingAlert"></div>
+
+  <div class="card">
+    <div class="provider">
+      <div class="provider-left">
+        <div class="provider-logo">B</div>
+        <div>
+          <strong>Bing Webmaster</strong>
+          <div class="small-text muted" id="bingStatusText">
+            Checking connection...
+          </div>
+        </div>
+      </div>
+
+      <span class="status-badge" id="bingStatusBadge">—</span>
+    </div>
+  </div>
+
+  <div style="height:14px"></div>
+
+  <div class="card">
+    <div class="field">
+      <label>Bing Site</label>
+      <select id="bingSiteSelect">
+        <option value="">— Pilih site —</option>
+      </select>
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="loadBingSites()">↻ Refresh Sites</button>
+      <button class="btn" onclick="loadBingQuota()">📊 Quota</button>
+      <button class="btn danger" onclick="disconnectBing()">Disconnect Bing</button>
+    </div>
+
+    <div id="bingQuotaBox" class="alert info hidden" style="margin-top:12px"></div>
+  </div>
+
+  <div style="height:14px"></div>
+
+  <div class="grid grid-2">
+
+    <div class="card">
+      <h2>Submit URLs</h2>
+
+      <div class="field">
+        <label>URL List — maksimum 50</label>
+        <textarea id="bingUrls" placeholder="https://www.mastaxul.my/
+https://www.mastaxul.my/about/"></textarea>
+      </div>
+
+      <button class="btn primary" onclick="submitBingUrls()">
+        🚀 Submit URLs
+      </button>
+
+      <div id="bingSubmitAlert" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card">
+      <h2>Submit Sitemap</h2>
+
+      <div class="field">
+        <label>Sitemap URL</label>
+        <input id="bingSitemapUrl" placeholder="https://www.mastaxul.my/sitemap.xml">
+      </div>
+
+      <button class="btn success" onclick="submitBingSitemap()">
+        🗺️ Submit Sitemap
+      </button>
+
+      <div id="bingSitemapAlert" style="margin-top:12px"></div>
+    </div>
+
+  </div>
+
+  <div style="height:14px"></div>
+
+  <div class="card">
+    <h2>Bing API Protection</h2>
+
+    <div class="alert warning">
+      Bing mempunyai perlindungan throttle. Jika API memulangkan
+      <strong>ThrottleIP / ErrorCode 17</strong>, dashboard tidak akan
+      spam retry secara automatik. Tunggu cooldown Bing sebelum cuba semula.
+    </div>
+  </div>
+
+</section>
+
+<!-- HISTORY -->
+<section class="page" id="page-history">
+
+  <div class="page-head">
+    <div>
+      <h1>History</h1>
+      <p>Rekod audit yang disimpan secara local dalam browser ini.</p>
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="exportHistoryCsv()">⬇️ CSV</button>
+      <button class="btn danger" onclick="clearHistory()">Clear History</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>URL</th>
+            <th>Score</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="historyTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+
+<!-- SETTINGS -->
+<section class="page" id="page-settings">
+
+  <div class="page-head">
+    <div>
+      <h1>Settings</h1>
+      <p>Konfigurasi frontend MastaXul Webmaster Manager.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-2">
+
+    <div class="card">
+      <h2>API Configuration</h2>
+
+      <div class="field">
+        <label>Worker API Base</label>
+        <input id="apiBaseInput">
+      </div>
+
+      <button class="btn primary" onclick="saveApiSettings()">
+        💾 Save API
+      </button>
+    </div>
+
+    <div class="card">
+      <h2>Local Storage</h2>
+
+      <div class="alert info">
+        History dan beberapa pilihan UI disimpan dalam browser.
+        OAuth token Google/Bing tidak disimpan dalam frontend.
+      </div>
+
+      <button class="btn danger" onclick="hardReset()">
+        ♻️ Hard Reset Frontend
+      </button>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- HELP -->
+<section class="page" id="page-help">
+
+  <div class="page-head">
+    <div>
+      <h1>Help</h1>
+      <p>Panduan ringkas MastaXul Webmaster Manager.</p>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <details open>
+      <summary>SEO Score</summary>
+      <p class="muted small-text">
+        Score dikira oleh Worker berdasarkan pemeriksaan SEO asas seperti
+        title, meta description, canonical, robots, viewport, H1,
+        JSON-LD, favicon dan Open Graph.
+      </p>
+    </details>
+
+    <details>
+      <summary>Google Search Console</summary>
+      <p class="muted small-text">
+        Google perlu OAuth. Akaun Google mesti mempunyai akses kepada
+        property Search Console. Token disimpan di Cloudflare KV,
+        bukan dalam browser.
+      </p>
+    </details>
+
+    <details>
+      <summary>Google URL Inspection</summary>
+      <p class="muted small-text">
+        Pilih property terlebih dahulu. URL yang diperiksa perlu
+        berada di bawah property tersebut.
+      </p>
+    </details>
+
+    <details>
+      <summary>Google Search Analytics</summary>
+      <p class="muted small-text">
+        Pilih tarikh dan dimension seperti query, page, country,
+        device atau date. Data datang daripada Search Console API.
+      </p>
+    </details>
+
+    <details>
+      <summary>Bing ThrottleIP</summary>
+      <p class="muted small-text">
+        Bing boleh mengehadkan request daripada IP tertentu.
+        Jangan tekan Refresh Sites berkali-kali apabila ErrorCode 17
+        muncul. V4.4.0 direka untuk mengurangkan request berulang.
+      </p>
+    </details>
+
+    <details>
+      <summary>Sitemap</summary>
+      <p class="muted small-text">
+        Sitemap crawler boleh menemukan sehingga 500 URL dan
+        URL tersebut boleh dihantar terus ke Bulk Audit.
+      </p>
+    </details>
+
+    <details>
+      <summary>Browser History / Cookies</summary>
+      <p class="muted small-text">
+        Website tidak boleh secara umum memadam history, cookies atau
+        cache global Safari/Chrome pengguna. Dashboard ini hanya
+        mengurus data localStorage miliknya sendiri.
+      </p>
+    </details>
+
+  </div>
+
+</section>
+
+</div>
+</main>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* =========================================================
+   MastaXul Webmaster Manager V4.4.0
+   Frontend (Fixed)
+   ========================================================= */
+
+const DEFAULT_API =
+  "https://mastaxul-webmaster-api.2ulfpv.workers.dev";
+
+const STORAGE_KEY = "mastaxul_webmaster_v44";
+
+const state = {
+  apiBase: localStorage.getItem("mastaxul_api_base") || DEFAULT_API,
+  history: [],
+  audit: null,
+  bulk: [],
+  sitemapUrls: [],
+  google: {
+    connected:false,
+    sites:[],
+    selectedSite:"",
+    permission:"",
+    sitemaps:[]
+  },
+  bing: {
+    connected:false,
+    sites:[],
+    selectedSite:"",
+    quota:null
+  }
+};
+
+/* =========================================================
+   INIT
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", init);
+
+async function init(){
+
+  loadLocalState();
+  setupNavigation();
+  setupGoogleTabs();
+  setupDefaults();
+
+  document.getElementById("apiBaseInput").value = state.apiBase;
+
+  renderHistory();
+  updateDashboardHistory();
+
+  await checkApi();
+
+  /*
+   * IMPORTANT:
+   * Status endpoints are local token checks.
+   * They should not unnecessarily call provider APIs.
+   */
+  await Promise.allSettled([
+    checkGoogleStatus(),
+    checkBingStatus()
+  ]);
+}
+
+/* =========================================================
+   LOCAL STATE
+   ========================================================= */
+
+function loadLocalState(){
+
+  try{
+    const saved = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "{}"
+    );
+
+    if(Array.isArray(saved.history)){
+      state.history = saved.history;
+    }
+
+    if(saved.sitemapUrls){
+      state.sitemapUrls = saved.sitemapUrls;
+    }
+
+  }catch(e){
+    console.warn("State load error",e);
+  }
+}
+
+function saveLocalState(){
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      history:state.history,
+      sitemapUrls:state.sitemapUrls
+    })
+  );
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+function setupNavigation(){
+
+  document.querySelectorAll(".nav button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      showPage(btn.dataset.page);
+    });
+  });
+
+  document.getElementById("mobileMenu").onclick=()=>{
+    document.getElementById("sidebar").classList.toggle("open");
+  };
+}
+
+function showPage(name){
+
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  const page=document.getElementById("page-"+name);
+
+  if(page){
+    page.classList.add("active");
+  }
+
+  document.querySelectorAll(".nav button").forEach(btn=>{
+    btn.classList.toggle(
+      "active",
+      btn.dataset.page===name
+    );
+  });
+
+  const titles={
+    dashboard:"Dashboard",
+    audit:"SEO Audit",
+    sitemap:"Sitemap Crawler",
+    bulk:"Bulk Audit",
+    google:"Google Search Console",
+    bing:"Bing Webmaster",
+    history:"History",
+    settings:"Settings",
+    help:"Help"
+  };
+
+  document.getElementById("topTitle").textContent =
+    titles[name] || "Dashboard";
+
+  document.getElementById("sidebar").classList.remove("open");
+
+  if(name==="history"){
+    renderHistory();
+  }
+}
+
+/* =========================================================
+   GOOGLE TABS
+   ========================================================= */
+
+function setupGoogleTabs(){
+
+  document.querySelectorAll("[data-google-tab]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const name=btn.dataset.googleTab;
+
+      document.querySelectorAll("[data-google-tab]")
+        .forEach(x=>x.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      ["overview","inspect","sitemaps","analytics"]
+        .forEach(tab=>{
+          const el=document.getElementById("googleTab-"+tab);
+
+          if(el){
+            el.classList.toggle(
+              "hidden",
+              tab!==name
+            );
+          }
+        });
+
+      if(name==="sitemaps"){
+        if(state.google.selectedSite){
+          loadGoogleSitemaps();
+        }
+      }
+    });
+  });
+}
+
+/* =========================================================
+   DEFAULTS
+   ========================================================= */
+
+function setupDefaults(){
+
+  const today=new Date();
+
+  const end=today.toISOString().slice(0,10);
+
+  const startDate=new Date(today);
+  startDate.setDate(startDate.getDate()-28);
+
+  const start=startDate.toISOString().slice(0,10);
+
+  document.getElementById("gaStart").value=start;
+  document.getElementById("gaEnd").value=end;
+}
+
+/* =========================================================
+   API
+   ========================================================= */
+
+function apiUrl(path){
+
+  return state.apiBase.replace(/\/+$/,"")+path;
+}
+
+async function api(path,options={}){
+
+  const url=apiUrl(path);
+
+  const response=await fetch(url,{
+    ...options,
+    headers:{
+      "Content-Type":"application/json",
+      ...(options.headers||{})
+    }
+  });
+
+  let data=null;
+
+  try{
+    data=await response.json();
+  }catch{
+    data={
+      ok:false,
+      error:await response.text()
+    };
+  }
+
+  if(!response.ok || data?.ok===false){
+
+    const err=new Error(
+      data?.error ||
+      data?.message ||
+      `HTTP ${response.status}`
+    );
+
+    err.status=response.status;
+    err.data=data;
+
+    throw err;
+  }
+
+  return data;
+}
+
+function post(path,body){
+
+  return api(path,{
+    method:"POST",
+    body:JSON.stringify(body)
+  });
+}
+
+/* =========================================================
+   API HEALTH
+   ========================================================= */
+
+async function checkApi(){
+
+  try{
+
+    const data=await api("/");
+
+    const version=data.version || "unknown";
+
+    document.getElementById("apiDot")
+      .className="dot green";
+
+    document.getElementById("apiStatusText")
+      .textContent="API "+version;
+
+    document.getElementById("dashApi")
+      .textContent=version;
+
+  }catch(error){
+
+    document.getElementById("apiDot")
+      .className="dot red";
+
+    document.getElementById("apiStatusText")
+      .textContent="API Offline";
+
+    document.getElementById("dashApi")
+      .textContent="OFF";
+  }
+}
+
+/* =========================================================
+   TOAST / ALERT
+   ========================================================= */
+
+function toast(message,type="info"){
+
+  const wrap=document.getElementById("toastWrap");
+
+  const el=document.createElement("div");
+
+  el.className="toast "+(
+    type==="success" ? "success" :
+    type==="error" ? "error" :
+    type==="warning" ? "warning" : ""
+  );
+
+  el.textContent=message;
+
+  wrap.appendChild(el);
+
+  setTimeout(()=>{
+    el.remove();
+  },4500);
+}
+
+function alertBox(target,message,type="info"){
+
+  const el=document.getElementById(target);
+
+  if(!el) return;
+
+  el.innerHTML=
+    `<div class="alert ${type}">${escapeHtml(message)}</div>`;
+}
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function formatDate(value){
+
+  if(!value) return "—";
+
+  try{
+    return new Date(value).toLocaleString("ms-MY");
+  }catch{
+    return String(value);
+  }
+}
+
+function formatNumber(value){
+
+  const n=Number(value);
+
+  if(!Number.isFinite(n)) return "0";
+
+  return n.toLocaleString("en-US",{
+    maximumFractionDigits:2
+  });
+}
+
+function csvEscape(value){
+
+  const s=String(value ?? "");
+
+  return `"${s.replace(/"/g,'""')}"`;
+}
+
+function downloadText(filename,text,type="text/plain"){
+
+  const blob=new Blob([text],{type});
+
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+
+  a.href=url;
+  a.download=filename;
+
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+}
+
+/* =========================================================
+   AUDIT
+   ========================================================= */
+
+async function runAuditFrom(inputId){
+
+  const input=document.getElementById(inputId);
+
+  document.getElementById("auditUrl").value=input.value;
+
+  showPage("audit");
+
+  await runAudit();
+}
+
+async function runAudit(){
+
+  const url=document.getElementById("auditUrl").value.trim();
+
+  if(!url){
+    alertBox("auditAlert","Masukkan URL terlebih dahulu.","warning");
+    return;
+  }
+
+  const btn=document.getElementById("auditBtn");
+
+  btn.disabled=true;
+  btn.innerHTML=
+    `<span class="loading"><span class="spinner"></span> Auditing...</span>`;
+
+  document.getElementById("auditAlert").innerHTML="";
+  document.getElementById("auditResult").classList.add("hidden");
+
+  try{
+
+    const data=await post("/audit",{url});
+
+    state.audit=data;
+
+    renderAudit(data);
+
+    saveHistory(data);
+
+    document.getElementById("auditResult")
+      .classList.remove("hidden");
+
+    toast("SEO audit selesai.","success");
+
+  }catch(error){
+
+    alertBox(
+      "auditAlert",
+      error.message,
+      "error"
+    );
+
+    toast("SEO audit gagal.","error");
+
+  }finally{
+
+    btn.disabled=false;
+    btn.textContent="🔍 Audit";
+  }
+}
+
+function renderAudit(data){
+
+  const score=Number(
+    data.score ??
+    data.seoScore ??
+    0
+  );
+
+  document.getElementById("auditScore")
+    .textContent=score;
+
+  document.getElementById("auditScoreStat")
+    .textContent=score;
+
+  document.getElementById("auditPass")
+    .textContent=data.pass ?? data.passed ?? data.counters?.pass ?? 0;
+
+  document.getElementById("auditWarn")
+    .textContent=data.warn ?? data.warnings ?? data.counters?.warn ?? 0;
+
+  document.getElementById("auditFail")
+    .textContent=data.fail ?? data.failed ?? data.counters?.fail ?? 0;
+
+  updateScoreRing(score);
+
+  const info=data.info || {};
+
+  const title=
+    data.title ??
+    info.title ??
+    "—";
+
+  const description=
+    data.description ??
+    info.description ??
+    "—";
+
+  const canonical=
+    data.canonical ??
+    info.canonical ??
+    "—";
+
+  const status=
+    data.status ??
+    data.httpStatus ??
+    data.http?.status ??
+    "—";
+
+  const responseTime=
+    data.responseTime ??
+    data.responseMs ??
+    "—";
+
+  document.getElementById("auditMeta").innerHTML=`
+    <div class="check-list">
+      ${miniInfo("URL",data.url || "—")}
+      ${miniInfo("Final URL",data.finalUrl || data.url || "—")}
+      ${miniInfo("HTTP",status)}
+      ${miniInfo("Response",responseTime==="—" ? "—" : responseTime+" ms")}
+      ${miniInfo("Title",title)}
+      ${miniInfo("Description",description)}
+      ${miniInfo("Canonical",canonical)}
+    </div>
+  `;
+
+  const og=data.og || data.openGraph || {};
+
+  document.getElementById("auditOg").innerHTML=`
+    <div class="check-list">
+      ${miniInfo("og:title",og.title || data.ogTitle || "—")}
+      ${miniInfo("og:description",og.description || data.ogDescription || "—")}
+      ${miniInfo("og:image",og.image || data.ogImage || "—")}
+      ${miniInfo("og:url",og.url || data.ogUrl || "—")}
+    </div>
+  `;
+
+  const checks=
+    data.checks ||
+    data.results ||
+    data.audit ||
+    [];
+
+  document.getElementById("auditChecks").innerHTML=
+    renderChecks(checks);
+
+  document.getElementById("auditRaw").textContent=
+    JSON.stringify(data,null,2);
+}
+
+function miniInfo(label,value){
+
+  return `
+    <div class="check-item">
+      <div style="flex:1">
+        <div class="check-title">${escapeHtml(label)}</div>
+        <div class="check-detail">${escapeHtml(value)}</div>
+      </div>
+    </div>
+  `;
+}
+
+function updateScoreRing(score){
+
+  const ring=document.getElementById("scoreRing");
+
+  const degrees=Math.max(0,Math.min(100,score))*3.6;
+
+  ring.style.background=
+    `radial-gradient(circle at center,var(--panel) 58%,transparent 59%),
+     conic-gradient(var(--primary) 0deg,var(--primary) ${degrees}deg,#273142 ${degrees}deg)`;
+}
+
+function renderChecks(checks){
+
+  if(!Array.isArray(checks)){
+
+    if(checks && typeof checks==="object"){
+
+      return Object.entries(checks)
+        .map(([key,value])=>{
+
+          const ok=Boolean(value);
+
+          return checkHtml(
+            ok ? "pass" : "fail",
+            key,
+            String(value)
+          );
+        })
+        .join("");
+    }
+
+    return `<div class="muted small-text">Tiada data checks.</div>`;
+  }
+
+  return checks.map(item=>{
+
+    const status=
+      item.status ||
+      item.result ||
+      (
+        item.pass ? "pass" :
+        item.warn ? "warn" :
+        item.fail ? "fail" : "info"
+      );
+
+    return checkHtml(
+      normalizeCheckStatus(status),
+      item.name || item.title || item.key || "Check",
+      item.message || item.detail || item.value || ""
+    );
+
+  }).join("");
+}
+
+function normalizeCheckStatus(status){
+
+  const s=String(status).toLowerCase();
+
+  if(
+    s.includes("pass") ||
+    s.includes("ok") ||
+    s.includes("success")
+  ) return "pass";
+
+  if(
+    s.includes("warn")
+  ) return "warn";
+
+  if(
+    s.includes("fail") ||
+    s.includes("error")
+  ) return "fail";
+
+  return "info";
+}
+
+function checkHtml(status,title,detail){
+
+  const icons={
+    pass:"✓",
+    warn:"!",
+    fail:"×",
+    info:"i"
+  };
+
+  return `
+    <div class="check-item check-${status}">
+      <div class="check-icon">${icons[status]}</div>
+      <div>
+        <div class="check-title">${escapeHtml(title)}</div>
+        <div class="check-detail">${escapeHtml(detail)}</div>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
+
+function saveHistory(data){
+
+  const item={
+    id:Date.now(),
+    date:new Date().toISOString(),
+    url:data.url || data.finalUrl || "",
+    score:Number(data.score ?? data.seoScore ?? 0),
+    status:data.status ?? data.httpStatus ?? "",
+    data
+  };
+
+  state.history.unshift(item);
+
+  state.history=state.history.slice(0,200);
+
+  saveLocalState();
+
+  renderHistory();
+  updateDashboardHistory();
+}
+
+function renderHistory(){
+
+  const tbody=document.getElementById("historyTable");
+
+  if(!tbody) return;
+
+  if(!state.history.length){
+
+    tbody.innerHTML=`
+      <tr>
+        <td colspan="5" class="muted">
+          Belum ada audit.
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  tbody.innerHTML=state.history.map(item=>`
+
+    <tr>
+      <td>${escapeHtml(formatDate(item.date))}</td>
+      <td class="url-cell">${escapeHtml(item.url)}</td>
+      <td><strong>${escapeHtml(item.score)}</strong></td>
+      <td>${escapeHtml(item.status)}</td>
+      <td>
+        <button class="btn small" onclick="openHistory(${item.id})">
+          Buka
+        </button>
+      </td>
+    </tr>
+
+  `).join("");
+}
+
+function openHistory(id){
+
+  const item=state.history.find(x=>x.id===id);
+
+  if(!item) return;
+
+  state.audit=item.data;
+
+  document.getElementById("auditUrl").value=item.url;
+
+  showPage("audit");
+
+  renderAudit(item.data);
+
+  document.getElementById("auditResult")
+    .classList.remove("hidden");
+}
+
+function clearHistory(){
+
+  if(!confirm("Padam semua history audit?")) return;
+
+  state.history=[];
+
+  saveLocalState();
+
+  renderHistory();
+  updateDashboardHistory();
+
+  toast("History telah dipadam.","success");
+}
+
+function updateDashboardHistory(){
+
+  document.getElementById("dashHistory").textContent=
+    state.history.length;
+}
+
+function exportHistoryCsv(){
+
+  const rows=[
+    ["Date","URL","Score","Status"]
+  ];
+
+  state.history.forEach(item=>{
+    rows.push([
+      formatDate(item.date),
+      item.url,
+      item.score,
+      item.status
+    ]);
+  });
+
+  const csv=rows.map(row=>row.map(csvEscape).join(",")).join("\n");
+
+  downloadText(
+    "mastaxul-audit-history.csv",
+    csv,
+    "text/csv;charset=utf-8"
+  );
+}
+
+/* =========================================================
+   SITEMAP
+   ========================================================= */
+
+async function crawlSitemap(){
+
+  const url=document.getElementById("sitemapUrl")
+    .value.trim();
+
+  if(!url){
+    alertBox("sitemapAlert","Masukkan sitemap URL.","warning");
+    return;
+  }
+
+  document.getElementById("sitemapAlert").innerHTML="";
+
+  const box=document.getElementById("sitemapProgressBox");
+
+  box.classList.remove("hidden");
+
+  document.getElementById("sitemapProgress").style.width="35%";
+
+  try{
+
+    // FIXED: send sitemapUrl (worker now also accepts "url")
+    const data=await post("/sitemap",{sitemapUrl: url});
+
+    document.getElementById("sitemapProgress").style.width="100%";
+
+    const urls=
+      data.urls ||
+      data.results ||
+      data.items ||
+      [];
+
+    state.sitemapUrls=Array.isArray(urls)
+      ? urls
+      : [];
+
+    saveLocalState();
+
+    renderSitemap(data);
+
+    toast(
+      `${state.sitemapUrls.length} URL ditemui.`,
+      "success"
+    );
+
+  }catch(error){
+
+    alertBox(
+      "sitemapAlert",
+      error.message,
+      "error"
+    );
+
+    toast("Sitemap crawl gagal.","error");
+
+  }finally{
+
+    setTimeout(()=>{
+      box.classList.add("hidden");
+      document.getElementById("sitemapProgress").style.width="0";
+    },500);
+  }
+}
+
+function renderSitemap(data){
+
+  document.getElementById("sitemapResult")
+    .classList.remove("hidden");
+
+  document.getElementById("sitemapCount")
+    .textContent=state.sitemapUrls.length;
+
+  document.getElementById("sitemapType")
+    .textContent=
+      data.type ||
+      data.kind ||
+      "XML";
+
+  document.getElementById("sitemapUrlsText")
+    .value=state.sitemapUrls.join("\n");
+}
+
+function exportSitemapUrls(){
+
+  if(!state.sitemapUrls.length){
+    toast("Tiada URL sitemap.","warning");
+    return;
+  }
+
+  downloadText(
+    "mastaxul-sitemap-urls.txt",
+    state.sitemapUrls.join("\n"),
+    "text/plain;charset=utf-8"
+  );
+}
+
+function sendSitemapToBulk(){
+
+  if(!state.sitemapUrls.length){
+    toast("Tiada URL sitemap.","warning");
+    return;
+  }
+
+  document.getElementById("bulkUrls").value=
+    state.sitemapUrls.slice(0,50).join("\n");
+
+  showPage("bulk");
+
+  toast(
+    "Sehingga 50 URL telah dihantar ke Bulk Audit.",
+    "success"
+  );
+}
+
+/* =========================================================
+   BULK AUDIT
+   ========================================================= */
+
+function clearBulk(){
+
+  document.getElementById("bulkUrls").value="";
+  document.getElementById("bulkResult").classList.add("hidden");
+  document.getElementById("bulkAlert").innerHTML="";
+}
+
+async function runBulkAudit(){
+
+  const raw=document.getElementById("bulkUrls").value;
+
+  const urls=[
+    ...new Set(
+      raw.split(/\r?\n/)
+        .map(x=>x.trim())
+        .filter(Boolean)
+    )
+  ];
+
+  if(!urls.length){
+    alertBox("bulkAlert","Masukkan sekurang-kurangnya satu URL.","warning");
+    return;
+  }
+
+  if(urls.length>50){
+    alertBox(
+      "bulkAlert",
+      `Bulk Audit maksimum 50 URL. Sekarang: ${urls.length}.`,
+      "warning"
+    );
+    return;
+  }
+
+  const btn=document.getElementById("bulkBtn");
+
+  btn.disabled=true;
+
+  btn.innerHTML=
+    `<span class="loading"><span class="spinner"></span> Processing...</span>`;
+
+  try{
+
+    const data=await post("/bulk-audit",{urls});
+
+    const results=
+      data.results ||
+      data.audits ||
+      data.items ||
+      [];
+
+    state.bulk=Array.isArray(results)
+      ? results
+      : [];
+
+    renderBulk(data);
+
+    toast(
+      `${state.bulk.length} URL selesai diaudit.`,
+      "success"
+    );
+
+  }catch(error){
+
+    alertBox(
+      "bulkAlert",
+      error.message,
+      "error"
+    );
+
+    toast("Bulk Audit gagal.","error");
+
+  }finally{
+
+    btn.disabled=false;
+    btn.textContent="📦 Audit Semua";
+  }
+}
+
+function renderBulk(data){
+
+  document.getElementById("bulkResult")
+    .classList.remove("hidden");
+
+  const results=state.bulk;
+
+  document.getElementById("bulkProcessed")
+    .textContent=results.length;
+
+  const scores=results
+    .map(x=>Number(x.score ?? x.seoScore))
+    .filter(Number.isFinite);
+
+  const average=scores.length
+    ? Math.round(
+        scores.reduce((a,b)=>a+b,0)/scores.length
+      )
+    : 0;
+
+  document.getElementById("bulkAverage")
+    .textContent=average;
+
+  const passed=results.filter(x=>{
+    const score=Number(x.score ?? x.seoScore ?? 0);
+    return score>=80;
+  }).length;
+
+  document.getElementById("bulkPassed")
+    .textContent=passed;
+
+  document.getElementById("bulkFailed")
+    .textContent=
+      Math.max(0,results.length-passed);
+
+  const tbody=document.getElementById("bulkTable");
+
+  tbody.innerHTML=results.map(item=>{
+
+    const score=Number(
+      item.score ??
+      item.seoScore ??
+      0
+    );
+
+    const title=
+      item.title ??
+      item.info?.title ??
+      "—";
+
+    const description=
+      item.description ??
+      item.info?.description ??
+      "—";
+
+    const status=
+      item.status ??
+      item.httpStatus ??
+      "—";
+
+    const https=
+      item.https ??
+      item.isHttps ??
+      (
+        String(item.url||"")
+          .startsWith("https://")
+      );
+
+    return `
+      <tr>
+        <td class="url-cell">${escapeHtml(item.url || "")}</td>
+        <td>${escapeHtml(status)}</td>
+        <td><strong>${score}</strong></td>
+        <td>${escapeHtml(title)}</td>
+        <td>${escapeHtml(description)}</td>
+        <td>${https ? "✅" : "❌"}</td>
+      </tr>
+    `;
+
+  }).join("");
+}
+
+function exportBulkCsv(){
+
+  const results=state.bulk;
+
+  if(!results.length){
+    toast("Tiada keputusan bulk audit.","warning");
+    return;
+  }
+
+  const rows=[
+    [
+      "URL",
+      "Status",
+      "Score",
+      "Title",
+      "Description",
+      "HTTPS"
+    ]
+  ];
+
+  results.forEach(item=>{
+
+    rows.push([
+      item.url || "",
+      item.status ?? item.httpStatus ?? "",
+      item.score ?? item.seoScore ?? "",
+      item.title ?? item.info?.title ?? "",
+      item.description ?? item.info?.description ?? "",
+      item.https ?? item.isHttps ?? ""
+    ]);
+
+  });
+
+  const csv=rows
+    .map(row=>row.map(csvEscape).join(","))
+    .join("\n");
+
+  downloadText(
+    "mastaxul-bulk-audit.csv",
+    csv,
+    "text/csv;charset=utf-8"
+  );
+}
+
+/* =========================================================
+   GOOGLE STATUS
+   ========================================================= */
+
+async function checkGoogleStatus(){
+
+  try{
+
+    const data=await api("/google/status");
+
+    state.google.connected=Boolean(
+      data.connected
+    );
+
+    updateGoogleStatusUI();
+
+    document.getElementById("dashGoogleDetail")
+      .textContent=
+        state.google.connected
+          ? "Connected"
+          : "Not connected";
+
+    document.getElementById("dashGoogleBadge")
+      .className=
+        "status-badge "+
+        (state.google.connected ? "ok" : "warn");
+
+    document.getElementById("dashGoogleBadge")
+      .textContent=
+        state.google.connected
+          ? "Connected"
+          : "Not connected";
+
+    document.getElementById("dashGoogle")
+      .textContent=
+        state.google.connected ? "ON" : "OFF";
+
+  }catch(error){
+
+    state.google.connected=false;
+
+    updateGoogleStatusUI();
+
+    document.getElementById("dashGoogle")
+      .textContent="OFF";
+  }
+}
+
+function updateGoogleStatusUI(){
+
+  const connected=state.google.connected;
+
+  document.getElementById("googleStatusBadge")
+    .className=
+      "status-badge "+
+      (connected ? "ok" : "warn");
+
+  document.getElementById("googleStatusBadge")
+    .textContent=
+      connected ? "Connected" : "Not connected";
+
+  document.getElementById("googleStatusText")
+    .textContent=
+      connected
+        ? "Google OAuth connected"
+        : "Google belum connected";
+
+  document.getElementById("googleConnectBtn")
+    .textContent=
+      connected
+        ? "🔐 Connected"
+        : "🔐 Connect Google";
+}
+
+function connectGoogle(){
+
+  window.location.href=apiUrl("/google/login");
+}
+
+/* =========================================================
+   GOOGLE SITES
+   ========================================================= */
+
+async function loadGoogleSites(){
+
+  if(!state.google.connected){
+    alertBox(
+      "googleAlert",
+      "Connect Google terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await api("/google/sites");
+
+    state.google.sites=
+      data.sites ||
+      data.data ||
+      [];
+
+    renderGoogleSites();
+
+    toast(
+      `${state.google.sites.length} Google properties ditemui.`,
+      "success"
+    );
+
+  }catch(error){
+
+    alertBox(
+      "googleAlert",
+      error.message,
+      "error"
+    );
+
+    toast("Gagal mendapatkan Google properties.","error");
+  }
+}
+
+function renderGoogleSites(){
+
+  const select=document.getElementById("googleSiteSelect");
+
+  const current=state.google.selectedSite;
+
+  select.innerHTML=
+    `<option value="">— Pilih property —</option>`;
+
+  state.google.sites.forEach(site=>{
+
+    const siteUrl=
+      site.siteUrl ||
+      site.url ||
+      site;
+
+    const permission=
+      site.permissionLevel ||
+      site.permission ||
+      "";
+
+    const option=document.createElement("option");
+
+    option.value=siteUrl;
+
+    option.textContent=
+      siteUrl+
+      (
+        permission
+          ? ` — ${permission}`
+          : ""
+      );
+
+    select.appendChild(option);
+  });
+
+  if(
+    current &&
+    state.google.sites.some(
+      x=>
+        (x.siteUrl || x.url || x)===current
+    )
+  ){
+    select.value=current;
+  }
+
+  select.onchange=()=>{
+    state.google.selectedSite=select.value;
+
+    const item=state.google.sites.find(
+      x=>
+        (x.siteUrl || x.url || x)===select.value
+    );
+
+    state.google.permission=
+      item?.permissionLevel ||
+      item?.permission ||
+      "";
+
+    document.getElementById("googleSelectedSite")
+      .textContent=
+        select.value || "Belum dipilih";
+
+    document.getElementById("googlePermission")
+      .textContent=
+        state.google.permission || "—";
+  };
+}
+
+/* =========================================================
+   GOOGLE DISCONNECT
+   ========================================================= */
+
+async function disconnectGoogle(){
+
+  if(!confirm("Disconnect Google OAuth?")) return;
+
+  try{
+
+    await post("/google/disconnect",{});
+
+    state.google.connected=false;
+    state.google.sites=[];
+    state.google.selectedSite="";
+
+    updateGoogleStatusUI();
+    renderGoogleSites();
+
+    document.getElementById("googleSelectedSite")
+      .textContent="Belum dipilih";
+
+    document.getElementById("googlePermission")
+      .textContent="—";
+
+    document.getElementById("dashGoogle")
+      .textContent="OFF";
+
+    toast("Google telah disconnected.","success");
+
+  }catch(error){
+
+    alertBox(
+      "googleAlert",
+      error.message,
+      "error"
+    );
+  }
+}
+
+/* =========================================================
+   GOOGLE URL INSPECTION
+   ========================================================= */
+
+async function googleInspect(){
+
+  const siteUrl=
+    state.google.selectedSite;
+
+  const inspectionUrl=
+    document.getElementById("googleInspectUrl")
+      .value.trim();
+
+  const languageCode=
+    document.getElementById("googleInspectLanguage")
+      .value.trim() || "en-US";
+
+  if(!siteUrl){
+    alertBox(
+      "googleInspectAlert",
+      "Pilih Google Search Console property terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  if(!inspectionUrl){
+    alertBox(
+      "googleInspectAlert",
+      "Masukkan URL untuk diperiksa.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await post(
+      "/google/inspect",
+      {
+        siteUrl,
+        inspectionUrl,
+        languageCode
+      }
+    );
+
+    document.getElementById("googleInspectResult")
+      .classList.remove("hidden");
+
+    document.getElementById("googleInspectRaw")
+      .textContent=
+        JSON.stringify(data,null,2);
+
+    alertBox(
+      "googleInspectAlert",
+      "URL Inspection berjaya.",
+      "success"
+    );
+
+    toast(
+      "Google URL Inspection selesai.",
+      "success"
+    );
+
+  }catch(error){
+
+    alertBox(
+      "googleInspectAlert",
+      error.message,
+      "error"
+    );
+  }
+}
+
+/* =========================================================
+   GOOGLE SITEMAPS
+   ========================================================= */
+
+async function loadGoogleSitemaps(){
+
+  const siteUrl=state.google.selectedSite;
+
+  if(!siteUrl){
+    alertBox(
+      "googleSitemapAlert",
+      "Pilih property terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await post(
+      "/google/sitemaps",
+      {siteUrl}
+    );
+
+    state.google.sitemaps=
+      data.sitemaps ||
+      data.data ||
+      [];
+
+    renderGoogleSitemaps();
+
+    toast("Google Sitemaps dimuatkan.","success");
+
+  }catch(error){
+
+    alertBox(
+      "googleSitemapAlert",
+      error.message,
+      "error"
+    );
+  }
+}
+
+function renderGoogleSitemaps(){
+
+  const tbody=document.getElementById(
+    "googleSitemapTable"
+  );
+
+  if(!state.google.sitemaps.length){
+
+    tbody.innerHTML=`
+      <tr>
+        <td colspan="6" class="muted">
+          Tiada sitemap dijumpai.
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  tbody.innerHTML=
+    state.google.sitemaps.map(item=>`
+
+      <tr>
+        <td class="url-cell">
+          ${escapeHtml(
+            item.path ||
+            item.sitemap ||
+            item.url ||
+            "—"
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            formatDate(
+              item.lastSubmitted ||
+              item.lastSubmittedTime
+            )
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            formatDate(
+              item.lastDownloaded ||
+              item.lastDownloadedTime
+            )
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            item.isPending
+              ? "Pending"
+              : (
+                  item.errors
+                    ? "Errors"
+                    : "OK"
+                )
+          )}
+        </td>
+
+        <td>${escapeHtml(item.errors ?? 0)}</td>
+
+        <td>${escapeHtml(item.warnings ?? 0)}</td>
+      </tr>
+
+    `).join("");
+}
+
+async function submitGoogleSitemap(){
+
+  const siteUrl=state.google.selectedSite;
+
+  const sitemapUrl=
+    document.getElementById("googleSitemapUrl")
+      .value.trim();
+
+  if(!siteUrl){
+    alertBox(
+      "googleSitemapAlert",
+      "Pilih property terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  if(!sitemapUrl){
+    alertBox(
+      "googleSitemapAlert",
+      "Masukkan sitemap URL.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await post(
+      "/google/sitemap",
+      {
+        siteUrl,
+        sitemapUrl
+      }
+    );
+
+    alertBox(
+      "googleSitemapAlert",
+      "Sitemap berjaya dihantar kepada Google.",
+      "success"
+    );
+
+    toast(
+      "Google Sitemap submitted.",
+      "success"
+    );
+
+    await loadGoogleSitemaps();
+
+  }catch(error){
+
+    alertBox(
+      "googleSitemapAlert",
+      error.message,
+      "error"
+    );
+  }
+}
+
+/* =========================================================
+   GOOGLE SEARCH ANALYTICS
+   ========================================================= */
+
+async function runGoogleAnalytics(){
+
+  const siteUrl=state.google.selectedSite;
+
+  if(!siteUrl){
+    alertBox(
+      "gaAlert",
+      "Pilih property terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  const startDate=
+    document.getElementById("gaStart").value;
+
+  const endDate=
+    document.getElementById("gaEnd").value;
+
+  const rowLimit=
+    Number(
+      document.getElementById("gaLimit").value
+    ) || 25;
+
+  const dimensions=[
+    ...document.querySelectorAll(".gaDimension:checked")
+  ].map(x=>x.value);
+
+  if(!startDate || !endDate){
+    alertBox(
+      "gaAlert",
+      "Pilih tarikh mula dan tarikh akhir.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const body={
+      siteUrl,
+      startDate,
+      endDate,
+      dimensions,
+      rowLimit
+    };
+
+    const data=await post(
+      "/google/analytics",
+      body
+    );
+
+    renderGoogleAnalytics(data);
+
+    alertBox(
+      "gaAlert",
+      "Search Analytics berjaya diambil.",
+      "success"
+    );
+
+    toast(
+      "Google Search Analytics selesai.",
+      "success"
+    );
+
+  }catch(error){
+
+    alertBox(
+      "gaAlert",
+      error.message,
+      "error"
+    );
+  }
+}
+
+function renderGoogleAnalytics(data){
+
+  const rows=
+    data.rows ||
+    data.data?.rows ||
+    [];
+
+  let clicks=0;
+  let impressions=0;
+  let ctrWeighted=0;
+  let positionWeighted=0;
+
+  rows.forEach(row=>{
+
+    const c=Number(row.clicks || 0);
+    const i=Number(row.impressions || 0);
+    const ctr=Number(row.ctr || 0);
+    const pos=Number(row.position || 0);
+
+    clicks+=c;
+    impressions+=i;
+
+    ctrWeighted+=ctr*i;
+    positionWeighted+=pos*i;
+  });
+
+  const ctr=
+    impressions
+      ? ctrWeighted/impressions
+      : 0;
+
+  const position=
+    impressions
+      ? positionWeighted/impressions
+      : 0;
+
+  document.getElementById("gaSummary")
+    .classList.remove("hidden");
+
+  document.getElementById("gaClicks")
+    .textContent=formatNumber(clicks);
+
+  document.getElementById("gaImpressions")
+    .textContent=formatNumber(impressions);
+
+  document.getElementById("gaCtr")
+    .textContent=(ctr*100).toFixed(2)+"%";
+
+  document.getElementById("gaPosition")
+    .textContent=position.toFixed(2);
+
+  const dimensions=
+    document.querySelectorAll(".gaDimension:checked");
+
+  const dimensionNames=[
+    ...dimensions
+  ].map(x=>x.value);
+
+  const head=document.getElementById("gaHead");
+  const body=document.getElementById("gaBody");
+
+  head.innerHTML=`
+    <tr>
+      ${dimensionNames.map(d=>`<th>${escapeHtml(d)}</th>`).join("")}
+      <th>Clicks</th>
+      <th>Impressions</th>
+      <th>CTR</th>
+      <th>Position</th>
+    </tr>
+  `;
+
+  body.innerHTML=rows.map(row=>{
+
+    const keys=row.keys || [];
+
+    return `
+      <tr>
+        ${dimensionNames.map((d,i)=>`
+          <td>${escapeHtml(keys[i] ?? "")}</td>
+        `).join("")}
+
+        <td>${formatNumber(row.clicks)}</td>
+
+        <td>${formatNumber(row.impressions)}</td>
+
+        <td>
+          ${(Number(row.ctr || 0)*100).toFixed(2)}%
+        </td>
+
+        <td>
+          ${Number(row.position || 0).toFixed(2)}
+        </td>
+      </tr>
+    `;
+
+  }).join("");
+
+  if(!rows.length){
+
+    body.innerHTML=`
+      <tr>
+        <td colspan="${dimensionNames.length+4}"
+            class="muted">
+          Tiada data untuk tempoh/dimension yang dipilih.
+        </td>
+      </tr>
+    `;
+  }
+}
+
+/* =========================================================
+   BING STATUS
+   ========================================================= */
+
+async function checkBingStatus(){
+
+  try{
+
+    const data=await api("/bing/status");
+
+    state.bing.connected=
+      Boolean(data.connected);
+
+    updateBingStatusUI();
+
+    document.getElementById("dashBing")
+      .textContent=
+        state.bing.connected ? "ON" : "OFF";
+
+    document.getElementById("dashBingDetail")
+      .textContent=
+      state.bing.connected
+        ? "Connected"
+        : "Not connected";
+
+    document.getElementById("dashBingBadge")
+      .className=
+        "status-badge "+
+        (state.bing.connected ? "ok" : "warn");
+
+    document.getElementById("dashBingBadge")
+      .textContent=
+        state.bing.connected
+          ? "Connected"
+          : "Not connected";
+
+  }catch{
+
+    state.bing.connected=false;
+
+    updateBingStatusUI();
+
+    document.getElementById("dashBing")
+      .textContent="OFF";
+  }
+}
+
+function updateBingStatusUI(){
+
+  const connected=state.bing.connected;
+
+  document.getElementById("bingStatusBadge")
+    .className=
+      "status-badge "+
+      (connected ? "ok" : "warn");
+
+  document.getElementById("bingStatusBadge")
+    .textContent=
+      connected ? "Connected" : "Not connected";
+
+  document.getElementById("bingStatusText")
+    .textContent=
+      connected
+        ? "Bing OAuth connected"
+        : "Bing belum connected";
+}
+
+function connectBing(){
+
+  window.location.href=apiUrl("/bing/login");
+}
+
+/* =========================================================
+   BING SITES
+   ========================================================= */
+
+async function loadBingSites(){
+
+  if(!state.bing.connected){
+    alertBox(
+      "bingAlert",
+      "Connect Bing terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await api("/bing/sites");
+
+    state.bing.sites=
+      data.sites ||
+      data.data ||
+      [];
+
+    renderBingSites();
+
+    toast(
+      `${state.bing.sites.length} Bing sites ditemui.`,
+      "success"
+    );
+
+  }catch(error){
+
+    handleBingError(
+      error,
+      "bingAlert"
+    );
+  }
+}
+
+function renderBingSites(){
+
+  const select=document.getElementById("bingSiteSelect");
+
+  const current=state.bing.selectedSite;
+
+  select.innerHTML=
+    `<option value="">— Pilih site —</option>`;
+
+  state.bing.sites.forEach(site=>{
+
+    const siteUrl=
+      site.siteUrl ||
+      site.url ||
+      site;
+
+    const option=document.createElement("option");
+
+    option.value=siteUrl;
+    option.textContent=siteUrl;
+
+    select.appendChild(option);
+  });
+
+  if(current){
+    select.value=current;
+  }
+
+  select.onchange=()=>{
+    state.bing.selectedSite=select.value;
+  };
+}
+
+/* =========================================================
+   BING QUOTA
+   ========================================================= */
+
+async function loadBingQuota(){
+
+  const siteUrl=state.bing.selectedSite;
+
+  if(!siteUrl){
+    alertBox(
+      "bingAlert",
+      "Pilih Bing site terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await post(
+      "/bing/quota",
+      {siteUrl}
+    );
+
+    state.bing.quota=data;
+
+    const box=document.getElementById(
+      "bingQuotaBox"
+    );
+
+    box.classList.remove("hidden");
+
+    box.innerHTML=
+      `<strong>Quota:</strong><br>`+
+      escapeHtml(
+        JSON.stringify(data,null,2)
+      ).replace(/\n/g,"<br>");
+
+    toast(
+      "Bing quota berjaya dimuatkan.",
+      "success"
+    );
+
+  }catch(error){
+
+    handleBingError(
+      error,
+      "bingAlert"
+    );
+  }
+}
+
+/* =========================================================
+   BING URL SUBMISSION
+   ========================================================= */
+
+async function submitBingUrls(){
+
+  const siteUrl=state.bing.selectedSite;
+
+  if(!siteUrl){
+    alertBox(
+      "bingSubmitAlert",
+      "Pilih Bing site terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  const urls=[
+    ...new Set(
+      document.getElementById("bingUrls")
+        .value
+        .split(/\r?\n/)
+        .map(x=>x.trim())
+        .filter(Boolean)
+    )
+  ];
+
+  if(!urls.length){
+    alertBox(
+      "bingSubmitAlert",
+      "Masukkan URL.",
+      "warning"
+    );
+    return;
+  }
+
+  if(urls.length>50){
+    alertBox(
+      "bingSubmitAlert",
+      "Maksimum 50 URL setiap submission.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await post(
+      "/bing/submit",
+      {
+        siteUrl,
+        urls
+      }
+    );
+
+    alertBox(
+      "bingSubmitAlert",
+      "URL berjaya dihantar ke Bing.",
+      "success"
+    );
+
+    toast(
+      `${urls.length} URL dihantar ke Bing.`,
+      "success"
+    );
+
+  }catch(error){
+
+    handleBingError(
+      error,
+      "bingSubmitAlert"
+    );
+  }
+}
+
+/* =========================================================
+   BING SITEMAP
+   ========================================================= */
+
+async function submitBingSitemap(){
+
+  const siteUrl=state.bing.selectedSite;
+
+  const sitemapUrl=
+    document.getElementById("bingSitemapUrl")
+      .value.trim();
+
+  if(!siteUrl){
+    alertBox(
+      "bingSitemapAlert",
+      "Pilih Bing site terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  if(!sitemapUrl){
+    alertBox(
+      "bingSitemapAlert",
+      "Masukkan sitemap URL.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    await post(
+      "/bing/sitemap",
+      {
+        siteUrl,
+        sitemapUrl
+      }
+    );
+
+    alertBox(
+      "bingSitemapAlert",
+      "Sitemap berjaya dihantar ke Bing.",
+      "success"
+    );
+
+    toast(
+      "Bing Sitemap submitted.",
+      "success"
+    );
+
+  }catch(error){
+
+    handleBingError(
+      error,
+      "bingSitemapAlert"
+    );
+  }
+}
+
+/* =========================================================
+   BING ERROR HANDLING
+   ========================================================= */
+
+function handleBingError(error,target){
+
+  const raw=
+    error?.data ||
+    {};
+
+  const text=
+    JSON.stringify(raw)+
+    " "+
+    String(error?.message || "");
+
+  const throttled=
+    text.includes("ThrottleIP") ||
+    text.includes("ErrorCode\":17") ||
+    text.includes("ErrorCode:17") ||
+    error?.status===429;
+
+  if(throttled){
+
+    alertBox(
+      target,
+      "Bing sedang mengenakan throttle (ThrottleIP / ErrorCode 17). "+
+      "Jangan retry berulang kali. Tunggu cooldown Bing dan cuba semula kemudian.",
+      "warning"
+    );
+
+    toast(
+      "Bing ThrottleIP — tunggu dahulu.",
+      "warning"
+    );
+
+    return;
+  }
+
+  alertBox(
+    target,
+    error.message || "Bing API error.",
+    "error"
+  );
+
+  toast(
+    "Bing API request gagal.",
+    "error"
+  );
+}
+
+/* =========================================================
+   BING DISCONNECT
+   ========================================================= */
+
+async function disconnectBing(){
+
+  if(!confirm("Disconnect Bing OAuth?")) return;
+
+  try{
+
+    await post("/bing/disconnect",{});
+
+    state.bing.connected=false;
+    state.bing.sites=[];
+    state.bing.selectedSite="";
+    state.bing.quota=null;
+
+    updateBingStatusUI();
+    renderBingSites();
+
+    document.getElementById("bingQuotaBox")
+      .classList.add("hidden");
+
+    document.getElementById("dashBing")
+      .textContent="OFF";
+
+    toast(
+      "Bing telah disconnected.",
+      "success"
+    );
+
+  }catch(error){
+
+    handleBingError(
+      error,
+      "bingAlert"
+    );
+  }
+}
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+function saveApiSettings(){
+
+  const value=
+    document.getElementById("apiBaseInput")
+      .value.trim()
+      .replace(/\/+$/,"");
+
+  if(!value){
+    toast("API Base tidak boleh kosong.","warning");
+    return;
+  }
+
+  state.apiBase=value;
+
+  localStorage.setItem(
+    "mastaxul_api_base",
+    value
+  );
+
+  toast(
+    "API Base disimpan.",
+    "success"
+  );
+
+  checkApi();
+}
+
+function hardReset(){
+
+  if(!confirm(
+    "Hard Reset akan memadam local settings dan history. Teruskan?"
+  )){
+    return;
+  }
+
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem("mastaxul_api_base");
+
+  location.reload();
+}
+
+/* =========================================================
+   EXPORT HELPERS
+   ========================================================= */
+
+function exportJson(filename,data){
+
+  downloadText(
+    filename,
+    JSON.stringify(data,null,2),
+    "application/json;charset=utf-8"
+  );
+}
+
+/* =========================================================
+   GLOBAL KEYBOARD
+   ========================================================= */
+
+document.addEventListener("keydown",event=>{
+
+  if(
+    event.key==="Enter" &&
+    document.activeElement?.id==="auditUrl"
+  ){
+    runAudit();
+  }
+
+});
+
+/* =========================================================
+   INITIAL DASHBOARD URL
+   ========================================================= */
+
+document.getElementById("dashUrl").value=
+  "https://www.mastaxul.my/";
+
+</script>
+
+
+  </section>
+
+
+  </div>
 
 <div class="modal-bg" id="editModal">
   <div class="modal">
@@ -930,6 +5181,2353 @@ form.onsubmit=async e=>{
   }catch(err){msg.className="msg warn";msg.textContent="Status tak pasti — semak sheet";}
   btn.disabled=false;btn.textContent="Tambah Produk";
 };
+
+/* ===== JAM / TARIKH / HIJRAH KL ===== */
+function updateClockKL(){
+  try{
+    const now = new Date();
+    const tz = "Asia/Kuala_Lumpur";
+    document.getElementById("clockTime").textContent = now.toLocaleTimeString("ms-MY", {
+      timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+    });
+    document.getElementById("clockDate").textContent = now.toLocaleDateString("ms-MY", {
+      timeZone: tz, weekday: "long", day: "numeric", month: "long", year: "numeric"
+    }) + " · KL";
+    // Hijrah (kalendar Islam) ikut zona KL
+    const hijri = new Intl.DateTimeFormat("ms-MY-u-ca-islamic", {
+      timeZone: tz, day: "numeric", month: "long", year: "numeric"
+    }).format(now);
+    document.getElementById("clockHijri").textContent = hijri + " H";
+  }catch(e){}
+}
+updateClockKL();
+setInterval(updateClockKL, 1000);
+
+</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+/* MAIL MODULE */
+(function(){
+try{
+
+/*
+  SETUP: Set GOOGLE_CLIENT_ID in the line below to your Google OAuth Web Client ID.
+  Do not place a Google client secret, Brevo API key, or SMTP key in this file.
+*/
+const GOOGLE_CLIENT_ID = "312318558531-8hidqrfs6e22h1rk7ctr1l9pvbresb3e.apps.googleusercontent.com";
+const SEND_ENDPOINT = "/api/send";
+const GMAIL_API = "https://gmail.googleapis.com/gmail/v1/users/me";
+let tokenClient=null, accessToken="", messages=[], currentView="inbox", currentQuery="";
+const $=id=>document.getElementById(id);
+function status(s){$("status").textContent=s}
+function escapeHtml(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function headersOf(m){const h=m.payload?.headers||[];const get=n=>h.find(x=>x.name.toLowerCase()===n.toLowerCase())?.value||"";return {from:get("From"),to:get("To"),subject:get("Subject")||"(Tiada subjek)",date:get("Date"),replyTo:get("Reply-To")}}
+function fmtDate(s){if(!s)return "";let d=new Date(s);return isNaN(d)?s:d.toLocaleString("ms-MY",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}
+function initGoogle(){if(!window.google?.accounts?.oauth2){setTimeout(initGoogle,250);return}
+ if(GOOGLE_CLIENT_ID.includes("PASTE_")){status("Sediakan Google OAuth Client ID dahulu. Ikut README_SETUP_MS.md.");return}
+ tokenClient=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:"https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/userinfo.email",callback:async r=>{if(r.error){status("Login Gmail gagal: "+r.error);return}accessToken=r.access_token; $("signInBtn").textContent="Gmail disambungkan";status("Berjaya disambungkan. Memuatkan peti masuk…");await loadMessages("inbox")}});
+}
+$("signInBtn").addEventListener("click",()=>{if(!tokenClient)initGoogle();if(tokenClient)tokenClient.requestAccessToken({prompt:accessToken?"":"consent"})});
+async function gmailFetch(url){let r=await fetch(url,{headers:{Authorization:"Bearer "+accessToken}});if(!r.ok){let t=await r.text();throw new Error("Gmail API "+r.status+": "+t.slice(0,180))}return r.json()}
+async function loadMessages(view=currentView){if(!accessToken){status("Tekan Sambung Gmail dahulu.");return}
+ currentView=view==="sent"?"sent":"inbox";$("viewTitle").textContent=currentView==="sent"?"Email dihantar":"Peti masuk";$("detail").classList.add("hidden");$("compose").classList.add("hidden");$("list").classList.remove("hidden");status("Memuatkan mesej…");
+ try{const q=currentView==="sent"?"in:sent":"in:anywhere -in:sent";const data=await gmailFetch(`${GMAIL_API}/messages?maxResults=40&q=${encodeURIComponent(q)}`);const ids=data.messages||[];
+ const details=await Promise.all(ids.map(async x=>{try{return await gmailFetch(`${GMAIL_API}/messages/${x.id}?format=full`)}catch(e){return null}}));messages=details.filter(Boolean);renderList();status(`${messages.length} mesej dimuatkan daripada Gmail. Email masuk ke admin@mastaxul.my diteruskan ke akaun Gmail ini oleh Cloudflare.`)
+ }catch(e){status("Tak dapat memuatkan email: "+e.message+" — pastikan Gmail API aktif dan OAuth Client ID betul.")}}
+function renderList(){let filtered=messages.filter(m=>{let h=headersOf(m);let s=[h.from,h.to,h.subject,m.snippet].join(" ").toLowerCase();return s.includes(currentQuery.toLowerCase())});$("list").innerHTML=filtered.length?filtered.map(m=>{let h=headersOf(m);return `<div class="msg" data-id="${escapeHtml(m.id)}"><div class="from">${escapeHtml(h.from)}</div><div><div class="subject">${escapeHtml(h.subject)}</div><div class="snippet">${escapeHtml(m.snippet||"")}</div></div><div class="date">${escapeHtml(fmtDate(h.date))}</div></div>`}).join(""):`<div class="empty">Tiada mesej dipaparkan. Cuba muat semula atau semak sambungan Gmail.</div>`;document.querySelectorAll(".msg").forEach(el=>el.addEventListener("click",()=>openMessage(el.dataset.id)))}
+function decodePart(data){try{let b=data.replace(/-/g,"+").replace(/_/g,"/");return decodeURIComponent(escape(atob(b)))}catch(e){return ""}}
+function extractBody(p){if(p.body?.data)return decodePart(p.body.data);for(const part of (p.parts||[])){let r=extractBody(part);if(r)return r}return ""}
+function openMessage(id){let m=messages.find(x=>x.id===id);if(!m)return;let h=headersOf(m),body=extractBody(m.payload)||m.snippet||"(Kandungan tidak tersedia dalam paparan ringkas.)";$("list").classList.add("hidden");$("detail").classList.remove("hidden");$("detail").innerHTML=`<button class="secondary" id="backList">← Kembali</button><h2>${escapeHtml(h.subject)}</h2><p><b>Daripada:</b> ${escapeHtml(h.from)}</p><p><b>Kepada:</b> ${escapeHtml(h.to)}</p><p><b>Tarikh:</b> ${escapeHtml(h.date)}</p><hr><pre>${escapeHtml(body)}</pre><div class="actions"><button id="replyBtn">Balas</button></div>`;$("backList").onclick=()=>{$("detail").classList.add("hidden");$("list").classList.remove("hidden")};$("replyBtn").onclick=()=>{showCompose();$("to").value=(h.replyTo||h.from).match(/<([^>]+)>/)?.[1]||(h.replyTo||h.from);$("subject").value=h.subject.startsWith("Re:")?h.subject:"Re: "+h.subject;$("body").value="\n\n--- Mesej asal ---\n"+body}}
+function showCompose(){$("list").classList.add("hidden");$("detail").classList.add("hidden");$("compose").classList.remove("hidden");$("viewTitle").textContent="Tulis email";currentView="compose"}
+async function sendEmail(){const to=$("to").value.trim(),subject=$("subject").value.trim(),textContent=$("body").value.trim();if(!to||!subject||!textContent){status("Lengkapkan penerima, subjek dan mesej.");return}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)){status("Alamat penerima tidak sah.");return}
+ $("sendBtn").disabled=true;status("Menghantar melalui Brevo…");try{const r=await fetch(SEND_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({to,subject,textContent})});const data=await r.json();if(!r.ok)throw new Error(data.error||"Penghantaran gagal");status("Permintaan diterima Brevo. ID mesej: "+(data.messageId||"berjaya dihantar")+". Semak folder Inbox/Spam penerima.");$("to").value="";$("subject").value="";$("body").value="";}catch(e){status("Gagal hantar: "+e.message+". Pastikan Cloudflare Worker dan BREVO_API_KEY telah disediakan.")}finally{$("sendBtn").disabled=false}}
+$("sendBtn").addEventListener("click",sendEmail);$("cancelCompose").addEventListener("click",()=>loadMessages(currentView==="sent"?"sent":"inbox"));$("refreshBtn").addEventListener("click",()=>loadMessages(currentView));$("search").addEventListener("input",e=>{currentQuery=e.target.value;renderList()});
+document.querySelectorAll("nav button[data-view]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");let v=b.dataset.view;if(v==="compose")showCompose();else if(v==="refresh")loadMessages(currentView);else loadMessages(v)}));
+window.addEventListener("load",initGoogle);
+
+}catch(e){console.warn('mail module',e)}
+})();
+</script><script>
+/* WEBMASTER MODULE */
+try{
+
+/* =========================================================
+   MastaXul Webmaster Manager V4.4.0
+   Frontend (Fixed)
+   ========================================================= */
+
+const DEFAULT_API =
+  "https://mastaxul-webmaster-api.2ulfpv.workers.dev";
+
+const STORAGE_KEY = "mastaxul_webmaster_v44";
+
+const state = {
+  apiBase: localStorage.getItem("mastaxul_api_base") || DEFAULT_API,
+  history: [],
+  audit: null,
+  bulk: [],
+  sitemapUrls: [],
+  google: {
+    connected:false,
+    sites:[],
+    selectedSite:"",
+    permission:"",
+    sitemaps:[]
+  },
+  bing: {
+    connected:false,
+    sites:[],
+    selectedSite:"",
+    quota:null
+  }
+};
+
+/* =========================================================
+   INIT
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", init);
+
+async function init(){
+
+  loadLocalState();
+  setupNavigation();
+  setupGoogleTabs();
+  setupDefaults();
+
+  document.getElementById("apiBaseInput").value = state.apiBase;
+
+  renderHistory();
+  updateDashboardHistory();
+
+  await checkApi();
+
+  /*
+   * IMPORTANT:
+   * Status endpoints are local token checks.
+   * They should not unnecessarily call provider APIs.
+   */
+  await Promise.allSettled([
+    checkGoogleStatus(),
+    checkBingStatus()
+  ]);
+}
+
+/* =========================================================
+   LOCAL STATE
+   ========================================================= */
+
+function loadLocalState(){
+
+  try{
+    const saved = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "{}"
+    );
+
+    if(Array.isArray(saved.history)){
+      state.history = saved.history;
+    }
+
+    if(saved.sitemapUrls){
+      state.sitemapUrls = saved.sitemapUrls;
+    }
+
+  }catch(e){
+    console.warn("State load error",e);
+  }
+}
+
+function saveLocalState(){
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      history:state.history,
+      sitemapUrls:state.sitemapUrls
+    })
+  );
+}
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+function setupNavigation(){
+
+  document.querySelectorAll(".nav button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      showPage(btn.dataset.page);
+    });
+  });
+
+  document.getElementById("mobileMenu").onclick=()=>{
+    document.getElementById("sidebar").classList.toggle("open");
+  };
+}
+
+function showPage(name){
+
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  const page=document.getElementById("page-"+name);
+
+  if(page){
+    page.classList.add("active");
+  }
+
+  document.querySelectorAll(".nav button").forEach(btn=>{
+    btn.classList.toggle(
+      "active",
+      btn.dataset.page===name
+    );
+  });
+
+  const titles={
+    dashboard:"Dashboard",
+    audit:"SEO Audit",
+    sitemap:"Sitemap Crawler",
+    bulk:"Bulk Audit",
+    google:"Google Search Console",
+    bing:"Bing Webmaster",
+    history:"History",
+    settings:"Settings",
+    help:"Help"
+  };
+
+  document.getElementById("topTitle").textContent =
+    titles[name] || "Dashboard";
+
+  document.getElementById("sidebar").classList.remove("open");
+
+  if(name==="history"){
+    renderHistory();
+  }
+}
+
+/* =========================================================
+   GOOGLE TABS
+   ========================================================= */
+
+function setupGoogleTabs(){
+
+  document.querySelectorAll("[data-google-tab]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const name=btn.dataset.googleTab;
+
+      document.querySelectorAll("[data-google-tab]")
+        .forEach(x=>x.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      ["overview","inspect","sitemaps","analytics"]
+        .forEach(tab=>{
+          const el=document.getElementById("googleTab-"+tab);
+
+          if(el){
+            el.classList.toggle(
+              "hidden",
+              tab!==name
+            );
+          }
+        });
+
+      if(name==="sitemaps"){
+        if(state.google.selectedSite){
+          loadGoogleSitemaps();
+        }
+      }
+    });
+  });
+}
+
+/* =========================================================
+   DEFAULTS
+   ========================================================= */
+
+function setupDefaults(){
+
+  const today=new Date();
+
+  const end=today.toISOString().slice(0,10);
+
+  const startDate=new Date(today);
+  startDate.setDate(startDate.getDate()-28);
+
+  const start=startDate.toISOString().slice(0,10);
+
+  document.getElementById("gaStart").value=start;
+  document.getElementById("gaEnd").value=end;
+}
+
+/* =========================================================
+   API
+   ========================================================= */
+
+function apiUrl(path){
+
+  return state.apiBase.replace(/\/+$/,"")+path;
+}
+
+async function api(path,options={}){
+
+  const url=apiUrl(path);
+
+  const response=await fetch(url,{
+    ...options,
+    headers:{
+      "Content-Type":"application/json",
+      ...(options.headers||{})
+    }
+  });
+
+  let data=null;
+
+  try{
+    data=await response.json();
+  }catch{
+    data={
+      ok:false,
+      error:await response.text()
+    };
+  }
+
+  if(!response.ok || data?.ok===false){
+
+    const err=new Error(
+      data?.error ||
+      data?.message ||
+      `HTTP ${response.status}`
+    );
+
+    err.status=response.status;
+    err.data=data;
+
+    throw err;
+  }
+
+  return data;
+}
+
+function post(path,body){
+
+  return api(path,{
+    method:"POST",
+    body:JSON.stringify(body)
+  });
+}
+
+/* =========================================================
+   API HEALTH
+   ========================================================= */
+
+async function checkApi(){
+
+  try{
+
+    const data=await api("/");
+
+    const version=data.version || "unknown";
+
+    document.getElementById("apiDot")
+      .className="dot green";
+
+    document.getElementById("apiStatusText")
+      .textContent="API "+version;
+
+    document.getElementById("dashApi")
+      .textContent=version;
+
+  }catch(error){
+
+    document.getElementById("apiDot")
+      .className="dot red";
+
+    document.getElementById("apiStatusText")
+      .textContent="API Offline";
+
+    document.getElementById("dashApi")
+      .textContent="OFF";
+  }
+}
+
+/* =========================================================
+   TOAST / ALERT
+   ========================================================= */
+
+function toast(message,type="info"){
+
+  const wrap=document.getElementById("toastWrap");
+
+  const el=document.createElement("div");
+
+  el.className="toast "+(
+    type==="success" ? "success" :
+    type==="error" ? "error" :
+    type==="warning" ? "warning" : ""
+  );
+
+  el.textContent=message;
+
+  wrap.appendChild(el);
+
+  setTimeout(()=>{
+    el.remove();
+  },4500);
+}
+
+function alertBox(target,message,type="info"){
+
+  const el=document.getElementById(target);
+
+  if(!el) return;
+
+  el.innerHTML=
+    `<div class="alert ${type}">${escapeHtml(message)}</div>`;
+}
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function formatDate(value){
+
+  if(!value) return "—";
+
+  try{
+    return new Date(value).toLocaleString("ms-MY");
+  }catch{
+    return String(value);
+  }
+}
+
+function formatNumber(value){
+
+  const n=Number(value);
+
+  if(!Number.isFinite(n)) return "0";
+
+  return n.toLocaleString("en-US",{
+    maximumFractionDigits:2
+  });
+}
+
+function csvEscape(value){
+
+  const s=String(value ?? "");
+
+  return `"${s.replace(/"/g,'""')}"`;
+}
+
+function downloadText(filename,text,type="text/plain"){
+
+  const blob=new Blob([text],{type});
+
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+
+  a.href=url;
+  a.download=filename;
+
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+}
+
+/* =========================================================
+   AUDIT
+   ========================================================= */
+
+async function runAuditFrom(inputId){
+
+  const input=document.getElementById(inputId);
+
+  document.getElementById("auditUrl").value=input.value;
+
+  showPage("audit");
+
+  await runAudit();
+}
+
+async function runAudit(){
+
+  const url=document.getElementById("auditUrl").value.trim();
+
+  if(!url){
+    alertBox("auditAlert","Masukkan URL terlebih dahulu.","warning");
+    return;
+  }
+
+  const btn=document.getElementById("auditBtn");
+
+  btn.disabled=true;
+  btn.innerHTML=
+    `<span class="loading"><span class="spinner"></span> Auditing...</span>`;
+
+  document.getElementById("auditAlert").innerHTML="";
+  document.getElementById("auditResult").classList.add("hidden");
+
+  try{
+
+    const data=await post("/audit",{url});
+
+    state.audit=data;
+
+    renderAudit(data);
+
+    saveHistory(data);
+
+    document.getElementById("auditResult")
+      .classList.remove("hidden");
+
+    toast("SEO audit selesai.","success");
+
+  }catch(error){
+
+    alertBox(
+      "auditAlert",
+      error.message,
+      "error"
+    );
+
+    toast("SEO audit gagal.","error");
+
+  }finally{
+
+    btn.disabled=false;
+    btn.textContent="🔍 Audit";
+  }
+}
+
+function renderAudit(data){
+
+  const score=Number(
+    data.score ??
+    data.seoScore ??
+    0
+  );
+
+  document.getElementById("auditScore")
+    .textContent=score;
+
+  document.getElementById("auditScoreStat")
+    .textContent=score;
+
+  document.getElementById("auditPass")
+    .textContent=data.pass ?? data.passed ?? data.counters?.pass ?? 0;
+
+  document.getElementById("auditWarn")
+    .textContent=data.warn ?? data.warnings ?? data.counters?.warn ?? 0;
+
+  document.getElementById("auditFail")
+    .textContent=data.fail ?? data.failed ?? data.counters?.fail ?? 0;
+
+  updateScoreRing(score);
+
+  const info=data.info || {};
+
+  const title=
+    data.title ??
+    info.title ??
+    "—";
+
+  const description=
+    data.description ??
+    info.description ??
+    "—";
+
+  const canonical=
+    data.canonical ??
+    info.canonical ??
+    "—";
+
+  const status=
+    data.status ??
+    data.httpStatus ??
+    data.http?.status ??
+    "—";
+
+  const responseTime=
+    data.responseTime ??
+    data.responseMs ??
+    "—";
+
+  document.getElementById("auditMeta").innerHTML=`
+    <div class="check-list">
+      ${miniInfo("URL",data.url || "—")}
+      ${miniInfo("Final URL",data.finalUrl || data.url || "—")}
+      ${miniInfo("HTTP",status)}
+      ${miniInfo("Response",responseTime==="—" ? "—" : responseTime+" ms")}
+      ${miniInfo("Title",title)}
+      ${miniInfo("Description",description)}
+      ${miniInfo("Canonical",canonical)}
+    </div>
+  `;
+
+  const og=data.og || data.openGraph || {};
+
+  document.getElementById("auditOg").innerHTML=`
+    <div class="check-list">
+      ${miniInfo("og:title",og.title || data.ogTitle || "—")}
+      ${miniInfo("og:description",og.description || data.ogDescription || "—")}
+      ${miniInfo("og:image",og.image || data.ogImage || "—")}
+      ${miniInfo("og:url",og.url || data.ogUrl || "—")}
+    </div>
+  `;
+
+  const checks=
+    data.checks ||
+    data.results ||
+    data.audit ||
+    [];
+
+  document.getElementById("auditChecks").innerHTML=
+    renderChecks(checks);
+
+  document.getElementById("auditRaw").textContent=
+    JSON.stringify(data,null,2);
+}
+
+function miniInfo(label,value){
+
+  return `
+    <div class="check-item">
+      <div style="flex:1">
+        <div class="check-title">${escapeHtml(label)}</div>
+        <div class="check-detail">${escapeHtml(value)}</div>
+      </div>
+    </div>
+  `;
+}
+
+function updateScoreRing(score){
+
+  const ring=document.getElementById("scoreRing");
+
+  const degrees=Math.max(0,Math.min(100,score))*3.6;
+
+  ring.style.background=
+    `radial-gradient(circle at center,var(--panel) 58%,transparent 59%),
+     conic-gradient(var(--primary) 0deg,var(--primary) ${degrees}deg,#273142 ${degrees}deg)`;
+}
+
+function renderChecks(checks){
+
+  if(!Array.isArray(checks)){
+
+    if(checks && typeof checks==="object"){
+
+      return Object.entries(checks)
+        .map(([key,value])=>{
+
+          const ok=Boolean(value);
+
+          return checkHtml(
+            ok ? "pass" : "fail",
+            key,
+            String(value)
+          );
+        })
+        .join("");
+    }
+
+    return `<div class="muted small-text">Tiada data checks.</div>`;
+  }
+
+  return checks.map(item=>{
+
+    const status=
+      item.status ||
+      item.result ||
+      (
+        item.pass ? "pass" :
+        item.warn ? "warn" :
+        item.fail ? "fail" : "info"
+      );
+
+    return checkHtml(
+      normalizeCheckStatus(status),
+      item.name || item.title || item.key || "Check",
+      item.message || item.detail || item.value || ""
+    );
+
+  }).join("");
+}
+
+function normalizeCheckStatus(status){
+
+  const s=String(status).toLowerCase();
+
+  if(
+    s.includes("pass") ||
+    s.includes("ok") ||
+    s.includes("success")
+  ) return "pass";
+
+  if(
+    s.includes("warn")
+  ) return "warn";
+
+  if(
+    s.includes("fail") ||
+    s.includes("error")
+  ) return "fail";
+
+  return "info";
+}
+
+function checkHtml(status,title,detail){
+
+  const icons={
+    pass:"✓",
+    warn:"!",
+    fail:"×",
+    info:"i"
+  };
+
+  return `
+    <div class="check-item check-${status}">
+      <div class="check-icon">${icons[status]}</div>
+      <div>
+        <div class="check-title">${escapeHtml(title)}</div>
+        <div class="check-detail">${escapeHtml(detail)}</div>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
+
+function saveHistory(data){
+
+  const item={
+    id:Date.now(),
+    date:new Date().toISOString(),
+    url:data.url || data.finalUrl || "",
+    score:Number(data.score ?? data.seoScore ?? 0),
+    status:data.status ?? data.httpStatus ?? "",
+    data
+  };
+
+  state.history.unshift(item);
+
+  state.history=state.history.slice(0,200);
+
+  saveLocalState();
+
+  renderHistory();
+  updateDashboardHistory();
+}
+
+function renderHistory(){
+
+  const tbody=document.getElementById("historyTable");
+
+  if(!tbody) return;
+
+  if(!state.history.length){
+
+    tbody.innerHTML=`
+      <tr>
+        <td colspan="5" class="muted">
+          Belum ada audit.
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  tbody.innerHTML=state.history.map(item=>`
+
+    <tr>
+      <td>${escapeHtml(formatDate(item.date))}</td>
+      <td class="url-cell">${escapeHtml(item.url)}</td>
+      <td><strong>${escapeHtml(item.score)}</strong></td>
+      <td>${escapeHtml(item.status)}</td>
+      <td>
+        <button class="btn small" onclick="openHistory(${item.id})">
+          Buka
+        </button>
+      </td>
+    </tr>
+
+  `).join("");
+}
+
+function openHistory(id){
+
+  const item=state.history.find(x=>x.id===id);
+
+  if(!item) return;
+
+  state.audit=item.data;
+
+  document.getElementById("auditUrl").value=item.url;
+
+  showPage("audit");
+
+  renderAudit(item.data);
+
+  document.getElementById("auditResult")
+    .classList.remove("hidden");
+}
+
+function clearHistory(){
+
+  if(!confirm("Padam semua history audit?")) return;
+
+  state.history=[];
+
+  saveLocalState();
+
+  renderHistory();
+  updateDashboardHistory();
+
+  toast("History telah dipadam.","success");
+}
+
+function updateDashboardHistory(){
+
+  document.getElementById("dashHistory").textContent=
+    state.history.length;
+}
+
+function exportHistoryCsv(){
+
+  const rows=[
+    ["Date","URL","Score","Status"]
+  ];
+
+  state.history.forEach(item=>{
+    rows.push([
+      formatDate(item.date),
+      item.url,
+      item.score,
+      item.status
+    ]);
+  });
+
+  const csv=rows.map(row=>row.map(csvEscape).join(",")).join("\n");
+
+  downloadText(
+    "mastaxul-audit-history.csv",
+    csv,
+    "text/csv;charset=utf-8"
+  );
+}
+
+/* =========================================================
+   SITEMAP
+   ========================================================= */
+
+async function crawlSitemap(){
+
+  const url=document.getElementById("sitemapUrl")
+    .value.trim();
+
+  if(!url){
+    alertBox("sitemapAlert","Masukkan sitemap URL.","warning");
+    return;
+  }
+
+  document.getElementById("sitemapAlert").innerHTML="";
+
+  const box=document.getElementById("sitemapProgressBox");
+
+  box.classList.remove("hidden");
+
+  document.getElementById("sitemapProgress").style.width="35%";
+
+  try{
+
+    // FIXED: send sitemapUrl (worker now also accepts "url")
+    const data=await post("/sitemap",{sitemapUrl: url});
+
+    document.getElementById("sitemapProgress").style.width="100%";
+
+    const urls=
+      data.urls ||
+      data.results ||
+      data.items ||
+      [];
+
+    state.sitemapUrls=Array.isArray(urls)
+      ? urls
+      : [];
+
+    saveLocalState();
+
+    renderSitemap(data);
+
+    toast(
+      `${state.sitemapUrls.length} URL ditemui.`,
+      "success"
+    );
+
+  }catch(error){
+
+    alertBox(
+      "sitemapAlert",
+      error.message,
+      "error"
+    );
+
+    toast("Sitemap crawl gagal.","error");
+
+  }finally{
+
+    setTimeout(()=>{
+      box.classList.add("hidden");
+      document.getElementById("sitemapProgress").style.width="0";
+    },500);
+  }
+}
+
+function renderSitemap(data){
+
+  document.getElementById("sitemapResult")
+    .classList.remove("hidden");
+
+  document.getElementById("sitemapCount")
+    .textContent=state.sitemapUrls.length;
+
+  document.getElementById("sitemapType")
+    .textContent=
+      data.type ||
+      data.kind ||
+      "XML";
+
+  document.getElementById("sitemapUrlsText")
+    .value=state.sitemapUrls.join("\n");
+}
+
+function exportSitemapUrls(){
+
+  if(!state.sitemapUrls.length){
+    toast("Tiada URL sitemap.","warning");
+    return;
+  }
+
+  downloadText(
+    "mastaxul-sitemap-urls.txt",
+    state.sitemapUrls.join("\n"),
+    "text/plain;charset=utf-8"
+  );
+}
+
+function sendSitemapToBulk(){
+
+  if(!state.sitemapUrls.length){
+    toast("Tiada URL sitemap.","warning");
+    return;
+  }
+
+  document.getElementById("bulkUrls").value=
+    state.sitemapUrls.slice(0,50).join("\n");
+
+  showPage("bulk");
+
+  toast(
+    "Sehingga 50 URL telah dihantar ke Bulk Audit.",
+    "success"
+  );
+}
+
+/* =========================================================
+   BULK AUDIT
+   ========================================================= */
+
+function clearBulk(){
+
+  document.getElementById("bulkUrls").value="";
+  document.getElementById("bulkResult").classList.add("hidden");
+  document.getElementById("bulkAlert").innerHTML="";
+}
+
+async function runBulkAudit(){
+
+  const raw=document.getElementById("bulkUrls").value;
+
+  const urls=[
+    ...new Set(
+      raw.split(/\r?\n/)
+        .map(x=>x.trim())
+        .filter(Boolean)
+    )
+  ];
+
+  if(!urls.length){
+    alertBox("bulkAlert","Masukkan sekurang-kurangnya satu URL.","warning");
+    return;
+  }
+
+  if(urls.length>50){
+    alertBox(
+      "bulkAlert",
+      `Bulk Audit maksimum 50 URL. Sekarang: ${urls.length}.`,
+      "warning"
+    );
+    return;
+  }
+
+  const btn=document.getElementById("bulkBtn");
+
+  btn.disabled=true;
+
+  btn.innerHTML=
+    `<span class="loading"><span class="spinner"></span> Processing...</span>`;
+
+  try{
+
+    const data=await post("/bulk-audit",{urls});
+
+    const results=
+      data.results ||
+      data.audits ||
+      data.items ||
+      [];
+
+    state.bulk=Array.isArray(results)
+      ? results
+      : [];
+
+    renderBulk(data);
+
+    toast(
+      `${state.bulk.length} URL selesai diaudit.`,
+      "success"
+    );
+
+  }catch(error){
+
+    alertBox(
+      "bulkAlert",
+      error.message,
+      "error"
+    );
+
+    toast("Bulk Audit gagal.","error");
+
+  }finally{
+
+    btn.disabled=false;
+    btn.textContent="📦 Audit Semua";
+  }
+}
+
+function renderBulk(data){
+
+  document.getElementById("bulkResult")
+    .classList.remove("hidden");
+
+  const results=state.bulk;
+
+  document.getElementById("bulkProcessed")
+    .textContent=results.length;
+
+  const scores=results
+    .map(x=>Number(x.score ?? x.seoScore))
+    .filter(Number.isFinite);
+
+  const average=scores.length
+    ? Math.round(
+        scores.reduce((a,b)=>a+b,0)/scores.length
+      )
+    : 0;
+
+  document.getElementById("bulkAverage")
+    .textContent=average;
+
+  const passed=results.filter(x=>{
+    const score=Number(x.score ?? x.seoScore ?? 0);
+    return score>=80;
+  }).length;
+
+  document.getElementById("bulkPassed")
+    .textContent=passed;
+
+  document.getElementById("bulkFailed")
+    .textContent=
+      Math.max(0,results.length-passed);
+
+  const tbody=document.getElementById("bulkTable");
+
+  tbody.innerHTML=results.map(item=>{
+
+    const score=Number(
+      item.score ??
+      item.seoScore ??
+      0
+    );
+
+    const title=
+      item.title ??
+      item.info?.title ??
+      "—";
+
+    const description=
+      item.description ??
+      item.info?.description ??
+      "—";
+
+    const status=
+      item.status ??
+      item.httpStatus ??
+      "—";
+
+    const https=
+      item.https ??
+      item.isHttps ??
+      (
+        String(item.url||"")
+          .startsWith("https://")
+      );
+
+    return `
+      <tr>
+        <td class="url-cell">${escapeHtml(item.url || "")}</td>
+        <td>${escapeHtml(status)}</td>
+        <td><strong>${score}</strong></td>
+        <td>${escapeHtml(title)}</td>
+        <td>${escapeHtml(description)}</td>
+        <td>${https ? "✅" : "❌"}</td>
+      </tr>
+    `;
+
+  }).join("");
+}
+
+function exportBulkCsv(){
+
+  const results=state.bulk;
+
+  if(!results.length){
+    toast("Tiada keputusan bulk audit.","warning");
+    return;
+  }
+
+  const rows=[
+    [
+      "URL",
+      "Status",
+      "Score",
+      "Title",
+      "Description",
+      "HTTPS"
+    ]
+  ];
+
+  results.forEach(item=>{
+
+    rows.push([
+      item.url || "",
+      item.status ?? item.httpStatus ?? "",
+      item.score ?? item.seoScore ?? "",
+      item.title ?? item.info?.title ?? "",
+      item.description ?? item.info?.description ?? "",
+      item.https ?? item.isHttps ?? ""
+    ]);
+
+  });
+
+  const csv=rows
+    .map(row=>row.map(csvEscape).join(","))
+    .join("\n");
+
+  downloadText(
+    "mastaxul-bulk-audit.csv",
+    csv,
+    "text/csv;charset=utf-8"
+  );
+}
+
+/* =========================================================
+   GOOGLE STATUS
+   ========================================================= */
+
+async function checkGoogleStatus(){
+
+  try{
+
+    const data=await api("/google/status");
+
+    state.google.connected=Boolean(
+      data.connected
+    );
+
+    updateGoogleStatusUI();
+
+    document.getElementById("dashGoogleDetail")
+      .textContent=
+        state.google.connected
+          ? "Connected"
+          : "Not connected";
+
+    document.getElementById("dashGoogleBadge")
+      .className=
+        "status-badge "+
+        (state.google.connected ? "ok" : "warn");
+
+    document.getElementById("dashGoogleBadge")
+      .textContent=
+        state.google.connected
+          ? "Connected"
+          : "Not connected";
+
+    document.getElementById("dashGoogle")
+      .textContent=
+        state.google.connected ? "ON" : "OFF";
+
+  }catch(error){
+
+    state.google.connected=false;
+
+    updateGoogleStatusUI();
+
+    document.getElementById("dashGoogle")
+      .textContent="OFF";
+  }
+}
+
+function updateGoogleStatusUI(){
+
+  const connected=state.google.connected;
+
+  document.getElementById("googleStatusBadge")
+    .className=
+      "status-badge "+
+      (connected ? "ok" : "warn");
+
+  document.getElementById("googleStatusBadge")
+    .textContent=
+      connected ? "Connected" : "Not connected";
+
+  document.getElementById("googleStatusText")
+    .textContent=
+      connected
+        ? "Google OAuth connected"
+        : "Google belum connected";
+
+  document.getElementById("googleConnectBtn")
+    .textContent=
+      connected
+        ? "🔐 Connected"
+        : "🔐 Connect Google";
+}
+
+function connectGoogle(){
+
+  window.location.href=apiUrl("/google/login");
+}
+
+/* =========================================================
+   GOOGLE SITES
+   ========================================================= */
+
+async function loadGoogleSites(){
+
+  if(!state.google.connected){
+    alertBox(
+      "googleAlert",
+      "Connect Google terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await api("/google/sites");
+
+    state.google.sites=
+      data.sites ||
+      data.data ||
+      [];
+
+    renderGoogleSites();
+
+    toast(
+      `${state.google.sites.length} Google properties ditemui.`,
+      "success"
+    );
+
+  }catch(error){
+
+    alertBox(
+      "googleAlert",
+      error.message,
+      "error"
+    );
+
+    toast("Gagal mendapatkan Google properties.","error");
+  }
+}
+
+function renderGoogleSites(){
+
+  const select=document.getElementById("googleSiteSelect");
+
+  const current=state.google.selectedSite;
+
+  select.innerHTML=
+    `<option value="">— Pilih property —</option>`;
+
+  state.google.sites.forEach(site=>{
+
+    const siteUrl=
+      site.siteUrl ||
+      site.url ||
+      site;
+
+    const permission=
+      site.permissionLevel ||
+      site.permission ||
+      "";
+
+    const option=document.createElement("option");
+
+    option.value=siteUrl;
+
+    option.textContent=
+      siteUrl+
+      (
+        permission
+          ? ` — ${permission}`
+          : ""
+      );
+
+    select.appendChild(option);
+  });
+
+  if(
+    current &&
+    state.google.sites.some(
+      x=>
+        (x.siteUrl || x.url || x)===current
+    )
+  ){
+    select.value=current;
+  }
+
+  select.onchange=()=>{
+    state.google.selectedSite=select.value;
+
+    const item=state.google.sites.find(
+      x=>
+        (x.siteUrl || x.url || x)===select.value
+    );
+
+    state.google.permission=
+      item?.permissionLevel ||
+      item?.permission ||
+      "";
+
+    document.getElementById("googleSelectedSite")
+      .textContent=
+        select.value || "Belum dipilih";
+
+    document.getElementById("googlePermission")
+      .textContent=
+        state.google.permission || "—";
+  };
+}
+
+/* =========================================================
+   GOOGLE DISCONNECT
+   ========================================================= */
+
+async function disconnectGoogle(){
+
+  if(!confirm("Disconnect Google OAuth?")) return;
+
+  try{
+
+    await post("/google/disconnect",{});
+
+    state.google.connected=false;
+    state.google.sites=[];
+    state.google.selectedSite="";
+
+    updateGoogleStatusUI();
+    renderGoogleSites();
+
+    document.getElementById("googleSelectedSite")
+      .textContent="Belum dipilih";
+
+    document.getElementById("googlePermission")
+      .textContent="—";
+
+    document.getElementById("dashGoogle")
+      .textContent="OFF";
+
+    toast("Google telah disconnected.","success");
+
+  }catch(error){
+
+    alertBox(
+      "googleAlert",
+      error.message,
+      "error"
+    );
+  }
+}
+
+/* =========================================================
+   GOOGLE URL INSPECTION
+   ========================================================= */
+
+async function googleInspect(){
+
+  const siteUrl=
+    state.google.selectedSite;
+
+  const inspectionUrl=
+    document.getElementById("googleInspectUrl")
+      .value.trim();
+
+  const languageCode=
+    document.getElementById("googleInspectLanguage")
+      .value.trim() || "en-US";
+
+  if(!siteUrl){
+    alertBox(
+      "googleInspectAlert",
+      "Pilih Google Search Console property terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  if(!inspectionUrl){
+    alertBox(
+      "googleInspectAlert",
+      "Masukkan URL untuk diperiksa.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await post(
+      "/google/inspect",
+      {
+        siteUrl,
+        inspectionUrl,
+        languageCode
+      }
+    );
+
+    document.getElementById("googleInspectResult")
+      .classList.remove("hidden");
+
+    document.getElementById("googleInspectRaw")
+      .textContent=
+        JSON.stringify(data,null,2);
+
+    alertBox(
+      "googleInspectAlert",
+      "URL Inspection berjaya.",
+      "success"
+    );
+
+    toast(
+      "Google URL Inspection selesai.",
+      "success"
+    );
+
+  }catch(error){
+
+    alertBox(
+      "googleInspectAlert",
+      error.message,
+      "error"
+    );
+  }
+}
+
+/* =========================================================
+   GOOGLE SITEMAPS
+   ========================================================= */
+
+async function loadGoogleSitemaps(){
+
+  const siteUrl=state.google.selectedSite;
+
+  if(!siteUrl){
+    alertBox(
+      "googleSitemapAlert",
+      "Pilih property terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await post(
+      "/google/sitemaps",
+      {siteUrl}
+    );
+
+    state.google.sitemaps=
+      data.sitemaps ||
+      data.data ||
+      [];
+
+    renderGoogleSitemaps();
+
+    toast("Google Sitemaps dimuatkan.","success");
+
+  }catch(error){
+
+    alertBox(
+      "googleSitemapAlert",
+      error.message,
+      "error"
+    );
+  }
+}
+
+function renderGoogleSitemaps(){
+
+  const tbody=document.getElementById(
+    "googleSitemapTable"
+  );
+
+  if(!state.google.sitemaps.length){
+
+    tbody.innerHTML=`
+      <tr>
+        <td colspan="6" class="muted">
+          Tiada sitemap dijumpai.
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  tbody.innerHTML=
+    state.google.sitemaps.map(item=>`
+
+      <tr>
+        <td class="url-cell">
+          ${escapeHtml(
+            item.path ||
+            item.sitemap ||
+            item.url ||
+            "—"
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            formatDate(
+              item.lastSubmitted ||
+              item.lastSubmittedTime
+            )
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            formatDate(
+              item.lastDownloaded ||
+              item.lastDownloadedTime
+            )
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            item.isPending
+              ? "Pending"
+              : (
+                  item.errors
+                    ? "Errors"
+                    : "OK"
+                )
+          )}
+        </td>
+
+        <td>${escapeHtml(item.errors ?? 0)}</td>
+
+        <td>${escapeHtml(item.warnings ?? 0)}</td>
+      </tr>
+
+    `).join("");
+}
+
+async function submitGoogleSitemap(){
+
+  const siteUrl=state.google.selectedSite;
+
+  const sitemapUrl=
+    document.getElementById("googleSitemapUrl")
+      .value.trim();
+
+  if(!siteUrl){
+    alertBox(
+      "googleSitemapAlert",
+      "Pilih property terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  if(!sitemapUrl){
+    alertBox(
+      "googleSitemapAlert",
+      "Masukkan sitemap URL.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await post(
+      "/google/sitemap",
+      {
+        siteUrl,
+        sitemapUrl
+      }
+    );
+
+    alertBox(
+      "googleSitemapAlert",
+      "Sitemap berjaya dihantar kepada Google.",
+      "success"
+    );
+
+    toast(
+      "Google Sitemap submitted.",
+      "success"
+    );
+
+    await loadGoogleSitemaps();
+
+  }catch(error){
+
+    alertBox(
+      "googleSitemapAlert",
+      error.message,
+      "error"
+    );
+  }
+}
+
+/* =========================================================
+   GOOGLE SEARCH ANALYTICS
+   ========================================================= */
+
+async function runGoogleAnalytics(){
+
+  const siteUrl=state.google.selectedSite;
+
+  if(!siteUrl){
+    alertBox(
+      "gaAlert",
+      "Pilih property terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  const startDate=
+    document.getElementById("gaStart").value;
+
+  const endDate=
+    document.getElementById("gaEnd").value;
+
+  const rowLimit=
+    Number(
+      document.getElementById("gaLimit").value
+    ) || 25;
+
+  const dimensions=[
+    ...document.querySelectorAll(".gaDimension:checked")
+  ].map(x=>x.value);
+
+  if(!startDate || !endDate){
+    alertBox(
+      "gaAlert",
+      "Pilih tarikh mula dan tarikh akhir.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const body={
+      siteUrl,
+      startDate,
+      endDate,
+      dimensions,
+      rowLimit
+    };
+
+    const data=await post(
+      "/google/analytics",
+      body
+    );
+
+    renderGoogleAnalytics(data);
+
+    alertBox(
+      "gaAlert",
+      "Search Analytics berjaya diambil.",
+      "success"
+    );
+
+    toast(
+      "Google Search Analytics selesai.",
+      "success"
+    );
+
+  }catch(error){
+
+    alertBox(
+      "gaAlert",
+      error.message,
+      "error"
+    );
+  }
+}
+
+function renderGoogleAnalytics(data){
+
+  const rows=
+    data.rows ||
+    data.data?.rows ||
+    [];
+
+  let clicks=0;
+  let impressions=0;
+  let ctrWeighted=0;
+  let positionWeighted=0;
+
+  rows.forEach(row=>{
+
+    const c=Number(row.clicks || 0);
+    const i=Number(row.impressions || 0);
+    const ctr=Number(row.ctr || 0);
+    const pos=Number(row.position || 0);
+
+    clicks+=c;
+    impressions+=i;
+
+    ctrWeighted+=ctr*i;
+    positionWeighted+=pos*i;
+  });
+
+  const ctr=
+    impressions
+      ? ctrWeighted/impressions
+      : 0;
+
+  const position=
+    impressions
+      ? positionWeighted/impressions
+      : 0;
+
+  document.getElementById("gaSummary")
+    .classList.remove("hidden");
+
+  document.getElementById("gaClicks")
+    .textContent=formatNumber(clicks);
+
+  document.getElementById("gaImpressions")
+    .textContent=formatNumber(impressions);
+
+  document.getElementById("gaCtr")
+    .textContent=(ctr*100).toFixed(2)+"%";
+
+  document.getElementById("gaPosition")
+    .textContent=position.toFixed(2);
+
+  const dimensions=
+    document.querySelectorAll(".gaDimension:checked");
+
+  const dimensionNames=[
+    ...dimensions
+  ].map(x=>x.value);
+
+  const head=document.getElementById("gaHead");
+  const body=document.getElementById("gaBody");
+
+  head.innerHTML=`
+    <tr>
+      ${dimensionNames.map(d=>`<th>${escapeHtml(d)}</th>`).join("")}
+      <th>Clicks</th>
+      <th>Impressions</th>
+      <th>CTR</th>
+      <th>Position</th>
+    </tr>
+  `;
+
+  body.innerHTML=rows.map(row=>{
+
+    const keys=row.keys || [];
+
+    return `
+      <tr>
+        ${dimensionNames.map((d,i)=>`
+          <td>${escapeHtml(keys[i] ?? "")}</td>
+        `).join("")}
+
+        <td>${formatNumber(row.clicks)}</td>
+
+        <td>${formatNumber(row.impressions)}</td>
+
+        <td>
+          ${(Number(row.ctr || 0)*100).toFixed(2)}%
+        </td>
+
+        <td>
+          ${Number(row.position || 0).toFixed(2)}
+        </td>
+      </tr>
+    `;
+
+  }).join("");
+
+  if(!rows.length){
+
+    body.innerHTML=`
+      <tr>
+        <td colspan="${dimensionNames.length+4}"
+            class="muted">
+          Tiada data untuk tempoh/dimension yang dipilih.
+        </td>
+      </tr>
+    `;
+  }
+}
+
+/* =========================================================
+   BING STATUS
+   ========================================================= */
+
+async function checkBingStatus(){
+
+  try{
+
+    const data=await api("/bing/status");
+
+    state.bing.connected=
+      Boolean(data.connected);
+
+    updateBingStatusUI();
+
+    document.getElementById("dashBing")
+      .textContent=
+        state.bing.connected ? "ON" : "OFF";
+
+    document.getElementById("dashBingDetail")
+      .textContent=
+      state.bing.connected
+        ? "Connected"
+        : "Not connected";
+
+    document.getElementById("dashBingBadge")
+      .className=
+        "status-badge "+
+        (state.bing.connected ? "ok" : "warn");
+
+    document.getElementById("dashBingBadge")
+      .textContent=
+        state.bing.connected
+          ? "Connected"
+          : "Not connected";
+
+  }catch{
+
+    state.bing.connected=false;
+
+    updateBingStatusUI();
+
+    document.getElementById("dashBing")
+      .textContent="OFF";
+  }
+}
+
+function updateBingStatusUI(){
+
+  const connected=state.bing.connected;
+
+  document.getElementById("bingStatusBadge")
+    .className=
+      "status-badge "+
+      (connected ? "ok" : "warn");
+
+  document.getElementById("bingStatusBadge")
+    .textContent=
+      connected ? "Connected" : "Not connected";
+
+  document.getElementById("bingStatusText")
+    .textContent=
+      connected
+        ? "Bing OAuth connected"
+        : "Bing belum connected";
+}
+
+function connectBing(){
+
+  window.location.href=apiUrl("/bing/login");
+}
+
+/* =========================================================
+   BING SITES
+   ========================================================= */
+
+async function loadBingSites(){
+
+  if(!state.bing.connected){
+    alertBox(
+      "bingAlert",
+      "Connect Bing terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await api("/bing/sites");
+
+    state.bing.sites=
+      data.sites ||
+      data.data ||
+      [];
+
+    renderBingSites();
+
+    toast(
+      `${state.bing.sites.length} Bing sites ditemui.`,
+      "success"
+    );
+
+  }catch(error){
+
+    handleBingError(
+      error,
+      "bingAlert"
+    );
+  }
+}
+
+function renderBingSites(){
+
+  const select=document.getElementById("bingSiteSelect");
+
+  const current=state.bing.selectedSite;
+
+  select.innerHTML=
+    `<option value="">— Pilih site —</option>`;
+
+  state.bing.sites.forEach(site=>{
+
+    const siteUrl=
+      site.siteUrl ||
+      site.url ||
+      site;
+
+    const option=document.createElement("option");
+
+    option.value=siteUrl;
+    option.textContent=siteUrl;
+
+    select.appendChild(option);
+  });
+
+  if(current){
+    select.value=current;
+  }
+
+  select.onchange=()=>{
+    state.bing.selectedSite=select.value;
+  };
+}
+
+/* =========================================================
+   BING QUOTA
+   ========================================================= */
+
+async function loadBingQuota(){
+
+  const siteUrl=state.bing.selectedSite;
+
+  if(!siteUrl){
+    alertBox(
+      "bingAlert",
+      "Pilih Bing site terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await post(
+      "/bing/quota",
+      {siteUrl}
+    );
+
+    state.bing.quota=data;
+
+    const box=document.getElementById(
+      "bingQuotaBox"
+    );
+
+    box.classList.remove("hidden");
+
+    box.innerHTML=
+      `<strong>Quota:</strong><br>`+
+      escapeHtml(
+        JSON.stringify(data,null,2)
+      ).replace(/\n/g,"<br>");
+
+    toast(
+      "Bing quota berjaya dimuatkan.",
+      "success"
+    );
+
+  }catch(error){
+
+    handleBingError(
+      error,
+      "bingAlert"
+    );
+  }
+}
+
+/* =========================================================
+   BING URL SUBMISSION
+   ========================================================= */
+
+async function submitBingUrls(){
+
+  const siteUrl=state.bing.selectedSite;
+
+  if(!siteUrl){
+    alertBox(
+      "bingSubmitAlert",
+      "Pilih Bing site terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  const urls=[
+    ...new Set(
+      document.getElementById("bingUrls")
+        .value
+        .split(/\r?\n/)
+        .map(x=>x.trim())
+        .filter(Boolean)
+    )
+  ];
+
+  if(!urls.length){
+    alertBox(
+      "bingSubmitAlert",
+      "Masukkan URL.",
+      "warning"
+    );
+    return;
+  }
+
+  if(urls.length>50){
+    alertBox(
+      "bingSubmitAlert",
+      "Maksimum 50 URL setiap submission.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    const data=await post(
+      "/bing/submit",
+      {
+        siteUrl,
+        urls
+      }
+    );
+
+    alertBox(
+      "bingSubmitAlert",
+      "URL berjaya dihantar ke Bing.",
+      "success"
+    );
+
+    toast(
+      `${urls.length} URL dihantar ke Bing.`,
+      "success"
+    );
+
+  }catch(error){
+
+    handleBingError(
+      error,
+      "bingSubmitAlert"
+    );
+  }
+}
+
+/* =========================================================
+   BING SITEMAP
+   ========================================================= */
+
+async function submitBingSitemap(){
+
+  const siteUrl=state.bing.selectedSite;
+
+  const sitemapUrl=
+    document.getElementById("bingSitemapUrl")
+      .value.trim();
+
+  if(!siteUrl){
+    alertBox(
+      "bingSitemapAlert",
+      "Pilih Bing site terlebih dahulu.",
+      "warning"
+    );
+    return;
+  }
+
+  if(!sitemapUrl){
+    alertBox(
+      "bingSitemapAlert",
+      "Masukkan sitemap URL.",
+      "warning"
+    );
+    return;
+  }
+
+  try{
+
+    await post(
+      "/bing/sitemap",
+      {
+        siteUrl,
+        sitemapUrl
+      }
+    );
+
+    alertBox(
+      "bingSitemapAlert",
+      "Sitemap berjaya dihantar ke Bing.",
+      "success"
+    );
+
+    toast(
+      "Bing Sitemap submitted.",
+      "success"
+    );
+
+  }catch(error){
+
+    handleBingError(
+      error,
+      "bingSitemapAlert"
+    );
+  }
+}
+
+/* =========================================================
+   BING ERROR HANDLING
+   ========================================================= */
+
+function handleBingError(error,target){
+
+  const raw=
+    error?.data ||
+    {};
+
+  const text=
+    JSON.stringify(raw)+
+    " "+
+    String(error?.message || "");
+
+  const throttled=
+    text.includes("ThrottleIP") ||
+    text.includes("ErrorCode\":17") ||
+    text.includes("ErrorCode:17") ||
+    error?.status===429;
+
+  if(throttled){
+
+    alertBox(
+      target,
+      "Bing sedang mengenakan throttle (ThrottleIP / ErrorCode 17). "+
+      "Jangan retry berulang kali. Tunggu cooldown Bing dan cuba semula kemudian.",
+      "warning"
+    );
+
+    toast(
+      "Bing ThrottleIP — tunggu dahulu.",
+      "warning"
+    );
+
+    return;
+  }
+
+  alertBox(
+    target,
+    error.message || "Bing API error.",
+    "error"
+  );
+
+  toast(
+    "Bing API request gagal.",
+    "error"
+  );
+}
+
+/* =========================================================
+   BING DISCONNECT
+   ========================================================= */
+
+async function disconnectBing(){
+
+  if(!confirm("Disconnect Bing OAuth?")) return;
+
+  try{
+
+    await post("/bing/disconnect",{});
+
+    state.bing.connected=false;
+    state.bing.sites=[];
+    state.bing.selectedSite="";
+    state.bing.quota=null;
+
+    updateBingStatusUI();
+    renderBingSites();
+
+    document.getElementById("bingQuotaBox")
+      .classList.add("hidden");
+
+    document.getElementById("dashBing")
+      .textContent="OFF";
+
+    toast(
+      "Bing telah disconnected.",
+      "success"
+    );
+
+  }catch(error){
+
+    handleBingError(
+      error,
+      "bingAlert"
+    );
+  }
+}
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+function saveApiSettings(){
+
+  const value=
+    document.getElementById("apiBaseInput")
+      .value.trim()
+      .replace(/\/+$/,"");
+
+  if(!value){
+    toast("API Base tidak boleh kosong.","warning");
+    return;
+  }
+
+  state.apiBase=value;
+
+  localStorage.setItem(
+    "mastaxul_api_base",
+    value
+  );
+
+  toast(
+    "API Base disimpan.",
+    "success"
+  );
+
+  checkApi();
+}
+
+function hardReset(){
+
+  if(!confirm(
+    "Hard Reset akan memadam local settings dan history. Teruskan?"
+  )){
+    return;
+  }
+
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem("mastaxul_api_base");
+
+  location.reload();
+}
+
+/* =========================================================
+   EXPORT HELPERS
+   ========================================================= */
+
+function exportJson(filename,data){
+
+  downloadText(
+    filename,
+    JSON.stringify(data,null,2),
+    "application/json;charset=utf-8"
+  );
+}
+
+/* =========================================================
+   GLOBAL KEYBOARD
+   ========================================================= */
+
+document.addEventListener("keydown",event=>{
+
+  if(
+    event.key==="Enter" &&
+    document.activeElement?.id==="auditUrl"
+  ){
+    runAudit();
+  }
+
+});
+
+/* =========================================================
+   INITIAL DASHBOARD URL
+   ========================================================= */
+
+document.getElementById("dashUrl").value=
+  "https://www.mastaxul.my/";
+
+
+}catch(e){console.warn('webmaster module',e)}
 </script>
 </body>
 </html>
