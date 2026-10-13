@@ -5,7 +5,7 @@ Allow: /
 Disallow: /draqualinine/
 Disallow: /tools/kulit/
 
-Allow: /edugame/beli.html
+Allow: /edugame/Game5/beli.html
 Allow: /edugame/og-image.jpg
 # Halaman game berbayar tidak perlu diindeks
 Disallow: /edugame/Game5/
