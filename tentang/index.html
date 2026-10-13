@@ -7,286 +7,255 @@
   <meta name="robots" content="noindex, nofollow">
   <style>
     :root {
-      --bg: #030712;
-      --card: rgba(15, 23, 42, 0.75);
-      --line: rgba(56, 189, 248, 0.25);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --cyan: #38bdf8;
-      --purple: #a855f7;
-      --green: #22c55e;
-      --red: #ef4444;
-      --amber: #f59e0b;
+      --bg: #030712; --card: rgba(15,23,42,.85); --line: rgba(56,189,248,.28);
+      --text: #f8fafc; --muted: #94a3b8; --cyan: #38bdf8; --purple: #a855f7;
+      --green: #22c55e; --red: #ef4444; --amber: #f59e0b; --gray: #64748b;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    #galaxyCanvas {
-      position: fixed; inset: 0; width: 100%; height: 100%;
-      z-index: 0; pointer-events: none;
-    }
+    body { font-family: system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    #galaxyCanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
     .app { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 20px 16px 80px; }
+    .hidden { display: none !important; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
-    /* LOGIN */
-    .login-screen {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      padding: 24px;
-    }
+    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .login-card {
-      width: 100%; max-width: 400px;
-      background: var(--card); border: 1px solid var(--line);
-      border-radius: 20px; padding: 32px 28px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 0 40px rgba(56, 189, 248, 0.12);
-      animation: fadeUp 0.6s ease;
+      width: 100%; max-width: 400px; background: var(--card); border: 1px solid var(--line);
+      border-radius: 20px; padding: 32px 28px; backdrop-filter: blur(16px); animation: fadeUp .5s ease;
     }
     .login-card h1 {
       text-align: center; font-size: 1.4rem; margin-bottom: 6px;
       background: linear-gradient(90deg, var(--cyan), var(--purple));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .login-card p { text-align: center; color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; }
-    label { display: block; font-size: 0.85rem; font-weight: 600; margin: 12px 0 6px; color: var(--muted); }
+    .login-card p { text-align: center; color: var(--muted); font-size: .9rem; margin-bottom: 18px; }
+    .login-err { color: var(--red); text-align: center; margin-top: 12px; display: none; font-size: .9rem; }
+
+    label { display: block; font-weight: 600; font-size: .88rem; margin: 12px 0 6px; color: var(--muted); }
     input, textarea, select {
-      width: 100%; padding: 12px 14px; border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.35);
-      color: var(--text); font-size: 1rem; outline: none;
+      width: 100%; padding: 11px 13px; border-radius: 12px; border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.35); color: var(--text); font-size: 1rem; font-family: inherit; outline: none;
     }
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(56,189,248,0.2);
-    }
+    input:focus, textarea:focus, select:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(56,189,248,.2); }
+    textarea { min-height: 80px; resize: vertical; }
+
     .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; padding: 13px 18px; margin-top: 18px; border: none; border-radius: 12px;
-      font-weight: 700; font-size: 1rem; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; padding: 12px 16px; margin-top: 14px; border: none; border-radius: 12px;
+      font-weight: 700; font-size: .95rem; cursor: pointer;
       background: linear-gradient(135deg, var(--cyan), var(--purple)); color: #fff;
-      transition: transform 0.15s, box-shadow 0.15s;
     }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(56,189,248,0.35); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
     .btn-ghost {
       background: transparent; border: 1px solid var(--line); color: var(--cyan);
-      width: auto; padding: 8px 14px; font-size: 0.85rem; margin: 0;
+      width: auto; padding: 7px 12px; font-size: .82rem; margin: 0;
     }
-    .err { color: var(--red); font-size: 0.9rem; text-align: center; margin-top: 12px; display: none; }
+    .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+    .btn-sm { width: auto; padding: 6px 10px; font-size: .78rem; margin: 0 4px 4px 0; }
 
-    /* HEADER */
-    .topbar {
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-      gap: 12px; margin-bottom: 22px; animation: fadeUp 0.5s ease;
-    }
+    .topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; }
     .topbar h1 {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       background: linear-gradient(90deg, var(--cyan), var(--purple));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .tabs {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px;
-    }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
     .tab {
-      padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line);
-      background: rgba(15,23,42,0.6); color: var(--muted); cursor: pointer;
-      font-weight: 600; font-size: 0.9rem; transition: 0.2s;
+      padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line);
+      background: rgba(15,23,42,.65); color: var(--muted); cursor: pointer; font-weight: 600; font-size: .88rem;
     }
-    .tab:hover, .tab.active {
-      color: #fff; border-color: var(--cyan);
-      background: rgba(56,189,248,0.15); box-shadow: 0 0 16px rgba(56,189,248,0.2);
-    }
-    .panel { display: none; animation: fadeUp 0.4s ease; }
+    .tab.active, .tab:hover { color: #fff; border-color: var(--cyan); background: rgba(56,189,248,.15); }
+    .panel { display: none; animation: fadeUp .35s ease; }
     .panel.active { display: block; }
 
-    /* STATS */
-    .stats {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 14px; margin-bottom: 22px;
-    }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
     .stat-card {
-      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
-      padding: 18px 16px; backdrop-filter: blur(12px);
-      transition: transform 0.2s, box-shadow 0.2s;
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; backdrop-filter: blur(12px);
     }
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 28px rgba(56,189,248,0.15);
-    }
-    .stat-card .label { font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+    .stat-card .label { font-size: .75rem; color: var(--muted); }
     .stat-card .value {
-      font-size: 1.75rem; font-weight: 800; letter-spacing: -0.5px;
+      font-size: 1.45rem; font-weight: 800; margin-top: 4px;
       background: linear-gradient(90deg, #fff, var(--cyan));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .stat-card .sub { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+    .stat-card .sub { font-size: .7rem; color: var(--muted); margin-top: 3px; }
 
     .card {
       background: var(--card); border: 1px solid var(--line); border-radius: 16px;
-      padding: 20px; margin-bottom: 18px; backdrop-filter: blur(12px);
+      padding: 18px; margin-bottom: 14px; backdrop-filter: blur(12px);
     }
-    .card h2 { font-size: 1.1rem; margin-bottom: 14px; color: var(--cyan); }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .card h2 { font-size: 1.02rem; color: var(--cyan); margin-bottom: 12px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     @media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
+
+    .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    .status-item {
+      display: flex; align-items: flex-start; gap: 12px; padding: 14px;
+      border-radius: 12px; border: 1px solid var(--line); background: rgba(0,0,0,.25);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; background: var(--gray); }
+    .dot.ok { background: var(--green); box-shadow: 0 0 10px var(--green); }
+    .dot.fail { background: var(--red); box-shadow: 0 0 10px var(--red); }
+    .dot.pending { background: var(--gray); }
+    .status-item .name { font-weight: 700; font-size: .9rem; }
+    .status-item .meta { font-size: .75rem; color: var(--muted); margin-top: 2px; }
 
     .checkbox-grid { display: flex; flex-wrap: wrap; gap: 8px; }
     .chk {
-      display: flex; align-items: center; gap: 6px; padding: 7px 12px;
-      border: 1px solid var(--line); border-radius: 20px; font-size: 0.82rem;
-      cursor: pointer; background: rgba(0,0,0,0.25);
+      display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 20px;
+      padding: 6px 11px; font-size: .8rem; font-weight: 600; cursor: pointer; background: rgba(0,0,0,.25);
     }
     .chk input { width: auto; accent-color: var(--cyan); }
 
-    .upload-box {
-      border: 1px dashed var(--line); border-radius: 12px; padding: 14px;
-      text-align: center; background: rgba(0,0,0,0.25);
-    }
-    .preview { max-width: 100%; max-height: 180px; margin-top: 10px; border-radius: 10px; display: none; }
-    .hint { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
-    .msg {
-      margin-top: 12px; padding: 12px; border-radius: 10px; text-align: center;
-      display: none; font-weight: 600; font-size: 0.92rem;
-    }
-    .msg.ok { display: block; background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid var(--green); }
-    .msg.err { display: block; background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid var(--red); }
-    .msg.warn { display: block; background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid var(--amber); }
+    .upload-box { border: 1px dashed var(--line); border-radius: 12px; padding: 12px; text-align: center; background: rgba(0,0,0,.25); }
+    .preview { margin-top: 10px; max-width: 100%; max-height: 180px; border-radius: 10px; display: none; object-fit: contain; }
+    .hint { font-size: .76rem; color: var(--muted); margin-top: 4px; }
+    .upload-status, .ocr-status { font-size: .84rem; margin-top: 6px; color: var(--cyan); font-weight: 600; }
 
-    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--line); }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); }
-    th { background: rgba(56,189,248,0.1); color: var(--cyan); font-weight: 700; white-space: nowrap; }
-    tr:hover td { background: rgba(255,255,255,0.03); }
-    td { color: #e2e8f0; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .msg { margin-top: 12px; padding: 11px; border-radius: 10px; text-align: center; display: none; font-weight: 600; font-size: .9rem; }
+    .msg.ok { display: block; background: rgba(34,197,94,.15); color: var(--green); border: 1px solid var(--green); }
+    .msg.err { display: block; background: rgba(239,68,68,.15); color: #f87171; border: 1px solid var(--red); }
+    .msg.warn { display: block; background: rgba(245,158,11,.15); color: var(--amber); border: 1px solid var(--amber); }
 
-    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
-    .toolbar input[type="search"] { max-width: 260px; margin: 0; }
-    .empty { text-align: center; color: var(--muted); padding: 28px; }
-
-    .captcha-wrap {
-      display: none; margin-top: 14px; padding: 12px; border: 1px dashed var(--red);
-      border-radius: 12px; background: rgba(239,68,68,0.08);
-    }
+    .captcha-wrap { display: none; margin-top: 14px; padding: 12px; border: 1px dashed var(--red); border-radius: 12px; background: rgba(239,68,68,.08); }
     .captcha-wrap.show { display: block; }
-    .captcha-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
-    .captcha-q { font-weight: 800; padding: 8px 12px; background: #000; border-radius: 8px; }
+    .captcha-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+    .captcha-q { font-weight: 800; background: #000; padding: 8px 12px; border-radius: 8px; }
+    .captcha-row input { width: 90px; margin: 0; }
+    .captcha-refresh { border: 1px solid var(--line); background: rgba(255,255,255,.06); color: #fff; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+    .toolbar input, .toolbar select { margin: 0; max-width: 180px; }
+    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.06); }
+    th { background: rgba(56,189,248,.1); color: var(--cyan); white-space: nowrap; }
+    td { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    tr.warn-row td { background: rgba(245,158,11,.08); }
+    .empty { text-align: center; color: var(--muted); padding: 22px; }
+    .banner {
+      display: none; margin-bottom: 14px; padding: 12px 14px; border-radius: 12px;
+      background: rgba(239,68,68,.12); border: 1px solid var(--red); color: #fecaca; font-size: .9rem;
     }
-    .hidden { display: none !important; }
+    .banner.show { display: block; }
+    .modal-bg {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 50;
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-bg.show { display: flex; }
+    .modal {
+      width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto;
+      background: #0f172a; border: 1px solid var(--line); border-radius: 16px; padding: 20px;
+    }
+    .modal h3 { color: var(--cyan); margin-bottom: 12px; }
   </style>
 </head>
 <body>
   <canvas id="galaxyCanvas"></canvas>
 
-  <!-- LOGIN -->
   <div class="login-screen" id="loginScreen">
     <div class="login-card">
       <h1>Masta Xul Admin</h1>
-      <p>Dashboard kawalan · Produk · Hubungi · EduGame</p>
+      <p>Status · Produk · Hubungi · EduGame · Log</p>
       <label>Password admin</label>
       <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password">
       <button type="button" class="btn" id="btnLogin">Masuk</button>
-      <p class="err" id="loginErr">Password salah atau kosong.</p>
+      <p class="login-err" id="loginErr">Password kosong.</p>
     </div>
   </div>
 
-  <!-- APP -->
   <div class="app hidden" id="appShell">
     <div class="topbar">
       <h1>Admin Dashboard</h1>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button type="button" class="btn btn-ghost" id="btnRefreshAll">↻ Refresh data</button>
+        <button type="button" class="btn btn-ghost" id="btnRefreshAll">↻ Refresh</button>
         <a class="btn btn-ghost" href="/shop/" style="text-decoration:none;">Shop</a>
         <button type="button" class="btn btn-ghost" id="btnLogout">Keluar</button>
       </div>
     </div>
+
+    <div class="banner" id="apiBanner"></div>
 
     <div class="tabs">
       <button type="button" class="tab active" data-tab="overview">Overview</button>
       <button type="button" class="tab" data-tab="produk">Produk</button>
       <button type="button" class="tab" data-tab="hubungi">Hubungi</button>
       <button type="button" class="tab" data-tab="edugame">EduGame</button>
+      <button type="button" class="tab" data-tab="log">Log</button>
     </div>
 
     <!-- OVERVIEW -->
     <section class="panel active" id="panel-overview">
-      <div class="stats" id="overviewStats">
-        <div class="stat-card"><div class="label">Jumlah produk</div><div class="value" id="stProduk">—</div><div class="sub">Dari cache / sheet</div></div>
-        <div class="stat-card"><div class="label">Jumlah terjual</div><div class="value" id="stTerjual">—</div><div class="sub">Jumlah medan terjual</div></div>
-        <div class="stat-card"><div class="label">Anggaran klik</div><div class="value" id="stKlik">—</div><div class="sub">Jika ada kolum klik</div></div>
-        <div class="stat-card"><div class="label">Mesej hubungi</div><div class="value" id="stHubungi">—</div><div class="sub">Rekod borang</div></div>
-        <div class="stat-card"><div class="label">Order EduGame</div><div class="value" id="stEdu">—</div><div class="sub">Pembelian / daftar</div></div>
-        <div class="stat-card"><div class="label">Badge Hot/Viral</div><div class="value" id="stBadge">—</div><div class="sub">Produk bertanda</div></div>
-      </div>
       <div class="card">
-        <h2>Ringkasan pantas</h2>
-        <p class="hint" id="overviewNote">Tekan Refresh untuk muat data terkini.</p>
+        <h2>Pusat status sistem</h2>
+        <div class="status-grid" id="statusGrid">
+          <div class="status-item" data-key="worker"><span class="dot pending"></span><div><div class="name">Worker / API produk</div><div class="meta">Belum diuji</div></div></div>
+          <div class="status-item" data-key="appsProduk"><span class="dot pending"></span><div><div class="name">Apps Script PRODUK</div><div class="meta">Belum diuji</div></div></div>
+          <div class="status-item" data-key="hubungi"><span class="dot pending"></span><div><div class="name">Apps Script Hubungi</div><div class="meta">Belum diuji</div></div></div>
+          <div class="status-item" data-key="edugame"><span class="dot pending"></span><div><div class="name">Apps Script EduGame</div><div class="meta">Belum diuji</div></div></div>
+        </div>
+        <p class="hint" id="statusTime" style="margin-top:12px;">—</p>
+        <button type="button" class="btn btn-ghost" id="btnCheckStatus" style="margin-top:10px;">Semak status</button>
+      </div>
+      <div class="stats">
+        <div class="stat-card"><div class="label">Produk</div><div class="value" id="stProduk">—</div></div>
+        <div class="stat-card"><div class="label">Terjual (sum)</div><div class="value" id="stTerjual">—</div></div>
+        <div class="stat-card"><div class="label">Tanpa gambar</div><div class="value" id="stNoImg">—</div></div>
+        <div class="stat-card"><div class="label">Tanpa affiliate</div><div class="value" id="stNoLink">—</div></div>
+        <div class="stat-card"><div class="label">Hubungi</div><div class="value" id="stHubungi">—</div></div>
+        <div class="stat-card"><div class="label">EduGame</div><div class="value" id="stEdu">—</div></div>
       </div>
     </section>
 
     <!-- PRODUK -->
     <section class="panel" id="panel-produk">
-      <div class="stats">
-        <div class="stat-card"><div class="label">Produk</div><div class="value" id="pCount">—</div></div>
-        <div class="stat-card"><div class="label">Terjual (sum)</div><div class="value" id="pSold">—</div></div>
-        <div class="stat-card"><div class="label">Harga purata</div><div class="value" id="pAvg">—</div></div>
-        <div class="stat-card"><div class="label">Dengan gambar</div><div class="value" id="pImg">—</div></div>
-      </div>
-
       <div class="card">
-        <h2>Senarai produk (terkini)</h2>
+        <h2>Senarai & penapis</h2>
         <div class="toolbar">
-          <input type="search" id="cariProduk" placeholder="Cari nama / id / kategori...">
+          <input type="search" id="cariProduk" placeholder="Cari nama / id...">
+          <select id="filterKat"><option value="">Semua kategori</option></select>
+          <select id="filterBadge"><option value="">Semua badge</option></select>
+          <input type="number" id="hargaMin" placeholder="Harga min" step="0.01">
+          <input type="number" id="hargaMax" placeholder="Harga max" step="0.01">
+          <button type="button" class="btn btn-ghost" id="btnFilter">Tapis</button>
+          <button type="button" class="btn btn-ghost" id="btnCsv">Export CSV</button>
           <button type="button" class="btn btn-ghost" id="btnLoadProduk">Muat semula</button>
         </div>
+        <p class="hint" id="produkWarnHint"></p>
         <div class="table-wrap">
           <table>
             <thead>
-              <tr><th>ID</th><th>Nama</th><th>Harga</th><th>Terjual</th><th>Kategori</th><th>Badge</th></tr>
+              <tr><th>ID</th><th>Nama</th><th>Harga</th><th>Terjual</th><th>Kategori</th><th>Badge</th><th>Amaran</th><th>Tindakan</th></tr>
             </thead>
-            <tbody id="tbodyProduk"><tr><td colspan="6" class="empty">Belum dimuat</td></tr></tbody>
+            <tbody id="tbodyProduk"><tr><td colspan="8" class="empty">Belum dimuat</td></tr></tbody>
           </table>
         </div>
       </div>
 
       <div class="card">
-        <h2>Tambah produk (borang /draqulanine)</h2>
+        <h2>Tambah produk</h2>
         <form id="formProduk">
           <label>Password admin *</label>
-          <input type="password" id="password" required placeholder="Sama dengan login" autocomplete="off">
+          <input type="password" id="password" required autocomplete="off">
 
-          <label>Gambar produk</label>
+          <label>Gambar</label>
           <div class="upload-box">
             <input type="file" id="fileGambar" accept="image/*">
-            <p class="hint">Password dulu → pilih gambar → upload ImgBB + OCR (jika Worker aktif)</p>
-            <p class="hint" id="uploadStatus"></p>
-            <p class="hint" id="ocrStatus"></p>
+            <p class="hint">Password dulu → pilih gambar → upload + AI</p>
+            <p class="upload-status" id="uploadStatus"></p>
+            <p class="ocr-status" id="ocrStatus"></p>
             <img id="preview" class="preview" alt="">
           </div>
-
           <label>Link gambar</label>
-          <input type="url" id="gambar" placeholder="Auto / manual">
-
+          <input type="url" id="gambar">
           <label>ID (kosong = auto)</label>
-          <input type="text" id="id" placeholder="Contoh: 31">
-
+          <input type="text" id="id">
           <label>Nama *</label>
           <input type="text" id="nama" required>
-
           <div class="row">
-            <div>
-              <label>Harga *</label>
-              <input type="text" id="harga" required placeholder="89.90">
-            </div>
-            <div>
-              <label>Terjual</label>
-              <input type="text" id="terjual" placeholder="120">
-            </div>
+            <div><label>Harga *</label><input type="text" id="harga" required></div>
+            <div><label>Terjual</label><input type="text" id="terjual"></div>
           </div>
-
           <label>Kategori</label>
           <div class="checkbox-grid" id="kategoriGrid">
             <label class="chk"><input type="checkbox" value="Viral"> Viral</label>
@@ -298,10 +267,13 @@
             <label class="chk"><input type="checkbox" value="Dapur"> Dapur</label>
             <label class="chk"><input type="checkbox" value="Lelaki"> Lelaki</label>
             <label class="chk"><input type="checkbox" value="Wanita"> Wanita</label>
+            <label class="chk"><input type="checkbox" value="Pakaian"> Pakaian</label>
+            <label class="chk"><input type="checkbox" value="Sukan"> Sukan</label>
+            <label class="chk"><input type="checkbox" value="Perhiasan"> Perhiasan</label>
             <label class="chk"><input type="checkbox" value="Elektrik"> Elektrik</label>
+            <label class="chk"><input type="checkbox" value="Tumbuhan"> Tumbuhan</label>
           </div>
-          <input type="text" id="kategoriLain" placeholder="Kategori lain (koma)" style="margin-top:10px;">
-
+          <input type="text" id="kategoriLain" placeholder="Kategori lain (koma)" style="margin-top:8px;">
           <label>Badge</label>
           <select id="badge">
             <option value="">Tiada</option>
@@ -311,29 +283,25 @@
             <option value="Mantap">Mantap</option>
             <option value="__lain__">Lain…</option>
           </select>
-          <input type="text" id="badgeLain" placeholder="Badge baru" style="display:none;margin-top:8px;">
-
+          <input type="text" id="badgeLain" style="display:none;margin-top:8px;" placeholder="Badge baru">
           <label>TikTok / Shopee / Lazada</label>
           <input type="url" id="tiktok" placeholder="TikTok">
           <input type="url" id="shopee" placeholder="Shopee" style="margin-top:8px;">
           <input type="url" id="lazada" placeholder="Lazada" style="margin-top:8px;">
-
           <label>Deskripsi</label>
-          <textarea id="deskripsi" rows="3"></textarea>
-
+          <textarea id="deskripsi"></textarea>
           <div class="captcha-wrap" id="captchaWrap">
-            <label>Captcha (setiap 3 hantaran)</label>
+            <label style="color:#f87171;margin-top:0;">Captcha (setiap 3 hantaran)</label>
             <div class="captcha-row">
               <span class="captcha-q" id="captchaQ">?</span>
-              <input type="number" id="captchaA" placeholder="Jawapan" style="width:100px;">
-              <button type="button" class="btn btn-ghost" id="btnCaptchaRefresh">↻</button>
+              <input type="number" id="captchaA" inputmode="numeric">
+              <button type="button" class="captcha-refresh" id="btnCaptchaRefresh">↻</button>
             </div>
           </div>
-
           <button type="submit" class="btn" id="btnSubmit">Tambah Produk</button>
           <p class="hint" id="submitHint"></p>
         </form>
-        <div class="msg" id="msgProduk"></div>
+        <div class="msg" id="msg"></div>
       </div>
     </section>
 
@@ -342,25 +310,22 @@
       <div class="card">
         <h2>Mesej Hubungi</h2>
         <div class="toolbar">
-          <input type="search" id="cariHubungi" placeholder="Cari nama / emel / mesej...">
+          <input type="search" id="cariHubungi" placeholder="Cari...">
           <button type="button" class="btn btn-ghost" id="btnLoadHubungi">Muat semula</button>
         </div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr><th>Masa</th><th>Nama</th><th>Emel</th><th>Telefon</th><th>Mesej</th></tr>
-            </thead>
-            <tbody id="tbodyHubungi"><tr><td colspan="5" class="empty">Belum dimuat</td></tr></tbody>
+            <thead><tr><th>Masa</th><th>Nama</th><th>Emel</th><th>Telefon</th><th>Mesej</th></tr></thead>
+            <tbody id="tbodyHubungi"><tr><td colspan="5" class="empty">—</td></tr></tbody>
           </table>
         </div>
-        <p class="hint">Memerlukan <code>doGet</code> pada web app Hubungi (lihat nota bawah).</p>
       </div>
     </section>
 
     <!-- EDUGAME -->
     <section class="panel" id="panel-edugame">
       <div class="card">
-        <h2>Data EduGame / Game5</h2>
+        <h2>EduGame / Game5</h2>
         <div class="toolbar">
           <input type="search" id="cariEdu" placeholder="Cari...">
           <button type="button" class="btn btn-ghost" id="btnLoadEdu">Muat semula</button>
@@ -368,71 +333,89 @@
         <div class="table-wrap">
           <table>
             <thead id="theadEdu"><tr><th>Data</th></tr></thead>
-            <tbody id="tbodyEdu"><tr><td class="empty">Isi API_EDUGAME dalam config JS</td></tr></tbody>
+            <tbody id="tbodyEdu"><tr><td class="empty">—</td></tr></tbody>
           </table>
         </div>
-        <p class="hint">Tampal URL web app EduGame di <code>API.edugame</code> dalam skrip.</p>
+      </div>
+    </section>
+
+    <!-- LOG -->
+    <section class="panel" id="panel-log">
+      <div class="card">
+        <h2>Log aktiviti (pelayan · ADMIN_LOG)</h2>
+        <div class="toolbar">
+          <button type="button" class="btn btn-ghost" id="btnLoadLog">Muat log</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Masa</th><th>Action</th><th>ID</th><th>Nama</th><th>Mesej</th><th>Detail</th></tr></thead>
+            <tbody id="tbodyLog"><tr><td colspan="6" class="empty">—</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </section>
   </div>
 
+  <!-- MODAL EDIT -->
+  <div class="modal-bg" id="editModal">
+    <div class="modal">
+      <h3>Edit produk</h3>
+      <input type="hidden" id="editId">
+      <label>Nama</label><input type="text" id="editNama">
+      <label>Harga</label><input type="text" id="editHarga">
+      <label>Terjual</label><input type="text" id="editTerjual">
+      <label>Kategori</label><input type="text" id="editKategori">
+      <label>Badge</label><input type="text" id="editBadge">
+      <label>Gambar</label><input type="url" id="editGambar">
+      <label>TikTok</label><input type="url" id="editTiktok">
+      <label>Shopee</label><input type="url" id="editShopee">
+      <label>Lazada</label><input type="url" id="editLazada">
+      <label>Deskripsi</label><textarea id="editDeskripsi"></textarea>
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <button type="button" class="btn" id="btnSaveEdit" style="flex:1;">Simpan</button>
+        <button type="button" class="btn btn-ghost" id="btnCloseEdit">Batal</button>
+      </div>
+      <div class="msg" id="editMsg"></div>
+    </div>
+  </div>
+
   <script>
-    /* ========== CONFIG — edit di sini ========== */
     const API = {
-      // Tulis produk (Apps Script shop — sama /draqulanine)
       produkWrite: "https://script.google.com/macros/s/AKfycbx5tijI4QHYTNap-YEN5i9-ZGfDIZ1IcGqUsZNi32s9gtOT9sIV0GcsUPzPka4srYujRA/exec",
-      // Baca produk (Worker — tak usik sheet)
       produkRead: "/api/produk",
       produkRefresh: "/api/produk/refresh",
       upload: "/api/upload-gambar",
       ocr: "/api/ocr-gemini",
-      // Hubungi — perlu doGet + password
       hubungi: "https://script.google.com/macros/s/AKfycbxsWSCyKSOiEx-Syg1dGuNT21U0Qqv_4GPBiFhJgvU-t014SXvbOwKAWL4TZiQk8NJE/exec",
-      // EduGame — PASTE URL WEB APP ANDA
       edugame: "https://script.google.com/macros/s/AKfycbzvU1sok6V2OWFrwomgtTxAm3O5mAaDxqjwzF_UoV41M1qLM7uyai_73pLkUqz_2Z3A/exec"
     };
     const CAPTCHA_EVERY = 3;
     const STORAGE_KEY = "mx_admin_submit_count";
     const PASS_KEY = "mx_admin_session";
 
-    /* ========== GALAXY ========== */
-    (function () {
-      const canvas = document.getElementById("galaxyCanvas");
-      if (!canvas) return;
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduced) return;
-      const ctx = canvas.getContext("2d");
+    (function galaxy() {
+      const c = document.getElementById("galaxyCanvas");
+      if (!c || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const ctx = c.getContext("2d");
       let w, h, stars = [];
       function resize() {
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
-        stars = Array.from({ length: Math.min(140, Math.floor(w * h / 16000) + 50) }, () => ({
-          x: Math.random() * w, y: Math.random() * h,
-          r: Math.random() * 1.4 + 0.2, a: Math.random() * 0.7 + 0.2,
-          c: ["#38bdf8", "#a855f7", "#fff", "#818cf8"][Math.floor(Math.random() * 4)]
+        w = c.width = innerWidth; h = c.height = innerHeight;
+        stars = Array.from({ length: Math.min(120, Math.floor(w * h / 18000) + 40) }, () => ({
+          x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.3 + 0.2,
+          a: Math.random() * 0.7 + 0.2, col: ["#38bdf8","#a855f7","#fff"][Math.floor(Math.random()*3)]
         }));
       }
       function draw() {
         ctx.clearRect(0, 0, w, h);
-        stars.forEach(s => {
-          ctx.globalAlpha = s.a;
-          ctx.fillStyle = s.c;
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-          ctx.fill();
-        });
-        ctx.globalAlpha = 1;
-        requestAnimationFrame(draw);
+        stars.forEach(s => { ctx.globalAlpha = s.a; ctx.fillStyle = s.col; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill(); });
+        ctx.globalAlpha = 1; requestAnimationFrame(draw);
       }
-      window.addEventListener("resize", resize);
-      resize();
-      draw();
+      addEventListener("resize", resize); resize(); draw();
     })();
 
-    /* ========== AUTH (client gate — password sama admin produk) ========== */
+    let adminPass = sessionStorage.getItem(PASS_KEY) || "";
     const loginScreen = document.getElementById("loginScreen");
     const appShell = document.getElementById("appShell");
-    let adminPass = sessionStorage.getItem(PASS_KEY) || "";
 
     function masuk(pass) {
       adminPass = pass;
@@ -442,24 +425,16 @@
       document.getElementById("password").value = pass;
       refreshAll();
     }
-
     document.getElementById("btnLogin").onclick = () => {
       const p = document.getElementById("loginPass").value.trim();
-      const err = document.getElementById("loginErr");
-      if (!p) { err.style.display = "block"; return; }
-      err.style.display = "none";
+      if (!p) { document.getElementById("loginErr").style.display = "block"; return; }
+      document.getElementById("loginErr").style.display = "none";
       masuk(p);
     };
-    document.getElementById("loginPass").addEventListener("keydown", e => {
-      if (e.key === "Enter") document.getElementById("btnLogin").click();
-    });
-    document.getElementById("btnLogout").onclick = () => {
-      sessionStorage.removeItem(PASS_KEY);
-      location.reload();
-    };
+    document.getElementById("loginPass").addEventListener("keydown", e => { if (e.key === "Enter") document.getElementById("btnLogin").click(); });
+    document.getElementById("btnLogout").onclick = () => { sessionStorage.removeItem(PASS_KEY); location.reload(); };
     if (adminPass) masuk(adminPass);
 
-    /* ========== TABS ========== */
     document.querySelectorAll(".tab").forEach(tab => {
       tab.onclick = () => {
         document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
@@ -469,7 +444,6 @@
       };
     });
 
-    /* ========== HELPERS ========== */
     function esc(s) {
       return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     }
@@ -481,194 +455,384 @@
       if (!el) return;
       const target = typeof end === "number" ? end : parseInt(end, 10);
       if (isNaN(target)) { el.textContent = end; return; }
-      const start = 0;
       const t0 = performance.now();
-      const dur = 700;
-      function frame(t) {
-        const p = Math.min(1, (t - t0) / dur);
-        const ease = 1 - Math.pow(1 - p, 3);
-        el.textContent = Math.round(start + (target - start) * ease).toLocaleString("ms-MY");
+      (function frame(t) {
+        const p = Math.min(1, (t - t0) / 600);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))).toLocaleString("ms-MY");
         if (p < 1) requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
+      })(t0);
     }
 
-    let allProduk = [];
-    let allHubungi = [];
-    let allEdu = [];
+    async function postProduk(payload) {
+      const res = await fetch(API.produkWrite, { method: "POST", body: JSON.stringify(payload) });
+      return res.json();
+    }
+    async function refreshCache() {
+      try {
+        await fetch(API.produkRefresh, { headers: { "X-Admin-Pass": adminPass } });
+      } catch (_) {}
+    }
+    async function serverLog(type, message, detail, id, nama) {
+      try {
+        await postProduk({
+          password: adminPass, action: "log",
+          logAction: type, message, detail: detail || "", id: id || "", nama: nama || ""
+        });
+      } catch (_) {}
+    }
 
-    /* ========== PRODUK READ ========== */
+    /* ===== STATUS ===== */
+    function setStatus(key, state, meta) {
+      const el = document.querySelector('.status-item[data-key="' + key + '"]');
+      if (!el) return;
+      const dot = el.querySelector(".dot");
+      dot.className = "dot " + (state === "ok" ? "ok" : state === "fail" ? "fail" : "pending");
+      el.querySelector(".meta").textContent = meta || "";
+    }
+
+    async function checkStatus() {
+      const t = new Date().toLocaleString("ms-MY");
+      document.getElementById("statusTime").textContent = "Semakan: " + t;
+      let fail = [];
+
+      try {
+        const r = await fetch(API.produkRead + "?_=" + Date.now());
+        if (!r.ok) throw new Error(r.status);
+        const d = await r.json();
+        setStatus("worker", "ok", "OK · " + (Array.isArray(d) ? d.length + " produk" : "data"));
+      } catch (e) {
+        setStatus("worker", "fail", "Gagal");
+        fail.push("Worker/API produk");
+      }
+
+      try {
+        const r = await fetch(API.produkWrite + "?_=" + Date.now());
+        if (!r.ok) throw new Error(r.status);
+        const d = await r.json();
+        setStatus("appsProduk", Array.isArray(d) ? "ok" : "fail", Array.isArray(d) ? "doGet OK · " + d.length : "Respons pelik");
+      } catch (e) {
+        setStatus("appsProduk", "fail", "Gagal");
+        fail.push("Apps Script PRODUK");
+      }
+
+      try {
+        const r = await fetch(API.hubungi + "?action=list&password=" + encodeURIComponent(adminPass) + "&_=" + Date.now());
+        const d = await r.json();
+        if (d.ok === false) throw new Error(d.message);
+        const n = Array.isArray(d.rows) ? d.rows.length : 0;
+        setStatus("hubungi", "ok", "OK · " + n + " mesej");
+      } catch (e) {
+        setStatus("hubungi", "fail", "Gagal");
+        fail.push("Hubungi");
+      }
+
+      try {
+        const r = await fetch(API.edugame + "?action=list&password=" + encodeURIComponent(adminPass) + "&_=" + Date.now());
+        const d = await r.json();
+        if (d.ok === false) throw new Error(d.message);
+        const n = Array.isArray(d.rows) ? d.rows.length : 0;
+        setStatus("edugame", "ok", "OK · " + n + " rekod");
+      } catch (e) {
+        setStatus("edugame", "fail", "Gagal");
+        fail.push("EduGame");
+      }
+
+      const ban = document.getElementById("apiBanner");
+      if (fail.length) {
+        ban.textContent = "⚠️ API bermasalah: " + fail.join(", ");
+        ban.classList.add("show");
+        serverLog("api_fail", "Status check gagal", fail.join(", "));
+      } else {
+        ban.classList.remove("show");
+      }
+    }
+    document.getElementById("btnCheckStatus").onclick = checkStatus;
+
+    /* ===== PRODUK ===== */
+    let allProduk = [], filteredProduk = [];
+
     async function loadProduk() {
       const tbody = document.getElementById("tbodyProduk");
-      tbody.innerHTML = "<tr><td colspan='6' class='empty'>Memuat...</td></tr>";
+      tbody.innerHTML = "<tr><td colspan='8' class='empty'>Memuat...</td></tr>";
       try {
-        const res = await fetch(API.produkRead + (API.produkRead.includes("?") ? "&" : "?") + "_=" + Date.now());
-        const data = await res.json();
-        allProduk = Array.isArray(data) ? data.filter(p => p && p.nama) : [];
-        renderProdukTable();
-        updateProdukStats();
+        const res = await fetch(API.produkRead + "?_=" + Date.now());
+        allProduk = (await res.json()).filter(p => p && p.nama);
+        buildFilterOptions();
+        applyFilters();
+        updateStats();
       } catch (e) {
-        console.error(e);
-        tbody.innerHTML = "<tr><td colspan='6' class='empty'>Gagal muat produk</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='8' class='empty'>Gagal muat</td></tr>";
       }
+    }
+
+    function buildFilterOptions() {
+      const kats = new Set(), badges = new Set();
+      allProduk.forEach(p => {
+        String(p.kategori || "").split(",").map(s => s.trim()).filter(Boolean).forEach(k => kats.add(k));
+        if (p.badge) badges.add(String(p.badge).trim());
+      });
+      const fk = document.getElementById("filterKat");
+      const fb = document.getElementById("filterBadge");
+      const kVal = fk.value, bVal = fb.value;
+      fk.innerHTML = '<option value="">Semua kategori</option>' + [...kats].sort().map(k => '<option value="' + esc(k) + '">' + esc(k) + "</option>").join("");
+      fb.innerHTML = '<option value="">Semua badge</option>' + [...badges].sort().map(b => '<option value="' + esc(b) + '">' + esc(b) + "</option>").join("");
+      fk.value = kVal; fb.value = bVal;
+    }
+
+    function applyFilters() {
+      const q = (document.getElementById("cariProduk").value || "").toLowerCase();
+      const kat = document.getElementById("filterKat").value.toLowerCase();
+      const badge = document.getElementById("filterBadge").value.toLowerCase();
+      const min = num(document.getElementById("hargaMin").value);
+      const max = num(document.getElementById("hargaMax").value);
+      const hasMax = document.getElementById("hargaMax").value.trim() !== "";
+
+      filteredProduk = allProduk.filter(p => {
+        const blob = [p.id, p.nama, p.kategori, p.badge].join(" ").toLowerCase();
+        if (q && !blob.includes(q)) return false;
+        if (kat) {
+          const list = String(p.kategori || "").toLowerCase().split(",").map(s => s.trim());
+          if (!list.includes(kat)) return false;
+        }
+        if (badge && String(p.badge || "").toLowerCase() !== badge) return false;
+        const h = num(p.harga);
+        if (min && h < min) return false;
+        if (hasMax && h > max) return false;
+        return true;
+      });
+      renderProdukTable();
+    }
+
+    function amaran(p) {
+      const a = [];
+      if (!String(p.gambar || "").trim()) a.push("Tiada gambar");
+      const noAff = !String(p.tiktok || "").trim() && !String(p.shopee || "").trim() && !String(p.lazada || "").trim();
+      if (noAff) a.push("Tiada affiliate");
+      return a;
     }
 
     function renderProdukTable() {
-      const q = (document.getElementById("cariProduk").value || "").toLowerCase();
-      const list = allProduk.filter(p => {
-        const blob = [p.id, p.nama, p.kategori, p.badge].join(" ").toLowerCase();
-        return !q || blob.includes(q);
-      });
       const tbody = document.getElementById("tbodyProduk");
-      if (!list.length) {
-        tbody.innerHTML = "<tr><td colspan='6' class='empty'>Tiada produk</td></tr>";
+      if (!filteredProduk.length) {
+        tbody.innerHTML = "<tr><td colspan='8' class='empty'>Tiada produk</td></tr>";
         return;
       }
-      tbody.innerHTML = list.slice(0, 100).map(p => `
-        <tr>
+      tbody.innerHTML = filteredProduk.slice(0, 200).map(p => {
+        const warn = amaran(p);
+        return `<tr class="${warn.length ? "warn-row" : ""}">
           <td>${esc(p.id)}</td>
           <td title="${esc(p.nama)}">${esc(p.nama)}</td>
           <td>${esc(p.harga)}</td>
           <td>${esc(p.terjual || 0)}</td>
           <td>${esc(p.kategori)}</td>
           <td>${esc(p.badge)}</td>
-        </tr>
-      `).join("");
+          <td style="color:#fbbf24;font-size:.75rem;">${esc(warn.join(", ") || "—")}</td>
+          <td>
+            <button type="button" class="btn btn-sm btn-ghost" data-edit="${esc(p.id)}">Edit</button>
+            <button type="button" class="btn btn-sm btn-danger" data-del="${esc(p.id)}">Padam</button>
+          </td>
+        </tr>`;
+      }).join("");
+
+      tbody.querySelectorAll("[data-edit]").forEach(btn => {
+        btn.onclick = () => openEdit(btn.getAttribute("data-edit"));
+      });
+      tbody.querySelectorAll("[data-del]").forEach(btn => {
+        btn.onclick = () => padamProduk(btn.getAttribute("data-del"));
+      });
     }
 
-    function updateProdukStats() {
+    function updateStats() {
       const n = allProduk.length;
       const sold = allProduk.reduce((s, p) => s + num(p.terjual), 0);
-      const klik = allProduk.reduce((s, p) => s + num(p.klik || p.clicks || p.views), 0);
-      const withImg = allProduk.filter(p => p.gambar).length;
-      const prices = allProduk.map(p => num(p.harga)).filter(x => x > 0);
-      const avg = prices.length ? (prices.reduce((a, b) => a + b, 0) / prices.length) : 0;
-      const badgeN = allProduk.filter(p => {
-        const b = (p.badge || "").toLowerCase();
-        return b.includes("hot") || b.includes("viral");
-      }).length;
-
+      const noImg = allProduk.filter(p => !String(p.gambar || "").trim()).length;
+      const noLink = allProduk.filter(p => !String(p.tiktok || "").trim() && !String(p.shopee || "").trim() && !String(p.lazada || "").trim()).length;
       animateValue(document.getElementById("stProduk"), n);
       animateValue(document.getElementById("stTerjual"), sold);
-      document.getElementById("stKlik").textContent = klik > 0 ? klik.toLocaleString("ms-MY") : "—";
-      animateValue(document.getElementById("stBadge"), badgeN);
-      animateValue(document.getElementById("pCount"), n);
-      animateValue(document.getElementById("pSold"), sold);
-      document.getElementById("pAvg").textContent = avg ? "RM " + avg.toFixed(2) : "—";
-      animateValue(document.getElementById("pImg"), withImg);
+      animateValue(document.getElementById("stNoImg"), noImg);
+      animateValue(document.getElementById("stNoLink"), noLink);
+      document.getElementById("produkWarnHint").textContent =
+        noImg || noLink ? ("Amaran: " + noImg + " tanpa gambar, " + noLink + " tanpa pautan affiliate.") : "Semua produk ada gambar & sekurang-kurangnya satu pautan (atau tiada amaran).";
     }
 
-    document.getElementById("cariProduk").oninput = renderProdukTable;
+    document.getElementById("cariProduk").oninput = applyFilters;
+    document.getElementById("btnFilter").onclick = applyFilters;
     document.getElementById("btnLoadProduk").onclick = loadProduk;
+    document.getElementById("btnCsv").onclick = () => {
+      const rows = [["ID", "Nama", "Harga", "Terjual", "Kategori", "Badge", "Gambar", "TikTok", "Shopee", "Lazada", "Deskripsi"]];
+      filteredProduk.forEach(p => rows.push([p.id, p.nama, p.harga, p.terjual, p.kategori, p.badge, p.gambar, p.tiktok, p.shopee, p.lazada, p.deskripsi]));
+      const csv = rows.map(r => r.map(c => '"' + String(c ?? "").replace(/"/g, '""') + '"').join(",")).join("\n");
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+      a.download = "mastaxul-produk.csv";
+      a.click();
+    };
 
-    /* ========== HUBUNGI ========== */
+    function openEdit(id) {
+      const p = allProduk.find(x => String(x.id) === String(id));
+      if (!p) return;
+      document.getElementById("editId").value = p.id;
+      document.getElementById("editNama").value = p.nama || "";
+      document.getElementById("editHarga").value = p.harga || "";
+      document.getElementById("editTerjual").value = p.terjual || "";
+      document.getElementById("editKategori").value = p.kategori || "";
+      document.getElementById("editBadge").value = p.badge || "";
+      document.getElementById("editGambar").value = p.gambar || "";
+      document.getElementById("editTiktok").value = p.tiktok || "";
+      document.getElementById("editShopee").value = p.shopee || "";
+      document.getElementById("editLazada").value = p.lazada || "";
+      document.getElementById("editDeskripsi").value = p.deskripsi || "";
+      document.getElementById("editMsg").className = "msg";
+      document.getElementById("editModal").classList.add("show");
+    }
+    document.getElementById("btnCloseEdit").onclick = () => document.getElementById("editModal").classList.remove("show");
+    document.getElementById("btnSaveEdit").onclick = async () => {
+      const payload = {
+        password: adminPass, action: "update",
+        id: document.getElementById("editId").value,
+        nama: document.getElementById("editNama").value,
+        harga: document.getElementById("editHarga").value,
+        terjual: document.getElementById("editTerjual").value,
+        kategori: document.getElementById("editKategori").value,
+        badge: document.getElementById("editBadge").value,
+        gambar: document.getElementById("editGambar").value,
+        tiktok: document.getElementById("editTiktok").value,
+        shopee: document.getElementById("editShopee").value,
+        lazada: document.getElementById("editLazada").value,
+        deskripsi: document.getElementById("editDeskripsi").value
+      };
+      const msg = document.getElementById("editMsg");
+      try {
+        const data = await postProduk(payload);
+        if (data.ok) {
+          msg.className = "msg ok"; msg.textContent = data.message || "OK";
+          await refreshCache();
+          await loadProduk();
+          setTimeout(() => document.getElementById("editModal").classList.remove("show"), 800);
+        } else {
+          msg.className = "msg err"; msg.textContent = data.message || "Gagal";
+        }
+      } catch (e) {
+        msg.className = "msg err"; msg.textContent = "Ralat rangkaian";
+      }
+    };
+
+    async function padamProduk(id) {
+      const p = allProduk.find(x => String(x.id) === String(id));
+      if (!confirm("Padam produk ID " + id + (p ? " — " + p.nama : "") + "?")) return;
+      try {
+        const data = await postProduk({ password: adminPass, action: "delete", id });
+        if (data.ok) {
+          await refreshCache();
+          await loadProduk();
+          loadLog();
+        } else alert(data.message || "Gagal padam");
+      } catch (e) {
+        alert("Ralat rangkaian");
+      }
+    }
+
+    /* ===== HUBUNGI / EDU / LOG ===== */
+    let allHubungi = [], allEdu = [];
+
     async function loadHubungi() {
       const tbody = document.getElementById("tbodyHubungi");
       tbody.innerHTML = "<tr><td colspan='5' class='empty'>Memuat...</td></tr>";
-      if (!API.hubungi) {
-        tbody.innerHTML = "<tr><td colspan='5' class='empty'>API hubungi kosong</td></tr>";
-        return;
-      }
       try {
-        const url = API.hubungi + "?action=list&password=" + encodeURIComponent(adminPass) + "&_=" + Date.now();
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.ok === false) throw new Error(data.message || "Gagal");
-        allHubungi = Array.isArray(data.rows) ? data.rows : (Array.isArray(data) ? data : []);
-        document.getElementById("stHubungi").textContent = allHubungi.length;
+        const r = await fetch(API.hubungi + "?action=list&password=" + encodeURIComponent(adminPass) + "&_=" + Date.now());
+        const d = await r.json();
+        if (d.ok === false) throw new Error(d.message);
+        allHubungi = Array.isArray(d.rows) ? d.rows : [];
         animateValue(document.getElementById("stHubungi"), allHubungi.length);
         renderHubungi();
       } catch (e) {
-        console.error(e);
-        tbody.innerHTML = "<tr><td colspan='5' class='empty'>Gagal muat — pastikan doGet list + password</td></tr>";
-        document.getElementById("stHubungi").textContent = "—";
+        tbody.innerHTML = "<tr><td colspan='5' class='empty'>Gagal</td></tr>";
       }
     }
-
     function renderHubungi() {
       const q = (document.getElementById("cariHubungi").value || "").toLowerCase();
       const list = allHubungi.filter(r => JSON.stringify(r).toLowerCase().includes(q));
       const tbody = document.getElementById("tbodyHubungi");
-      if (!list.length) {
-        tbody.innerHTML = "<tr><td colspan='5' class='empty'>Tiada rekod</td></tr>";
-        return;
-      }
-      tbody.innerHTML = list.slice(0, 150).map(r => `
-        <tr>
-          <td>${esc(r.timestamp || r.masa || r.Tarikh || "")}</td>
-          <td>${esc(r.nama || r.Nama || "")}</td>
-          <td>${esc(r.emel || r.email || r.Emel || "")}</td>
-          <td>${esc(r.telefon || r.Telefon || "")}</td>
-          <td title="${esc(r.mesej || r.Mesej || "")}">${esc(r.mesej || r.Mesej || "")}</td>
-        </tr>
-      `).join("");
+      if (!list.length) { tbody.innerHTML = "<tr><td colspan='5' class='empty'>Tiada</td></tr>"; return; }
+      tbody.innerHTML = list.slice(0, 150).map(r => `<tr>
+        <td>${esc(r.timestamp || r.masa || "")}</td>
+        <td>${esc(r.nama || "")}</td>
+        <td>${esc(r.emel || r.email || "")}</td>
+        <td>${esc(r.telefon || "")}</td>
+        <td title="${esc(r.mesej || "")}">${esc(r.mesej || "")}</td>
+      </tr>`).join("");
     }
     document.getElementById("cariHubungi").oninput = renderHubungi;
     document.getElementById("btnLoadHubungi").onclick = loadHubungi;
 
-    /* ========== EDUGAME ========== */
     async function loadEdu() {
       const tbody = document.getElementById("tbodyEdu");
       const thead = document.getElementById("theadEdu");
-      if (!API.edugame) {
-        tbody.innerHTML = "<tr><td class='empty'>Isi API.edugame dalam config</td></tr>";
-        return;
-      }
       tbody.innerHTML = "<tr><td class='empty'>Memuat...</td></tr>";
       try {
-        const url = API.edugame + "?action=list&password=" + encodeURIComponent(adminPass) + "&_=" + Date.now();
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.ok === false) throw new Error(data.message || "Gagal");
-        allEdu = Array.isArray(data.rows) ? data.rows : (Array.isArray(data) ? data : []);
+        const r = await fetch(API.edugame + "?action=list&password=" + encodeURIComponent(adminPass) + "&_=" + Date.now());
+        const d = await r.json();
+        if (d.ok === false) throw new Error(d.message);
+        allEdu = Array.isArray(d.rows) ? d.rows : [];
         animateValue(document.getElementById("stEdu"), allEdu.length);
         const keys = allEdu[0] ? Object.keys(allEdu[0]) : ["Data"];
         thead.innerHTML = "<tr>" + keys.map(k => "<th>" + esc(k) + "</th>").join("") + "</tr>";
-        renderEdu(keys);
+        const q = (document.getElementById("cariEdu").value || "").toLowerCase();
+        const list = allEdu.filter(row => JSON.stringify(row).toLowerCase().includes(q));
+        tbody.innerHTML = list.slice(0, 150).map(row =>
+          "<tr>" + keys.map(k => "<td title='" + esc(row[k]) + "'>" + esc(row[k]) + "</td>").join("") + "</tr>"
+        ).join("") || "<tr><td class='empty' colspan='" + keys.length + "'>Tiada</td></tr>";
       } catch (e) {
-        console.error(e);
-        tbody.innerHTML = "<tr><td class='empty'>Gagal muat EduGame</td></tr>";
+        tbody.innerHTML = "<tr><td class='empty'>Gagal</td></tr>";
       }
     }
-
-    function renderEdu(keys) {
-      const q = (document.getElementById("cariEdu").value || "").toLowerCase();
-      const list = allEdu.filter(r => JSON.stringify(r).toLowerCase().includes(q));
-      const tbody = document.getElementById("tbodyEdu");
-      const ks = keys || (allEdu[0] ? Object.keys(allEdu[0]) : []);
-      if (!list.length) {
-        tbody.innerHTML = "<tr><td class='empty' colspan='" + Math.max(ks.length, 1) + "'>Tiada rekod</td></tr>";
-        return;
-      }
-      tbody.innerHTML = list.slice(0, 150).map(r =>
-        "<tr>" + ks.map(k => "<td title='" + esc(r[k]) + "'>" + esc(r[k]) + "</td>").join("") + "</tr>"
-      ).join("");
-    }
-    document.getElementById("cariEdu").oninput = () => renderEdu();
+    document.getElementById("cariEdu").oninput = loadEdu;
     document.getElementById("btnLoadEdu").onclick = loadEdu;
 
+    async function loadLog() {
+      const tbody = document.getElementById("tbodyLog");
+      tbody.innerHTML = "<tr><td colspan='6' class='empty'>Memuat...</td></tr>";
+      try {
+        const d = await postProduk({ password: adminPass, action: "logs", limit: 80 });
+        if (!d.ok) throw new Error(d.message);
+        const rows = d.rows || [];
+        if (!rows.length) { tbody.innerHTML = "<tr><td colspan='6' class='empty'>Tiada log</td></tr>"; return; }
+        tbody.innerHTML = rows.map(r => `<tr>
+          <td>${esc(r.timestamp)}</td><td>${esc(r.action)}</td><td>${esc(r.id)}</td>
+          <td>${esc(r.nama)}</td><td>${esc(r.mesej)}</td><td>${esc(r.detail)}</td>
+        </tr>`).join("");
+      } catch (e) {
+        tbody.innerHTML = "<tr><td colspan='6' class='empty'>Gagal muat log</td></tr>";
+      }
+    }
+    document.getElementById("btnLoadLog").onclick = loadLog;
+
     async function refreshAll() {
-      document.getElementById("overviewNote").textContent = "Memuat data...";
+      await checkStatus();
       await loadProduk();
       await loadHubungi();
       await loadEdu();
-      document.getElementById("overviewNote").textContent =
-        "Kemas kini: " + new Date().toLocaleString("ms-MY") +
-        " · Produk dari Worker · Hubungi/EduGame dari Apps Script doGet.";
+      await loadLog();
     }
     document.getElementById("btnRefreshAll").onclick = refreshAll;
 
-    /* ========== FORM PRODUK (draqulanine) ========== */
+    /* ===== FORM ADD (draqulanine) ===== */
     const form = document.getElementById("formProduk");
-    const msg = document.getElementById("msgProduk");
+    const msg = document.getElementById("msg");
     const btn = document.getElementById("btnSubmit");
+    const fileInput = document.getElementById("fileGambar");
+    const preview = document.getElementById("preview");
+    const uploadStatus = document.getElementById("uploadStatus");
+    const ocrStatus = document.getElementById("ocrStatus");
+    const gambarInput = document.getElementById("gambar");
     const badgeSelect = document.getElementById("badge");
     const badgeLain = document.getElementById("badgeLain");
+    const namaInput = document.getElementById("nama");
+    const deskripsiInput = document.getElementById("deskripsi");
+    const captchaWrap = document.getElementById("captchaWrap");
+    const captchaQ = document.getElementById("captchaQ");
+    const captchaA = document.getElementById("captchaA");
     let captchaJawapan = 0;
-
-    badgeSelect.onchange = () => {
-      badgeLain.style.display = badgeSelect.value === "__lain__" ? "block" : "none";
-    };
 
     function getSubmitCount() {
       const n = parseInt(sessionStorage.getItem(STORAGE_KEY) || "0", 10);
@@ -677,27 +841,23 @@
     function setSubmitCount(n) { sessionStorage.setItem(STORAGE_KEY, String(n)); }
     function perluCaptcha() { return (getSubmitCount() + 1) % CAPTCHA_EVERY === 0; }
     function buatCaptcha() {
-      const a = Math.floor(Math.random() * 8) + 2;
-      const b = Math.floor(Math.random() * 8) + 2;
+      const a = 2 + Math.floor(Math.random() * 8), b = 2 + Math.floor(Math.random() * 8);
       captchaJawapan = a + b;
-      document.getElementById("captchaQ").textContent = a + " + " + b + " = ?";
-      document.getElementById("captchaA").value = "";
+      captchaQ.textContent = a + " + " + b + " = ?";
+      captchaA.value = "";
     }
     function kemaskiniCaptchaUI() {
-      const wrap = document.getElementById("captchaWrap");
-      const next = getSubmitCount() + 1;
       if (perluCaptcha()) {
-        wrap.classList.add("show");
+        captchaWrap.classList.add("show");
         buatCaptcha();
-        document.getElementById("submitHint").textContent = "Hantaran #" + next + " — captcha wajib.";
+        document.getElementById("submitHint").textContent = "Captcha wajib hantaran ini.";
       } else {
-        wrap.classList.remove("show");
-        const tinggal = CAPTCHA_EVERY - (next % CAPTCHA_EVERY);
-        document.getElementById("submitHint").textContent =
-          "Berjaya: " + getSubmitCount() + " · Captcha selepas " + tinggal + " lagi.";
+        captchaWrap.classList.remove("show");
+        document.getElementById("submitHint").textContent = "Berjaya: " + getSubmitCount();
       }
     }
     document.getElementById("btnCaptchaRefresh").onclick = buatCaptcha;
+    badgeSelect.onchange = () => { badgeLain.style.display = badgeSelect.value === "__lain__" ? "block" : "none"; };
     kemaskiniCaptchaUI();
 
     function fileToBase64(file) {
@@ -709,62 +869,57 @@
       });
     }
 
-    document.getElementById("fileGambar").onchange = async function () {
-      const file = this.files[0];
-      if (!file) return;
-      const password = document.getElementById("password").value.trim();
-      if (!password) {
-        document.getElementById("uploadStatus").textContent = "Isi password dulu.";
-        this.value = "";
-        return;
-      }
-      const preview = document.getElementById("preview");
-      preview.src = URL.createObjectURL(file);
-      preview.style.display = "block";
-      document.getElementById("uploadStatus").textContent = "Upload...";
-      btn.disabled = true;
-
+    async function jalankanOCR(file, password) {
+      ocrStatus.textContent = "AI menganalisis...";
       try {
-        const fd = new FormData();
-        fd.append("password", password);
-        fd.append("image", file);
-        const res = await fetch(API.upload, { method: "POST", body: fd });
-        const data = await res.json();
-        if (data.success && data.url) {
-          document.getElementById("gambar").value = data.url;
-          document.getElementById("uploadStatus").textContent = "Upload berjaya";
-        } else {
-          document.getElementById("uploadStatus").textContent = "Upload gagal — paste link manual.";
-        }
-      } catch (e) {
-        document.getElementById("uploadStatus").textContent = "Ralat upload.";
-      }
-
-      try {
-        document.getElementById("ocrStatus").textContent = "AI menganalisis...";
         const { base64, mimeType } = await fileToBase64(file);
         const res = await fetch(API.ocr, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ password, imageBase64: base64, mimeType })
         });
         const result = await res.json();
-        if (result.ok && result.data) {
-          const c = result.data;
-          if (!document.getElementById("nama").value.trim() && c.nama) document.getElementById("nama").value = c.nama;
-          if (!document.getElementById("deskripsi").value.trim() && c.deskripsi) document.getElementById("deskripsi").value = c.deskripsi;
-          document.getElementById("ocrStatus").textContent = "AI siap — semak medan.";
-        } else {
-          document.getElementById("ocrStatus").textContent = "AI skip — isi manual.";
+        if (res.status === 401) { ocrStatus.textContent = "Password salah (OCR)"; await serverLog("ocr_fail", "Password salah", ""); return; }
+        if (!result.ok || !result.data) { ocrStatus.textContent = "AI skip — isi manual"; await serverLog("ocr_fail", result.message || "OCR gagal", ""); return; }
+        const c = result.data;
+        if (!namaInput.value.trim() && c.nama) namaInput.value = c.nama;
+        if (!deskripsiInput.value.trim() && c.deskripsi) deskripsiInput.value = c.deskripsi;
+        if (!badgeSelect.value && c.badge && [...badgeSelect.options].some(o => o.value === c.badge)) badgeSelect.value = c.badge;
+        if (c.kategori_cadangan) {
+          const cb = document.querySelector('#kategoriGrid input[value="' + c.kategori_cadangan.replace(/"/g, "") + '"]');
+          if (cb) cb.checked = true;
         }
+        ocrStatus.textContent = "AI siap";
       } catch (e) {
-        document.getElementById("ocrStatus").textContent = "OCR tak tersedia.";
+        ocrStatus.textContent = "OCR gagal";
+        await serverLog("ocr_fail", e.message || "OCR error", "");
       }
+    }
+
+    fileInput.onchange = async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+      const password = document.getElementById("password").value.trim();
+      if (!password) { uploadStatus.textContent = "Isi password dulu"; fileInput.value = ""; return; }
+      preview.src = URL.createObjectURL(file); preview.style.display = "block";
+      uploadStatus.textContent = "Upload..."; ocrStatus.textContent = ""; btn.disabled = true;
+      const up = (async () => {
+        try {
+          const fd = new FormData(); fd.append("password", password); fd.append("image", file);
+          const res = await fetch(API.upload, { method: "POST", body: fd });
+          const data = await res.json();
+          if (data.success && data.url) { gambarInput.value = data.url; uploadStatus.textContent = "Upload OK"; }
+          else { uploadStatus.textContent = "Upload gagal"; await serverLog("upload_fail", data.message || "Upload gagal", ""); }
+        } catch (e) {
+          uploadStatus.textContent = "Ralat upload";
+          await serverLog("upload_fail", e.message || "upload error", "");
+        }
+      })();
+      await Promise.all([up, jalankanOCR(file, password)]);
       btn.disabled = false;
     };
 
     function ambilKategori() {
-      const dipilih = Array.from(document.querySelectorAll('#kategoriGrid input:checked')).map(c => c.value);
+      const dipilih = [...document.querySelectorAll('#kategoriGrid input:checked')].map(c => c.value);
       const lain = document.getElementById("kategoriLain").value.trim();
       if (lain) lain.split(",").map(s => s.trim()).filter(Boolean).forEach(k => { if (!dipilih.includes(k)) dipilih.push(k); });
       return dipilih.join(", ");
@@ -772,61 +927,46 @@
 
     form.onsubmit = async (e) => {
       e.preventDefault();
-      msg.className = "msg";
-      msg.textContent = "";
-      if (perluCaptcha()) {
-        if (parseInt(document.getElementById("captchaA").value, 10) !== captchaJawapan) {
-          msg.className = "msg err";
-          msg.textContent = "Captcha salah.";
-          buatCaptcha();
-          return;
-        }
+      msg.className = "msg"; msg.textContent = "";
+      if (perluCaptcha() && parseInt(captchaA.value, 10) !== captchaJawapan) {
+        msg.className = "msg err"; msg.textContent = "Captcha salah"; buatCaptcha(); return;
       }
-      btn.disabled = true;
-      btn.textContent = "Menghantar...";
+      btn.disabled = true; btn.textContent = "Menghantar...";
       const payload = {
         password: document.getElementById("password").value.trim(),
         id: document.getElementById("id").value.trim(),
-        nama: document.getElementById("nama").value.trim(),
+        nama: namaInput.value.trim(),
         harga: document.getElementById("harga").value.trim(),
         terjual: document.getElementById("terjual").value.trim(),
         kategori: ambilKategori(),
         badge: badgeSelect.value === "__lain__" ? badgeLain.value.trim() : badgeSelect.value,
-        gambar: document.getElementById("gambar").value.trim(),
+        gambar: gambarInput.value.trim(),
         tiktok: document.getElementById("tiktok").value.trim(),
         shopee: document.getElementById("shopee").value.trim(),
         lazada: document.getElementById("lazada").value.trim(),
-        deskripsi: document.getElementById("deskripsi").value.trim()
+        deskripsi: deskripsiInput.value.trim()
       };
       try {
-        const res = await fetch(API.produkWrite, { method: "POST", body: JSON.stringify(payload) });
-        const data = await res.json();
+        const data = await postProduk(payload);
         if (data.ok) {
           setSubmitCount(getSubmitCount() + 1);
           kemaskiniCaptchaUI();
           msg.className = "msg ok";
-          msg.textContent = (data.message || "Berjaya") + " (ID: " + data.id + ")";
+          msg.textContent = (data.message || "OK") + " (ID " + data.id + ")";
           const pass = payload.password;
           form.reset();
           document.getElementById("password").value = pass;
-          document.getElementById("preview").style.display = "none";
-          try {
-            await fetch(API.produkRefresh, { headers: { "X-Admin-Pass": pass } });
-            msg.textContent += " · cache OK";
-          } catch (_) {
-            msg.textContent += " · cache ~10 min";
-          }
-          loadProduk();
+          preview.style.display = "none"; uploadStatus.textContent = ""; ocrStatus.textContent = "";
+          await refreshCache();
+          await loadProduk();
+          loadLog();
         } else {
-          msg.className = "msg err";
-          msg.textContent = data.message || "Gagal";
+          msg.className = "msg err"; msg.textContent = data.message || "Gagal";
         }
       } catch (err) {
-        msg.className = "msg warn";
-        msg.textContent = "Status tak pasti — semak sheet PRODUK.";
+        msg.className = "msg warn"; msg.textContent = "Status tak pasti — semak sheet";
       }
-      btn.disabled = false;
-      btn.textContent = "Tambah Produk";
+      btn.disabled = false; btn.textContent = "Tambah Produk";
     };
   </script>
 </body>
