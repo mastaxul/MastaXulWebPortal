@@ -3,594 +3,256 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard | Masta Xul</title>
+  <title>Admin | Masta Xul</title>
   <meta name="robots" content="noindex, nofollow">
   <style>
-    :root {
-      --bg: #030712;
-      --card: rgba(15, 23, 42, 0.82);
-      --line: rgba(56, 189, 248, 0.28);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --cyan: #38bdf8;
-      --purple: #a855f7;
-      --green: #22c55e;
-      --red: #ef4444;
-      --amber: #f59e0b;
-      --brown: #6B4423;
-    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-      background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #f5f2ef;
+      color: #111;
+      padding: 20px 16px 60px;
     }
-    #galaxyCanvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-    .app { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 20px 16px 80px; }
-
-    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-    .login-card {
-      width: 100%; max-width: 400px; background: var(--card); border: 1px solid var(--line);
-      border-radius: 20px; padding: 32px 28px; backdrop-filter: blur(16px);
-      box-shadow: 0 0 40px rgba(56, 189, 248, 0.12); animation: fadeUp 0.5s ease;
+    .box {
+      max-width: 520px;
+      margin: 0 auto;
+      background: #fff;
+      border: 2px solid #6B4423;
+      border-radius: 16px;
+      padding: 24px 20px;
+      box-shadow: 0 4px 16px rgba(107,68,35,0.1);
     }
-    .login-card h1 {
-      text-align: center; font-size: 1.4rem; margin-bottom: 6px;
-      background: linear-gradient(90deg, var(--cyan), var(--purple));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .login-card p { text-align: center; color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
-    .login-err { color: var(--red); text-align: center; font-size: 0.9rem; margin-top: 12px; display: none; }
-
-    label { display: block; font-weight: 600; font-size: 0.88rem; margin: 14px 0 6px; color: var(--muted); }
+    h1 { font-size: 1.35rem; margin-bottom: 4px; text-align: center; }
+    .sub { text-align: center; color: #6B4423; font-size: 0.9rem; margin-bottom: 22px; }
+    label { display: block; font-weight: 600; font-size: 0.88rem; margin: 14px 0 6px; }
     input, textarea, select {
-      width: 100%; padding: 12px 14px; border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.14); background: rgba(0,0,0,0.35);
-      color: var(--text); font-size: 1rem; outline: none; font-family: inherit;
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #6B4423;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+      background: #fff;
+      font-family: inherit;
     }
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(56,189,248,0.2);
-    }
+    input:focus, textarea:focus, select:focus { border-color: #D32F2F; }
     textarea { min-height: 90px; resize: vertical; }
-
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; padding: 13px 18px; margin-top: 16px; border: none; border-radius: 12px;
-      font-weight: 700; font-size: 1rem; cursor: pointer;
-      background: linear-gradient(135deg, var(--cyan), var(--purple)); color: #fff;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(56,189,248,0.35); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-    .btn-ghost {
-      background: transparent; border: 1px solid var(--line); color: var(--cyan);
-      width: auto; padding: 8px 14px; font-size: 0.85rem; margin: 0;
-    }
-
-    .topbar {
-      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-      gap: 12px; margin-bottom: 18px;
-    }
-    .topbar h1 {
-      font-size: 1.35rem;
-      background: linear-gradient(90deg, var(--cyan), var(--purple));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-    .tab {
-      padding: 10px 16px; border-radius: 999px; border: 1px solid var(--line);
-      background: rgba(15,23,42,0.65); color: var(--muted); cursor: pointer;
-      font-weight: 600; font-size: 0.9rem;
-    }
-    .tab.active, .tab:hover {
-      color: #fff; border-color: var(--cyan); background: rgba(56,189,248,0.15);
-    }
-    .panel { display: none; animation: fadeUp 0.35s ease; }
-    .panel.active { display: block; }
-
-    .stats {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px; margin-bottom: 18px;
-    }
-    .stat-card {
-      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
-      padding: 16px; backdrop-filter: blur(12px);
-    }
-    .stat-card .label { font-size: 0.78rem; color: var(--muted); }
-    .stat-card .value {
-      font-size: 1.6rem; font-weight: 800; margin-top: 4px;
-      background: linear-gradient(90deg, #fff, var(--cyan));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .stat-card .sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
-
-    .card {
-      background: var(--card); border: 1px solid var(--line); border-radius: 16px;
-      padding: 20px; margin-bottom: 16px; backdrop-filter: blur(12px);
-    }
-    .card h2 { font-size: 1.05rem; color: var(--cyan); margin-bottom: 12px; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
-
+    button[type="submit"] {
+      width: 100%;
+      margin-top: 22px;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #D32F2F;
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button[type="submit"]:disabled { background: #ccc; cursor: not-allowed; }
+    button[type="submit"]:hover:not(:disabled) { background: #111; }
+    .msg {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      display: none;
+      text-align: center;
+    }
+    .msg.ok { display: block; background: #e8f5e9; color: #2E7D32; }
+    .msg.err { display: block; background: #ffebee; color: #c62828; }
+    .msg.warn { display: block; background: #fff8e1; color: #8a6100; }
+    .hint { font-size: 0.8rem; color: #888; margin-top: 4px; }
+    .back {
+      display: block;
+      text-align: center;
+      margin-top: 18px;
+      color: #6B4423;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .upload-box {
+      border: 2px dashed #6B4423;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      background: #faf7f4;
+    }
+    .upload-box input[type="file"] { border: none; padding: 8px 0; }
+    .preview {
+      margin-top: 12px;
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 10px;
+      display: none;
+      object-fit: contain;
+      background: #f0ebe6;
+    }
+    .upload-status { font-size: 0.85rem; margin-top: 8px; color: #6B4423; }
+    .ocr-status { font-size: 0.85rem; margin-top: 6px; color: #0088cc; font-weight: 600; }
     .checkbox-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
     .chk {
-      display: flex; align-items: center; gap: 6px; border: 1px solid var(--line);
-      border-radius: 20px; padding: 7px 12px; font-size: 0.82rem; font-weight: 600;
-      cursor: pointer; background: rgba(0,0,0,0.25); margin: 0; color: var(--text);
+      display: flex; align-items: center; gap: 6px;
+      border: 2px solid #6B4423; border-radius: 20px;
+      padding: 7px 12px; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; background: #fff; margin: 0;
     }
-    .chk input { width: auto; margin: 0; accent-color: var(--cyan); }
+    .chk input { width: auto; margin: 0; accent-color: #D32F2F; }
 
-    .upload-box {
-      border: 1px dashed var(--line); border-radius: 12px; padding: 14px;
-      text-align: center; background: rgba(0,0,0,0.25);
-    }
-    .preview {
-      margin-top: 12px; max-width: 100%; max-height: 200px; border-radius: 10px;
-      display: none; object-fit: contain; background: rgba(0,0,0,0.3);
-    }
-    .upload-status { font-size: 0.85rem; margin-top: 8px; color: var(--cyan); }
-    .ocr-status { font-size: 0.85rem; margin-top: 6px; color: #7dd3fc; font-weight: 600; }
-    .hint { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
-
-    .msg {
-      margin-top: 14px; padding: 12px; border-radius: 10px; font-size: 0.95rem;
-      display: none; text-align: center; font-weight: 600;
-    }
-    .msg.ok { display: block; background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid var(--green); }
-    .msg.err { display: block; background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid var(--red); }
-    .msg.warn { display: block; background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid var(--amber); }
-
+    /* Captcha — hanya muncul setiap 3 hantaran */
     .captcha-wrap {
-      display: none; margin-top: 16px; padding: 14px; border: 1px dashed var(--red);
-      border-radius: 12px; background: rgba(239,68,68,0.08);
+      display: none;
+      margin-top: 16px;
+      padding: 14px;
+      border: 2px dashed #D32F2F;
+      border-radius: 12px;
+      background: #fff5f5;
     }
     .captcha-wrap.show { display: block; }
-    .captcha-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+    .captcha-wrap label { margin-top: 0; color: #c62828; }
+    .captcha-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
     .captcha-q {
-      font-weight: 700; font-size: 1.15rem; background: #000; color: #fff;
-      padding: 10px 14px; border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.15rem;
+      background: #111;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      letter-spacing: 1px;
     }
-    .captcha-row input { width: 100px; margin: 0; }
+    .captcha-row input {
+      width: 100px;
+      margin: 0;
+    }
     .captcha-refresh {
-      border: 1px solid var(--line); background: rgba(255,255,255,0.06); color: var(--text);
-      padding: 10px 12px; border-radius: 8px; font-weight: 600; cursor: pointer;
+      border: 2px solid #6B4423;
+      background: #fff;
+      color: #111;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
     }
-    .submit-hint { text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 8px; }
-
-    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
-    .toolbar input[type="search"] { max-width: 280px; margin: 0; }
-    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--line); }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); }
-    th { background: rgba(56,189,248,0.1); color: var(--cyan); white-space: nowrap; }
-    td { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #e2e8f0; }
-    .empty { text-align: center; color: var(--muted); padding: 24px; }
-    .hidden { display: none !important; }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .submit-hint {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: 8px;
     }
   </style>
 </head>
 <body>
-  <canvas id="galaxyCanvas"></canvas>
 
-  <!-- LOGIN -->
-  <div class="login-screen" id="loginScreen">
-    <div class="login-card">
-      <h1>Masta Xul Admin</h1>
-      <p>Produk · Hubungi · EduGame</p>
-      <label>Password admin</label>
-      <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password">
-      <button type="button" class="btn" id="btnLogin">Masuk</button>
-      <p class="login-err" id="loginErr">Password kosong.</p>
-    </div>
-  </div>
+  <div class="box">
+    <h1>Dashboard Admin</h1>
+    <p class="sub">Tambah produk · Upload gambar ImgBB</p>
 
-  <div class="app hidden" id="appShell">
-    <div class="topbar">
-      <h1>Admin Dashboard</h1>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button type="button" class="btn btn-ghost" id="btnRefreshAll">↻ Refresh</button>
-        <a class="btn btn-ghost" href="/shop/" style="text-decoration:none;">Shop</a>
-        <a class="btn btn-ghost" href="/draqulanine/" style="text-decoration:none;">Borang lama</a>
-        <button type="button" class="btn btn-ghost" id="btnLogout">Keluar</button>
-      </div>
-    </div>
+    <form id="formProduk">
+      <label>Password admin *</label>
+      <input type="password" id="password" required placeholder="Isi dulu sebelum upload gambar" autocomplete="off">
 
-    <div class="tabs">
-      <button type="button" class="tab active" data-tab="overview">Overview</button>
-      <button type="button" class="tab" data-tab="produk">Produk</button>
-      <button type="button" class="tab" data-tab="hubungi">Hubungi</button>
-      <button type="button" class="tab" data-tab="edugame">EduGame</button>
-    </div>
-
-    <!-- OVERVIEW -->
-    <section class="panel active" id="panel-overview">
-      <div class="stats">
-        <div class="stat-card"><div class="label">Jumlah produk</div><div class="value" id="stProduk">—</div><div class="sub">Cache Worker</div></div>
-        <div class="stat-card"><div class="label">Jumlah terjual</div><div class="value" id="stTerjual">—</div><div class="sub">Sum medan terjual</div></div>
-        <div class="stat-card"><div class="label">Klik / views</div><div class="value" id="stKlik">—</div><div class="sub">Jika ada kolum</div></div>
-        <div class="stat-card"><div class="label">Mesej hubungi</div><div class="value" id="stHubungi">—</div><div class="sub">doGet list</div></div>
-        <div class="stat-card"><div class="label">Order EduGame</div><div class="value" id="stEdu">—</div><div class="sub">doGet list</div></div>
-        <div class="stat-card"><div class="label">Hot / Viral</div><div class="value" id="stBadge">—</div><div class="sub">Badge produk</div></div>
-      </div>
-      <div class="card"><h2>Status</h2><p class="hint" id="overviewNote">Tekan Refresh selepas login.</p></div>
-    </section>
-
-    <!-- PRODUK -->
-    <section class="panel" id="panel-produk">
-      <div class="stats">
-        <div class="stat-card"><div class="label">Produk</div><div class="value" id="pCount">—</div></div>
-        <div class="stat-card"><div class="label">Terjual (sum)</div><div class="value" id="pSold">—</div></div>
-        <div class="stat-card"><div class="label">Harga purata</div><div class="value" id="pAvg">—</div></div>
-        <div class="stat-card"><div class="label">Ada gambar</div><div class="value" id="pImg">—</div></div>
+      <label>Gambar produk</label>
+      <div class="upload-box">
+        <input type="file" id="fileGambar" accept="image/*">
+        <p class="hint">Isi password dulu → pilih gambar → auto upload + analisis AI</p>
+        <p class="upload-status" id="uploadStatus"></p>
+        <p class="ocr-status" id="ocrStatus"></p>
+        <img id="preview" class="preview" alt="Preview">
       </div>
 
-      <div class="card">
-        <h2>Senarai produk</h2>
-        <div class="toolbar">
-          <input type="search" id="cariProduk" placeholder="Cari nama / id / kategori...">
-          <button type="button" class="btn btn-ghost" id="btnLoadProduk">Muat semula</button>
+      <label>Link gambar (auto / manual)</label>
+      <input type="url" id="gambar" placeholder="Akan diisi automatik selepas upload">
+
+      <label>ID (kosongkan = auto)</label>
+      <input type="text" id="id" placeholder="Contoh: 31">
+
+      <label>Nama produk *</label>
+      <input type="text" id="nama" required placeholder="Nama produk">
+
+      <div class="row">
+        <div>
+          <label>Harga *</label>
+          <input type="text" id="harga" required placeholder="89.90">
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>ID</th><th>Nama</th><th>Harga</th><th>Terjual</th><th>Kategori</th><th>Badge</th></tr></thead>
-            <tbody id="tbodyProduk"><tr><td colspan="6" class="empty">Belum dimuat</td></tr></tbody>
-          </table>
+        <div>
+          <label>Terjual</label>
+          <input type="text" id="terjual" placeholder="120">
         </div>
       </div>
 
-      <div class="card">
-        <h2>Tambah produk · sama /draqulanine</h2>
-        <form id="formProduk">
-          <label>Password admin *</label>
-          <input type="password" id="password" required placeholder="Isi dulu sebelum upload gambar" autocomplete="off">
-
-          <label>Gambar produk</label>
-          <div class="upload-box">
-            <input type="file" id="fileGambar" accept="image/*">
-            <p class="hint">Isi password dulu → pilih gambar → auto upload + analisis AI</p>
-            <p class="upload-status" id="uploadStatus"></p>
-            <p class="ocr-status" id="ocrStatus"></p>
-            <img id="preview" class="preview" alt="Preview">
-          </div>
-
-          <label>Link gambar (auto / manual)</label>
-          <input type="url" id="gambar" placeholder="Akan diisi automatik selepas upload">
-
-          <label>ID (kosongkan = auto)</label>
-          <input type="text" id="id" placeholder="Contoh: 31">
-
-          <label>Nama produk *</label>
-          <input type="text" id="nama" required placeholder="Nama produk">
-
-          <div class="row">
-            <div>
-              <label>Harga *</label>
-              <input type="text" id="harga" required placeholder="89.90">
-            </div>
-            <div>
-              <label>Terjual</label>
-              <input type="text" id="terjual" placeholder="120">
-            </div>
-          </div>
-
-          <label>Kategori</label>
-          <div class="checkbox-grid" id="kategoriGrid">
-            <label class="chk"><input type="checkbox" value="Viral"> Viral</label>
-            <label class="chk"><input type="checkbox" value="Kesihatan"> Kesihatan</label>
-            <label class="chk"><input type="checkbox" value="Gadget"> Gadget</label>
-            <label class="chk"><input type="checkbox" value="Rumah"> Rumah</label>
-            <label class="chk"><input type="checkbox" value="Kecantikan"> Kecantikan</label>
-            <label class="chk"><input type="checkbox" value="Pertanian"> Pertanian</label>
-            <label class="chk"><input type="checkbox" value="Dapur"> Dapur</label>
-            <label class="chk"><input type="checkbox" value="Lelaki"> Lelaki</label>
-            <label class="chk"><input type="checkbox" value="Wanita"> Wanita</label>
-            <label class="chk"><input type="checkbox" value="Pakaian"> Pakaian</label>
-            <label class="chk"><input type="checkbox" value="Sukan"> Sukan</label>
-            <label class="chk"><input type="checkbox" value="Perhiasan"> Perhiasan</label>
-            <label class="chk"><input type="checkbox" value="Elektrik"> Elektrik</label>
-            <label class="chk"><input type="checkbox" value="Tumbuhan"> Tumbuhan</label>
-          </div>
-          <input type="text" id="kategoriLain" placeholder="Kategori lain (pisah dengan koma)" style="margin-top:10px;">
-
-          <label>Badge</label>
-          <select id="badge">
-            <option value="">Tiada</option>
-            <option value="Hot">Hot</option>
-            <option value="Viral">Viral</option>
-            <option value="Terlaris">Terlaris</option>
-            <option value="Mantap">Mantap</option>
-            <option value="__lain__">Lain (taip sendiri)</option>
-          </select>
-          <input type="text" id="badgeLain" placeholder="Taip badge baru" style="display:none; margin-top:8px;">
-
-          <label>Link TikTok</label>
-          <input type="url" id="tiktok" placeholder="https://...">
-          <label>Link Shopee</label>
-          <input type="url" id="shopee" placeholder="https://...">
-          <label>Link Lazada</label>
-          <input type="url" id="lazada" placeholder="https://...">
-
-          <label>Deskripsi</label>
-          <textarea id="deskripsi" placeholder="Penerangan produk..."></textarea>
-
-          <div class="captcha-wrap" id="captchaWrap">
-            <label style="color:#f87171;margin-top:0;">🔒 Captcha (wajib setiap 3 produk)</label>
-            <div class="captcha-row">
-              <span class="captcha-q" id="captchaQ">?</span>
-              <input type="number" id="captchaA" placeholder="Jawapan" inputmode="numeric">
-              <button type="button" class="captcha-refresh" id="btnCaptchaRefresh" title="Soalan baru">↻</button>
-            </div>
-            <p class="hint">Hantaran ke-3, ke-6, ke-9… perlu jawab captcha ini.</p>
-          </div>
-
-          <button type="submit" class="btn" id="btnSubmit">Tambah Produk</button>
-          <p class="submit-hint" id="submitHint"></p>
-        </form>
-        <div class="msg" id="msg"></div>
+      <label>Kategori</label>
+      <div class="checkbox-grid" id="kategoriGrid">
+        <label class="chk"><input type="checkbox" value="Viral"> Viral</label>
+        <label class="chk"><input type="checkbox" value="Kesihatan"> Kesihatan</label>
+        <label class="chk"><input type="checkbox" value="Gadget"> Gadget</label>
+        <label class="chk"><input type="checkbox" value="Rumah"> Rumah</label>
+        <label class="chk"><input type="checkbox" value="Kecantikan"> Kecantikan</label>
+        <label class="chk"><input type="checkbox" value="Pertanian"> Pertanian</label>
+        <label class="chk"><input type="checkbox" value="Dapur"> Dapur</label>
+        <label class="chk"><input type="checkbox" value="Lelaki"> Lelaki</label>
+        <label class="chk"><input type="checkbox" value="Wanita"> Wanita</label>
+        <label class="chk"><input type="checkbox" value="Pakaian"> Pakaian</label>
+        <label class="chk"><input type="checkbox" value="Sukan"> Sukan</label>
+        <label class="chk"><input type="checkbox" value="Perhiasan"> Perhiasan</label>
+        <label class="chk"><input type="checkbox" value="Elektrik"> Elektrik</label>
+        <label class="chk"><input type="checkbox" value="Tumbuhan"> Tumbuhan</label>
       </div>
-    </section>
+      <input type="text" id="kategoriLain" placeholder="Kategori lain (pisah dengan koma)" style="margin-top:10px;">
 
-    <!-- HUBUNGI -->
-    <section class="panel" id="panel-hubungi">
-      <div class="card">
-        <h2>Mesej Hubungi</h2>
-        <div class="toolbar">
-          <input type="search" id="cariHubungi" placeholder="Cari nama / emel / mesej...">
-          <button type="button" class="btn btn-ghost" id="btnLoadHubungi">Muat semula</button>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Masa</th><th>Nama</th><th>Emel</th><th>Telefon</th><th>Mesej</th></tr></thead>
-            <tbody id="tbodyHubungi"><tr><td colspan="5" class="empty">Belum dimuat</td></tr></tbody>
-          </table>
-        </div>
-        <p class="hint">Perlu <code>doGet?action=list&amp;password=...</code> pada web app Hubungi.</p>
-      </div>
-    </section>
+      <label>Badge</label>
+      <select id="badge">
+        <option value="">Tiada</option>
+        <option value="Hot">Hot</option>
+        <option value="Viral">Viral</option>
+        <option value="Terlaris">Terlaris</option>
+        <option value="Mantap">Mantap</option>
+        <option value="__lain__">Lain (taip sendiri)</option>
+      </select>
+      <input type="text" id="badgeLain" placeholder="Taip badge baru" style="display:none; margin-top:8px;">
 
-    <!-- EDUGAME -->
-    <section class="panel" id="panel-edugame">
-      <div class="card">
-        <h2>Data EduGame / Game5</h2>
-        <div class="toolbar">
-          <input type="search" id="cariEdu" placeholder="Cari...">
-          <button type="button" class="btn btn-ghost" id="btnLoadEdu">Muat semula</button>
+      <label>Link TikTok</label>
+      <input type="url" id="tiktok" placeholder="https://...">
+
+      <label>Link Shopee</label>
+      <input type="url" id="shopee" placeholder="https://...">
+
+      <label>Link Lazada</label>
+      <input type="url" id="lazada" placeholder="https://...">
+
+      <label>Deskripsi</label>
+      <textarea id="deskripsi" placeholder="Penerangan produk..."></textarea>
+
+      <!-- Captcha: hanya papar setiap 3 hantaran berjaya -->
+      <div class="captcha-wrap" id="captchaWrap">
+        <label>🔒 Captcha (wajib setiap 3 produk)</label>
+        <div class="captcha-row">
+          <span class="captcha-q" id="captchaQ">?</span>
+          <input type="number" id="captchaA" placeholder="Jawapan" inputmode="numeric">
+          <button type="button" class="captcha-refresh" id="btnCaptchaRefresh" title="Soalan baru">↻</button>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead id="theadEdu"><tr><th>Data</th></tr></thead>
-            <tbody id="tbodyEdu"><tr><td class="empty">Belum dimuat</td></tr></tbody>
-          </table>
-        </div>
-        <p class="hint">URL EduGame sudah diisi. Jika gagal, tambah <code>doGet</code> list + password pada script Game5.</p>
+        <p class="hint">Hantaran ke-3, ke-6, ke-9… perlu jawab captcha ini.</p>
       </div>
-    </section>
+
+      <button type="submit" id="btnSubmit">Tambah Produk</button>
+      <p class="submit-hint" id="submitHint"></p>
+    </form>
+
+    <div class="msg" id="msg"></div>
+    <a class="back" href="/shop/">← Ke Shop</a>
   </div>
 
   <script>
-    /* ========== CONFIG ========== */
-    const API = {
-      produkWrite: "https://script.google.com/macros/s/AKfycbx5tijI4QHYTNap-YEN5i9-ZGfDIZ1IcGqUsZNi32s9gtOT9sIV0GcsUPzPka4srYujRA/exec",
-      produkRead: "/api/produk",
-      produkRefresh: "/api/produk/refresh",
-      upload: "/api/upload-gambar",
-      ocr: "/api/ocr-gemini",
-      hubungi: "https://script.google.com/macros/s/AKfycbxsWSCyKSOiEx-Syg1dGuNT21U0Qqv_4GPBiFhJgvU-t014SXvbOwKAWL4TZiQk8NJE/exec",
-      edugame: "https://script.google.com/macros/s/AKfycbzvU1sok6V2OWFrwomgtTxAm3O5mAaDxqjwzF_UoV41M1qLM7uyai_73pLkUqz_2Z3A/exec"
-    };
-    const CAPTCHA_EVERY = 3;
+    const API_URL = "https://script.google.com/macros/s/AKfycbx5tijI4QHYTNap-YEN5i9-ZGfDIZ1IcGqUsZNi32s9gtOT9sIV0GcsUPzPka4srYujRA/exec";
+    const CAPTCHA_EVERY = 3; // captcha pada hantaran ke-3, 6, 9...
     const STORAGE_KEY = "mx_admin_submit_count";
-    const PASS_KEY = "mx_admin_session";
 
-    /* ========== GALAXY ========== */
-    (function () {
-      const canvas = document.getElementById("galaxyCanvas");
-      if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      const ctx = canvas.getContext("2d");
-      let w, h, stars = [];
-      function resize() {
-        w = canvas.width = innerWidth; h = canvas.height = innerHeight;
-        stars = Array.from({ length: Math.min(140, Math.floor(w * h / 16000) + 50) }, () => ({
-          x: Math.random() * w, y: Math.random() * h,
-          r: Math.random() * 1.4 + 0.2, a: Math.random() * 0.7 + 0.2,
-          c: ["#38bdf8", "#a855f7", "#fff", "#818cf8"][Math.floor(Math.random() * 4)]
-        }));
-      }
-      function draw() {
-        ctx.clearRect(0, 0, w, h);
-        stars.forEach(s => {
-          ctx.globalAlpha = s.a; ctx.fillStyle = s.c;
-          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
-        });
-        ctx.globalAlpha = 1; requestAnimationFrame(draw);
-      }
-      addEventListener("resize", resize); resize(); draw();
-    })();
-
-    /* ========== AUTH ========== */
-    let adminPass = sessionStorage.getItem(PASS_KEY) || "";
-    const loginScreen = document.getElementById("loginScreen");
-    const appShell = document.getElementById("appShell");
-
-    function masuk(pass) {
-      adminPass = pass;
-      sessionStorage.setItem(PASS_KEY, pass);
-      loginScreen.classList.add("hidden");
-      appShell.classList.remove("hidden");
-      document.getElementById("password").value = pass;
-      refreshAll();
-    }
-    document.getElementById("btnLogin").onclick = () => {
-      const p = document.getElementById("loginPass").value.trim();
-      const err = document.getElementById("loginErr");
-      if (!p) { err.style.display = "block"; return; }
-      err.style.display = "none"; masuk(p);
-    };
-    document.getElementById("loginPass").addEventListener("keydown", e => {
-      if (e.key === "Enter") document.getElementById("btnLogin").click();
-    });
-    document.getElementById("btnLogout").onclick = () => {
-      sessionStorage.removeItem(PASS_KEY); location.reload();
-    };
-    if (adminPass) masuk(adminPass);
-
-    /* ========== TABS ========== */
-    document.querySelectorAll(".tab").forEach(tab => {
-      tab.onclick = () => {
-        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-        document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-        tab.classList.add("active");
-        document.getElementById("panel-" + tab.dataset.tab).classList.add("active");
-      };
-    });
-
-    function esc(s) {
-      return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-    }
-    function num(v) {
-      const n = parseFloat(String(v ?? "").replace(/[^\d.-]/g, ""));
-      return isNaN(n) ? 0 : n;
-    }
-    function animateValue(el, end) {
-      if (!el) return;
-      const target = typeof end === "number" ? end : parseInt(end, 10);
-      if (isNaN(target)) { el.textContent = end; return; }
-      const t0 = performance.now(), dur = 650;
-      (function frame(t) {
-        const p = Math.min(1, (t - t0) / dur);
-        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))).toLocaleString("ms-MY");
-        if (p < 1) requestAnimationFrame(frame);
-      })(t0);
-    }
-
-    let allProduk = [], allHubungi = [], allEdu = [];
-
-    /* ========== PRODUK LIST ========== */
-    async function loadProduk() {
-      const tbody = document.getElementById("tbodyProduk");
-      tbody.innerHTML = "<tr><td colspan='6' class='empty'>Memuat...</td></tr>";
-      try {
-        const res = await fetch(API.produkRead + "?_=" + Date.now());
-        const data = await res.json();
-        allProduk = Array.isArray(data) ? data.filter(p => p && p.nama) : [];
-        renderProdukTable();
-        updateProdukStats();
-      } catch (e) {
-        tbody.innerHTML = "<tr><td colspan='6' class='empty'>Gagal muat produk</td></tr>";
-      }
-    }
-    function renderProdukTable() {
-      const q = (document.getElementById("cariProduk").value || "").toLowerCase();
-      const list = allProduk.filter(p => [p.id, p.nama, p.kategori, p.badge].join(" ").toLowerCase().includes(q));
-      const tbody = document.getElementById("tbodyProduk");
-      if (!list.length) { tbody.innerHTML = "<tr><td colspan='6' class='empty'>Tiada produk</td></tr>"; return; }
-      tbody.innerHTML = list.slice(0, 120).map(p => `<tr>
-        <td>${esc(p.id)}</td><td title="${esc(p.nama)}">${esc(p.nama)}</td>
-        <td>${esc(p.harga)}</td><td>${esc(p.terjual || 0)}</td>
-        <td>${esc(p.kategori)}</td><td>${esc(p.badge)}</td></tr>`).join("");
-    }
-    function updateProdukStats() {
-      const n = allProduk.length;
-      const sold = allProduk.reduce((s, p) => s + num(p.terjual), 0);
-      const klik = allProduk.reduce((s, p) => s + num(p.klik || p.clicks || p.views), 0);
-      const withImg = allProduk.filter(p => p.gambar).length;
-      const prices = allProduk.map(p => num(p.harga)).filter(x => x > 0);
-      const avg = prices.length ? prices.reduce((a, b) => a + b, 0) / prices.length : 0;
-      const badgeN = allProduk.filter(p => /hot|viral/i.test(p.badge || "")).length;
-      animateValue(document.getElementById("stProduk"), n);
-      animateValue(document.getElementById("stTerjual"), sold);
-      document.getElementById("stKlik").textContent = klik > 0 ? klik.toLocaleString("ms-MY") : "—";
-      animateValue(document.getElementById("stBadge"), badgeN);
-      animateValue(document.getElementById("pCount"), n);
-      animateValue(document.getElementById("pSold"), sold);
-      document.getElementById("pAvg").textContent = avg ? "RM " + avg.toFixed(2) : "—";
-      animateValue(document.getElementById("pImg"), withImg);
-    }
-    document.getElementById("cariProduk").oninput = renderProdukTable;
-    document.getElementById("btnLoadProduk").onclick = loadProduk;
-
-    /* ========== HUBUNGI ========== */
-    async function loadHubungi() {
-      const tbody = document.getElementById("tbodyHubungi");
-      tbody.innerHTML = "<tr><td colspan='5' class='empty'>Memuat...</td></tr>";
-      try {
-        const url = API.hubungi + "?action=list&password=" + encodeURIComponent(adminPass) + "&_=" + Date.now();
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.ok === false) throw new Error(data.message || "fail");
-        allHubungi = Array.isArray(data.rows) ? data.rows : (Array.isArray(data) ? data : []);
-        animateValue(document.getElementById("stHubungi"), allHubungi.length);
-        renderHubungi();
-      } catch (e) {
-        tbody.innerHTML = "<tr><td colspan='5' class='empty'>Gagal — pastikan doGet list + password</td></tr>";
-        document.getElementById("stHubungi").textContent = "—";
-      }
-    }
-    function renderHubungi() {
-      const q = (document.getElementById("cariHubungi").value || "").toLowerCase();
-      const list = allHubungi.filter(r => JSON.stringify(r).toLowerCase().includes(q));
-      const tbody = document.getElementById("tbodyHubungi");
-      if (!list.length) { tbody.innerHTML = "<tr><td colspan='5' class='empty'>Tiada rekod</td></tr>"; return; }
-      tbody.innerHTML = list.slice(0, 150).map(r => `<tr>
-        <td>${esc(r.timestamp || r.masa || r.Tarikh || "")}</td>
-        <td>${esc(r.nama || r.Nama || "")}</td>
-        <td>${esc(r.emel || r.email || r.Emel || "")}</td>
-        <td>${esc(r.telefon || r.Telefon || "")}</td>
-        <td title="${esc(r.mesej || r.Mesej || "")}">${esc(r.mesej || r.Mesej || "")}</td>
-      </tr>`).join("");
-    }
-    document.getElementById("cariHubungi").oninput = renderHubungi;
-    document.getElementById("btnLoadHubungi").onclick = loadHubungi;
-
-    /* ========== EDUGAME ========== */
-    async function loadEdu() {
-      const tbody = document.getElementById("tbodyEdu");
-      const thead = document.getElementById("theadEdu");
-      tbody.innerHTML = "<tr><td class='empty'>Memuat...</td></tr>";
-      try {
-        const url = API.edugame + "?action=list&password=" + encodeURIComponent(adminPass) + "&_=" + Date.now();
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.ok === false) throw new Error(data.message || "fail");
-        allEdu = Array.isArray(data.rows) ? data.rows : (Array.isArray(data) ? data : []);
-        animateValue(document.getElementById("stEdu"), allEdu.length);
-        const keys = allEdu[0] ? Object.keys(allEdu[0]) : ["Data"];
-        thead.innerHTML = "<tr>" + keys.map(k => "<th>" + esc(k) + "</th>").join("") + "</tr>";
-        renderEdu(keys);
-      } catch (e) {
-        tbody.innerHTML = "<tr><td class='empty'>Gagal muat — doGet list pada script Game5?</td></tr>";
-        document.getElementById("stEdu").textContent = "—";
-      }
-    }
-    function renderEdu(keys) {
-      const q = (document.getElementById("cariEdu").value || "").toLowerCase();
-      const list = allEdu.filter(r => JSON.stringify(r).toLowerCase().includes(q));
-      const tbody = document.getElementById("tbodyEdu");
-      const ks = keys || (allEdu[0] ? Object.keys(allEdu[0]) : []);
-      if (!list.length) {
-        tbody.innerHTML = "<tr><td class='empty' colspan='" + Math.max(ks.length, 1) + "'>Tiada rekod</td></tr>";
-        return;
-      }
-      tbody.innerHTML = list.slice(0, 150).map(r =>
-        "<tr>" + ks.map(k => "<td title='" + esc(r[k]) + "'>" + esc(r[k]) + "</td>").join("") + "</tr>"
-      ).join("");
-    }
-    document.getElementById("cariEdu").oninput = () => renderEdu();
-    document.getElementById("btnLoadEdu").onclick = loadEdu;
-
-    async function refreshAll() {
-      document.getElementById("overviewNote").textContent = "Memuat...";
-      await loadProduk();
-      await loadHubungi();
-      await loadEdu();
-      document.getElementById("overviewNote").textContent =
-        "Kemas kini " + new Date().toLocaleString("ms-MY");
-    }
-    document.getElementById("btnRefreshAll").onclick = refreshAll;
-
-    /* ========== FORM = exact /draqulanine ========== */
     const form = document.getElementById("formProduk");
     const msg = document.getElementById("msg");
     const btn = document.getElementById("btnSubmit");
@@ -607,14 +269,23 @@
     const captchaQ = document.getElementById("captchaQ");
     const captchaA = document.getElementById("captchaA");
     const submitHint = document.getElementById("submitHint");
+
     let captchaJawapan = 0;
 
     function getSubmitCount() {
       const n = parseInt(sessionStorage.getItem(STORAGE_KEY) || "0", 10);
       return isNaN(n) || n < 0 ? 0 : n;
     }
-    function setSubmitCount(n) { sessionStorage.setItem(STORAGE_KEY, String(n)); }
-    function perluCaptcha() { return (getSubmitCount() + 1) % CAPTCHA_EVERY === 0; }
+
+    function setSubmitCount(n) {
+      sessionStorage.setItem(STORAGE_KEY, String(n));
+    }
+
+    // Hantaran seterusnya (count+1) perlu captcha jika gandaan 3
+    function perluCaptcha() {
+      return (getSubmitCount() + 1) % CAPTCHA_EVERY === 0;
+    }
+
     function buatCaptcha() {
       const a = Math.floor(Math.random() * 8) + 2;
       const b = Math.floor(Math.random() * 8) + 2;
@@ -622,6 +293,7 @@
       captchaQ.textContent = a + " + " + b + " = ?";
       captchaA.value = "";
     }
+
     function kemaskiniCaptchaUI() {
       const count = getSubmitCount();
       const next = count + 1;
@@ -639,7 +311,9 @@
           "Hantaran berjaya: " + count + " · Captcha seterusnya selepas " + tinggal + " produk lagi.";
       }
     }
+
     document.getElementById("btnCaptchaRefresh").addEventListener("click", buatCaptcha);
+
     badgeSelect.addEventListener("change", () => {
       badgeLain.style.display = badgeSelect.value === "__lain__" ? "block" : "none";
       if (badgeSelect.value === "__lain__") badgeLain.focus();
@@ -648,7 +322,10 @@
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve({ base64: reader.result.split(",")[1], mimeType: file.type || "image/jpeg" });
+        reader.onload = () => {
+          const base64 = reader.result.split(",")[1];
+          resolve({ base64, mimeType: file.type || "image/jpeg" });
+        };
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });
@@ -658,12 +335,13 @@
       ocrStatus.textContent = "🔍 Menganalisis gambar dengan AI...";
       try {
         const { base64, mimeType } = await fileToBase64(file);
-        const res = await fetch(API.ocr, {
+        const res = await fetch("/api/ocr-gemini", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ password, imageBase64: base64, mimeType })
         });
         const result = await res.json();
+
         if (res.status === 401) {
           ocrStatus.textContent = "❌ Password salah — analisis AI tak dijalankan.";
           return;
@@ -672,6 +350,7 @@
           ocrStatus.textContent = "⚠️ AI tak dapat analisis — isi manual.";
           return;
         }
+
         const cadangan = result.data;
         if (!namaInput.value.trim() && cadangan.nama) namaInput.value = cadangan.nama;
         if (!deskripsiInput.value.trim() && cadangan.deskripsi) deskripsiInput.value = cadangan.deskripsi;
@@ -695,12 +374,14 @@
     fileInput.addEventListener("change", async () => {
       const file = fileInput.files[0];
       if (!file) return;
+
       const password = document.getElementById("password").value.trim();
       if (!password) {
         uploadStatus.textContent = "🔒 Isi password admin dulu, kemudian pilih gambar semula.";
         fileInput.value = "";
         return;
       }
+
       preview.src = URL.createObjectURL(file);
       preview.style.display = "block";
       uploadStatus.textContent = "⏳ Sedang upload gambar...";
@@ -712,7 +393,7 @@
           const formData = new FormData();
           formData.append("password", password);
           formData.append("image", file);
-          const res = await fetch(API.upload, { method: "POST", body: formData });
+          const res = await fetch("/api/upload-gambar", { method: "POST", body: formData });
           const data = await res.json();
           if (res.status === 401) {
             uploadStatus.textContent = "❌ Password salah — gambar tak dimuat naik.";
@@ -744,6 +425,7 @@
       }
       return dipilih.join(", ");
     }
+
     function ambilBadge() {
       if (badgeSelect.value === "__lain__") return badgeLain.value.trim();
       return badgeSelect.value;
@@ -753,6 +435,8 @@
       e.preventDefault();
       msg.className = "msg";
       msg.textContent = "";
+
+      // ===== CAPTCHA setiap 3 hantaran =====
       if (perluCaptcha()) {
         const jawapan = parseInt(captchaA.value, 10);
         if (jawapan !== captchaJawapan) {
@@ -762,8 +446,10 @@
           return;
         }
       }
+
       btn.disabled = true;
       btn.textContent = "Menghantar...";
+
       const payload = {
         password: document.getElementById("password").value.trim(),
         id: document.getElementById("id").value.trim(),
@@ -778,13 +464,21 @@
         lazada: document.getElementById("lazada").value.trim(),
         deskripsi: document.getElementById("deskripsi").value.trim()
       };
+
       try {
-        const res = await fetch(API.produkWrite, { method: "POST", body: JSON.stringify(payload) });
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
         const data = await res.json();
+
         if (data.ok) {
-          setSubmitCount(getSubmitCount() + 1);
+          const newCount = getSubmitCount() + 1;
+          setSubmitCount(newCount);
+
           msg.className = "msg ok";
           msg.textContent = "✅ " + data.message + " (ID: " + data.id + ") — menyegerak cache...";
+
           const passwordAsal = payload.password;
           form.reset();
           document.getElementById("password").value = passwordAsal;
@@ -792,16 +486,19 @@
           uploadStatus.textContent = "";
           ocrStatus.textContent = "";
           badgeLain.style.display = "none";
+
           kemaskiniCaptchaUI();
+
           try {
-            const refreshRes = await fetch(API.produkRefresh, { headers: { "X-Admin-Pass": passwordAsal } });
+            const refreshRes = await fetch("/api/produk/refresh", {
+              headers: { "X-Admin-Pass": passwordAsal }
+            });
             if (!refreshRes.ok) throw new Error("Refresh " + refreshRes.status);
             msg.textContent = "✅ " + data.message + " (ID: " + data.id + ") — cache OK, boleh share!";
           } catch (refreshErr) {
             console.error(refreshErr);
             msg.textContent = "✅ " + data.message + " (ID: " + data.id + ") — cache auto gagal; ~10 minit.";
           }
-          loadProduk();
         } else {
           msg.className = "msg err";
           msg.textContent = "❌ " + (data.message || "Gagal");
@@ -813,10 +510,12 @@
         msg.textContent = "⚠️ Status tak dapat disahkan. Semak sheet PRODUK.";
         if (perluCaptcha()) buatCaptcha();
       }
+
       btn.disabled = false;
       btn.textContent = "Tambah Produk";
     });
 
+    // Init UI captcha
     kemaskiniCaptchaUI();
   </script>
 </body>
