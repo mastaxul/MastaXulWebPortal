@@ -2345,15 +2345,92 @@ let adminPass=sessionStorage.getItem(PASS_KEY)||"";
 const loginScreen=document.getElementById("loginScreen");
 const appShell=document.getElementById("appShell");
 
-function masuk(pass){adminPass=pass;sessionStorage.setItem(PASS_KEY,pass);const ls=document.getElementById("loginScreen");const app=document.getElementById("appShell");if(ls)ls.classList.add("hidden");if(app)app.classList.remove("hidden");const pw=document.getElementById("password");if(pw)pw.value=pass;try{refreshAll();}catch(e){console.warn(e);}}
-document.getElementById("btnLogin").onclick=()=>{
-  const p=document.getElementById("loginPass").value.trim();
-  if(!p){document.getElementById("loginErr").style.display="block";return;}
-  document.getElementById("loginErr").style.display="none";masuk(p);
+async function verifyAdminPass(pass){
+  // Sahkan password dengan Apps Script PRODUK (action logs)
+  const res = await fetch(API.produkWrite, {
+    method: "POST",
+    body: JSON.stringify({ password: pass, action: "logs", limit: 1 })
+  });
+  let data = null;
+  try { data = await res.json(); } catch (_) {}
+  if (data && data.ok === true) return true;
+  // Fallback: Worker refresh (X-Admin-Pass)
+  try {
+    const r2 = await fetch(API.produkRefresh, { headers: { "X-Admin-Pass": pass } });
+    const d2 = await r2.json();
+    if (d2 && d2.ok === true) return true;
+  } catch (_) {}
+  return false;
+}
+
+function masuk(pass){
+  adminPass = pass;
+  sessionStorage.setItem(PASS_KEY, pass);
+  const ls = document.getElementById("loginScreen");
+  const app = document.getElementById("appShell");
+  if (ls) ls.classList.add("hidden");
+  if (app) app.classList.remove("hidden");
+  const pw = document.getElementById("password");
+  if (pw) pw.value = pass;
+  try { refreshAll(); } catch (e) { console.warn(e); }
+}
+
+document.getElementById("btnLogin").onclick = async () => {
+  const err = document.getElementById("loginErr");
+  const btn = document.getElementById("btnLogin");
+  const p = document.getElementById("loginPass").value.trim();
+  if (!p) {
+    err.style.display = "block";
+    err.textContent = "Password kosong.";
+    return;
+  }
+  err.style.display = "block";
+  err.style.color = "#94a3b8";
+  err.textContent = "Mengesahkan password…";
+  btn.disabled = true;
+  try {
+    const ok = await verifyAdminPass(p);
+    if (!ok) {
+      sessionStorage.removeItem(PASS_KEY);
+      adminPass = "";
+      err.style.color = "#ef4444";
+      err.textContent = "Password salah. Cuba lagi.";
+      return;
+    }
+    err.style.display = "none";
+    masuk(p);
+  } catch (e) {
+    err.style.color = "#ef4444";
+    err.textContent = "Gagal sambung ke API. Semak rangkaian / Apps Script.";
+  } finally {
+    btn.disabled = false;
+  }
 };
-document.getElementById("loginPass").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("btnLogin").click();});
-document.getElementById("btnLogout").onclick=()=>{sessionStorage.removeItem(PASS_KEY);location.reload();};
-if(adminPass)masuk(adminPass);
+
+document.getElementById("loginPass").addEventListener("keydown", e => {
+  if (e.key === "Enter") document.getElementById("btnLogin").click();
+});
+
+document.getElementById("btnLogout").onclick = () => {
+  sessionStorage.removeItem(PASS_KEY);
+  location.reload();
+};
+
+// Auto-login hanya jika password session masih SAH di server
+(async () => {
+  if (!adminPass) return;
+  try {
+    const ok = await verifyAdminPass(adminPass);
+    if (ok) masuk(adminPass);
+    else {
+      sessionStorage.removeItem(PASS_KEY);
+      adminPass = "";
+    }
+  } catch (_) {
+    sessionStorage.removeItem(PASS_KEY);
+    adminPass = "";
+  }
+})();
 
 document.querySelectorAll(".tab").forEach(tab=>{
   tab.onclick=()=>{
@@ -2973,7 +3050,14 @@ const state = {
    INIT
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", init);
+function bootWebmaster(){
+  try { init(); } catch (e) { console.warn("webmaster init", e); }
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", bootWebmaster);
+} else {
+  bootWebmaster();
+}
 
 async function init(){
 
@@ -3040,31 +3124,35 @@ function saveLocalState(){
    ========================================================= */
 
 function setupNavigation(){
-
-  document.querySelectorAll(".nav button").forEach(btn=>{
+  const root = document.getElementById("panel-webmaster") || document;
+  root.querySelectorAll(".nav button").forEach(btn=>{
     btn.addEventListener("click",()=>{
       showPage(btn.dataset.page);
     });
   });
-
-  document.getElementById("mobileMenu").onclick=()=>{
-    document.getElementById("sidebar").classList.toggle("open");
-  };
+  const mm = document.getElementById("mobileMenu");
+  if (mm) {
+    mm.onclick = ()=>{
+      const sb = document.getElementById("sidebar");
+      if (sb) sb.classList.toggle("open");
+    };
+  }
 }
 
 function showPage(name){
+  const root = document.getElementById("panel-webmaster") || document;
 
-  document.querySelectorAll(".page").forEach(p=>{
+  root.querySelectorAll(".page").forEach(p=>{
     p.classList.remove("active");
   });
 
-  const page=document.getElementById("page-"+name);
+  const page = document.getElementById("page-"+name);
 
   if(page){
     page.classList.add("active");
   }
 
-  document.querySelectorAll(".nav button").forEach(btn=>{
+  root.querySelectorAll(".nav button").forEach(btn=>{
     btn.classList.toggle(
       "active",
       btn.dataset.page===name
