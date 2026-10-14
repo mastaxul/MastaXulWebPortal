@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | Masta Xul</title>
   <meta name="robots" content="noindex, nofollow">
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   <style>
 
     :root {
@@ -23,6 +24,10 @@
     .login-card{width:100%;max-width:400px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px 26px;backdrop-filter:blur(16px);animation:fadeUp .45s ease}
     .login-card h1{text-align:center;font-size:1.35rem;margin-bottom:6px;background:linear-gradient(90deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
     .login-card p{text-align:center;color:var(--muted);font-size:.88rem;margin-bottom:16px}
+    
+    .turnstile-wrap{display:flex;justify-content:center;margin:14px 0 4px;min-height:65px}
+    .turnstile-wrap.compact{margin:10px 0;transform:scale(.95);transform-origin:center}
+
     .login-err{color:var(--red);text-align:center;margin-top:10px;display:none;font-size:.88rem}
 
     label{display:block;font-weight:600;font-size:.85rem;margin:11px 0 5px;color:var(--muted)}
@@ -969,8 +974,11 @@
     <p>please close all window</p>
     <label>log ur pin</label>
     <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password">
+    <div class="turnstile-wrap" id="turnstileLoginWrap">
+      <div id="turnstile-login"></div>
+    </div>
     <button type="button" class="btn" id="btnLogin">Attack</button>
-    <p class="login-err" id="loginErr">276669</p>
+    <p class="login-err" id="loginErr" style="display:none">Password kosong.</p>
   </div>
 </div>
 
@@ -1134,6 +1142,11 @@
             <button type="button" class="captcha-refresh" id="btnCaptchaRefresh">↻</button>
           </div>
         </div>
+        
+        <div class="turnstile-wrap compact" id="turnstileFormWrap">
+          <div id="turnstile-form"></div>
+        </div>
+
         <button type="submit" class="btn" id="btnSubmit">Tambah Produk</button>
         <p class="hint" id="submitHint"></p>
       </form>
@@ -2345,6 +2358,63 @@ let adminPass=sessionStorage.getItem(PASS_KEY)||"";
 const loginScreen=document.getElementById("loginScreen");
 const appShell=document.getElementById("appShell");
 
+
+/* ===== CLOUDFLARE TURNSTILE ===== */
+const TURNSTILE_SITEKEY = "0x4AAAAAAFWrdcXMTCekaOTS";
+let tsLoginId = null;
+let tsFormId = null;
+
+function renderTurnstileWidgets(){
+  if (!window.turnstile) return;
+  try {
+    const loginEl = document.getElementById("turnstile-login");
+    if (loginEl && tsLoginId === null) {
+      loginEl.innerHTML = "";
+      tsLoginId = turnstile.render("#turnstile-login", {
+        sitekey: TURNSTILE_SITEKEY,
+        theme: "dark",
+        callback: function(){},
+        "expired-callback": function(){},
+        "error-callback": function(){}
+      });
+    }
+  } catch (e) { console.warn("turnstile login", e); }
+  try {
+    const formEl = document.getElementById("turnstile-form");
+    if (formEl && tsFormId === null) {
+      formEl.innerHTML = "";
+      tsFormId = turnstile.render("#turnstile-form", {
+        sitekey: TURNSTILE_SITEKEY,
+        theme: "dark",
+        callback: function(){},
+        "expired-callback": function(){},
+        "error-callback": function(){}
+      });
+    }
+  } catch (e) { console.warn("turnstile form", e); }
+}
+
+function getTurnstileToken(widgetId){
+  if (!window.turnstile || widgetId === null || widgetId === undefined) return "";
+  try {
+    return turnstile.getResponse(widgetId) || "";
+  } catch (_) { return ""; }
+}
+
+function resetTurnstile(widgetId){
+  if (!window.turnstile || widgetId === null || widgetId === undefined) return;
+  try { turnstile.reset(widgetId); } catch (_) {}
+}
+
+// Render bila API Turnstile siap
+(function waitTurnstile(){
+  if (window.turnstile) {
+    renderTurnstileWidgets();
+  } else {
+    setTimeout(waitTurnstile, 200);
+  }
+})();
+
 async function verifyAdminPass(pass){
   // Sahkan password dengan Apps Script PRODUK (action logs)
   const res = await fetch(API.produkWrite, {
@@ -2381,7 +2451,15 @@ document.getElementById("btnLogin").onclick = async () => {
   const p = document.getElementById("loginPass").value.trim();
   if (!p) {
     err.style.display = "block";
+    err.style.color = "#ef4444";
     err.textContent = "Password kosong.";
+    return;
+  }
+  const tsToken = getTurnstileToken(tsLoginId);
+  if (!tsToken) {
+    err.style.display = "block";
+    err.style.color = "#ef4444";
+    err.textContent = "Sila lengkapkan CAPTCHA (Turnstile) dahulu.";
     return;
   }
   err.style.display = "block";
@@ -2395,6 +2473,7 @@ document.getElementById("btnLogin").onclick = async () => {
       adminPass = "";
       err.style.color = "#ef4444";
       err.textContent = "Password salah. Cuba lagi.";
+      resetTurnstile(tsLoginId);
       return;
     }
     err.style.display = "none";
@@ -2402,6 +2481,7 @@ document.getElementById("btnLogin").onclick = async () => {
   } catch (e) {
     err.style.color = "#ef4444";
     err.textContent = "Gagal sambung ke API. Semak rangkaian / Apps Script.";
+    resetTurnstile(tsLoginId);
   } finally {
     btn.disabled = false;
   }
@@ -2928,6 +3008,8 @@ function ambilKategori(){
 form.onsubmit=async e=>{
   e.preventDefault();msg.className="msg";msg.textContent="";
   if(perluCaptcha()&&parseInt(captchaA.value,10)!==captchaJawapan){msg.className="msg err";msg.textContent="Captcha salah";buatCaptcha();return;}
+  const tsFormTok=getTurnstileToken(tsFormId);
+  if(!tsFormTok){msg.className="msg err";msg.textContent="Sila lengkapkan CAPTCHA (Turnstile) dahulu.";return;}
   btn.disabled=true;btn.textContent="Menghantar...";
   const payload={password:document.getElementById("password").value.trim(),id:document.getElementById("id").value.trim(),
     nama:namaInput.value.trim(),harga:document.getElementById("harga").value.trim(),terjual:document.getElementById("terjual").value.trim(),
@@ -2938,7 +3020,7 @@ form.onsubmit=async e=>{
   try{
     const data=await postProduk(payload);
     if(data.ok){
-      setSubmitCount(getSubmitCount()+1);kemaskiniCaptchaUI();
+      setSubmitCount(getSubmitCount()+1);kemaskiniCaptchaUI();resetTurnstile(tsFormId);
       msg.className="msg ok";msg.textContent=(data.message||"OK")+" (ID "+data.id+")";
       const pass=payload.password;form.reset();document.getElementById("password").value=pass;
       preview.style.display="none";uploadStatus.textContent="";ocrStatus.textContent="";
