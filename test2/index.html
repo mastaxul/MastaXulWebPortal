@@ -160,7 +160,65 @@
 
     });
 
-    document.getElementById("verify").addEventListener("click",
+    
+document.getElementById("verify").addEventListener("click", async () => {
+  const result = document.getElementById("result");
+  const button = document.getElementById("verify");
+  const token = captchaToken;
+
+  if (!token) return;
+
+  button.disabled = true;
+  result.textContent = "Menjalankan ujian keselamatan...";
+
+  async function checkToken(value) {
+    const response = await fetch(
+      "https://mastaxul-captcha.2ulfpv.workers.dev/verify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: value })
+      }
+    );
+
+    return {
+      status: response.status,
+      data: await response.json()
+    };
+  }
+
+  try {
+    // Ujian 1: token palsu
+    const fake = await checkToken("FAKE_INVALID_TURNSTILE_TOKEN");
+    const fakePassed =
+      fake.data.success === false && fake.status !== 500 &&
+      fake.status !== 502;
+
+    // Ujian 2: sahkan token sebenar, kemudian guna semula
+    const first = await checkToken(token);
+    const replay = await checkToken(token);
+
+    result.textContent =
+      "UJIAN TOKEN PALSU: " +
+      (fakePassed ? "DITOLAK — LULUS" : "SEMAK — " +
+        JSON.stringify(fake)) + "\n\n" +
+      "PENGGUNAAN PERTAMA: " +
+      (first.data.success ? "DITERIMA" : "GAGAL — " +
+        JSON.stringify(first)) + "\n\n" +
+      "PENGGUNAAN SEMULA: " +
+      (!replay.data.success ? "DITOLAK — LULUS" :
+        "DITERIMA — GAGAL UJIAN");
+
+  } catch (error) {
+    result.textContent =
+      "Ralat rangkaian: " + error.message;
+  } finally {
+    captchaToken = "";
+    if (window.turnstile) turnstile.reset();
+    button.disabled = true;
+  }
+});
+
 
       async () => {
 
