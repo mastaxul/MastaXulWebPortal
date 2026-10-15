@@ -1,36 +1,36 @@
-<!--
-  Panel Blog untuk Admin Dashboard
-  1. Letak sebagai tab "Blog" atau buka fail ini dalam /admindashboard/
-  2. TUKAR BLOG_API kepada URL Web App Blog
-  3. Guna password admin yang sama (ADMIN_PASS)
--->
 <!DOCTYPE html>
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tulis Artikel | Admin</title>
+  <title>Tulis Artikel | Admin Masta Xul</title>
   <meta name="robots" content="noindex, nofollow">
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   <style>
     body{font-family:system-ui,sans-serif;background:#0b0f19;color:#e8eef7;margin:0;padding:20px}
     .box{max-width:640px;margin:0 auto;background:#121826;border:1px solid #283244;border-radius:14px;padding:20px}
-    h1{font-size:1.25rem;margin:0 0 14px}
+    h1{font-size:1.25rem;margin:0 0 8px}
     label{display:block;font-size:.85rem;color:#8f9bad;margin:12px 0 5px}
     input,textarea,select{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #283244;background:#0c111a;color:#fff;font:inherit}
-    textarea{min-height:220px;resize:vertical}
+    textarea{min-height:200px;resize:vertical}
     button{margin-top:14px;width:100%;padding:12px;border:0;border-radius:10px;background:#3d7eff;color:#fff;font-weight:700;cursor:pointer}
     button:disabled{opacity:.5}
+    button.secondary{background:#1b2433;border:1px solid #283244;margin-top:8px}
     .msg{margin-top:12px;padding:10px;border-radius:8px;display:none;text-align:center;font-weight:600}
     .msg.ok{display:block;background:rgba(57,217,138,.12);color:#7df0b3}
     .msg.err{display:block;background:rgba(255,107,107,.12);color:#ff9292}
     .hint{font-size:.78rem;color:#8f9bad;margin-top:6px}
     a{color:#6ea8fe}
+    .preview{max-width:100%;max-height:160px;border-radius:10px;margin-top:8px;display:none}
+    .turnstile-wrap{display:flex;justify-content:center;margin:14px 0;min-height:65px}
+    .upload-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .upload-row input[type=file]{flex:1;min-width:160px}
   </style>
 </head>
 <body>
   <div class="box">
     <h1>✍️ Tulis Artikel / Post</h1>
-    <p class="hint">Artikel disimpan sebagai Google Doc dalam folder <b>post-artikel</b>. URL awam: <code>/blog/?slug=nama-tajuk</code></p>
+    <p class="hint">URL: <code>mastaxul.my/blog/nama-tajuk</code> · Gambar ImgBB · Video YouTube/TikTok/IG/FB · Turnstile disahkan server</p>
 
     <label>Password admin *</label>
     <input type="password" id="password" autocomplete="current-password">
@@ -39,22 +39,33 @@
     <input type="text" id="title" placeholder="Contoh: Cara pilih produk viral di TikTok">
 
     <label>Slug (kosong = auto dari tajuk)</label>
-    <input type="text" id="slug" placeholder="cara-pilih-produk-viral-di-tiktok">
+    <input type="text" id="slug" placeholder="cara-pilih-produk-viral">
 
-    <label>Excerpt / ringkasan (kosong = auto)</label>
-    <input type="text" id="excerpt" placeholder="1–2 ayat pendek untuk senarai blog">
+    <label>Excerpt / ringkasan</label>
+    <input type="text" id="excerpt" placeholder="1–2 ayat untuk senarai blog">
 
-    <label>Cover image URL (optional)</label>
+    <label>Cover — URL atau upload ImgBB</label>
     <input type="url" id="cover" placeholder="https://i.ibb.co/...">
+    <div class="upload-row">
+      <input type="file" id="coverFile" accept="image/*">
+      <button type="button" class="secondary" id="btnUploadCover" style="width:auto;margin:0;padding:10px 14px">Upload</button>
+    </div>
+    <img id="coverPreview" class="preview" alt="">
+
+    <label>Video (satu URL sebaris)</label>
+    <textarea id="videos" style="min-height:90px" placeholder="https://www.youtube.com/watch?v=xxxxx
+https://www.tiktok.com/@user/video/123456"></textarea>
 
     <label>Status</label>
     <select id="status">
       <option value="published">Published (tampak awam)</option>
-      <option value="draft">Draft (tersembunyi)</option>
+      <option value="draft">Draft</option>
     </select>
 
     <label>Isi artikel *</label>
-    <textarea id="body" placeholder="Tulis isi penuh di sini. Perenggan dipisahkan dengan baris kosong."></textarea>
+    <textarea id="body" placeholder="Tulis isi. Perenggan dipisah baris kosong."></textarea>
+
+    <div class="turnstile-wrap"><div id="turnstile-form"></div></div>
 
     <button type="button" id="btnPublish">Simpan ke Google Docs + Sheet</button>
     <div class="msg" id="msg"></div>
@@ -62,11 +73,132 @@
   </div>
 
 <script>
+/* ===== KONFIG ===== */
 const BLOG_API = "https://script.google.com/macros/s/AKfycbyx_ovUg3Nuw6N49nve0zdToASgP3F-cTQClP0cIshCrvdWWcLox5IXtk55FfnVmRAG/exec";
+
+/* Site key Turnstile (awam) */
+const TURNSTILE_SITEKEY = "0x4AAAAAAFWrdcXMTCekaOTS";
+
+/*
+ * Worker verify Turnstile anda (POST /verify)
+ * Contoh: https://turnstile-xxxx.namaanda.workers.dev/verify
+ * ATAU domain custom yang host worker tersebut
+ * WAJIB Origin mastaxul.my (ikut worker anda)
+ */
+const TURNSTILE_VERIFY_URL = "https://GANTI-WORKER-ANDA.workers.dev/verify";
+/* ================== */
+
+let tsId = null;
+
+function renderTS(){
+  if (!window.turnstile) return setTimeout(renderTS, 200);
+  if (tsId !== null) return;
+  try {
+    tsId = turnstile.render("#turnstile-form", {
+      sitekey: TURNSTILE_SITEKEY,
+      theme: "dark"
+    });
+  } catch(e){}
+}
+renderTS();
+
+function getTS(){
+  if (!window.turnstile || tsId===null) return "";
+  try { return turnstile.getResponse(tsId)||""; } catch(_){ return ""; }
+}
+function resetTS(){
+  if (window.turnstile && tsId!==null) try{ turnstile.reset(tsId); }catch(_){}
+}
+
+async function verifyTurnstileServer(token){
+  // Jika URL belum diganti, skip server verify (masih ada token client)
+  if (!TURNSTILE_VERIFY_URL || TURNSTILE_VERIFY_URL.indexOf("GANTI-WORKER") !== -1) {
+    return { success: !!token, skipped: true };
+  }
+  const r = await fetch(TURNSTILE_VERIFY_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token: token })
+  });
+  const d = await r.json().catch(() => ({}));
+  return { success: d.success === true, raw: d };
+}
+
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+document.getElementById("btnUploadCover").onclick = async () => {
+  const msg = document.getElementById("msg");
+  const file = document.getElementById("coverFile").files[0];
+  const pass = document.getElementById("password").value.trim();
+  if (!file) { msg.className="msg err"; msg.textContent="Pilih fail gambar dulu."; return; }
+  if (!pass) { msg.className="msg err"; msg.textContent="Isi password admin dulu."; return; }
+  msg.className="msg ok"; msg.textContent="Uploading ImgBB…";
+  try {
+    const b64 = await fileToBase64(file);
+    const r = await fetch(BLOG_API, {
+      method: "POST",
+      body: JSON.stringify({
+        password: pass,
+        action: "upload",
+        image: b64,
+        name: file.name
+      })
+    });
+    const d = await r.json();
+    if (d.ok && d.url) {
+      document.getElementById("cover").value = d.url;
+      const img = document.getElementById("coverPreview");
+      img.src = d.url;
+      img.style.display = "block";
+      msg.className="msg ok"; msg.textContent="Gambar berjaya diupload.";
+    } else {
+      msg.className="msg err"; msg.textContent=d.message||"Upload gagal (semak IMGBB_KEY)";
+    }
+  } catch(e) {
+    msg.className="msg err"; msg.textContent="Ralat upload / rangkaian";
+  }
+};
 
 document.getElementById("btnPublish").onclick = async () => {
   const msg = document.getElementById("msg");
   const btn = document.getElementById("btnPublish");
+
+  const token = getTS();
+  if (!token) {
+    msg.className="msg err";
+    msg.textContent="Sila lengkapkan CAPTCHA (Turnstile) dahulu.";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "Mengesahkan CAPTCHA…";
+
+  try {
+    const v = await verifyTurnstileServer(token);
+    if (!v.success) {
+      msg.className="msg err";
+      msg.textContent="CAPTCHA ditolak. Cuba semula.";
+      resetTS();
+      btn.disabled = false;
+      btn.textContent = "Simpan ke Google Docs + Sheet";
+      return;
+    }
+  } catch (e) {
+    msg.className="msg err";
+    msg.textContent="Gagal hubungi Turnstile verify worker. Semak TURNSTILE_VERIFY_URL.";
+    resetTS();
+    btn.disabled = false;
+    btn.textContent = "Simpan ke Google Docs + Sheet";
+    return;
+  }
+
   const payload = {
     password: document.getElementById("password").value.trim(),
     action: "create",
@@ -75,14 +207,18 @@ document.getElementById("btnPublish").onclick = async () => {
     excerpt: document.getElementById("excerpt").value.trim(),
     cover: document.getElementById("cover").value.trim(),
     status: document.getElementById("status").value,
-    body: document.getElementById("body").value
+    body: document.getElementById("body").value,
+    videos: document.getElementById("videos").value
   };
+
   if (!payload.password || !payload.title || !payload.body.trim()) {
-    msg.className = "msg err";
-    msg.textContent = "Password, tajuk dan isi wajib.";
+    msg.className="msg err";
+    msg.textContent="Password, tajuk dan isi wajib.";
+    btn.disabled = false;
+    btn.textContent = "Simpan ke Google Docs + Sheet";
     return;
   }
-  btn.disabled = true;
+
   btn.textContent = "Menyimpan…";
   msg.className = "msg";
   try {
@@ -90,17 +226,21 @@ document.getElementById("btnPublish").onclick = async () => {
     const d = await r.json();
     if (d.ok) {
       msg.className = "msg ok";
-      msg.textContent = d.message + " · slug: " + d.slug;
+      msg.textContent = d.message + " · /blog/" + d.slug;
+      const full = d.fullUrl || ("https://www.mastaxul.my/blog/" + d.slug);
       document.getElementById("resultLink").innerHTML =
-        'Lihat: <a href="/blog/?slug=' + encodeURIComponent(d.slug) + '" target="_blank">/blog/?slug=' + d.slug + '</a>' +
-        (d.docUrl ? ' · <a href="' + d.docUrl + '" target="_blank">Google Doc</a>' : "");
+        'Buka: <a href="'+full+'" target="_blank">'+full+'</a>' +
+        (d.docUrl ? ' · <a href="'+d.docUrl+'" target="_blank">Google Doc</a>' : "");
+      resetTS();
     } else {
       msg.className = "msg err";
       msg.textContent = d.message || "Gagal";
+      resetTS();
     }
   } catch (e) {
     msg.className = "msg err";
-    msg.textContent = "Ralat rangkaian / CORS. Pastikan deploy Web App = Anyone.";
+    msg.textContent = "Ralat rangkaian. Pastikan deploy Web App = Anyone.";
+    resetTS();
   }
   btn.disabled = false;
   btn.textContent = "Simpan ke Google Docs + Sheet";
