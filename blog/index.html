@@ -2,7 +2,7 @@
 <html lang="ms" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Blog | Masta Xul</title>
   <meta name="description" content="Artikel dan tip dari Masta Xul.">
   <meta name="robots" content="index, follow">
@@ -92,6 +92,22 @@
     .prod .n{font-size:.78rem;font-weight:600;line-height:1.3;max-height:2.6em;overflow:hidden}
     .prod .p{font-size:.78rem;color:#ef4444;font-weight:700;margin-top:2px}
     .back{color:var(--accent);text-decoration:none;font-size:.9rem}
+    
+    @media(max-width:600px){
+      .layout{padding:12px 10px 60px;gap:16px}
+      header.blog-head h1{font-size:1.3rem}
+      .article h1{font-size:1.25rem}
+      .post-card .thumb{max-height:160px}
+      .share-box a,.share-box button,.subscribe-box a{flex:1 1 auto;justify-content:center;text-align:center}
+      .react-btn{flex:1;justify-content:center}
+      .side{order:2}
+      .main{order:1}
+    }
+    @media(min-width:901px){
+      .layout{padding:24px 18px 70px}
+    }
+    .views-line{font-size:.82rem;color:var(--muted);margin:4px 0 10px}
+
     footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:36px;grid-column:1/-1}
   </style>
 </head>
@@ -130,6 +146,7 @@
           <h1 id="artTitle"></h1>
           <div class="meta" id="artMeta"></div>
           <div class="read-time" id="artReadTime"></div>
+          <div class="views-line" id="artViews"></div>
           <img id="artCover" class="cover" alt="" style="display:none" loading="lazy">
           <div id="artVideos"></div>
           <div class="content" id="artContent"></div>
@@ -353,37 +370,55 @@ function setupShare(post){
   };
 }
 
-/* ===== Reactions (localStorage) ===== */
-function reactKey(slug, type){ return "mx_blog_" + type + "_" + slug; }
-function getReactCount(slug, type){
-  return parseInt(localStorage.getItem(reactKey(slug, type) + "_n") || "0", 10) || 0;
-}
+/* ===== Reactions + Views (Google Sheet via Apps Script) ===== */
+function reactUserKey(slug, type){ return "mx_blog_u_" + type + "_" + slug; }
 function hasReacted(slug, type){
-  return localStorage.getItem(reactKey(slug, type) + "_u") === "1";
+  return localStorage.getItem(reactUserKey(slug, type)) === "1";
 }
-function toggleReact(slug, type){
-  const nKey = reactKey(slug, type) + "_n";
-  const uKey = reactKey(slug, type) + "_u";
-  let n = getReactCount(slug, type);
-  if (hasReacted(slug, type)) {
-    n = Math.max(0, n - 1);
-    localStorage.setItem(uKey, "0");
-  } else {
-    n += 1;
-    localStorage.setItem(uKey, "1");
-  }
-  localStorage.setItem(nKey, String(n));
-  return n;
+function setReacted(slug, type, yes){
+  localStorage.setItem(reactUserKey(slug, type), yes ? "1" : "0");
 }
-function renderReacts(slug){
-  const likeN = getReactCount(slug, "like");
-  const loveN = getReactCount(slug, "love");
+function renderReacts(slug, likes, loves){
   const likeBtn = document.getElementById("btnLike");
   const loveBtn = document.getElementById("btnLove");
-  likeBtn.innerHTML = "👍 <span>" + likeN + "</span>";
-  loveBtn.innerHTML = "❤️ <span>" + loveN + "</span>";
+  if (likes == null) likes = 0;
+  if (loves == null) loves = 0;
+  likeBtn.innerHTML = "👍 <span>" + likes + "</span>";
+  loveBtn.innerHTML = "❤️ <span>" + loves + "</span>";
   likeBtn.classList.toggle("active", hasReacted(slug, "like"));
   loveBtn.classList.toggle("active", hasReacted(slug, "love"));
+}
+async function sendReact(slug, type){
+  const undo = hasReacted(slug, type);
+  try {
+    const r = await fetch(BLOG_API, {
+      method: "POST",
+      body: JSON.stringify({ action: type, slug, undo: undo ? "1" : "0" })
+    });
+    const d = await r.json();
+    if (d.ok) {
+      setReacted(slug, type, !undo);
+      renderReacts(slug, d.likes, d.loves);
+    }
+  } catch(e) {}
+}
+async function recordView(slug){
+  const vKey = "mx_blog_viewed_" + slug;
+  // Elak spam view setiap refresh dalam 30 minit per pelayar
+  const last = parseInt(localStorage.getItem(vKey) || "0", 10);
+  if (Date.now() - last < 30 * 60 * 1000) return;
+  try {
+    const r = await fetch(BLOG_API, {
+      method: "POST",
+      body: JSON.stringify({ action: "view", slug })
+    });
+    const d = await r.json();
+    if (d.ok) {
+      localStorage.setItem(vKey, String(Date.now()));
+      const el = document.getElementById("artViews");
+      if (el && d.views != null) el.textContent = "👁 " + d.views + " tontonan";
+    }
+  } catch(e) {}
 }
 
 function renderPostCards(posts){
@@ -404,7 +439,7 @@ function renderPostCards(posts){
       <h2>${esc(p.title)}</h2>
       <div class="meta">📅 ${esc(formatPostDate(p.timestamp||p.updated||""))}</div>
       <div class="excerpt">${esc(p.excerpt||"")}</div>
-      <div class="read-time">⏱ ~${mins} min baca</div>
+      <div class="read-time">⏱ ~${mins} min · 👁 ${p.views||0} · 👍 ${p.likes||0} · ❤️ ${p.loves||0}</div>
     </a>`;
   }).join("");
 }
@@ -478,7 +513,10 @@ async function loadArticle(slug){
     const inlineImgs = images.filter(u => u !== cover);
     document.getElementById("artContent").innerHTML = interleaveContent(p.html || "", inlineImgs.length ? inlineImgs : images);
 
-    renderReacts(slug);
+    renderReacts(slug, p.likes || 0, p.loves || 0);
+    const elV = document.getElementById("artViews");
+    if (elV) elV.textContent = "👁 " + (p.views || 0) + " tontonan";
+    recordView(slug);
     showRelated(slug);
   } catch {
     document.getElementById("artTitle").textContent = "Artikel tidak dijumpai";
@@ -554,13 +592,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("btnLike").onclick = () => {
     if (!currentSlug) return;
-    toggleReact(currentSlug, "like");
-    renderReacts(currentSlug);
+    sendReact(currentSlug, "like");
   };
   document.getElementById("btnLove").onclick = () => {
     if (!currentSlug) return;
-    toggleReact(currentSlug, "love");
-    renderReacts(currentSlug);
+    sendReact(currentSlug, "love");
   };
   document.getElementById("btnReactShare").onclick = () => {
     document.getElementById("shareBox").scrollIntoView({ behavior: "smooth", block: "center" });
