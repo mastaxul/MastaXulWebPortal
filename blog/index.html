@@ -6,6 +6,12 @@
   <title>Blog | Masta Xul</title>
   <meta name="description" content="Artikel dan tip dari Masta Xul — produk, affiliate, dan idea berguna.">
   <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Blog | Masta Xul">
+  <meta property="og:description" content="Artikel dan tip dari Masta Xul.">
+  <meta property="og:url" content="https://www.mastaxul.my/blog/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.mastaxul.my/blog/">
+  <meta name="twitter:card" content="summary_large_image">
   <style>
     body{background:#0b0f19;color:#e8eef7;font-family:system-ui,-apple-system,sans-serif;margin:0;line-height:1.6}
     .wrap{max-width:720px;margin:0 auto;padding:24px 16px 60px}
@@ -14,17 +20,28 @@
     header.blog-head p{margin:0;color:#8f9bad;font-size:.95rem}
     .nav-mini{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
     .nav-mini a{color:#6ea8fe;text-decoration:none;font-size:.88rem}
-    .post-list{margin-top:22px;display:flex;flex-direction:column;gap:14px}
+    .clock-bar{text-align:center;margin-top:14px;padding:10px 12px;border-radius:12px;background:#121826;border:1px solid #283244}
+    .clock-time{font-weight:800;font-size:1.15rem;letter-spacing:.3px;background:linear-gradient(90deg,#6ea8fe,#b58cff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .clock-date{font-size:.82rem;color:#8f9bad;margin-top:2px}
+    .clock-hijri{font-size:.8rem;color:#c4b5fd;margin-top:2px}
+    .search-box{margin:18px 0 6px}
+    .search-box input{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;border:1px solid #283244;background:#121826;color:#fff;font-size:1rem}
+    .search-box input:focus{outline:none;border-color:#6ea8fe}
+    .post-list{margin-top:16px;display:flex;flex-direction:column;gap:14px}
     .post-card{display:block;background:#121826;border:1px solid #283244;border-radius:14px;padding:16px 18px;text-decoration:none;color:inherit;transition:.15s}
     .post-card:hover{border-color:#6ea8fe;transform:translateY(-1px)}
     .post-card h2{margin:0 0 6px;font-size:1.15rem;color:#fff}
     .post-card .meta{font-size:.78rem;color:#8f9bad;margin-bottom:8px}
     .post-card .excerpt{font-size:.92rem;color:#b8c1d0}
     .post-card .thumb{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-bottom:10px;background:#1a2230}
+    .post-card .read-time{font-size:.75rem;color:#6ea8fe;margin-top:8px}
     .empty{text-align:center;color:#8f9bad;padding:40px 10px}
-    .article{margin-top:20px}
+    .breadcrumb{font-size:.85rem;color:#8f9bad;margin:12px 0 8px}
+    .breadcrumb a{color:#6ea8fe;text-decoration:none}
+    .article{margin-top:8px}
     .article h1{font-size:1.55rem;margin:0 0 8px;line-height:1.3}
-    .article .meta{color:#8f9bad;font-size:.85rem;margin-bottom:18px}
+    .article .meta{color:#8f9bad;font-size:.85rem;margin-bottom:6px}
+    .article .read-time{color:#6ea8fe;font-size:.85rem;margin-bottom:16px}
     .article .cover{width:100%;max-height:420px;object-fit:contain;border-radius:12px;margin-bottom:18px;background:#111827}
     .article .content{font-size:1.02rem;color:#dce4ef}
     .article .content p{margin:0 0 1em}
@@ -35,7 +52,24 @@
     .video-block.tiktok iframe{aspect-ratio:9/16;min-height:480px;max-height:720px}
     .video-fallback{padding:16px;text-align:center}
     .video-fallback a{color:#6ea8fe;font-weight:600}
-    .back{display:inline-block;margin:12px 0 8px;color:#6ea8fe;text-decoration:none;font-size:.9rem}
+    .share-box{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0;padding:14px;border-radius:12px;background:#121826;border:1px solid #283244}
+    .share-box span{width:100%;font-size:.8rem;color:#8f9bad;margin-bottom:2px}
+    .share-box button,.share-box a.share-btn{
+      display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:10px;
+      border:1px solid #283244;background:#1b2433;color:#e8eef7;font-weight:600;font-size:.85rem;
+      cursor:pointer;text-decoration:none
+    }
+    .share-box button:hover,.share-box a.share-btn:hover{border-color:#6ea8fe}
+    .share-box .wa{background:#075e54;border-color:#075e54}
+    .share-box .tg{background:#1a6fa3;border-color:#1a6fa3}
+    .related{margin-top:32px;padding-top:20px;border-top:1px solid #283244}
+    .related h2{font-size:1.1rem;margin:0 0 14px;color:#fff}
+    .related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+    .related-card{background:#121826;border:1px solid #283244;border-radius:12px;padding:12px;text-decoration:none;color:inherit;display:block}
+    .related-card:hover{border-color:#6ea8fe}
+    .related-card h3{margin:0 0 6px;font-size:.95rem;color:#fff}
+    .related-card .meta{font-size:.72rem;color:#8f9bad}
+    .back{display:inline-block;margin:4px 0 8px;color:#6ea8fe;text-decoration:none;font-size:.9rem}
     footer{text-align:center;color:#667085;font-size:.8rem;margin-top:40px}
   </style>
 </head>
@@ -49,23 +83,47 @@
         <a href="/shop/">Shop</a>
         <a href="/blog/">Semua Artikel</a>
       </div>
+      <div class="clock-bar" title="Waktu Kuala Lumpur">
+        <div class="clock-time" id="clockTime">--:--:--</div>
+        <div class="clock-date" id="clockDate">—</div>
+        <div class="clock-hijri" id="clockHijri">—</div>
+      </div>
     </header>
 
     <div id="listView">
+      <div class="search-box">
+        <input type="search" id="blogSearch" placeholder="Cari artikel…" autocomplete="off">
+      </div>
       <div class="post-list" id="postList">
         <div class="empty">Memuatkan artikel…</div>
       </div>
     </div>
 
     <div id="articleView" style="display:none">
+      <nav class="breadcrumb" id="breadcrumb">
+        <a href="/">Utama</a> › <a href="/blog/">Blog</a> › <span id="bcTitle">…</span>
+      </nav>
       <a class="back" href="/blog/">← Semua artikel</a>
       <article class="article">
         <h1 id="artTitle"></h1>
         <div class="meta" id="artMeta"></div>
+        <div class="read-time" id="artReadTime"></div>
         <img id="artCover" class="cover" alt="" style="display:none" loading="lazy">
         <div id="artVideos"></div>
         <div class="content" id="artContent"></div>
+
+        <div class="share-box" id="shareBox">
+          <span>Kongsi artikel ini</span>
+          <a class="share-btn wa" id="shareWA" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="share-btn tg" id="shareTG" target="_blank" rel="noopener">Telegram</a>
+          <button type="button" id="shareCopy">Salin pautan</button>
+        </div>
       </article>
+
+      <section class="related" id="relatedSection" style="display:none">
+        <h2>Artikel berkaitan</h2>
+        <div class="related-grid" id="relatedGrid"></div>
+      </section>
     </div>
 
     <footer>© Masta Xul · Blog</footer>
@@ -73,6 +131,9 @@
 
 <script>
 const BLOG_API = "https://script.google.com/macros/s/AKfycbyx_ovUg3Nuw6N49nve0zdToASgP3F-cTQClP0cIshCrvdWWcLox5IXtk55FfnVmRAG/exec";
+const SITE = "https://www.mastaxul.my";
+
+let allPostsCache = [];
 
 function esc(s){
   return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -88,14 +149,47 @@ function getSlug(){
   return "";
 }
 
-/** Cover mesti URL gambar terus (i.ibb.co / .jpg), bukan halaman album */
+function formatPostDate(raw){
+  if (!raw) return "";
+  try {
+    let d;
+    if (typeof raw === "string" && /^\d{4}-\d{2}-\d{2}/.test(raw)) {
+      const m = raw.match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+      if (m) {
+        d = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), Number(m[4]), Number(m[5]));
+      } else d = new Date(raw);
+    } else d = new Date(raw);
+    if (isNaN(d.getTime())) return String(raw);
+    const hari = d.toLocaleDateString("ms-MY", { weekday: "long" });
+    const tarikh = d.toLocaleDateString("ms-MY", { day: "numeric", month: "long", year: "numeric" });
+    const jam = d.toLocaleTimeString("ms-MY", { hour: "2-digit", minute: "2-digit", hour12: false });
+    let hijri = "";
+    try {
+      hijri = " · " + new Intl.DateTimeFormat("ms-MY-u-ca-islamic", {
+        day: "numeric", month: "long", year: "numeric"
+      }).format(d) + " H";
+    } catch(_){}
+    return hari + ", " + tarikh + " · " + jam + hijri;
+  } catch (e) {
+    return String(raw);
+  }
+}
+
 function isDirectImage(url){
   if (!url) return false;
   if (/ibb\.co\/album\//i.test(url)) return false;
   if (/i\.ibb\.co\//i.test(url)) return true;
   if (/\.(jpe?g|png|gif|webp|avif)(\?|$)/i.test(url)) return true;
-  if (/^https?:\/\/.*\.(googleusercontent|imgur|cloudinary|imgbb)/i.test(url)) return true;
+  if (/^https?:\/\/.*\.(googleusercontent|imgur|cloudinary)/i.test(url)) return true;
   return false;
+}
+
+/** Anggaran masa baca (~200 patah/minit) */
+function readingTimeFromHtml(html, excerpt){
+  const text = String(html || "").replace(/<[^>]+>/g, " ") + " " + String(excerpt || "");
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  const mins = Math.max(1, Math.ceil(words / 200));
+  return mins;
 }
 
 function youtubeId(url){
@@ -109,62 +203,48 @@ function tiktokVideoId(url){
   let m = String(url).match(/tiktok\.com\/@[^/]+\/video\/(\d+)/i);
   if (m) return m[1];
   m = String(url).match(/tiktok\.com\/.*[?&]video[_-]?id=(\d+)/i);
-  if (m) return m[1];
-  // API sudah resolve short link → full URL dalam field resolved / id
-  return "";
+  return m ? m[1] : "";
 }
 
 function embedVideo(item){
-  // item boleh string URL atau {url, id, platform}
-  let url = "";
-  let id = "";
-  let platform = "";
-  if (typeof item === "string") {
-    url = item.trim();
-  } else if (item && typeof item === "object") {
+  let url = "", id = "", platform = "";
+  if (typeof item === "string") url = item.trim();
+  else if (item && typeof item === "object") {
     url = String(item.url || item.resolved || "").trim();
     id = String(item.id || "").trim();
     platform = String(item.platform || "").toLowerCase();
   }
   if (!url && !id) return "";
 
-  // ---- YouTube ----
   const yt = id && platform === "youtube" ? id : youtubeId(url);
   if (yt) {
     return `<div class="video-block"><iframe src="https://www.youtube.com/embed/${esc(yt)}?rel=0" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture;web-share" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`;
   }
 
-  // ---- TikTok ----
   const tt = id && (platform === "tiktok" || !platform) ? id : tiktokVideoId(url);
   if (tt) {
     return `<div class="video-block tiktok"><iframe src="https://www.tiktok.com/player/v1/${esc(tt)}?music_info=1&description=1" allow="fullscreen;encrypted-media" loading="lazy"></iframe></div>`;
   }
-  // Short link belum resolve
   if (/vt\.tiktok\.com|vm\.tiktok\.com/i.test(url)) {
     return `<div class="video-block"><div class="video-fallback">
-      <p>Video TikTok (pautan pendek)</p>
+      <p>Video TikTok</p>
       <a href="${esc(url)}" target="_blank" rel="noopener">▶ Buka di TikTok</a>
-      <p style="font-size:.8rem;color:#8f9bad;margin-top:8px">Tip: dalam admin, paste link penuh<br>tiktok.com/@user/video/123… atau deploy Code.gs v2 (auto-resolve)</p>
     </div></div>`;
   }
 
-  // ---- Instagram ----
   let m = url.match(/instagram\.com\/(p|reel|tv)\/([A-Za-z0-9_-]+)/i);
   if (m) {
     return `<div class="video-block"><iframe src="https://www.instagram.com/${m[1]}/${m[2]}/embed" loading="lazy" allowfullscreen></iframe></div>`;
   }
 
-  // ---- Facebook ----
   if (/facebook\.com\//i.test(url) && /video|fb\.watch|reel/i.test(url)) {
     return `<div class="video-block"><iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0&width=720" allowFullScreen loading="lazy"></iframe></div>`;
   }
 
-  // ---- Direct video file ----
   if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) {
     return `<div class="video-block"><video controls playsinline preload="metadata" src="${esc(url)}"></video></div>`;
   }
 
-  // ---- Image mistaken in videos field ----
   if (isDirectImage(url)) {
     return `<p><img src="${esc(url)}" alt="Gambar" style="max-width:100%;border-radius:10px"></p>`;
   }
@@ -172,10 +252,78 @@ function embedVideo(item){
   return `<div class="video-fallback"><a href="${esc(url)}" target="_blank" rel="noopener">▶ Buka media</a></div>`;
 }
 
-/** Jadikan URL gambar dalam teks jadi <img> */
-function enhanceHtml(html){
-  // Auto-link image URLs on their own line already as text
-  return html;
+function setMeta(name, content, prop){
+  if (!content) return;
+  const sel = prop ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+  let el = document.querySelector(sel);
+  if (!el) {
+    el = document.createElement("meta");
+    if (prop) el.setAttribute("property", name);
+    else el.setAttribute("name", name);
+    document.head.appendChild(el);
+  }
+  el.setAttribute("content", content);
+}
+
+function applyOg(post){
+  const url = SITE + "/blog/" + encodeURIComponent(post.slug);
+  document.title = post.title + " | Masta Xul Blog";
+  setMeta("description", post.excerpt || post.title, false);
+  setMeta("og:title", post.title, true);
+  setMeta("og:description", post.excerpt || post.title, true);
+  setMeta("og:url", url, true);
+  setMeta("og:type", "article", true);
+  if (isDirectImage(post.cover)) {
+    setMeta("og:image", post.cover, true);
+    setMeta("twitter:image", post.cover, false);
+  }
+  setMeta("twitter:card", "summary_large_image", false);
+  setMeta("twitter:title", post.title, false);
+  setMeta("twitter:description", post.excerpt || post.title, false);
+}
+
+function setupShare(post){
+  const url = SITE + "/blog/" + encodeURIComponent(post.slug);
+  const text = `📝 ${post.title}\n\n${post.excerpt || ""}\n\n${url}`.trim();
+  const wa = document.getElementById("shareWA");
+  const tg = document.getElementById("shareTG");
+  if (wa) wa.href = "https://wa.me/?text=" + encodeURIComponent(text);
+  if (tg) tg.href = "https://t.me/share/url?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(post.title);
+  const btn = document.getElementById("shareCopy");
+  if (btn) {
+    btn.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+        btn.textContent = "Disalin ✓";
+        setTimeout(() => { btn.textContent = "Salin pautan"; }, 2000);
+      } catch {
+        prompt("Salin pautan:", url);
+      }
+    };
+  }
+}
+
+function renderPostCards(posts){
+  const box = document.getElementById("postList");
+  if (!posts.length) {
+    box.innerHTML = '<div class="empty">Tiada artikel dijumpai.</div>';
+    return;
+  }
+  box.innerHTML = posts.map(p => {
+    const href = "/blog/" + encodeURIComponent(p.slug);
+    const thumb = isDirectImage(p.cover)
+      ? `<img class="thumb" src="${esc(p.cover)}" alt="" loading="lazy">`
+      : "";
+    const mins = readingTimeFromHtml("", p.excerpt || p.title);
+    return `
+    <a class="post-card" href="${href}">
+      ${thumb}
+      <h2>${esc(p.title)}</h2>
+      <div class="meta">📅 ${esc(formatPostDate(p.timestamp || p.updated || ""))}</div>
+      <div class="excerpt">${esc(p.excerpt || "")}</div>
+      <div class="read-time">⏱ ~${mins} min baca</div>
+    </a>`;
+  }).join("");
 }
 
 async function loadList(){
@@ -184,27 +332,32 @@ async function loadList(){
     const r = await fetch(BLOG_API + "?action=list&_=" + Date.now());
     const d = await r.json();
     if (!d.ok) throw new Error(d.message||"Gagal");
-    const posts = d.posts || [];
-    if (!posts.length){
+    allPostsCache = d.posts || [];
+    if (!allPostsCache.length){
       box.innerHTML = '<div class="empty">Belum ada artikel diterbitkan.</div>';
       return;
     }
-    box.innerHTML = posts.map(p => {
-      const href = "/blog/" + encodeURIComponent(p.slug);
-      const thumb = isDirectImage(p.cover)
-        ? `<img class="thumb" src="${esc(p.cover)}" alt="" loading="lazy">`
-        : "";
-      return `
-      <a class="post-card" href="${href}">
-        ${thumb}
-        <h2>${esc(p.title)}</h2>
-        <div class="meta">${esc(p.updated || p.timestamp || "")}</div>
-        <div class="excerpt">${esc(p.excerpt || "")}</div>
-      </a>`;
-    }).join("");
+    renderPostCards(allPostsCache);
   }catch(e){
     box.innerHTML = '<div class="empty">Gagal memuatkan senarai.</div>';
   }
+}
+
+function showRelated(currentSlug){
+  const section = document.getElementById("relatedSection");
+  const grid = document.getElementById("relatedGrid");
+  const others = allPostsCache.filter(p => p.slug !== currentSlug).slice(0, 6);
+  if (!others.length) {
+    section.style.display = "none";
+    return;
+  }
+  section.style.display = "block";
+  grid.innerHTML = others.map(p => `
+    <a class="related-card" href="/blog/${encodeURIComponent(p.slug)}">
+      <h3>${esc(p.title)}</h3>
+      <div class="meta">${esc(formatPostDate(p.timestamp || p.updated || ""))}</div>
+    </a>
+  `).join("");
 }
 
 async function loadArticle(slug){
@@ -213,15 +366,32 @@ async function loadArticle(slug){
   document.getElementById("pageTitle").textContent = "Artikel";
   document.getElementById("pageSub").textContent = "Masta Xul Blog";
   document.getElementById("artTitle").textContent = "Memuatkan…";
+
+  // Pastikan cache senarai untuk related
+  if (!allPostsCache.length) {
+    try {
+      const r0 = await fetch(BLOG_API + "?action=list&_=" + Date.now());
+      const d0 = await r0.json();
+      if (d0.ok) allPostsCache = d0.posts || [];
+    } catch(_){}
+  }
+
   try{
     const r = await fetch(BLOG_API + "?action=get&slug=" + encodeURIComponent(slug) + "&_=" + Date.now());
     const d = await r.json();
     if (!d.ok || !d.post) throw new Error(d.message||"Tidak dijumpai");
     const p = d.post;
-    document.title = p.title + " | Masta Xul Blog";
+
+    applyOg(p);
+    setupShare(p);
+
     document.getElementById("artTitle").textContent = p.title;
+    document.getElementById("bcTitle").textContent = p.title;
     document.getElementById("artMeta").textContent =
-      (p.updated || p.timestamp || "") + " · mastaxul.my/blog/" + p.slug;
+      formatPostDate(p.timestamp || p.updated || "") + " · mastaxul.my/blog/" + p.slug;
+
+    const mins = readingTimeFromHtml(p.html, p.excerpt);
+    document.getElementById("artReadTime").textContent = "⏱ Anggaran masa baca: ~" + mins + " minit";
 
     const cover = document.getElementById("artCover");
     if (isDirectImage(p.cover)) {
@@ -235,21 +405,65 @@ async function loadArticle(slug){
 
     const vids = Array.isArray(p.videos) ? p.videos : [];
     document.getElementById("artVideos").innerHTML = vids.map(embedVideo).join("") || "";
+    document.getElementById("artContent").innerHTML = p.html || "<p></p>";
 
-    document.getElementById("artContent").innerHTML = enhanceHtml(p.html || "<p></p>");
-
-    let md = document.querySelector('meta[name="description"]');
-    if (md && p.excerpt) md.setAttribute("content", p.excerpt);
+    showRelated(p.slug);
   }catch(e){
     document.getElementById("artTitle").textContent = "Artikel tidak dijumpai";
     document.getElementById("artContent").innerHTML = "<p>Slug tidak sah atau belum diterbitkan.</p>";
+    document.getElementById("artReadTime").textContent = "";
+    document.getElementById("shareBox").style.display = "none";
   }
 }
+
+function updateClockKL(){
+  try{
+    const now = new Date();
+    const tz = "Asia/Kuala_Lumpur";
+    const elT = document.getElementById("clockTime");
+    const elD = document.getElementById("clockDate");
+    const elH = document.getElementById("clockHijri");
+    if (elT) {
+      elT.textContent = now.toLocaleTimeString("ms-MY", {
+        timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+      });
+    }
+    if (elD) {
+      elD.textContent = now.toLocaleDateString("ms-MY", {
+        timeZone: tz, weekday: "long", day: "numeric", month: "long", year: "numeric"
+      }) + " · KL";
+    }
+    if (elH) {
+      elH.textContent = new Intl.DateTimeFormat("ms-MY-u-ca-islamic", {
+        timeZone: tz, weekday: "long", day: "numeric", month: "long", year: "numeric"
+      }).format(now) + " H";
+    }
+  } catch (e) {}
+}
+updateClockKL();
+setInterval(updateClockKL, 1000);
 
 document.addEventListener("DOMContentLoaded", () => {
   const slug = getSlug();
   if (slug) loadArticle(slug);
   else loadList();
+
+  const search = document.getElementById("blogSearch");
+  if (search) {
+    search.addEventListener("input", () => {
+      const q = search.value.trim().toLowerCase();
+      if (!q) {
+        renderPostCards(allPostsCache);
+        return;
+      }
+      const filtered = allPostsCache.filter(p =>
+        (p.title || "").toLowerCase().includes(q) ||
+        (p.excerpt || "").toLowerCase().includes(q) ||
+        (p.slug || "").toLowerCase().includes(q)
+      );
+      renderPostCards(filtered);
+    });
+  }
 });
 </script>
 </body>
