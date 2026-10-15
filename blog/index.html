@@ -6,7 +6,10 @@
   <title>Blog | Masta Xul</title>
   <meta name="description" content="Artikel dan tip dari Masta Xul — produk, affiliate, dan idea berguna.">
   <meta name="robots" content="index, follow">
-  <link rel="stylesheet" href="/style.css">
+  <meta property="og:title" content="Blog | Masta Xul">
+  <meta property="og:description" content="Artikel dan tip dari Masta Xul.">
+  <meta property="og:url" content="https://www.mastaxul.my/blog/">
+  <meta property="og:type" content="website">
   <style>
     body{background:#0b0f19;color:#e8eef7;font-family:system-ui,-apple-system,sans-serif;margin:0;line-height:1.6}
     .wrap{max-width:720px;margin:0 auto;padding:24px 16px 60px}
@@ -22,13 +25,15 @@
     .post-card .meta{font-size:.78rem;color:#8f9bad;margin-bottom:8px}
     .post-card .excerpt{font-size:.92rem;color:#b8c1d0}
     .empty{text-align:center;color:#8f9bad;padding:40px 10px}
-    /* Artikel tunggal */
     .article{margin-top:20px}
     .article h1{font-size:1.55rem;margin:0 0 8px;line-height:1.3}
     .article .meta{color:#8f9bad;font-size:.85rem;margin-bottom:18px}
     .article .cover{width:100%;max-height:320px;object-fit:cover;border-radius:12px;margin-bottom:18px;background:#1a2230}
     .article .content{font-size:1.02rem;color:#dce4ef}
     .article .content p{margin:0 0 1em}
+    .video-block{margin:18px 0;border-radius:12px;overflow:hidden;background:#000}
+    .video-block iframe,.video-block video{width:100%;aspect-ratio:16/9;border:0;display:block}
+    .video-block.tiktok iframe{aspect-ratio:9/16;max-height:640px;margin:0 auto}
     .back{display:inline-block;margin:12px 0 8px;color:#6ea8fe;text-decoration:none;font-size:.9rem}
     footer{text-align:center;color:#667085;font-size:.8rem;margin-top:40px}
   </style>
@@ -57,6 +62,7 @@
         <h1 id="artTitle"></h1>
         <div class="meta" id="artMeta"></div>
         <img id="artCover" class="cover" alt="" style="display:none">
+        <div id="artVideos"></div>
         <div class="content" id="artContent"></div>
       </article>
     </div>
@@ -65,25 +71,51 @@
   </div>
 
 <script>
-/* ===== TUKAR URL WEB APP BLOG DI SINI ===== */
 const BLOG_API = "https://script.google.com/macros/s/AKfycbyx_ovUg3Nuw6N49nve0zdToASgP3F-cTQClP0cIshCrvdWWcLox5IXtk55FfnVmRAG/exec";
-/* ========================================= */
 
 function esc(s){
   return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
+/** /blog/ayam  atau  /blog/?slug=ayam (lama masih disokong) */
 function getSlug(){
   const q = new URLSearchParams(location.search);
-  let slug = q.get("slug");
-  if (slug) return slug.trim();
-  // Sokong path /blog/nama-artikel/ jika Worker rewrite
+  if (q.get("slug")) return q.get("slug").trim();
   const parts = location.pathname.replace(/\/+$/,"").split("/").filter(Boolean);
-  // ["blog", "nama-artikel"]
-  if (parts[0]==="blog" && parts[1] && parts[1] !== "index.html") {
+  if (parts[0]==="blog" && parts[1] && !/\.html?$/i.test(parts[1])) {
     return decodeURIComponent(parts[1]);
   }
   return "";
+}
+
+function embedVideo(url){
+  url = String(url||"").trim();
+  if (!url) return "";
+
+  let m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{6,})/i);
+  if (m) {
+    return `<div class="video-block"><iframe src="https://www.youtube.com/embed/${m[1]}" allowfullscreen allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" loading="lazy"></iframe></div>`;
+  }
+
+  m = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/i);
+  if (m) {
+    return `<div class="video-block tiktok"><iframe src="https://www.tiktok.com/embed/v2/${m[1]}" allow="fullscreen" loading="lazy"></iframe></div>`;
+  }
+
+  m = url.match(/instagram\.com\/(p|reel|tv)\/([A-Za-z0-9_-]+)/i);
+  if (m) {
+    return `<div class="video-block"><iframe src="https://www.instagram.com/${m[1]}/${m[2]}/embed" loading="lazy" allowfullscreen></iframe></div>`;
+  }
+
+  if (/facebook\.com\//i.test(url) && /video/i.test(url)) {
+    return `<div class="video-block"><iframe src="https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0" allowFullScreen loading="lazy"></iframe></div>`;
+  }
+
+  if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) {
+    return `<div class="video-block"><video controls playsinline src="${esc(url)}"></video></div>`;
+  }
+
+  return `<p><a href="${esc(url)}" target="_blank" rel="noopener">▶ Tonton video</a></p>`;
 }
 
 async function loadList(){
@@ -97,13 +129,15 @@ async function loadList(){
       box.innerHTML = '<div class="empty">Belum ada artikel diterbitkan.</div>';
       return;
     }
-    box.innerHTML = posts.map(p => `
-      <a class="post-card" href="/blog/?slug=${encodeURIComponent(p.slug)}">
+    box.innerHTML = posts.map(p => {
+      const href = "/blog/" + encodeURIComponent(p.slug);
+      return `
+      <a class="post-card" href="${href}">
         <h2>${esc(p.title)}</h2>
-        <div class="meta">${esc(p.updated || p.timestamp || "")}</div>
+        <div class="meta">${esc(p.updated || p.timestamp || "")} · /blog/${esc(p.slug)}</div>
         <div class="excerpt">${esc(p.excerpt || "")}</div>
-      </a>
-    `).join("");
+      </a>`;
+    }).join("");
   }catch(e){
     box.innerHTML = '<div class="empty">Gagal memuatkan senarai. Semak BLOG_API.</div>';
   }
@@ -122,15 +156,17 @@ async function loadArticle(slug){
     const p = d.post;
     document.title = p.title + " | Masta Xul Blog";
     document.getElementById("artTitle").textContent = p.title;
-    document.getElementById("artMeta").textContent = (p.updated || p.timestamp || "") + (p.slug ? " · /" + p.slug : "");
+    document.getElementById("artMeta").textContent =
+      (p.updated || p.timestamp || "") + " · mastaxul.my/blog/" + p.slug;
     const cover = document.getElementById("artCover");
     if (p.cover){
       cover.src = p.cover;
       cover.style.display = "block";
       cover.alt = p.title;
     }
+    const vids = Array.isArray(p.videos) ? p.videos : [];
+    document.getElementById("artVideos").innerHTML = vids.map(embedVideo).join("");
     document.getElementById("artContent").innerHTML = p.html || "<p></p>";
-    // Meta SEO ringkas
     let md = document.querySelector('meta[name="description"]');
     if (md && p.excerpt) md.setAttribute("content", p.excerpt);
   }catch(e){
