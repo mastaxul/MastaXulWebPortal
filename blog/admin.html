@@ -2,86 +2,112 @@
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tulis Artikel | Admin Masta Xul</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Admin Blog | Masta Xul</title>
   <meta name="robots" content="noindex, nofollow">
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   <style>
-    body{font-family:system-ui,sans-serif;background:#0b0f19;color:#e8eef7;margin:0;padding:20px}
-    .box{max-width:640px;margin:0 auto;background:#121826;border:1px solid #283244;border-radius:14px;padding:20px}
-    h1{font-size:1.25rem;margin:0 0 8px}
+    *{box-sizing:border-box}
+    body{font-family:system-ui,sans-serif;background:#0b0f19;color:#e8eef7;margin:0;padding:12px;padding-bottom:40px}
+    .box{max-width:720px;margin:0 auto;background:#121826;border:1px solid #283244;border-radius:14px;padding:16px}
+    @media(min-width:600px){.box{padding:20px}}
+    h1{font-size:1.2rem;margin:0 0 8px}
+    h2{font-size:1rem;margin:20px 0 10px;color:#6ea8fe}
     label{display:block;font-size:.85rem;color:#8f9bad;margin:12px 0 5px}
-    input,textarea,select{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #283244;background:#0c111a;color:#fff;font:inherit}
-    textarea{min-height:200px;resize:vertical}
-    button{margin-top:14px;width:100%;padding:12px;border:0;border-radius:10px;background:#3d7eff;color:#fff;font-weight:700;cursor:pointer}
+    input,textarea,select{width:100%;padding:11px 12px;border-radius:10px;border:1px solid #283244;background:#0c111a;color:#fff;font:inherit;font-size:16px}
+    textarea{min-height:160px;resize:vertical}
+    button{margin-top:12px;width:100%;padding:12px;border:0;border-radius:10px;background:#3d7eff;color:#fff;font-weight:700;cursor:pointer;min-height:44px}
     button:disabled{opacity:.5}
-    button.secondary{background:#1b2433;border:1px solid #283244;margin-top:8px}
+    button.secondary{background:#1b2433;border:1px solid #283244}
+    button.danger{background:#7f1d1d}
+    button.sm{width:auto;padding:8px 12px;margin:0;font-size:.8rem;min-height:40px}
     .msg{margin-top:12px;padding:10px;border-radius:8px;display:none;text-align:center;font-weight:600}
     .msg.ok{display:block;background:rgba(57,217,138,.12);color:#7df0b3}
     .msg.err{display:block;background:rgba(255,107,107,.12);color:#ff9292}
-    .hint{font-size:.78rem;color:#8f9bad;margin-top:6px}
+    .hint{font-size:.75rem;color:#8f9bad;margin-top:6px}
     a{color:#6ea8fe}
     .preview-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-    .preview-grid img{width:88px;height:88px;object-fit:cover;border-radius:8px;border:1px solid #283244}
+    .preview-grid img{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid #283244}
     .turnstile-wrap{display:flex;justify-content:center;margin:14px 0;min-height:65px}
     .upload-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .upload-row input[type=file]{flex:1;min-width:160px}
-    .publish-date-box{margin-top:12px;padding:12px 14px;border-radius:10px;background:#0c111a;border:1px solid #283244}
-    .publish-date-box .label{font-size:.78rem;color:#8f9bad;margin-bottom:4px}
-    .publish-date-box .value{font-weight:700;font-size:.95rem;color:#7df0b3}
-    .publish-date-box .hijri{font-size:.8rem;color:#c4b5fd;margin-top:2px}
+    .upload-row input[type=file]{flex:1;min-width:140px}
+    .tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+    .tabs button{flex:1;min-width:120px;margin:0;background:#1b2433;border:1px solid #283244}
+    .tabs button.active{background:#3d7eff;border-color:#3d7eff}
+    .post-item{border:1px solid #283244;border-radius:12px;padding:12px;margin-bottom:10px;background:#0c111a}
+    .post-item h3{margin:0 0 6px;font-size:.95rem}
+    .post-item .meta{font-size:.75rem;color:#8f9bad;margin-bottom:8px}
+    .post-item .actions{display:flex;flex-wrap:wrap;gap:6px}
+    .hidden{display:none}
+    .publish-date-box{margin-top:10px;padding:10px 12px;border-radius:10px;background:#0c111a;border:1px solid #283244}
+    .publish-date-box .value{font-weight:700;color:#7df0b3;font-size:.9rem}
   </style>
 </head>
 <body>
   <div class="box">
-    <h1>✍️ Tulis Artikel / Post</h1>
-    <p class="hint">URL: <code>mastaxul.my/blog/nama-tajuk</code> · Multi gambar ImgBB · Video · Turnstile</p>
+    <h1>✍️ Admin Blog Masta Xul</h1>
+    <p class="hint">Tulis · Edit · Views/Likes/Loves disimpan dalam Google Sheet</p>
+
+    <div class="tabs">
+      <button type="button" class="active" id="tabWrite">Tulis baru</button>
+      <button type="button" id="tabList">Senarai & Edit</button>
+    </div>
 
     <label>Password admin *</label>
     <input type="password" id="password" autocomplete="current-password">
 
-    <div class="publish-date-box">
-      <div class="label">Tarikh & masa siaran (Kuala Lumpur)</div>
-      <div class="value" id="publishDateNow">—</div>
-      <div class="hijri" id="publishHijriNow">—</div>
+    <!-- ===== TULIS / EDIT FORM ===== -->
+    <div id="panelWrite">
+      <div class="publish-date-box">
+        <div class="hint">Masa sekarang (KL)</div>
+        <div class="value" id="publishDateNow">—</div>
+      </div>
+
+      <input type="hidden" id="editSlug" value="">
+
+      <label>Tajuk *</label>
+      <input type="text" id="title">
+
+      <label>Slug (kosong = auto; semasa edit, slug kekal)</label>
+      <input type="text" id="slug" placeholder="auto-dari-tajuk">
+
+      <label>Excerpt</label>
+      <input type="text" id="excerpt">
+
+      <label>Gambar (multi) — ImgBB</label>
+      <div class="upload-row">
+        <input type="file" id="imageFiles" accept="image/*" multiple>
+        <button type="button" class="secondary sm" id="btnUploadImages">Upload</button>
+      </div>
+      <div class="preview-grid" id="imagePreviews"></div>
+      <label>Cover URL</label>
+      <input type="url" id="cover" placeholder="https://i.ibb.co/...">
+
+      <label>Video (URL sebaris)</label>
+      <textarea id="videos" style="min-height:70px"></textarea>
+
+      <label>Status</label>
+      <select id="status">
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+      </select>
+
+      <label>Isi artikel *</label>
+      <textarea id="body"></textarea>
+
+      <div class="turnstile-wrap"><div id="turnstile-form"></div></div>
+      <button type="button" id="btnPublish">Simpan artikel baru</button>
+      <button type="button" class="secondary hidden" id="btnUpdate">Kemaskini artikel</button>
+      <button type="button" class="secondary hidden" id="btnCancelEdit">Batal edit</button>
+      <div class="msg" id="msg"></div>
+      <p class="hint" id="resultLink"></p>
     </div>
 
-    <label>Tajuk *</label>
-    <input type="text" id="title" placeholder="Tajuk artikel">
-
-    <label>Slug (kosong = auto)</label>
-    <input type="text" id="slug" placeholder="nama-tajuk-auto">
-
-    <label>Excerpt / ringkasan</label>
-    <input type="text" id="excerpt" placeholder="1–2 ayat">
-
-    <label>Gambar (multi) — upload ImgBB *</label>
-    <p class="hint">Boleh pilih banyak fail sekali. Gambar pertama = cover. Diselit automatik antara perenggan di laman.</p>
-    <div class="upload-row">
-      <input type="file" id="imageFiles" accept="image/*" multiple>
-      <button type="button" class="secondary" id="btnUploadImages" style="width:auto;margin:0;padding:10px 14px">Upload semua</button>
+    <!-- ===== SENARAI ===== -->
+    <div id="panelList" class="hidden">
+      <button type="button" class="secondary" id="btnRefreshList">Muat semula senarai</button>
+      <div id="postListAdmin" style="margin-top:12px"></div>
     </div>
-    <div class="preview-grid" id="imagePreviews"></div>
-    <input type="hidden" id="imagesJson" value="[]">
-    <label>Cover URL (auto dari gambar pertama, boleh ubah)</label>
-    <input type="url" id="cover" placeholder="https://i.ibb.co/...">
-
-    <label>Video (satu URL sebaris — YouTube disyorkan)</label>
-    <textarea id="videos" style="min-height:80px" placeholder="https://youtu.be/xxxxx"></textarea>
-
-    <label>Status</label>
-    <select id="status">
-      <option value="published">Published</option>
-      <option value="draft">Draft</option>
-    </select>
-
-    <label>Isi artikel *</label>
-    <textarea id="body" placeholder="Tulis perenggan. Gambar akan diselit antara perenggan secara automatik."></textarea>
-
-    <div class="turnstile-wrap"><div id="turnstile-form"></div></div>
-    <button type="button" id="btnPublish">Simpan ke Google Docs + Sheet</button>
-    <div class="msg" id="msg"></div>
-    <p class="hint" id="resultLink"></p>
   </div>
 
 <script>
@@ -95,168 +121,243 @@ let uploadedImages = [];
 function renderTS(){
   if (!window.turnstile) return setTimeout(renderTS, 200);
   if (tsId !== null) return;
-  try {
-    tsId = turnstile.render("#turnstile-form", { sitekey: TURNSTILE_SITEKEY, theme: "dark" });
-  } catch(e){}
+  try { tsId = turnstile.render("#turnstile-form", { sitekey: TURNSTILE_SITEKEY, theme: "dark" }); } catch(e){}
 }
 renderTS();
+function getTS(){ try { return turnstile.getResponse(tsId)||""; } catch(_){ return ""; } }
+function resetTS(){ try { turnstile.reset(tsId); } catch(_){} }
 
-function getTS(){
-  if (!window.turnstile || tsId===null) return "";
-  try { return turnstile.getResponse(tsId)||""; } catch(_){ return ""; }
-}
-function resetTS(){
-  if (window.turnstile && tsId!==null) try{ turnstile.reset(tsId); }catch(_){}
-}
-
-async function verifyTurnstileServer(token){
-  if (!TURNSTILE_VERIFY_URL) return { success: !!token };
+async function verifyTS(token){
   const r = await fetch(TURNSTILE_VERIFY_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method:"POST", headers:{"Content-Type":"application/json"},
     body: JSON.stringify({ token })
   });
-  const d = await r.json().catch(() => ({}));
-  return { success: d.success === true };
+  const d = await r.json().catch(()=>({}));
+  return d.success === true;
 }
 
 function fileToBase64(file){
-  return new Promise((resolve,reject)=>{
-    const r = new FileReader();
-    r.onload = () => resolve(r.result);
-    r.onerror = reject;
-    r.readAsDataURL(file);
-  });
+  return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); });
 }
 
 function refreshImageUI(){
-  document.getElementById("imagesJson").value = JSON.stringify(uploadedImages);
-  const box = document.getElementById("imagePreviews");
-  box.innerHTML = uploadedImages.map(u => `<img src="${u}" alt="">`).join("");
+  document.getElementById("imagePreviews").innerHTML =
+    uploadedImages.map(u=>`<img src="${u}" alt="">`).join("");
   if (uploadedImages.length && !document.getElementById("cover").value.trim()) {
     document.getElementById("cover").value = uploadedImages[0];
   }
 }
 
-document.getElementById("btnUploadImages").onclick = async () => {
-  const msg = document.getElementById("msg");
-  const files = document.getElementById("imageFiles").files;
-  const pass = document.getElementById("password").value.trim();
-  if (!files.length) { msg.className="msg err"; msg.textContent="Pilih sekurang-kurangnya 1 gambar."; return; }
-  if (!pass) { msg.className="msg err"; msg.textContent="Isi password admin dulu."; return; }
+function showMsg(ok, text){
+  const m = document.getElementById("msg");
+  m.className = "msg " + (ok ? "ok" : "err");
+  m.textContent = text;
+}
 
-  msg.className="msg ok"; msg.textContent="Uploading " + files.length + " gambar…";
-  for (let i = 0; i < files.length; i++) {
-    try {
-      const b64 = await fileToBase64(files[i]);
-      const r = await fetch(BLOG_API, {
-        method: "POST",
-        body: JSON.stringify({ password: pass, action: "upload", image: b64, name: files[i].name })
-      });
-      const d = await r.json();
-      if (d.ok && d.url) {
-        uploadedImages.push(d.url);
-        refreshImageUI();
-        msg.textContent = "Upload " + (i+1) + "/" + files.length + " OK";
-      } else {
-        msg.className="msg err";
-        msg.textContent = (d.message || "Gagal") + " pada fail " + files[i].name;
-        return;
-      }
-    } catch (e) {
-      msg.className="msg err"; msg.textContent="Ralat upload: " + files[i].name;
-      return;
-    }
-  }
-  msg.className="msg ok";
-  msg.textContent = uploadedImages.length + " gambar berjaya. Cover = gambar pertama.";
+document.getElementById("tabWrite").onclick = () => {
+  document.getElementById("panelWrite").classList.remove("hidden");
+  document.getElementById("panelList").classList.add("hidden");
+  document.getElementById("tabWrite").classList.add("active");
+  document.getElementById("tabList").classList.remove("active");
+};
+document.getElementById("tabList").onclick = () => {
+  document.getElementById("panelWrite").classList.add("hidden");
+  document.getElementById("panelList").classList.remove("hidden");
+  document.getElementById("tabList").classList.add("active");
+  document.getElementById("tabWrite").classList.remove("active");
+  loadAdminList();
 };
 
-function updatePublishDateBox(){
-  try{
-    const now = new Date();
-    const tz = "Asia/Kuala_Lumpur";
-    const el = document.getElementById("publishDateNow");
-    const elH = document.getElementById("publishHijriNow");
-    if (el) {
-      el.textContent =
-        now.toLocaleDateString("ms-MY", { timeZone: tz, weekday: "long", day: "numeric", month: "long", year: "numeric" }) +
-        " · " +
-        now.toLocaleTimeString("ms-MY", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
-    }
-    if (elH) {
-      elH.textContent = new Intl.DateTimeFormat("ms-MY-u-ca-islamic", {
-        timeZone: tz, weekday: "long", day: "numeric", month: "long", year: "numeric"
-      }).format(now) + " H";
-    }
-  }catch(e){}
+document.getElementById("btnUploadImages").onclick = async () => {
+  const files = document.getElementById("imageFiles").files;
+  const pass = document.getElementById("password").value.trim();
+  if (!files.length) return showMsg(false, "Pilih gambar.");
+  if (!pass) return showMsg(false, "Password wajib.");
+  showMsg(true, "Uploading…");
+  for (let i=0;i<files.length;i++){
+    try {
+      const b64 = await fileToBase64(files[i]);
+      const r = await fetch(BLOG_API, { method:"POST", body: JSON.stringify({ password:pass, action:"upload", image:b64, name:files[i].name }) });
+      const d = await r.json();
+      if (d.ok && d.url) { uploadedImages.push(d.url); refreshImageUI(); showMsg(true, (i+1)+"/"+files.length+" OK"); }
+      else return showMsg(false, d.message || "Gagal upload");
+    } catch { return showMsg(false, "Ralat upload"); }
+  }
+  showMsg(true, uploadedImages.length + " gambar siap.");
+};
+
+function resetForm(){
+  document.getElementById("editSlug").value = "";
+  document.getElementById("title").value = "";
+  document.getElementById("slug").value = "";
+  document.getElementById("slug").readOnly = false;
+  document.getElementById("excerpt").value = "";
+  document.getElementById("cover").value = "";
+  document.getElementById("videos").value = "";
+  document.getElementById("body").value = "";
+  document.getElementById("status").value = "published";
+  uploadedImages = [];
+  refreshImageUI();
+  document.getElementById("btnPublish").classList.remove("hidden");
+  document.getElementById("btnUpdate").classList.add("hidden");
+  document.getElementById("btnCancelEdit").classList.add("hidden");
+  document.getElementById("btnPublish").textContent = "Simpan artikel baru";
 }
-updatePublishDateBox();
-setInterval(updatePublishDateBox, 1000);
 
-document.getElementById("btnPublish").onclick = async () => {
-  const msg = document.getElementById("msg");
-  const btn = document.getElementById("btnPublish");
+document.getElementById("btnCancelEdit").onclick = resetForm;
+
+async function savePost(isUpdate){
   const token = getTS();
-  if (!token) { msg.className="msg err"; msg.textContent="Lengkapkan CAPTCHA dahulu."; return; }
-
+  if (!token) return showMsg(false, "Lengkapkan CAPTCHA.");
+  const btn = isUpdate ? document.getElementById("btnUpdate") : document.getElementById("btnPublish");
   btn.disabled = true;
-  btn.textContent = "Mengesahkan CAPTCHA…";
   try {
-    const v = await verifyTurnstileServer(token);
-    if (!v.success) {
-      msg.className="msg err"; msg.textContent="CAPTCHA ditolak.";
-      resetTS(); btn.disabled=false; btn.textContent="Simpan ke Google Docs + Sheet"; return;
+    if (!(await verifyTS(token))) {
+      showMsg(false, "CAPTCHA ditolak."); resetTS(); btn.disabled=false; return;
     }
   } catch {
-    msg.className="msg err"; msg.textContent="Gagal verify Turnstile.";
-    resetTS(); btn.disabled=false; btn.textContent="Simpan ke Google Docs + Sheet"; return;
+    showMsg(false, "Verify Turnstile gagal."); resetTS(); btn.disabled=false; return;
   }
 
-  const imgs = uploadedImages.length ? uploadedImages : (() => {
-    try { return JSON.parse(document.getElementById("imagesJson").value || "[]"); } catch { return []; }
-  })();
-
   let cover = document.getElementById("cover").value.trim();
-  if (!cover && imgs.length) cover = imgs[0];
+  if (!cover && uploadedImages.length) cover = uploadedImages[0];
 
   const payload = {
     password: document.getElementById("password").value.trim(),
-    action: "create",
+    action: isUpdate ? "update" : "create",
     title: document.getElementById("title").value.trim(),
-    slug: document.getElementById("slug").value.trim(),
+    slug: isUpdate ? document.getElementById("editSlug").value : document.getElementById("slug").value.trim(),
     excerpt: document.getElementById("excerpt").value.trim(),
     cover,
-    images: imgs,
+    images: uploadedImages,
+    videos: document.getElementById("videos").value,
     status: document.getElementById("status").value,
-    body: document.getElementById("body").value,
-    videos: document.getElementById("videos").value
+    body: document.getElementById("body").value
   };
-
   if (!payload.password || !payload.title || !payload.body.trim()) {
-    msg.className="msg err"; msg.textContent="Password, tajuk dan isi wajib.";
-    btn.disabled=false; btn.textContent="Simpan ke Google Docs + Sheet"; return;
+    showMsg(false, "Password, tajuk, isi wajib."); btn.disabled=false; return;
+  }
+  if (isUpdate && !payload.slug) {
+    showMsg(false, "Slug edit hilang."); btn.disabled=false; return;
   }
 
-  btn.textContent = "Menyimpan…";
   try {
-    const r = await fetch(BLOG_API, { method: "POST", body: JSON.stringify(payload) });
+    const r = await fetch(BLOG_API, { method:"POST", body: JSON.stringify(payload) });
     const d = await r.json();
     if (d.ok) {
-      msg.className="msg ok";
-      msg.textContent = d.message + " · /blog/" + d.slug;
-      const full = d.fullUrl || ("https://www.mastaxul.my/blog/" + d.slug);
-      document.getElementById("resultLink").innerHTML =
-        'Buka: <a href="'+full+'" target="_blank">'+full+'</a>';
+      showMsg(true, d.message + (d.slug ? " · /blog/"+d.slug : ""));
+      const full = d.fullUrl || (d.slug ? "https://www.mastaxul.my/blog/"+d.slug : "");
+      document.getElementById("resultLink").innerHTML = full ? 'Buka: <a href="'+full+'" target="_blank">'+full+'</a>' : "";
       resetTS();
+      if (!isUpdate) resetForm();
     } else {
-      msg.className="msg err"; msg.textContent=d.message||"Gagal"; resetTS();
+      showMsg(false, d.message || "Gagal"); resetTS();
     }
   } catch {
-    msg.className="msg err"; msg.textContent="Ralat rangkaian."; resetTS();
+    showMsg(false, "Ralat rangkaian"); resetTS();
   }
-  btn.disabled=false; btn.textContent="Simpan ke Google Docs + Sheet";
+  btn.disabled = false;
+}
+
+document.getElementById("btnPublish").onclick = () => savePost(false);
+document.getElementById("btnUpdate").onclick = () => savePost(true);
+
+async function loadAdminList(){
+  const pass = document.getElementById("password").value.trim();
+  const box = document.getElementById("postListAdmin");
+  if (!pass) { box.innerHTML = '<p class="hint">Isi password dulu, kemudian muat semula.</p>'; return; }
+  box.innerHTML = '<p class="hint">Memuatkan…</p>';
+  try {
+    const r = await fetch(BLOG_API + "?action=list&all=1&password=" + encodeURIComponent(pass) + "&_=" + Date.now());
+    const d = await r.json();
+    if (!d.ok) { box.innerHTML = '<p class="msg err" style="display:block">'+ (d.message||"Unauthorized") +'</p>'; return; }
+    const posts = d.posts || [];
+    if (!posts.length) { box.innerHTML = '<p class="hint">Tiada artikel.</p>'; return; }
+    box.innerHTML = posts.map(p => `
+      <div class="post-item">
+        <h3>${escapeHtml(p.title)}</h3>
+        <div class="meta">
+          /blog/${escapeHtml(p.slug)} · ${escapeHtml(p.status)} ·
+          👁 ${p.views||0} · 👍 ${p.likes||0} · ❤️ ${p.loves||0}<br>
+          ${escapeHtml(p.updated || p.timestamp || "")}
+        </div>
+        <div class="actions">
+          <button type="button" class="sm" onclick="editPost('${escapeAttr(p.slug)}')">✏️ Edit</button>
+          <a class="sm" style="display:inline-flex;align-items:center;padding:8px 12px;background:#1b2433;border-radius:10px;text-decoration:none"
+             href="https://www.mastaxul.my/blog/${encodeURIComponent(p.slug)}" target="_blank">Buka</a>
+          <button type="button" class="sm secondary" onclick="setStatus('${escapeAttr(p.slug)}','${p.status==='published'?'draft':'published'}')">
+            ${p.status==='published'?'Jadikan Draft':'Publish'}
+          </button>
+        </div>
+      </div>
+    `).join("");
+  } catch {
+    box.innerHTML = '<p class="msg err" style="display:block">Gagal muat senarai</p>';
+  }
+}
+
+function escapeHtml(s){
+  return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function escapeAttr(s){
+  return String(s??"").replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+}
+
+window.editPost = async function(slug){
+  const pass = document.getElementById("password").value.trim();
+  if (!pass) return showMsg(false, "Password wajib.");
+  showMsg(true, "Memuatkan artikel…");
+  try {
+    const r = await fetch(BLOG_API + "?action=get&slug=" + encodeURIComponent(slug) + "&password=" + encodeURIComponent(pass) + "&_=" + Date.now());
+    const d = await r.json();
+    if (!d.ok || !d.post) return showMsg(false, d.message || "Gagal");
+    const p = d.post;
+    document.getElementById("tabWrite").click();
+    document.getElementById("editSlug").value = p.slug;
+    document.getElementById("title").value = p.title || "";
+    document.getElementById("slug").value = p.slug || "";
+    document.getElementById("slug").readOnly = true;
+    document.getElementById("excerpt").value = p.excerpt || "";
+    document.getElementById("cover").value = p.cover || "";
+    document.getElementById("videos").value = (Array.isArray(p.videos) ? p.videos.map(v => typeof v==='string'?v:(v.url||v.original||"")).join("\n") : "");
+    document.getElementById("status").value = (p.status || "published").toLowerCase();
+    document.getElementById("body").value = p.bodyText || (p.html||"").replace(/<br\s*\/?>/gi,"\n").replace(/<\/p>/gi,"\n\n").replace(/<[^>]+>/g,"").trim();
+    uploadedImages = Array.isArray(p.images) ? p.images.slice() : [];
+    if (!uploadedImages.length && p.cover) uploadedImages = [p.cover];
+    refreshImageUI();
+    document.getElementById("btnPublish").classList.add("hidden");
+    document.getElementById("btnUpdate").classList.remove("hidden");
+    document.getElementById("btnCancelEdit").classList.remove("hidden");
+    showMsg(true, "Mode edit: " + p.slug);
+  } catch {
+    showMsg(false, "Gagal muat untuk edit");
+  }
 };
+
+window.setStatus = async function(slug, status){
+  const pass = document.getElementById("password").value.trim();
+  if (!pass) return alert("Password wajib");
+  try {
+    const r = await fetch(BLOG_API, {
+      method:"POST",
+      body: JSON.stringify({ password: pass, action: "setstatus", slug, status })
+    });
+    const d = await r.json();
+    alert(d.message || (d.ok ? "OK" : "Gagal"));
+    loadAdminList();
+  } catch { alert("Ralat"); }
+};
+
+document.getElementById("btnRefreshList").onclick = loadAdminList;
+
+setInterval(() => {
+  try {
+    const now = new Date();
+    const tz = "Asia/Kuala_Lumpur";
+    document.getElementById("publishDateNow").textContent =
+      now.toLocaleString("ms-MY", { timeZone: tz, weekday:"long", day:"numeric", month:"long", year:"numeric", hour:"2-digit", minute:"2-digit", second:"2-digit", hour12:false });
+  } catch(e){}
+}, 1000);
 </script>
 </body>
 </html>
