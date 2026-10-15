@@ -25,6 +25,10 @@
     .turnstile-wrap{display:flex;justify-content:center;margin:14px 0;min-height:65px}
     .upload-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
     .upload-row input[type=file]{flex:1;min-width:160px}
+    .publish-date-box{margin-top:12px;padding:12px 14px;border-radius:10px;background:#0c111a;border:1px solid #283244}
+    .publish-date-box .label{font-size:.78rem;color:#8f9bad;margin-bottom:4px}
+    .publish-date-box .value{font-weight:700;font-size:.95rem;color:#7df0b3}
+    .publish-date-box .hijri{font-size:.8rem;color:#c4b5fd;margin-top:2px}
   </style>
 </head>
 <body>
@@ -34,6 +38,14 @@
 
     <label>Password admin *</label>
     <input type="password" id="password" autocomplete="current-password">
+
+    
+    <div class="publish-date-box">
+      <div class="label">Tarikh & masa siaran (Kuala Lumpur)</div>
+      <div class="value" id="publishDateNow">—</div>
+      <div class="hijri" id="publishHijriNow">—</div>
+      <p class="hint" style="margin-top:6px">Direkod automatik bila artikel disimpan (Timestamp dalam Sheet + Apps Script).</p>
+    </div>
 
     <label>Tajuk *</label>
     <input type="text" id="title" placeholder="Contoh: Cara pilih produk viral di TikTok">
@@ -101,6 +113,29 @@ function renderTS(){
   } catch(e){}
 }
 renderTS();
+
+function updatePublishDateBox(){
+  try{
+    const now = new Date();
+    const tz = "Asia/Kuala_Lumpur";
+    const el = document.getElementById("publishDateNow");
+    const elH = document.getElementById("publishHijriNow");
+    if (el) {
+      const hari = now.toLocaleDateString("ms-MY", { timeZone: tz, weekday: "long" });
+      const tarikh = now.toLocaleDateString("ms-MY", { timeZone: tz, day: "numeric", month: "long", year: "numeric" });
+      const jam = now.toLocaleTimeString("ms-MY", { timeZone: tz, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+      el.textContent = hari + ", " + tarikh + " · " + jam;
+    }
+    if (elH) {
+      elH.textContent = new Intl.DateTimeFormat("ms-MY-u-ca-islamic", {
+        timeZone: tz, weekday: "long", day: "numeric", month: "long", year: "numeric"
+      }).format(now) + " H";
+    }
+  }catch(e){}
+}
+updatePublishDateBox();
+setInterval(updatePublishDateBox, 1000);
+
 
 function getTS(){
   if (!window.turnstile || tsId===null) return "";
