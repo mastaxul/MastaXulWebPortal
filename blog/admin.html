@@ -1,0 +1,110 @@
+<!--
+  Panel Blog untuk Admin Dashboard
+  1. Letak sebagai tab "Blog" atau buka fail ini dalam /admindashboard/
+  2. TUKAR BLOG_API kepada URL Web App Blog
+  3. Guna password admin yang sama (ADMIN_PASS)
+-->
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tulis Artikel | Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    body{font-family:system-ui,sans-serif;background:#0b0f19;color:#e8eef7;margin:0;padding:20px}
+    .box{max-width:640px;margin:0 auto;background:#121826;border:1px solid #283244;border-radius:14px;padding:20px}
+    h1{font-size:1.25rem;margin:0 0 14px}
+    label{display:block;font-size:.85rem;color:#8f9bad;margin:12px 0 5px}
+    input,textarea,select{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #283244;background:#0c111a;color:#fff;font:inherit}
+    textarea{min-height:220px;resize:vertical}
+    button{margin-top:14px;width:100%;padding:12px;border:0;border-radius:10px;background:#3d7eff;color:#fff;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.5}
+    .msg{margin-top:12px;padding:10px;border-radius:8px;display:none;text-align:center;font-weight:600}
+    .msg.ok{display:block;background:rgba(57,217,138,.12);color:#7df0b3}
+    .msg.err{display:block;background:rgba(255,107,107,.12);color:#ff9292}
+    .hint{font-size:.78rem;color:#8f9bad;margin-top:6px}
+    a{color:#6ea8fe}
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>✍️ Tulis Artikel / Post</h1>
+    <p class="hint">Artikel disimpan sebagai Google Doc dalam folder <b>post-artikel</b>. URL awam: <code>/blog/?slug=nama-tajuk</code></p>
+
+    <label>Password admin *</label>
+    <input type="password" id="password" autocomplete="current-password">
+
+    <label>Tajuk *</label>
+    <input type="text" id="title" placeholder="Contoh: Cara pilih produk viral di TikTok">
+
+    <label>Slug (kosong = auto dari tajuk)</label>
+    <input type="text" id="slug" placeholder="cara-pilih-produk-viral-di-tiktok">
+
+    <label>Excerpt / ringkasan (kosong = auto)</label>
+    <input type="text" id="excerpt" placeholder="1–2 ayat pendek untuk senarai blog">
+
+    <label>Cover image URL (optional)</label>
+    <input type="url" id="cover" placeholder="https://i.ibb.co/...">
+
+    <label>Status</label>
+    <select id="status">
+      <option value="published">Published (tampak awam)</option>
+      <option value="draft">Draft (tersembunyi)</option>
+    </select>
+
+    <label>Isi artikel *</label>
+    <textarea id="body" placeholder="Tulis isi penuh di sini. Perenggan dipisahkan dengan baris kosong."></textarea>
+
+    <button type="button" id="btnPublish">Simpan ke Google Docs + Sheet</button>
+    <div class="msg" id="msg"></div>
+    <p class="hint" id="resultLink"></p>
+  </div>
+
+<script>
+const BLOG_API = "https://script.google.com/macros/s/AKfycbyx_ovUg3Nuw6N49nve0zdToASgP3F-cTQClP0cIshCrvdWWcLox5IXtk55FfnVmRAG/exec";
+
+document.getElementById("btnPublish").onclick = async () => {
+  const msg = document.getElementById("msg");
+  const btn = document.getElementById("btnPublish");
+  const payload = {
+    password: document.getElementById("password").value.trim(),
+    action: "create",
+    title: document.getElementById("title").value.trim(),
+    slug: document.getElementById("slug").value.trim(),
+    excerpt: document.getElementById("excerpt").value.trim(),
+    cover: document.getElementById("cover").value.trim(),
+    status: document.getElementById("status").value,
+    body: document.getElementById("body").value
+  };
+  if (!payload.password || !payload.title || !payload.body.trim()) {
+    msg.className = "msg err";
+    msg.textContent = "Password, tajuk dan isi wajib.";
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = "Menyimpan…";
+  msg.className = "msg";
+  try {
+    const r = await fetch(BLOG_API, { method: "POST", body: JSON.stringify(payload) });
+    const d = await r.json();
+    if (d.ok) {
+      msg.className = "msg ok";
+      msg.textContent = d.message + " · slug: " + d.slug;
+      document.getElementById("resultLink").innerHTML =
+        'Lihat: <a href="/blog/?slug=' + encodeURIComponent(d.slug) + '" target="_blank">/blog/?slug=' + d.slug + '</a>' +
+        (d.docUrl ? ' · <a href="' + d.docUrl + '" target="_blank">Google Doc</a>' : "");
+    } else {
+      msg.className = "msg err";
+      msg.textContent = d.message || "Gagal";
+    }
+  } catch (e) {
+    msg.className = "msg err";
+    msg.textContent = "Ralat rangkaian / CORS. Pastikan deploy Web App = Anyone.";
+  }
+  btn.disabled = false;
+  btn.textContent = "Simpan ke Google Docs + Sheet";
+};
+</script>
+</body>
+</html>
