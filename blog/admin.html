@@ -86,6 +86,25 @@
       <label>Video (URL sebaris)</label>
       <textarea id="videos" style="min-height:70px"></textarea>
 
+      
+      <label>Label / Kategori</label>
+      <select id="kategori">
+        <option value="Umum">Umum</option>
+        <option value="Berita">Berita</option>
+        <option value="Teknologi">Teknologi</option>
+        <option value="Sains">Sains</option>
+        <option value="Rumah">Rumah</option>
+        <option value="Pertanian">Pertanian</option>
+        <option value="Luar negara">Luar negara</option>
+        <option value="Lelaki">Lelaki</option>
+        <option value="Wanita">Wanita</option>
+        <option value="Politik">Politik</option>
+        <option value="Kesihatan">Kesihatan</option>
+        <option value="Gadget">Gadget</option>
+        <option value="Viral">Viral</option>
+        <option value="Lain-lain">Lain-lain</option>
+      </select>
+
       <label>Status</label>
       <select id="status">
         <option value="published">Published</option>
@@ -232,6 +251,7 @@ async function savePost(isUpdate){
     images: uploadedImages,
     videos: document.getElementById("videos").value,
     status: document.getElementById("status").value,
+    kategori: document.getElementById("kategori").value,
     body: document.getElementById("body").value
   };
   if (!payload.password || !payload.title || !payload.body.trim()) {
@@ -277,7 +297,7 @@ async function loadAdminList(){
       <div class="post-item">
         <h3>${escapeHtml(p.title)}</h3>
         <div class="meta">
-          /blog/${escapeHtml(p.slug)} · ${escapeHtml(p.status)} ·
+          /blog/${escapeHtml(p.slug)} · ${escapeHtml(p.kategori||"Umum")} · ${escapeHtml(p.status)} ·
           👁 ${p.views||0} · 👍 ${p.likes||0} · ❤️ ${p.loves||0}<br>
           ${escapeHtml(p.updated || p.timestamp || "")}
         </div>
@@ -321,6 +341,7 @@ window.editPost = async function(slug){
     document.getElementById("cover").value = p.cover || "";
     document.getElementById("videos").value = (Array.isArray(p.videos) ? p.videos.map(v => typeof v==='string'?v:(v.url||v.original||"")).join("\n") : "");
     document.getElementById("status").value = (p.status || "published").toLowerCase();
+    const katEl=document.getElementById("kategori"); if(katEl) katEl.value = p.kategori || "Umum";
     document.getElementById("body").value = p.bodyText || (p.html||"").replace(/<br\s*\/?>/gi,"\n").replace(/<\/p>/gi,"\n\n").replace(/<[^>]+>/g,"").trim();
     uploadedImages = Array.isArray(p.images) ? p.images.slice() : [];
     if (!uploadedImages.length && p.cover) uploadedImages = [p.cover];
