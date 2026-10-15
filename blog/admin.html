@@ -80,8 +80,13 @@
         <button type="button" class="secondary sm" id="btnUploadImages">Upload</button>
       </div>
       <div class="preview-grid" id="imagePreviews"></div>
-      <label>Cover URL</label>
+      <label>Cover URL (auto dari gambar pertama)</label>
       <input type="url" id="cover" placeholder="https://i.ibb.co/...">
+
+      <label>Atau tampal URL gambar manual (satu sebaris)</label>
+      <textarea id="imagesManual" style="min-height:70px" placeholder="https://i.ibb.co/xxx/a.jpg
+https://i.ibb.co/xxx/b.jpg"></textarea>
+      <p class="hint">Jika upload auto gagal, upload di imgbb.com kemudian tampal URL di sini.</p>
 
       <label>Video (URL sebaris)</label>
       <textarea id="videos" style="min-height:70px"></textarea>
@@ -187,22 +192,84 @@ document.getElementById("tabList").onclick = () => {
   loadAdminList();
 };
 
+/** Kecilkan gambar sebelum hantar (elak Apps Script / ImgBB reject) */
+function compressImageFile(file, maxW, quality){
+  maxW = maxW || 1280;
+  quality = quality || 0.82;
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      const dataUrl = canvas.toDataURL("image/jpeg", quality);
+      resolve(dataUrl);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Gagal baca gambar")); };
+    img.src = url;
+  });
+}
+
+function collectAllImages(){
+  const manual = (document.getElementById("imagesManual")?.value || "")
+    .split(/[\n,]+/).map(s => s.trim()).filter(s => /^https?:\/\//i.test(s));
+  const merged = [];
+  const seen = {};
+  uploadedImages.concat(manual).forEach(u => {
+    if (u && !seen[u]) { seen[u] = true; merged.push(u); }
+  });
+  return merged;
+}
+
 document.getElementById("btnUploadImages").onclick = async () => {
   const files = document.getElementById("imageFiles").files;
   const pass = document.getElementById("password").value.trim();
   if (!files.length) return showMsg(false, "Pilih gambar.");
   if (!pass) return showMsg(false, "Password wajib.");
-  showMsg(true, "Uploading…");
-  for (let i=0;i<files.length;i++){
+  showMsg(true, "Memampatkan & upload ke ImgBB…");
+  for (let i = 0; i < files.length; i++) {
     try {
-      const b64 = await fileToBase64(files[i]);
-      const r = await fetch(BLOG_API, { method:"POST", body: JSON.stringify({ password:pass, action:"upload", image:b64, name:files[i].name }) });
-      const d = await r.json();
-      if (d.ok && d.url) { uploadedImages.push(d.url); refreshImageUI(); showMsg(true, (i+1)+"/"+files.length+" OK"); }
-      else return showMsg(false, d.message || "Gagal upload");
-    } catch { return showMsg(false, "Ralat upload"); }
+      let dataUrl;
+      try {
+        dataUrl = await compressImageFile(files[i], 1280, 0.82);
+      } catch (e) {
+        dataUrl = await fileToBase64(files[i]);
+      }
+      // Saiz kasar base64
+      if (dataUrl.length > 1200000) {
+        dataUrl = await compressImageFile(files[i], 960, 0.7);
+      }
+      const r = await fetch(BLOG_API, {
+        method: "POST",
+        body: JSON.stringify({
+          password: pass,
+          action: "upload",
+          image: dataUrl,
+          name: (files[i].name || "img").replace(/\.[^.]+$/, "") + ".jpg"
+        })
+      });
+      const text = await r.text();
+      let d;
+      try { d = JSON.parse(text); } catch {
+        return showMsg(false, "Server bukan JSON. Deploy Web App semula (Anyone). Respon: " + text.substring(0, 80));
+      }
+      if (d.ok && d.url) {
+        uploadedImages.push(d.url);
+        refreshImageUI();
+        showMsg(true, "Upload " + (i + 1) + "/" + files.length + " OK");
+      } else {
+        return showMsg(false, (d.message || "Gagal upload") + " — semak IMGBB_KEY dalam Script properties");
+      }
+    } catch (e) {
+      return showMsg(false, "Ralat rangkaian/upload: " + (e.message || e));
+    }
   }
-  showMsg(true, uploadedImages.length + " gambar siap.");
+  showMsg(true, uploadedImages.length + " gambar berjaya di ImgBB. Cover auto diisi.");
 };
 
 function resetForm(){
@@ -216,6 +283,8 @@ function resetForm(){
   document.getElementById("body").value = "";
   document.getElementById("status").value = "published";
   uploadedImages = [];
+  const man = document.getElementById("imagesManual");
+  if (man) man.value = "";
   refreshImageUI();
   document.getElementById("btnPublish").classList.remove("hidden");
   document.getElementById("btnUpdate").classList.add("hidden");
@@ -238,8 +307,9 @@ async function savePost(isUpdate){
     showMsg(false, "Verify Turnstile gagal."); resetTS(); btn.disabled=false; return;
   }
 
+  const allImgs = collectAllImages();
   let cover = document.getElementById("cover").value.trim();
-  if (!cover && uploadedImages.length) cover = uploadedImages[0];
+  if (!cover && allImgs.length) cover = allImgs[0];
 
   const payload = {
     password: document.getElementById("password").value.trim(),
@@ -248,7 +318,7 @@ async function savePost(isUpdate){
     slug: isUpdate ? document.getElementById("editSlug").value : document.getElementById("slug").value.trim(),
     excerpt: document.getElementById("excerpt").value.trim(),
     cover,
-    images: uploadedImages,
+    images: allImgs,
     videos: document.getElementById("videos").value,
     status: document.getElementById("status").value,
     kategori: document.getElementById("kategori").value,
@@ -345,6 +415,8 @@ window.editPost = async function(slug){
     document.getElementById("body").value = p.bodyText || (p.html||"").replace(/<br\s*\/?>/gi,"\n").replace(/<\/p>/gi,"\n\n").replace(/<[^>]+>/g,"").trim();
     uploadedImages = Array.isArray(p.images) ? p.images.slice() : [];
     if (!uploadedImages.length && p.cover) uploadedImages = [p.cover];
+    const man = document.getElementById("imagesManual");
+    if (man) man.value = uploadedImages.join("\n");
     refreshImageUI();
     document.getElementById("btnPublish").classList.add("hidden");
     document.getElementById("btnUpdate").classList.remove("hidden");
