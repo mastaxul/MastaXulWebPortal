@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog | Masta Xul</title>
+  <meta name="description" content="Artikel dan tip dari Masta Xul — produk, affiliate, dan idea berguna.">
+  <meta name="robots" content="index, follow">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body{background:#0b0f19;color:#e8eef7;font-family:system-ui,-apple-system,sans-serif;margin:0;line-height:1.6}
+    .wrap{max-width:720px;margin:0 auto;padding:24px 16px 60px}
+    header.blog-head{text-align:center;padding:28px 0 18px;border-bottom:1px solid #283244}
+    header.blog-head h1{margin:0 0 6px;font-size:1.6rem}
+    header.blog-head p{margin:0;color:#8f9bad;font-size:.95rem}
+    .nav-mini{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+    .nav-mini a{color:#6ea8fe;text-decoration:none;font-size:.88rem}
+    .post-list{margin-top:22px;display:flex;flex-direction:column;gap:14px}
+    .post-card{display:block;background:#121826;border:1px solid #283244;border-radius:14px;padding:16px 18px;text-decoration:none;color:inherit;transition:.15s}
+    .post-card:hover{border-color:#6ea8fe;transform:translateY(-1px)}
+    .post-card h2{margin:0 0 6px;font-size:1.15rem;color:#fff}
+    .post-card .meta{font-size:.78rem;color:#8f9bad;margin-bottom:8px}
+    .post-card .excerpt{font-size:.92rem;color:#b8c1d0}
+    .empty{text-align:center;color:#8f9bad;padding:40px 10px}
+    /* Artikel tunggal */
+    .article{margin-top:20px}
+    .article h1{font-size:1.55rem;margin:0 0 8px;line-height:1.3}
+    .article .meta{color:#8f9bad;font-size:.85rem;margin-bottom:18px}
+    .article .cover{width:100%;max-height:320px;object-fit:cover;border-radius:12px;margin-bottom:18px;background:#1a2230}
+    .article .content{font-size:1.02rem;color:#dce4ef}
+    .article .content p{margin:0 0 1em}
+    .back{display:inline-block;margin:12px 0 8px;color:#6ea8fe;text-decoration:none;font-size:.9rem}
+    footer{text-align:center;color:#667085;font-size:.8rem;margin-top:40px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="blog-head">
+      <h1 id="pageTitle">Blog Masta Xul</h1>
+      <p id="pageSub">Artikel & tip pilihan</p>
+      <div class="nav-mini">
+        <a href="/">Laman Utama</a>
+        <a href="/shop/">Shop</a>
+        <a href="/blog/">Semua Artikel</a>
+      </div>
+    </header>
+
+    <div id="listView">
+      <div class="post-list" id="postList">
+        <div class="empty">Memuatkan artikel…</div>
+      </div>
+    </div>
+
+    <div id="articleView" style="display:none">
+      <a class="back" href="/blog/">← Semua artikel</a>
+      <article class="article">
+        <h1 id="artTitle"></h1>
+        <div class="meta" id="artMeta"></div>
+        <img id="artCover" class="cover" alt="" style="display:none">
+        <div class="content" id="artContent"></div>
+      </article>
+    </div>
+
+    <footer>© Masta Xul · Blog</footer>
+  </div>
+
+<script>
+/* ===== TUKAR URL WEB APP BLOG DI SINI ===== */
+const BLOG_API = "https://script.google.com/macros/s/GANTI_ID_DEPLOYMENT_BLOG/exec";
+/* ========================================= */
+
+function esc(s){
+  return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+function getSlug(){
+  const q = new URLSearchParams(location.search);
+  let slug = q.get("slug");
+  if (slug) return slug.trim();
+  // Sokong path /blog/nama-artikel/ jika Worker rewrite
+  const parts = location.pathname.replace(/\/+$/,"").split("/").filter(Boolean);
+  // ["blog", "nama-artikel"]
+  if (parts[0]==="blog" && parts[1] && parts[1] !== "index.html") {
+    return decodeURIComponent(parts[1]);
+  }
+  return "";
+}
+
+async function loadList(){
+  const box = document.getElementById("postList");
+  try{
+    const r = await fetch(BLOG_API + "?action=list&_=" + Date.now());
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.message||"Gagal");
+    const posts = d.posts || [];
+    if (!posts.length){
+      box.innerHTML = '<div class="empty">Belum ada artikel diterbitkan.</div>';
+      return;
+    }
+    box.innerHTML = posts.map(p => `
+      <a class="post-card" href="/blog/?slug=${encodeURIComponent(p.slug)}">
+        <h2>${esc(p.title)}</h2>
+        <div class="meta">${esc(p.updated || p.timestamp || "")}</div>
+        <div class="excerpt">${esc(p.excerpt || "")}</div>
+      </a>
+    `).join("");
+  }catch(e){
+    box.innerHTML = '<div class="empty">Gagal memuatkan senarai. Semak BLOG_API.</div>';
+  }
+}
+
+async function loadArticle(slug){
+  document.getElementById("listView").style.display = "none";
+  document.getElementById("articleView").style.display = "block";
+  document.getElementById("pageTitle").textContent = "Artikel";
+  document.getElementById("pageSub").textContent = "Masta Xul Blog";
+  document.getElementById("artTitle").textContent = "Memuatkan…";
+  try{
+    const r = await fetch(BLOG_API + "?action=get&slug=" + encodeURIComponent(slug) + "&_=" + Date.now());
+    const d = await r.json();
+    if (!d.ok || !d.post) throw new Error(d.message||"Tidak dijumpai");
+    const p = d.post;
+    document.title = p.title + " | Masta Xul Blog";
+    document.getElementById("artTitle").textContent = p.title;
+    document.getElementById("artMeta").textContent = (p.updated || p.timestamp || "") + (p.slug ? " · /" + p.slug : "");
+    const cover = document.getElementById("artCover");
+    if (p.cover){
+      cover.src = p.cover;
+      cover.style.display = "block";
+      cover.alt = p.title;
+    }
+    document.getElementById("artContent").innerHTML = p.html || "<p></p>";
+    // Meta SEO ringkas
+    let md = document.querySelector('meta[name="description"]');
+    if (md && p.excerpt) md.setAttribute("content", p.excerpt);
+  }catch(e){
+    document.getElementById("artTitle").textContent = "Artikel tidak dijumpai";
+    document.getElementById("artContent").innerHTML = "<p>Slug tidak sah atau belum diterbitkan.</p>";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const slug = getSlug();
+  if (slug) loadArticle(slug);
+  else loadList();
+});
+</script>
+</body>
+</html>
