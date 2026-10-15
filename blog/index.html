@@ -106,6 +106,12 @@
     @media(min-width:901px){
       .layout{padding:24px 18px 70px}
     }
+    
+    .kat-bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 8px;justify-content:flex-start}
+    .kat-chip{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:7px 12px;font-size:.8rem;font-weight:600;cursor:pointer;min-height:36px}
+    .kat-chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+    .kat-badge{display:inline-block;font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--soft);color:var(--accent);margin-bottom:6px}
+
     .views-line{font-size:.82rem;color:var(--muted);margin:4px 0 10px}
 
     footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:36px;grid-column:1/-1}
@@ -131,6 +137,7 @@
       </header>
 
       <div id="listView">
+        <div class="kat-bar" id="katBar"></div>
         <div class="search-box">
           <input type="search" id="blogSearch" placeholder="Cari artikel…" autocomplete="off">
         </div>
@@ -144,6 +151,7 @@
         <a class="back" href="/blog/">← Semua artikel</a>
         <article class="article">
           <h1 id="artTitle"></h1>
+          <div class="kat-badge" id="artKategori" style="display:none"></div>
           <div class="meta" id="artMeta"></div>
           <div class="read-time" id="artReadTime"></div>
           <div class="views-line" id="artViews"></div>
@@ -202,6 +210,41 @@ const SITE = "https://www.mastaxul.my";
 const WA_CHANNEL = "https://whatsapp.com/channel/0029VaHHLhNIt5rvXDSZl03Y";
 
 let allPostsCache = [];
+
+const KATEGORI_LIST = ["Semua","Berita","Teknologi","Sains","Rumah","Pertanian","Luar negara","Lelaki","Wanita","Politik","Kesihatan","Gadget","Viral","Umum","Lain-lain"];
+let aktifKategori = "Semua";
+
+function renderKatBar(){
+  const bar = document.getElementById("katBar");
+  if (!bar) return;
+  bar.innerHTML = KATEGORI_LIST.map(k =>
+    `<button type="button" class="kat-chip${k===aktifKategori?' active':''}" data-kat="${esc(k)}">${esc(k)}</button>`
+  ).join("");
+  bar.querySelectorAll(".kat-chip").forEach(btn => {
+    btn.onclick = () => {
+      aktifKategori = btn.getAttribute("data-kat");
+      renderKatBar();
+      applyListFilter();
+    };
+  });
+}
+function applyListFilter(){
+  const q = (document.getElementById("blogSearch")?.value || "").trim().toLowerCase();
+  let list = allPostsCache.slice();
+  if (aktifKategori && aktifKategori !== "Semua") {
+    list = list.filter(p => (p.kategori || "Umum").toLowerCase() === aktifKategori.toLowerCase());
+  }
+  if (q) {
+    list = list.filter(p =>
+      (p.title||"").toLowerCase().includes(q) ||
+      (p.excerpt||"").toLowerCase().includes(q) ||
+      (p.slug||"").toLowerCase().includes(q) ||
+      (p.kategori||"").toLowerCase().includes(q)
+    );
+  }
+  renderPostCards(list);
+}
+
 let currentSlug = "";
 
 function esc(s){
@@ -434,8 +477,10 @@ function renderPostCards(posts){
       media = `<div class="preview-video"><iframe src="https://www.youtube.com/embed/${esc(vt.id)}?controls=0" loading="lazy" tabindex="-1"></iframe></div>`;
     }
     const mins = readingTimeFromHtml("", p.excerpt || p.title);
+    const kat = p.kategori || "Umum";
     return `<a class="post-card" href="${href}">
       ${media}
+      <div class="kat-badge">${esc(kat)}</div>
       <h2>${esc(p.title)}</h2>
       <div class="meta">📅 ${esc(formatPostDate(p.timestamp||p.updated||""))}</div>
       <div class="excerpt">${esc(p.excerpt||"")}</div>
@@ -450,7 +495,8 @@ async function loadList(){
     const d = await r.json();
     if (!d.ok) throw new Error();
     allPostsCache = d.posts || [];
-    renderPostCards(allPostsCache);
+    renderKatBar();
+    applyListFilter();
   } catch {
     document.getElementById("postList").innerHTML = '<div class="empty">Gagal memuatkan.</div>';
   }
@@ -494,6 +540,11 @@ async function loadArticle(slug){
     setupShare(p);
     document.getElementById("artTitle").textContent = p.title;
     document.getElementById("bcTitle").textContent = p.title;
+    const ak = document.getElementById("artKategori");
+    if (ak) {
+      if (p.kategori) { ak.style.display = "inline-block"; ak.textContent = p.kategori; }
+      else ak.style.display = "none";
+    }
     document.getElementById("artMeta").textContent = formatPostDate(p.timestamp||p.updated||"") + " · /blog/" + p.slug;
     document.getElementById("artReadTime").textContent = "⏱ ~" + readingTimeFromHtml(p.html, p.excerpt) + " minit baca";
 
@@ -603,15 +654,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const search = document.getElementById("blogSearch");
-  if (search) search.addEventListener("input", () => {
-    const q = search.value.trim().toLowerCase();
-    if (!q) return renderPostCards(allPostsCache);
-    renderPostCards(allPostsCache.filter(p =>
-      (p.title||"").toLowerCase().includes(q) ||
-      (p.excerpt||"").toLowerCase().includes(q) ||
-      (p.slug||"").toLowerCase().includes(q)
-    ));
-  });
+  if (search) search.addEventListener("input", () => applyListFilter());
 });
 </script>
 </body>
