@@ -74,7 +74,7 @@
       <label>Excerpt</label>
       <input type="text" id="excerpt">
 
-      <label>Gambar (multi) — ImgBB</label>
+      <label>Gambar (multi) — upload via Worker → ImgBB</label>
       <div class="upload-row">
         <input type="file" id="imageFiles" accept="image/*" multiple>
         <button type="button" class="secondary sm" id="btnUploadImages">Upload</button>
@@ -86,7 +86,7 @@
       <label>Atau tampal URL gambar manual (satu sebaris)</label>
       <textarea id="imagesManual" style="min-height:70px" placeholder="https://i.ibb.co/xxx/a.jpg
 https://i.ibb.co/xxx/b.jpg"></textarea>
-      <p class="hint">Jika upload auto gagal, upload di imgbb.com kemudian tampal URL di sini.</p>
+      <p class="hint">Jika upload gagal: semak password = ADMIN_PASS Worker, atau tampal URL i.ibb.co di sini.</p>
 
       <label>Video (URL sebaris)</label>
       <textarea id="videos" style="min-height:70px"></textarea>
@@ -136,6 +136,8 @@ https://i.ibb.co/xxx/b.jpg"></textarea>
 
 <script>
 const BLOG_API = "https://script.google.com/macros/s/AKfycbyx_ovUg3Nuw6N49nve0zdToASgP3F-cTQClP0cIshCrvdWWcLox5IXtk55FfnVmRAG/exec";
+/* Upload ImgBB melalui Worker og-produk (secret IMGBB_API_KEY di Cloudflare) */
+const UPLOAD_API = "https://mastaxul.my/api/upload-gambar";
 const TURNSTILE_SITEKEY = "0x4AAAAAAFWrdcXMTCekaOTS";
 const TURNSTILE_VERIFY_URL = "https://mastaxul-captcha.2ulfpv.workers.dev/verify";
 
@@ -192,8 +194,8 @@ document.getElementById("tabList").onclick = () => {
   loadAdminList();
 };
 
-/** Kecilkan gambar sebelum hantar (elak Apps Script / ImgBB reject) */
-function compressImageFile(file, maxW, quality){
+/** Kecilkan gambar (canvas) → Blob JPEG untuk FormData Worker */
+function compressImageToBlob(file, maxW, quality){
   maxW = maxW || 1280;
   quality = quality || 0.82;
   return new Promise((resolve, reject) => {
@@ -204,11 +206,13 @@ function compressImageFile(file, maxW, quality){
       if (w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
       const canvas = document.createElement("canvas");
       canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, w, h);
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
       URL.revokeObjectURL(url);
-      const dataUrl = canvas.toDataURL("image/jpeg", quality);
-      resolve(dataUrl);
+      canvas.toBlob(
+        (blob) => blob ? resolve(blob) : reject(new Error("toBlob gagal")),
+        "image/jpeg",
+        quality
+      );
     };
     img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Gagal baca gambar")); };
     img.src = url;
@@ -230,46 +234,44 @@ document.getElementById("btnUploadImages").onclick = async () => {
   const files = document.getElementById("imageFiles").files;
   const pass = document.getElementById("password").value.trim();
   if (!files.length) return showMsg(false, "Pilih gambar.");
-  if (!pass) return showMsg(false, "Password wajib.");
-  showMsg(true, "Memampatkan & upload ke ImgBB…");
+  if (!pass) return showMsg(false, "Password wajib (sama admin Worker / masta2026).");
+  showMsg(true, "Upload ke ImgBB melalui Worker…");
+
   for (let i = 0; i < files.length; i++) {
     try {
-      let dataUrl;
+      let blob;
       try {
-        dataUrl = await compressImageFile(files[i], 1280, 0.82);
+        blob = await compressImageToBlob(files[i], 1280, 0.82);
+        if (blob.size > 900000) blob = await compressImageToBlob(files[i], 960, 0.7);
       } catch (e) {
-        dataUrl = await fileToBase64(files[i]);
+        blob = files[i];
       }
-      // Saiz kasar base64
-      if (dataUrl.length > 1200000) {
-        dataUrl = await compressImageFile(files[i], 960, 0.7);
-      }
-      const r = await fetch(BLOG_API, {
-        method: "POST",
-        body: JSON.stringify({
-          password: pass,
-          action: "upload",
-          image: dataUrl,
-          name: (files[i].name || "img").replace(/\.[^.]+$/, "") + ".jpg"
-        })
-      });
+
+      const fd = new FormData();
+      fd.append("password", pass);
+      fd.append("image", blob, (files[i].name || "img").replace(/\.[^.]+$/, "") + ".jpg");
+
+      const r = await fetch(UPLOAD_API, { method: "POST", body: fd });
       const text = await r.text();
       let d;
       try { d = JSON.parse(text); } catch {
-        return showMsg(false, "Server bukan JSON. Deploy Web App semula (Anyone). Respon: " + text.substring(0, 80));
+        return showMsg(false, "Respon Worker bukan JSON: " + text.substring(0, 100));
       }
-      if (d.ok && d.url) {
-        uploadedImages.push(d.url);
+
+      // Worker pulangkan { success: true, url } 
+      const url = d.url || d.data?.url;
+      if ((d.success || d.ok) && url) {
+        uploadedImages.push(url);
         refreshImageUI();
         showMsg(true, "Upload " + (i + 1) + "/" + files.length + " OK");
       } else {
-        return showMsg(false, (d.message || "Gagal upload") + " — semak IMGBB_KEY dalam Script properties");
+        return showMsg(false, d.message || ("Gagal upload HTTP " + r.status) + " — semak ADMIN_PASS & IMGBB_API_KEY di Cloudflare Worker");
       }
     } catch (e) {
-      return showMsg(false, "Ralat rangkaian/upload: " + (e.message || e));
+      return showMsg(false, "Ralat upload: " + (e.message || e));
     }
   }
-  showMsg(true, uploadedImages.length + " gambar berjaya di ImgBB. Cover auto diisi.");
+  showMsg(true, uploadedImages.length + " gambar berjaya. Cover auto diisi jika kosong.");
 };
 
 function resetForm(){
