@@ -4,6 +4,7 @@ Allow: /
 # Jangan index halaman admin
 Disallow: /draqualinine/
 Disallow: /tools/kulit/
+Disallow: /tentang/
 
 Allow: /edugame/Game5/beli.html
 Allow: /edugame/og-image.jpg
