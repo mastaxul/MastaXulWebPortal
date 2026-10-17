@@ -232,29 +232,45 @@ navItems.forEach((item) => {
 
 window.addEventListener("load", kemaskiniKedudukanAlien);
 
-// ----- 4. BORANG + CAPTCHA -----
+// ----- 4. BORANG + CLOUDFLARE TURNSTILE -----
 const API_URL =
   "https://script.google.com/macros/s/AKfycbxsWSCyKSOiEx-Syg1dGuNT21U0Qqv_4GPBiFhJgvU-t014SXvbOwKAWL4TZiQk8NJE/exec";
+const TURNSTILE_SITEKEY = "0x4AAAAAAFWrdcXMTCekaOTS";
+const TURNSTILE_VERIFY_URL = "https://mastaxul-captcha.2ulfpv.workers.dev/verify";
 
 const formHubungi = document.getElementById("formHubungi");
 const btnHantar = document.getElementById("btnHantar");
 const msgContainer = document.getElementById("msg");
-const captchaSoalan = document.getElementById("captchaSoalan");
-const captchaJawapan = document.getElementById("captchaJawapan");
-const btnRefreshCaptcha = document.getElementById("btnRefreshCaptcha");
+let turnstileWidgetId = null;
 
-let captchaA = 0;
-let captchaB = 0;
-
-function buatCaptcha() {
-  captchaA = Math.floor(Math.random() * 8) + 2;
-  captchaB = Math.floor(Math.random() * 8) + 2;
-  if (captchaSoalan) captchaSoalan.textContent = captchaA + " + " + captchaB + " = ?";
-  if (captchaJawapan) captchaJawapan.value = "";
+function renderTurnstileHubungi() {
+  const el = document.getElementById("turnstile-hubungi");
+  if (!el || typeof turnstile === "undefined") return;
+  try {
+    if (turnstileWidgetId != null) {
+      try { turnstile.remove(turnstileWidgetId); } catch (e) {}
+    }
+    el.innerHTML = "";
+    turnstileWidgetId = turnstile.render(el, {
+      sitekey: TURNSTILE_SITEKEY,
+      theme: "dark",
+      callback: function () {},
+    });
+  } catch (e) {
+    console.warn("Turnstile render:", e);
+  }
 }
 
-if (btnRefreshCaptcha) btnRefreshCaptcha.addEventListener("click", buatCaptcha);
-buatCaptcha();
+function waitTurnstileReady(attempt) {
+  attempt = attempt || 0;
+  if (typeof turnstile !== "undefined") {
+    renderTurnstileHubungi();
+    return;
+  }
+  if (attempt < 40) setTimeout(function () { waitTurnstileReady(attempt + 1); }, 150);
+}
+
+waitTurnstileReady();
 
 if (formHubungi) {
   formHubungi.addEventListener("submit", async (e) => {
@@ -271,17 +287,50 @@ if (formHubungi) {
         msgContainer.textContent = "Mesej berjaya dihantar. Terima kasih!";
       }
       formHubungi.reset();
-      buatCaptcha();
+      renderTurnstileHubungi();
       return;
     }
 
-    const jawapanUser = parseInt(captchaJawapan ? captchaJawapan.value : "", 10);
-    if (jawapanUser !== captchaA + captchaB) {
+    // Token Turnstile
+    let token = "";
+    try {
+      if (turnstileWidgetId != null && typeof turnstile !== "undefined") {
+        token = turnstile.getResponse(turnstileWidgetId) || "";
+      }
+    } catch (err) {}
+    if (!token) {
+      const hidden = formHubungi.querySelector('[name="cf-turnstile-response"]');
+      token = hidden ? hidden.value : "";
+    }
+    if (!token) {
       if (msgContainer) {
         msgContainer.className = "msg err";
-        msgContainer.textContent = "Jawapan CAPTCHA salah. Sila cuba lagi.";
+        msgContainer.textContent = "Sila lengkapkan CAPTCHA (Cloudflare) dahulu.";
       }
-      buatCaptcha();
+      return;
+    }
+
+    // Sahkan token di Worker captcha
+    try {
+      const vr = await fetch(TURNSTILE_VERIFY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: token }),
+      });
+      const vd = await vr.json().catch(function () { return {}; });
+      if (!vd.success && !vd.ok) {
+        if (msgContainer) {
+          msgContainer.className = "msg err";
+          msgContainer.textContent = "CAPTCHA gagal disahkan. Sila cuba lagi.";
+        }
+        renderTurnstileHubungi();
+        return;
+      }
+    } catch (err) {
+      if (msgContainer) {
+        msgContainer.className = "msg err";
+        msgContainer.textContent = "Gagal sahkan CAPTCHA. Semak rangkaian.";
+      }
       return;
     }
 
@@ -296,7 +345,7 @@ if (formHubungi) {
       telefon: (document.getElementById("telefon") || {}).value?.trim() || "",
       mesej: (document.getElementById("mesej") || {}).value?.trim() || "",
       website: hp ? hp.value : "",
-      captchaOk: true
+      captchaOk: true,
     };
 
     try {
@@ -304,7 +353,7 @@ if (formHubungi) {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       if (msgContainer) {
@@ -312,14 +361,14 @@ if (formHubungi) {
         msgContainer.textContent = "Mesej berjaya dihantar!";
       }
       formHubungi.reset();
-      buatCaptcha();
+      renderTurnstileHubungi();
     } catch (err) {
       if (msgContainer) {
         msgContainer.className = "msg err";
         msgContainer.textContent =
           "Gagal berhubung dengan pelayan. Sila cuba lagi atau e-mel terus.";
       }
-      buatCaptcha();
+      renderTurnstileHubungi();
     }
 
     if (btnHantar) {
@@ -461,10 +510,11 @@ if (formHubungi) {
 const tahunEl = document.getElementById("tahun");
 if (tahunEl) tahunEl.textContent = new Date().getFullYear();
 
+
+
 // =========================================================
-// 7. BLOG PREVIEW + PRODUK SHOP (auto rotate)
+// 7. BLOG PREVIEW + PRODUK SHOP (auto rotate 10s)
 // =========================================================
-// Melalui Worker og-produk (laju, cache KV) — bukan Apps Script terus
 const BLOG_API = "/api/blog";
 const SHOP_API = "/api/produk";
 
@@ -506,48 +556,91 @@ function coverOfPostHome(p) {
   return "";
 }
 
+function postTime(p) {
+  const s = p.updated || p.timestamp || "";
+  const t = Date.parse(s);
+  return isNaN(t) ? 0 : t;
+}
+
+function cardBlogHtml(p) {
+  const href = "/blog/" + encodeURIComponent(p.slug);
+  const cover = coverOfPostHome(p);
+  const img = cover
+    ? '<img src="' + escHome(cover) + '" alt="" loading="lazy">'
+    : '<div style="height:140px;background:rgba(15,23,42,.9);display:flex;align-items:center;justify-content:center;color:#64748b;font-size:.85rem">Artikel</div>';
+  const kat = p.kategori || "Umum";
+  return (
+    '<a class="home-blog-card" href="' +
+    href +
+    '">' +
+    img +
+    '<div class="body">' +
+    '<span class="kat">' +
+    escHome(kat) +
+    "</span>" +
+    "<h3>" +
+    escHome(p.title) +
+    "</h3>" +
+    '<p class="excerpt">' +
+    escHome(p.excerpt || "") +
+    "</p>" +
+    "</div></a>"
+  );
+}
+
+let olderPostsCache = [];
+let blogRotateTimer = null;
+
+function renderBlogRotate() {
+  const grid = document.getElementById("homeBlogRotate");
+  if (!grid || !olderPostsCache.length) return;
+  grid.classList.add("is-swapping");
+  setTimeout(function () {
+    const picks = shuffleHome(olderPostsCache).slice(0, 3);
+    grid.innerHTML = picks.map(cardBlogHtml).join("");
+    grid.classList.remove("is-swapping");
+  }, 280);
+}
+
 async function loadHomeBlog() {
-  const grid = document.getElementById("homeBlogGrid");
-  if (!grid) return;
+  const latestEl = document.getElementById("homeBlogLatest");
+  const rotateEl = document.getElementById("homeBlogRotate");
+  if (!latestEl) return;
   try {
     const r = await fetch(BLOG_API + "?_=" + Date.now());
     const d = await r.json();
     if (!d.ok || !Array.isArray(d.posts) || !d.posts.length) {
-      grid.innerHTML =
+      latestEl.innerHTML =
         '<div class="home-loading">Belum ada artikel. <a href="/blog/" style="color:#38bdf8">Ke Blog</a></div>';
+      if (rotateEl) rotateEl.innerHTML = "";
       return;
     }
-    const picks = shuffleHome(d.posts).slice(0, 3);
-    grid.innerHTML = picks
-      .map(function (p) {
-        const href = "/blog/" + encodeURIComponent(p.slug);
-        const cover = coverOfPostHome(p);
-        const img = cover
-          ? '<img src="' + escHome(cover) + '" alt="" loading="lazy">'
-          : '<div style="height:140px;background:rgba(15,23,42,.9);display:flex;align-items:center;justify-content:center;color:#64748b;font-size:.85rem">Artikel</div>';
-        const kat = p.kategori || "Umum";
-        return (
-          '<a class="home-blog-card" href="' +
-          href +
-          '">' +
-          img +
-          '<div class="body">' +
-          '<span class="kat">' +
-          escHome(kat) +
-          "</span>" +
-          "<h3>" +
-          escHome(p.title) +
-          "</h3>" +
-          '<p class="excerpt">' +
-          escHome(p.excerpt || "") +
-          "</p>" +
-          "</div></a>"
-        );
-      })
-      .join("");
+    const sorted = d.posts.slice().sort(function (a, b) {
+      return postTime(b) - postTime(a);
+    });
+    // 3 terbaru (tetap)
+    const latest = sorted.slice(0, 3);
+    latestEl.innerHTML = latest.map(cardBlogHtml).join("");
+
+    // Selebihnya untuk baris bawah (auto tukar)
+    olderPostsCache = sorted.slice(3);
+    if (!olderPostsCache.length) {
+      // kurang dari 4 post — ulang dari semua kecuali yang di atas
+      const slugs = {};
+      latest.forEach(function (p) {
+        slugs[p.slug] = true;
+      });
+      olderPostsCache = sorted.filter(function (p) {
+        return !slugs[p.slug];
+      });
+      if (!olderPostsCache.length) olderPostsCache = sorted.slice();
+    }
+    renderBlogRotate();
+    if (blogRotateTimer) clearInterval(blogRotateTimer);
+    blogRotateTimer = setInterval(renderBlogRotate, 10000);
   } catch (e) {
     console.error("home blog", e);
-    grid.innerHTML =
+    latestEl.innerHTML =
       '<div class="home-loading">Gagal muat artikel. <a href="/blog/" style="color:#38bdf8">Ke Blog</a></div>';
   }
 }
@@ -601,7 +694,7 @@ function renderHomeProduk(list) {
 
 function rotateHomeProduk() {
   if (!allProdukHome.length) return;
-  renderHomeProduk(shuffleHome(allProdukHome).slice(0, 4));
+  renderHomeProduk(shuffleHome(allProdukHome).slice(0, 6));
 }
 
 async function loadHomeProduk() {
@@ -621,14 +714,14 @@ async function loadHomeProduk() {
     }
     rotateHomeProduk();
     if (produkRotateTimerHome) clearInterval(produkRotateTimerHome);
-    produkRotateTimerHome = setInterval(rotateHomeProduk, 8000);
+    produkRotateTimerHome = setInterval(rotateHomeProduk, 10000);
   } catch (e) {
+    console.error("home produk", e);
     grid.innerHTML =
       '<div class="home-loading">Gagal muat produk. <a href="/shop/" style="color:#38bdf8">Ke Shop</a></div>';
   }
 }
 
-// Jalankan bila DOM sedia (seksyen homeBlogGrid / homeProdukGrid wujud)
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", function () {
     loadHomeBlog();
