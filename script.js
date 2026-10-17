@@ -464,8 +464,8 @@ if (tahunEl) tahunEl.textContent = new Date().getFullYear();
 // =========================================================
 // 7. BLOG PREVIEW + PRODUK SHOP (auto rotate)
 // =========================================================
-const BLOG_API =
-  "https://script.google.com/macros/s/AKfycbyx_ovUg3Nuw6N49nve0zdToASgP3F-cTQClP0cIshCrvdWWcLox5IXtk55FfnVmRAG/exec";
+// Melalui Worker og-produk (laju, cache KV) — bukan Apps Script terus
+const BLOG_API = "/api/blog";
 const SHOP_API = "/api/produk";
 
 function escHome(s) {
@@ -510,7 +510,7 @@ async function loadHomeBlog() {
   const grid = document.getElementById("homeBlogGrid");
   if (!grid) return;
   try {
-    const r = await fetch(BLOG_API + "?action=list&_=" + Date.now());
+    const r = await fetch(BLOG_API + "?_=" + Date.now());
     const d = await r.json();
     if (!d.ok || !Array.isArray(d.posts) || !d.posts.length) {
       grid.innerHTML =
@@ -546,6 +546,7 @@ async function loadHomeBlog() {
       })
       .join("");
   } catch (e) {
+    console.error("home blog", e);
     grid.innerHTML =
       '<div class="home-loading">Gagal muat artikel. <a href="/blog/" style="color:#38bdf8">Ke Blog</a></div>';
   }
