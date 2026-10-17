@@ -1,5 +1,6 @@
 // =========================================================
 // MASTA XUL PORTAL — script.js
+// (asal + blog preview + produk shop auto-rotate)
 // =========================================================
 
 // ----- 1. LOADING SCREEN -----
@@ -220,7 +221,7 @@ if ("IntersectionObserver" in window && sections.length > 0) {
 
 navItems.forEach((item) => {
   item.addEventListener("click", function () {
-    // Jangan set active untuk pautan luar (Shop)
+    // Jangan set active untuk pautan luar (Shop / Blog)
     if (this.getAttribute("data-section")) {
       navItems.forEach((link) => link.classList.remove("active"));
       this.classList.add("active");
@@ -229,7 +230,6 @@ navItems.forEach((item) => {
   });
 });
 
-// Kedudukan alien dikira semula selepas semua aset (font/imej) siap dimuatkan
 window.addEventListener("load", kemaskiniKedudukanAlien);
 
 // ----- 4. BORANG + CAPTCHA -----
@@ -266,7 +266,6 @@ if (formHubungi) {
 
     const hp = document.getElementById("website");
     if (hp && hp.value.trim() !== "") {
-      // Honeypot diisi — kemungkinan besar bot. Pura-pura berjaya.
       if (msgContainer) {
         msgContainer.className = "msg ok";
         msgContainer.textContent = "Mesej berjaya dihantar. Terima kasih!";
@@ -296,17 +295,11 @@ if (formHubungi) {
       emel: (document.getElementById("emel") || {}).value?.trim() || "",
       telefon: (document.getElementById("telefon") || {}).value?.trim() || "",
       mesej: (document.getElementById("mesej") || {}).value?.trim() || "",
-      // Nilai honeypot turut dihantar supaya Apps Script boleh menyemaknya
-      // di pihak server (jangan bergantung pada semakan klien sahaja)
       website: hp ? hp.value : "",
       captchaOk: true
     };
 
     try {
-      // mode "no-cors": Google Apps Script membuat redirect tanpa header CORS,
-      // jadi fetch biasa akan dianggap gagal walaupun data sudah terhantar.
-      // Dengan no-cors, respons menjadi "opaque" — kita anggap berjaya
-      // selagi tiada exception rangkaian.
       await fetch(API_URL, {
         method: "POST",
         mode: "no-cors",
@@ -342,35 +335,33 @@ if (formHubungi) {
   const spinner = document.querySelector(".carousel-spinner");
   if (!container || !spinner) return;
 
-  const KELAJUAN_AUTO = 360 / 28; // deg/saat — sama dengan animasi CSS
-  const SENSITIVITI = 0.25;       // deg per piksel seretan
+  const KELAJUAN_AUTO = 360 / 28;
+  const SENSITIVITI = 0.25;
 
   let sudut = 0;
-  let kawalanJS = false;   // true selepas pengguna mula menyeret
+  let kawalanJS = false;
   let sedangSeret = false;
   let hovering = false;
   let mulaX = 0;
   let sudutMula = 0;
   let sudutSebelum = 0;
-  let halaju = 0;          // momentum (deg per frame ~60fps)
+  let halaju = 0;
   let jumlahGerakan = 0;
   let halangKlik = false;
   let frameSebelum = null;
 
-  // Baca sudut semasa daripada matrix transform animasi CSS,
-  // supaya peralihan CSS -> JS berlaku tanpa lompatan visual
   function dapatkanSudutCSS() {
     const t = getComputedStyle(spinner).transform;
     if (!t || t === "none") return 0;
     const m3 = t.match(/matrix3d\(([^)]+)\)/);
     if (m3) {
       const v = m3[1].split(",").map(Number);
-      return Math.atan2(-v[2], v[0]) * 180 / Math.PI; // rotateY
+      return (Math.atan2(-v[2], v[0]) * 180) / Math.PI;
     }
     const m2 = t.match(/matrix\(([^)]+)\)/);
     if (m2) {
       const v = m2[1].split(",").map(Number);
-      return Math.atan2(v[1], v[0]) * 180 / Math.PI;
+      return (Math.atan2(v[1], v[0]) * 180) / Math.PI;
     }
     return 0;
   }
@@ -391,20 +382,17 @@ if (formHubungi) {
     if (kawalanJS) {
       if (frameSebelum === null) frameSebelum = now;
       const dt = (now - frameSebelum) / 1000;
-      const bingkai = dt * 60; // normal kepada unit "per frame" 60fps
+      const bingkai = dt * 60;
       frameSebelum = now;
 
       if (sedangSeret) {
-        // Rekod halaju daripada perubahan sudut untuk momentum lepas seretan
         halaju = halaju * 0.7 + (sudut - sudutSebelum) * 0.3;
         sudutSebelum = sudut;
       } else if (Math.abs(halaju) > 0.3) {
-        // Momentum: pusingan merayap perlahan-lahan
         sudut += halaju * bingkai;
         halaju *= Math.pow(0.93, bingkai);
         terapkan();
       } else if (!hovering && !preferReduced) {
-        // Auto-putar seperti biasa (berhenti semasa kursor atas carousel)
         sudut += KELAJUAN_AUTO * dt;
         terapkan();
       }
@@ -414,7 +402,7 @@ if (formHubungi) {
   requestAnimationFrame(tickCarousel);
 
   spinner.addEventListener("pointerdown", function (e) {
-    if (e.button !== undefined && e.button !== 0) return; // tetikus kiri sahaja
+    if (e.button !== undefined && e.button !== 0) return;
     ambilAlihKawalan();
     sedangSeret = true;
     hovering = false;
@@ -431,7 +419,6 @@ if (formHubungi) {
     if (!sedangSeret) return;
     const dx = e.clientX - mulaX;
     jumlahGerakan = Math.max(jumlahGerakan, Math.abs(dx));
-    // Seret ke kiri (dx negatif) = carousel berpusing ke kiri
     sudut = sudutMula - dx * SENSITIVITI;
     terapkan();
   });
@@ -441,23 +428,27 @@ if (formHubungi) {
     sedangSeret = false;
     container.classList.remove("dragging");
     if (jumlahGerakan > 8) {
-      // Ini seretan, bukan ketukan — halang pautan daripada terbuka
       halangKlik = true;
-      setTimeout(function () { halangKlik = false; }, 120);
+      setTimeout(function () {
+        halangKlik = false;
+      }, 120);
     }
   }
 
   window.addEventListener("pointerup", tamatSeretan);
   window.addEventListener("pointercancel", tamatSeretan);
 
-  container.addEventListener("click", function (e) {
-    if (halangKlik) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  }, true);
+  container.addEventListener(
+    "click",
+    function (e) {
+      if (halangKlik) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    },
+    true
+  );
 
-  // Berhenti auto-putar bila kursor berada atas carousel (desktop)
   container.addEventListener("pointerenter", function () {
     if (!sedangSeret) hovering = true;
   });
@@ -469,3 +460,180 @@ if (formHubungi) {
 // ----- 6. TAHUN FOOTER -----
 const tahunEl = document.getElementById("tahun");
 if (tahunEl) tahunEl.textContent = new Date().getFullYear();
+
+// =========================================================
+// 7. BLOG PREVIEW + PRODUK SHOP (auto rotate)
+// =========================================================
+const BLOG_API =
+  "https://script.google.com/macros/s/AKfycbyx_ovUg3Nuw6N49nve0zdToASgP3F-cTQClP0cIshCrvdWWcLox5IXtk55FfnVmRAG/exec";
+const SHOP_API = "/api/produk";
+
+function escHome(s) {
+  return String(s ?? "").replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+
+function shuffleHome(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const t = a[i];
+    a[i] = a[j];
+    a[j] = t;
+  }
+  return a;
+}
+
+function formatHargaHome(h) {
+  const n = parseFloat(String(h).replace(/[^\d.]/g, ""));
+  return isNaN(n) ? "0.00" : n.toFixed(2);
+}
+
+function isDirectImageHome(url) {
+  if (!url) return false;
+  if (/ibb\.co\/album\//i.test(url)) return false;
+  if (/i\.ibb\.co\//i.test(url)) return true;
+  return /\.(jpe?g|png|gif|webp)(\?|$)/i.test(url);
+}
+
+function coverOfPostHome(p) {
+  if (isDirectImageHome(p.cover)) return p.cover;
+  const imgs = Array.isArray(p.images) ? p.images : [];
+  for (let i = 0; i < imgs.length; i++) {
+    if (isDirectImageHome(imgs[i])) return imgs[i];
+  }
+  return "";
+}
+
+async function loadHomeBlog() {
+  const grid = document.getElementById("homeBlogGrid");
+  if (!grid) return;
+  try {
+    const r = await fetch(BLOG_API + "?action=list&_=" + Date.now());
+    const d = await r.json();
+    if (!d.ok || !Array.isArray(d.posts) || !d.posts.length) {
+      grid.innerHTML =
+        '<div class="home-loading">Belum ada artikel. <a href="/blog/" style="color:#38bdf8">Ke Blog</a></div>';
+      return;
+    }
+    const picks = shuffleHome(d.posts).slice(0, 3);
+    grid.innerHTML = picks
+      .map(function (p) {
+        const href = "/blog/" + encodeURIComponent(p.slug);
+        const cover = coverOfPostHome(p);
+        const img = cover
+          ? '<img src="' + escHome(cover) + '" alt="" loading="lazy">'
+          : '<div style="height:140px;background:rgba(15,23,42,.9);display:flex;align-items:center;justify-content:center;color:#64748b;font-size:.85rem">Artikel</div>';
+        const kat = p.kategori || "Umum";
+        return (
+          '<a class="home-blog-card" href="' +
+          href +
+          '">' +
+          img +
+          '<div class="body">' +
+          '<span class="kat">' +
+          escHome(kat) +
+          "</span>" +
+          "<h3>" +
+          escHome(p.title) +
+          "</h3>" +
+          '<p class="excerpt">' +
+          escHome(p.excerpt || "") +
+          "</p>" +
+          "</div></a>"
+        );
+      })
+      .join("");
+  } catch (e) {
+    grid.innerHTML =
+      '<div class="home-loading">Gagal muat artikel. <a href="/blog/" style="color:#38bdf8">Ke Blog</a></div>';
+  }
+}
+
+let allProdukHome = [];
+let produkRotateTimerHome = null;
+
+function renderHomeProduk(list) {
+  const grid = document.getElementById("homeProdukGrid");
+  if (!grid) return;
+  if (!list.length) {
+    grid.innerHTML =
+      '<div class="home-loading">Tiada produk. <a href="/shop/" style="color:#38bdf8">Ke Shop</a></div>';
+    return;
+  }
+  grid.classList.add("is-swapping");
+  setTimeout(function () {
+    grid.innerHTML = list
+      .map(function (p) {
+        const id = p.id;
+        const href =
+          id != null
+            ? "/shop/produk.html?id=" + encodeURIComponent(id)
+            : "/shop/";
+        const img = p.gambar || "";
+        const badge = p.badge
+          ? '<span class="badge">' + escHome(p.badge) + "</span>"
+          : "";
+        return (
+          '<a class="home-produk-card" href="' +
+          href +
+          '">' +
+          '<img src="' +
+          escHome(img) +
+          '" alt="" loading="lazy" onerror="this.style.opacity=.3">' +
+          '<div class="body">' +
+          badge +
+          "<h3>" +
+          escHome(p.nama || "Produk") +
+          "</h3>" +
+          '<div class="harga">RM ' +
+          formatHargaHome(p.harga) +
+          "</div>" +
+          "</div></a>"
+        );
+      })
+      .join("");
+    grid.classList.remove("is-swapping");
+  }, 280);
+}
+
+function rotateHomeProduk() {
+  if (!allProdukHome.length) return;
+  renderHomeProduk(shuffleHome(allProdukHome).slice(0, 4));
+}
+
+async function loadHomeProduk() {
+  const grid = document.getElementById("homeProdukGrid");
+  if (!grid) return;
+  try {
+    const r = await fetch(SHOP_API + "?_=" + Date.now());
+    let data = await r.json();
+    if (!Array.isArray(data)) data = data.produk || data.products || [];
+    allProdukHome = data.filter(function (p) {
+      return p && p.nama;
+    });
+    if (!allProdukHome.length) {
+      grid.innerHTML =
+        '<div class="home-loading">Tiada produk. <a href="/shop/" style="color:#38bdf8">Ke Shop</a></div>';
+      return;
+    }
+    rotateHomeProduk();
+    if (produkRotateTimerHome) clearInterval(produkRotateTimerHome);
+    produkRotateTimerHome = setInterval(rotateHomeProduk, 8000);
+  } catch (e) {
+    grid.innerHTML =
+      '<div class="home-loading">Gagal muat produk. <a href="/shop/" style="color:#38bdf8">Ke Shop</a></div>';
+  }
+}
+
+// Jalankan bila DOM sedia (seksyen homeBlogGrid / homeProdukGrid wujud)
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function () {
+    loadHomeBlog();
+    loadHomeProduk();
+  });
+} else {
+  loadHomeBlog();
+  loadHomeProduk();
+}
