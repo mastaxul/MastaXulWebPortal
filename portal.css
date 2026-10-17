@@ -977,3 +977,33 @@ textarea:focus-visible {
     height: 120px;
   }
 }
+
+
+/* Grid 3 kolum — blog + 6 produk (3 atas + 3 bawah) */
+.home-blog-grid,
+.home-produk-grid.home-produk-6 {
+  grid-template-columns: repeat(3, 1fr);
+}
+.home-blog-rotate.is-swapping,
+.home-produk-grid.is-swapping {
+  opacity: 0.4;
+  transition: opacity 0.35s ease;
+}
+.cf-turnstile-wrap {
+  min-height: 65px;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 6px;
+}
+@media (max-width: 900px) {
+  .home-blog-grid,
+  .home-produk-grid.home-produk-6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 520px) {
+  .home-blog-grid,
+  .home-produk-grid.home-produk-6 {
+    grid-template-columns: 1fr;
+  }
+}
