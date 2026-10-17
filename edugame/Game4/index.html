@@ -1,1127 +1,623 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Masta Xul: Kenali Haiwan — Animal World</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #FF6B6B;
-            --secondary: #4ECDC4;
-            --accent: #FFE66D;
-            --dark: #2F3640;
-            --light: #F7F1E3;
-            --white: #FFFFFF;
-            --success: #2ED573;
-            --danger: #FF4757;
-            --shadow: 0 8px 20px rgba(0,0,0,0.15);
-            --radius: 20px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#2EC4B6">
+<title>Masta Xul: Kenali Haiwan — Animal World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#2EC4B6; --teal-d:#1f9e92; --yellow:#FFC94D; --coral:#FF7B54;
+  --purple:#7C5CFC; --green:#58CC02; --green-d:#46a302; --red:#FF4B4B;
+  --ink:#3c3c3c; --paper:#FFFDF5; --card:#ffffff;
+  --shadow:0 4px 0 rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Fredoka','PingFang SC','Microsoft YaHei',-apple-system,sans-serif;
+  background:linear-gradient(180deg,#B7F0EA 0%,#D9F7D4 55%,#FFF3C9 100%);
+  min-height:100vh; color:var(--ink);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+#app{max-width:760px;margin:0 auto;padding:12px 14px 40px}
+button{font-family:inherit;cursor:pointer;border:none;touch-action:manipulation}
+button:active{transform:translateY(2px)}
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+/* ---------- Header ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.logo{font-weight:700;font-size:22px;color:var(--teal-d);letter-spacing:.5px}
+.logo span{color:var(--coral)}
+.topbtns{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.pillbtn{background:#fff;border-radius:999px;padding:8px 12px;font-size:14px;font-weight:600;
+  box-shadow:var(--shadow);min-height:44px;display:inline-flex;align-items:center;gap:4px}
+.pillbtn.on{background:var(--yellow)}
+h1.title{text-align:center;font-size:clamp(24px,6vw,38px);margin:14px 0 4px;color:var(--purple)}
+.subtitle{text-align:center;font-size:clamp(14px,3.5vw,17px);margin:0 0 18px;color:#666}
 
-        body {
-            background: linear-gradient(135deg, #74b9ff 0%, #a29bfe 100%);
-            color: var(--dark);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-        }
+/* ---------- Menu ---------- */
+.menugrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:560px){.menugrid{grid-template-columns:repeat(3,1fr)}}
+.modecard{background:var(--card);border-radius:20px;padding:18px 12px;text-align:center;
+  box-shadow:var(--shadow);min-height:44px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  transition:transform .15s}
+.modecard:hover{transform:scale(1.03)}
+.modecard .mi{font-size:40px;line-height:1}
+.modecard .mn{font-weight:600;font-size:15px}
+.modecard .hs{font-size:12px;color:#999}
+.diffrow{display:flex;gap:8px;justify-content:center;margin:18px 0 6px;flex-wrap:wrap}
+.diffbtn{background:#fff;border-radius:14px;padding:10px 18px;font-weight:600;font-size:15px;
+  box-shadow:var(--shadow);min-height:44px;min-width:88px}
+.diffbtn.on{background:var(--green);color:#fff}
+.scoreline{text-align:center;font-size:14px;color:#777;margin-top:10px}
 
-        #app {
-            width: 100%;
-            max-width: 480px;
-            height: 92vh;
-            max-height: 850px;
-            background: var(--light);
-            border-radius: var(--radius);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-            border: 5px solid var(--white);
-        }
+/* ---------- Game screens ---------- */
+.card{background:var(--card);border-radius:24px;padding:20px;box-shadow:var(--shadow);text-align:center}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.hud .hitem{background:#fff;border-radius:12px;padding:6px 14px;font-weight:600;font-size:14px;box-shadow:var(--shadow)}
+.timerbar{height:10px;background:#eee;border-radius:99px;overflow:hidden;margin-bottom:12px}
+.timerbar>div{height:100%;background:var(--green);border-radius:99px;transition:width .3s linear}
+.animal-emoji{font-size:clamp(90px,26vw,150px);line-height:1.1;margin:8px 0}
+.animal-name{font-size:clamp(24px,6vw,34px);font-weight:700;color:var(--teal-d)}
+.animal-fact{font-size:15px;color:#666;margin:10px auto 0;max-width:480px;line-height:1.5}
+.qtext{font-size:clamp(18px,5vw,24px);font-weight:600;margin-bottom:14px}
+.optgrid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+@media(min-width:480px){.optgrid{grid-template-columns:1fr 1fr}}
+.optbtn{background:#fff;border:3px solid #e5e5e5;border-radius:16px;padding:14px;font-size:17px;font-weight:600;
+  min-height:54px;box-shadow:0 3px 0 #e5e5e5}
+.optbtn.emoji{font-size:34px;padding:10px}
+.optbtn.correct{background:#d7ffb8;border-color:var(--green);color:var(--green-d);animation:pop .35s}
+.optbtn.wrong{background:#ffdfe0;border-color:var(--red);color:var(--red);animation:shake .35s}
+.optbtn:disabled{opacity:.85;cursor:default}
+@keyframes pop{50%{transform:scale(1.07)}}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.feedback{min-height:28px;font-weight:700;font-size:18px;margin-top:12px}
+.feedback.ok{color:var(--green-d)} .feedback.no{color:var(--red)}
 
-        .screen {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            overflow-y: auto;
-            display: none;
-            position: relative;
-        }
+/* match mode */
+.matchgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+@media(min-width:560px){.matchgrid{gap:10px}}
+.mcard{background:var(--purple);border-radius:14px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:clamp(24px,7vw,40px);font-weight:700;color:transparent;user-select:none;box-shadow:var(--shadow)}
+.mcard.open{background:#fff;color:var(--ink);border:3px solid var(--purple)}
+.mcard.name{font-size:clamp(11px,3vw,15px);padding:4px;text-align:center}
+.mcard.done{background:#d7ffb8;border-color:var(--green);color:var(--ink);opacity:.9}
+.mcard.wrongf{animation:shake .35s}
 
-        .screen.active {
-            display: flex;
-        }
+/* gallery */
+.galtools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.searchin{flex:1;min-width:160px;padding:12px 14px;border-radius:14px;border:3px solid #e5e5e5;font-size:16px;font-family:inherit;min-height:44px}
+.catbtn{background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;box-shadow:var(--shadow);min-height:40px}
+.catbtn.on{background:var(--teal);color:#fff}
+.galgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(min-width:560px){.galgrid{grid-template-columns:repeat(4,1fr)}}
+.gcard{background:#fff;border-radius:16px;padding:12px 6px;text-align:center;box-shadow:var(--shadow);min-height:44px}
+.gcard .ge{font-size:44px}
+.gcard .gn{font-size:13px;font-weight:600;margin-top:4px}
+.noresult{text-align:center;color:#888;padding:30px 0}
 
-        .app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+/* modal */
+.modalbg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.modal{background:#fff;border-radius:24px;padding:24px;max-width:420px;width:100%;text-align:center;max-height:85vh;overflow:auto}
+.modal .me{font-size:80px}
+.mrow{display:flex;justify-content:space-between;gap:8px;border-top:1px solid #eee;padding:8px 4px;font-size:15px}
+.mrow b{color:var(--teal-d)}
 
-        .brand-title {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .lang-select {
-            padding: 5px 10px;
-            border-radius: 10px;
-            border: 2px solid var(--secondary);
-            background: var(--white);
-            font-weight: 600;
-            font-size: 0.85rem;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .home-hero {
-            text-align: center;
-            margin: 10px 0;
-        }
-
-        .home-hero h1 {
-            font-size: 1.8rem;
-            color: #2c3e50;
-            margin-bottom: 5px;
-            font-weight: 800;
-        }
-
-        .home-hero p {
-            font-size: 0.95rem;
-            color: #57606f;
-        }
-
-        .mascot-container {
-            width: 140px;
-            height: 140px;
-            margin: 10px auto;
-            background: var(--accent);
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: var(--shadow);
-            animation: bounce 2s infinite ease-in-out;
-            overflow: hidden;
-            border: 4px solid var(--white);
-        }
-
-        .mascot-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .menu-btn {
-            background: var(--white);
-            border: none;
-            padding: 15px 10px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: transform 0.1s, background 0.2s;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--dark);
-            text-align: center;
-        }
-
-        .menu-btn:active {
-            transform: scale(0.95);
-        }
-
-        .menu-icon-img {
-            width: 45px;
-            height: 45px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .game-top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .back-btn, .audio-toggle-btn {
-            background: var(--white);
-            border: none;
-            padding: 8px 12px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            color: var(--primary);
-        }
-
-        .score-board {
-            background: var(--accent);
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        .card-container {
-            background: var(--white);
-            border-radius: var(--radius);
-            padding: 15px;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 15px;
-            flex: 1;
-            justify-content: center;
-            position: relative;
-        }
-
-        /* PERBESARAN GAMBAR & BENTUK EMPAT SEGI (RECTANGLE) */
-        .animal-img-wrap {
-            width: 100%;
-            max-width: 260px;
-            height: 200px;
-            border-radius: 15px;
-            overflow: hidden;
-            background: #dfe4ea;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 15px;
-            border: 4px solid var(--secondary);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-        }
-
-        .animal-img-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .animal-title-display {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--dark);
-            margin-bottom: 5px;
-            text-align: center;
-        }
-
-        .animal-desc {
-            font-size: 0.85rem;
-            color: #57606f;
-            text-align: center;
-            padding: 0 10px;
-            line-height: 1.4;
-            max-height: 70px;
-            overflow-y: auto;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .option-btn {
-            background: var(--white);
-            border: 3px solid #dfe4ea;
-            padding: 12px;
-            border-radius: 15px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 60px;
-        }
-
-        .option-btn:hover {
-            border-color: var(--secondary);
-        }
-
-        .option-btn.correct {
-            background: var(--success) !important;
-            color: var(--white);
-            border-color: var(--success);
-        }
-
-        .option-btn.wrong {
-            background: var(--danger) !important;
-            color: var(--white);
-            border-color: var(--danger);
-        }
-
-        .nav-controls {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-        }
-
-        .action-btn {
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 15px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            flex: 1;
-            text-align: center;
-        }
-
-        .action-btn.secondary {
-            background: var(--secondary);
-        }
-
-        .gallery-header {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .search-filter-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .search-input, .category-select {
-            padding: 10px 12px;
-            border-radius: 12px;
-            border: 2px solid #dfe4ea;
-            font-size: 0.85rem;
-            outline: none;
-            background: var(--white);
-        }
-
-        .search-input {
-            flex: 1;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            overflow-y: auto;
-            padding-bottom: 20px;
-        }
-
-        .gallery-card {
-            background: var(--white);
-            border-radius: 15px;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .gallery-card:active {
-            transform: scale(0.97);
-        }
-
-        /* GALERI SEGI EMPAT */
-        .gallery-card img {
-            width: 100%;
-            height: 90px;
-            border-radius: 10px;
-            object-fit: cover;
-            margin-bottom: 8px;
-            background: #f1f2f6;
-        }
-
-        .gallery-card h4 {
-            font-size: 0.9rem;
-            text-align: center;
-            margin-bottom: 2px;
-            font-weight: 700;
-        }
-
-        .gallery-card span {
-            font-size: 0.75rem;
-            color: #718093;
-        }
-
-        .match-grid-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 10px;
-        }
-
-        .match-column {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .match-item {
-            background: var(--white);
-            padding: 10px;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 0.85rem;
-            border: 3px solid #dfe4ea;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .match-item.selected {
-            border-color: var(--primary);
-            background: #ffeaa7;
-        }
-
-        .match-item.matched {
-            background: var(--success);
-            color: var(--white);
-            border-color: var(--success);
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .modal-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            display: none;
-        }
-
-        .modal-content {
-            background: var(--white);
-            padding: 25px;
-            border-radius: var(--radius);
-            text-align: center;
-            width: 85%;
-            max-width: 320px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-
-        .modal-content h2 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: var(--primary);
-        }
-
-        .modal-content p {
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-            color: #57606f;
-        }
-    </style>
+/* buttons row */
+.btnrow{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.bigbtn{border-radius:16px;padding:14px 26px;font-size:17px;font-weight:700;min-height:52px;box-shadow:0 4px 0 rgba(0,0,0,.12);color:#fff}
+.bigbtn.teal{background:var(--teal)} .bigbtn.coral{background:var(--coral)}
+.bigbtn.purple{background:var(--purple)} .bigbtn.yellow{background:var(--yellow);color:#6b5200}
+.bigbtn.grey{background:#aab3ab}
+.learnnav{display:flex;gap:10px;justify-content:center;align-items:center;margin-top:16px}
+.learnnav button{border-radius:14px;padding:12px 20px;font-size:18px;font-weight:700;background:var(--yellow);color:#6b5200;min-height:52px;box-shadow:var(--shadow)}
+.counter{font-weight:700;color:#777}
+.result-emoji{font-size:70px}
+.result-score{font-size:40px;font-weight:700;color:var(--purple)}
+.newbest{color:var(--green-d);font-weight:700}
+.footer{text-align:center;font-size:12px;color:#999;margin-top:26px}
+.footer a{color:var(--teal-d)}
+</style>
 </head>
 <body>
-    <div id="app">
-        <!-- SCREEN 1: HOME -->
-        <div id="screen-home" class="screen active">
-            <div class="app-header">
-                <div class="brand-title">Masta Xul</div>
-                <select id="langSelect" class="lang-select" onchange="changeLanguage(this.value)">
-                    <option value="ms">Bahasa Melayu</option>
-                    <option value="en">English</option>
-                    <option value="zh">中文 (简体)</option>
-                </select>
-            </div>
+<div id="app"></div>
+<div id="modalroot"></div>
+<script>
+/* ================= Masta Xul: Kenali Haiwan ================= */
+/* Semua data dan logik dalam satu fail — tiada API luar diperlukan */
 
-            <div class="home-hero">
-                <h1 id="txt-hero-title">Jom Kenali Dunia Haiwan!</h1>
-                <p id="txt-hero-sub">Pilih mod permainan dan mula belajar dengan menyeronokkan.</p>
-                <div class="mascot-container">
-                    <img src="https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=400" alt="Mascot Lion">
-                </div>
-            </div>
+const I18N = {
+  ms:{
+    title:"Jom Kenali Dunia Haiwan!", subtitle:"Belajar haiwan dengan seronok — 100 haiwan menanti anda!",
+    modes:{learn:"Kenali Haiwan",quiz:"Kuiz Pilihan",find:"Cari Nama Haiwan",match:"Padankan Haiwan",time:"Cabaran Masa",gallery:"Koleksi Haiwan"},
+    diff:{easy:"Mudah",medium:"Sederhana",hard:"Sukar"}, difficulty:"Tahap Kesukaran",
+    best:"Rekod", score:"Markah", correct:"Betul!", wrong:"Salah!", correctAns:"Jawapan betul:",
+    start:"Mula", stop:"Berhenti", restart:"Ulang Semula", menu:"Kembali ke Menu", next:"Seterusnya",
+    listen:"Dengar Sebutan", question:"Soalan", timeLeft:"Masa", gameOver:"Permainan Tamat!",
+    yourScore:"Markah Anda", newBest:"Rekod Baru!", playAgain:"Main Lagi",
+    search:"Cari haiwan…", all:"Semua", notFound:"Tiada haiwan dijumpai.",
+    pairsLeft:"Padanan tinggal", great:"Bagus!", habitat:"Fakta Menarik",
+    langNames:{ms:"Bahasa Melayu",en:"English",zh:"中文"},
+    cats:{mammal:"Mamalia",bird:"Burung",reptile:"Reptilia & Amfibia",water:"Hidupan Air",insect:"Serangga & Lain"},
+    qWhich:"Haiwan apakah ini?", qFind:"Cari gambar:", tapMatch:"Padankan gambar dengan nama!",
+    wellDone:"Tahniah! Semua padanan selesai!", moves:"Langkah"
+  },
+  en:{
+    title:"Let's Explore the Animal World!", subtitle:"Learn animals the fun way — 100 animals await!",
+    modes:{learn:"Meet the Animals",quiz:"Quiz Time",find:"Find the Animal",match:"Match the Animals",time:"Time Challenge",gallery:"Animal Collection"},
+    diff:{easy:"Easy",medium:"Medium",hard:"Hard"}, difficulty:"Difficulty",
+    best:"Best", score:"Score", correct:"Correct!", wrong:"Wrong!", correctAns:"Correct answer:",
+    start:"Start", stop:"Stop", restart:"Restart", menu:"Back to Menu", next:"Next",
+    listen:"Hear Pronunciation", question:"Question", timeLeft:"Time", gameOver:"Game Over!",
+    yourScore:"Your Score", newBest:"New Record!", playAgain:"Play Again",
+    search:"Search animals…", all:"All", notFound:"No animals found.",
+    pairsLeft:"Pairs left", great:"Great!", habitat:"Fun Fact",
+    langNames:{ms:"Bahasa Melayu",en:"English",zh:"中文"},
+    cats:{mammal:"Mammals",bird:"Birds",reptile:"Reptiles & Amphibians",water:"Water Life",insect:"Insects & Others"},
+    qWhich:"Which animal is this?", qFind:"Find the picture of:", tapMatch:"Match pictures with names!",
+    wellDone:"Congrats! All pairs matched!", moves:"Moves"
+  },
+  zh:{
+    title:"一起认识动物世界！", subtitle:"快乐学动物——100种动物等着你！",
+    modes:{learn:"认识动物",quiz:"选择题测验",find:"找动物名字",match:"动物配对",time:"限时挑战",gallery:"动物图鉴"},
+    diff:{easy:"简单",medium:"中等",hard:"困难"}, difficulty:"难度",
+    best:"最高纪录", score:"分数", correct:"答对了！", wrong:"答错了！", correctAns:"正确答案：",
+    start:"开始", stop:"停止", restart:"重新开始", menu:"返回菜单", next:"下一题",
+    listen:"听发音", question:"题目", timeLeft:"时间", gameOver:"游戏结束！",
+    yourScore:"你的分数", newBest:"新纪录！", playAgain:"再玩一次",
+    search:"搜索动物…", all:"全部", notFound:"没有找到动物。",
+    pairsLeft:"剩余配对", great:"太棒了！", habitat:"有趣知识",
+    langNames:{ms:"Bahasa Melayu",en:"English",zh:"中文"},
+    cats:{mammal:"哺乳动物",bird:"鸟类",reptile:"爬行与两栖",water:"水生动物",insect:"昆虫及其他"},
+    qWhich:"这是什么动物？", qFind:"请找出图片：", tapMatch:"把图片和名字配对！",
+    wellDone:"恭喜！全部配对完成！", moves:"步数"
+  }
+};
+const SPEECH_LANG = {ms:'ms-MY', en:'en-US', zh:'zh-CN'};
 
-            <div class="menu-grid">
-                <button class="menu-btn" onclick="startGameMode('explore')">
-                    <img class="menu-icon-img" src="https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=100" alt="Icon">
-                    <span id="btn-explore">Kenali Haiwan</span>
-                </button>
-                <button class="menu-btn" onclick="startGameMode('quiz')">
-                    <img class="menu-icon-img" src="https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=100" alt="Icon">
-                    <span id="btn-quiz">Kuiz Pilihan</span>
-                </button>
-                <button class="menu-btn" onclick="startGameMode('findName')">
-                    <img class="menu-icon-img" src="https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=100" alt="Icon">
-                    <span id="btn-findName">Cari Nama</span>
-                </button>
-                <button class="menu-btn" onclick="startGameMode('match')">
-                    <img class="menu-icon-img" src="https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=100" alt="Icon">
-                    <span id="btn-match">Padankan Haiwan</span>
-                </button>
-                <button class="menu-btn" onclick="startGameMode('timeAttack')">
-                    <img class="menu-icon-img" src="https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=100" alt="Icon">
-                    <span id="btn-time">Cabaran Masa</span>
-                </button>
-                <button class="menu-btn" onclick="openGallery()">
-                    <img class="menu-icon-img" src="https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=100" alt="Icon">
-                    <span id="btn-gallery">Koleksi Haiwan</span>
-                </button>
-            </div>
-        </div>
+/* ---------- 100 haiwan: [emoji, kategori, nama_ms, nama_en, nama_zh, fakta_ms, fakta_en, fakta_zh] ---------- */
+const A = [
+["🐯","mammal","Harimau","Tiger","老虎","Harimau ialah kucing terbesar di dunia dan setiap ekor mempunyai corak belang yang berbeza.","Tigers are the world's biggest cats, and each one has a unique stripe pattern.","老虎是世界上最大的猫科动物，每只老虎的条纹都独一无二。"],
+["🦁","mammal","Singa","Lion","狮子","Singa dikenali sebagai raja hutan dan hidup berkumpulan yang dipanggil 'pride'.","Lions are called the king of the jungle and live in groups called prides.","狮子被称为森林之王，成群生活，群体叫狮群。"],
+["🐘","mammal","Gajah","Elephant","大象","Gajah ialah haiwan darat terbesar dan belalainya mempunyai lebih 40,000 otot.","Elephants are the largest land animals; their trunks have over 40,000 muscles.","大象是陆地上最大的动物，鼻子有超过四万块肌肉。"],
+["🦒","mammal","Zirafah","Giraffe","长颈鹿","Zirafah ialah haiwan tertinggi di dunia dan lidahnya boleh mencecah 45 cm.","Giraffes are the tallest animals; their tongues can reach 45 cm long.","长颈鹿是世界上最高的动物，舌头可长达45厘米。"],
+["🐼","mammal","Panda","Panda","大熊猫","Panda makan buluh sehingga 12 jam sehari.","Pandas spend up to 12 hours a day eating bamboo.","大熊猫每天花多达12个小时吃竹子。"],
+["🐻","mammal","Beruang","Bear","熊","Beruang tidur sepanjang musim sejuk dalam keadaan yang dipanggil hibernasi.","Bears sleep through winter in a state called hibernation.","熊冬天会冬眠，一睡就是几个月。"],
+["🐻‍❄️","mammal","Beruang Kutub","Polar Bear","北极熊","Beruang kutub sebenarnya berkulit hitam di bawah bulu putihnya.","Polar bears actually have black skin under their white fur.","北极熊白色的毛下面其实是黑色的皮肤。"],
+["🐴","mammal","Kuda","Horse","马","Kuda boleh tidur sambil berdiri.","Horses can sleep while standing up.","马可以站着睡觉。"],
+["🐄","mammal","Lembu","Cow","奶牛","Lembu mempunyai empat bahagian perut untuk menghadam makanan.","Cows have four stomach compartments to digest food.","奶牛有四个胃室来帮助消化食物。"],
+["🐐","mammal","Kambing","Goat","山羊","Kambing adalah pemanjat yang hebat dan boleh memanjat cerun curam.","Goats are amazing climbers and can climb steep slopes.","山羊是攀岩高手，能爬上陡峭的山坡。"],
+["🐑","mammal","Biri-biri","Sheep","绵羊","Bulu biri-biri dipanggil 'wool' dan digunakan untuk membuat pakaian hangat.","Sheep's fleece is called wool and is used to make warm clothes.","绵羊的毛叫羊毛，可以用来做保暖的衣服。"],
+["🦌","mammal","Rusa","Deer","鹿","Rusa jantan menumbuhkan tanduk baharu setiap tahun.","Male deer grow new antlers every year.","雄鹿每年都会长出新的鹿角。"],
+["🐒","mammal","Monyet","Monkey","猴子","Monyet suka hidup berkumpulan dan sangat bijak menggunakan alat.","Monkeys live in groups and are clever enough to use tools.","猴子喜欢群居，聪明到会使用工具。"],
+["🦍","mammal","Gorila","Gorilla","大猩猩","Gorila ialah primat terbesar dan berkongsi 98% DNA dengan manusia.","Gorillas are the largest primates and share 98% of DNA with humans.","大猩猩是最大的灵长类动物，与人类有98%相同的DNA。"],
+["🦧","mammal","Orang Utan","Orangutan","红毛猩猩","Orang utan tinggal di hutan Borneo dan Sumatera serta sangat pandai.","Orangutans live in the forests of Borneo and Sumatra and are very smart.","红毛猩猩生活在婆罗洲和苏门答腊的森林里，非常聪明。"],
+["🐰","mammal","Arnab","Rabbit","兔子","Telinga arnab yang panjang membantunya mendengar bahaya dari jauh.","A rabbit's long ears help it hear danger from far away.","兔子的长耳朵能帮助它听到远处的危险。"],
+["🐱","mammal","Kucing","Cat","猫","Kucing tidur sehingga 16 jam sehari dan sentiasa jatuh dengan kaki dahulu.","Cats sleep up to 16 hours a day and usually land on their feet.","猫一天可以睡16个小时，而且常常能四脚着地。"],
+["🐶","mammal","Anjing","Dog","狗","Hidung anjing 40 kali lebih sensitif daripada hidung manusia.","A dog's nose is about 40 times more sensitive than a human's.","狗的鼻子比人的鼻子灵敏约40倍。"],
+["🦊","mammal","Musang","Fox","狐狸","Musang menggunakan ekornya yang lebat sebagai selimut ketika tidur.","Foxes use their bushy tails as blankets when they sleep.","狐狸睡觉时会用蓬松的尾巴当被子。"],
+["🐺","mammal","Serigala","Wolf","狼","Serigala berkomunikasi dengan lolongan yang boleh didengar sejauh 10 km.","Wolves howl to communicate; their howls can be heard 10 km away.","狼用嚎叫交流，嚎声可以传到10公里外。"],
+["🦘","mammal","Kanggaru","Kangaroo","袋鼠","Anak kanggaru tinggal dalam kantung ibunya yang dipanggil 'pouch'.","Baby kangaroos live in their mother's pouch.","袋鼠宝宝住在妈妈的育儿袋里。"],
+["🦓","mammal","Zebra","Zebra","斑马","Setiap zebra mempunyai corak belang yang unik seperti cap jari.","Every zebra has a unique stripe pattern, like a fingerprint.","每匹斑马的条纹都像指纹一样独一无二。"],
+["🦏","mammal","Badak Sumbu","Rhinoceros","犀牛","Sumbu badak diperbuat daripada keratin, bahan yang sama seperti kuku manusia.","A rhino's horn is made of keratin, the same material as human nails.","犀牛的角由角蛋白构成，和人的指甲是同一种物质。"],
+["🦛","mammal","Kuda Nil","Hippopotamus","河马","Kuda nil suka berada di dalam air tetapi tidak pandai berenang — ia berjalan di dasar sungai.","Hippos love water but can't swim — they walk along river bottoms.","河马喜欢泡在水里，但不会游泳，而是在河底行走。"],
+["🐪","mammal","Unta","Camel","骆驼","Unta boleh minum 100 liter air dalam masa 10 minit.","A camel can drink 100 litres of water in 10 minutes.","骆驼能在10分钟内喝下100升水。"],
+["🐷","mammal","Babi","Pig","猪","Babi sebenarnya haiwan yang bersih dan sangat bijak.","Pigs are actually clean and very intelligent animals.","猪其实是爱干净而且非常聪明的动物。"],
+["🐿️","mammal","Tupai","Squirrel","松鼠","Tupai menanam ribuan pokok secara tidak sengaja kerana lupa tempat menyorok biji.","Squirrels plant thousands of trees by forgetting where they buried nuts.","松鼠因为忘记藏坚果的地方，无意间种下了成千上万棵树。"],
+["🦔","mammal","Landak","Hedgehog","刺猬","Landak mempunyai sehingga 6,000 duri di badannya.","A hedgehog can have up to 6,000 spines on its body.","刺猬身上可以有多达6000根刺。"],
+["🦇","mammal","Kelawar","Bat","蝙蝠","Kelawar ialah satu-satunya mamalia yang boleh terbang.","Bats are the only mammals that can truly fly.","蝙蝠是唯一真正会飞的哺乳动物。"],
+["🐭","mammal","Tikus","Mouse","老鼠","Gigi tikus tidak pernah berhenti tumbuh sepanjang hayatnya.","A mouse's teeth never stop growing throughout its life.","老鼠的牙齿一生都在不停地生长。"],
+["🐨","mammal","Koala","Koala","考拉","Koala tidur sehingga 22 jam sehari dan makan daun eukaliptus.","Koalas sleep up to 22 hours a day and eat eucalyptus leaves.","考拉一天可以睡22个小时，以桉树叶为食。"],
+["🦥","mammal","Kungkang","Sloth","树懒","Kungkang sangat perlahan sehingga alga boleh tumbuh pada bulunya.","Sloths are so slow that algae can grow on their fur.","树懒行动慢到毛发上都能长出藻类。"],
+["🦙","mammal","Llama","Llama","羊驼","Llama meludah apabila marah atau terancam.","Llamas spit when they are annoyed or feel threatened.","羊驼生气或受到威胁时会吐口水。"],
+["🦨","mammal","Sigung","Skunk","臭鼬","Sigung menyembur cecair berbau busuk untuk melindungi diri.","Skunks spray a stinky liquid to protect themselves.","臭鼬会喷出难闻的液体来保护自己。"],
+["🦫","mammal","Biver","Beaver","海狸","Biver membina empangan daripada kayu dan sangat rajin bekerja.","Beavers build dams from wood and are very hardworking.","海狸会用木头筑坝，非常勤劳。"],
+["🐹","mammal","Hamster","Hamster","仓鼠","Hamster menyimpan makanan di dalam pipinya.","Hamsters store food in their cheek pouches.","仓鼠会把食物藏在腮帮子里。"],
+["🦣","mammal","Mamut","Mammoth","猛犸象","Mamut ialah gajah purba berbulu panjang yang telah pupus.","Mammoths were long-haired ancient elephants that are now extinct.","猛犸象是长着长毛的古代大象，如今已经灭绝。"],
+["🐗","mammal","Babi Hutan","Wild Boar","野猪","Babi hutan menggunakan hidungnya untuk mencari makanan di dalam tanah.","Wild boars use their snouts to dig for food in the ground.","野猪用鼻子在土里拱食。"],
+["🐏","mammal","Kambing Jantan","Ram","公羊","Kambing jantan bertanding dengan menghentak tanduk mereka.","Rams compete by bashing their horns together.","公羊会用角互相撞击来一较高下。"],
+["🐂","mammal","Lembu Jantan","Ox","公牛","Lembu jantan kuat dan sering membantu petani membajak sawah.","Oxen are strong and often help farmers plough fields.","公牛力气大，常帮助农民耕田。"],
+["🐃","mammal","Kerbau","Buffalo","水牛","Kerbau suka berendam dalam kubang untuk menyejukkan badan.","Buffaloes love soaking in mud to cool down.","水牛喜欢泡在泥塘里降温。"],
+["🦮","mammal","Anjing Pemandu","Guide Dog","导盲犬","Anjing pemandu membantu orang buta berjalan dengan selamat.","Guide dogs help blind people walk safely.","导盲犬帮助视障人士安全出行。"],
+["🐕‍🦺","mammal","Anjing Khidmat","Service Dog","服务犬","Anjing khidmat dilatih khas untuk membantu orang yang memerlukan.","Service dogs are specially trained to help people in need.","服务犬经过特殊训练，帮助有需要的人。"],
+["🐩","mammal","Pudel","Poodle","贵宾犬","Pudel ialah salah satu baka anjing yang paling bijak di dunia.","Poodles are one of the smartest dog breeds in the world.","贵宾犬是世界上最聪明的犬种之一。"],
+["🐀","mammal","Tikus Besar","Rat","褐鼠","Tikus besar pandai berenang dan boleh menahan nafas selama 3 minit.","Rats are good swimmers and can hold their breath for 3 minutes.","褐鼠擅长游泳，能屏住呼吸3分钟。"],
+["🦅","bird","Helang","Eagle","鹰","Mata helang sangat tajam — ia dapat melihat mangsa dari 3 km jauhnya.","An eagle's eyesight is so sharp it can spot prey from 3 km away.","鹰的视力非常敏锐，能看到3公里外的猎物。"],
+["🦉","bird","Burung Hantu","Owl","猫头鹰","Burung hantu boleh memusing kepalanya sehingga 270 darjah.","Owls can turn their heads up to 270 degrees.","猫头鹰的头可以转动270度。"],
+["🦚","bird","Merak","Peacock","孔雀","Hanya merak jantan yang mempunyai ekor berwarna-warni yang cantik.","Only male peacocks have the beautiful colourful tail feathers.","只有雄孔雀才有漂亮的彩色尾羽。"],
+["🦩","bird","Flamingo","Flamingo","火烈鸟","Flamingo berwarna merah jambu kerana makan udang kecil.","Flamingos are pink because they eat tiny shrimps.","火烈鸟因为吃小虾，羽毛才变成粉红色。"],
+["🦜","bird","Burung Kakak Tua","Parrot","鹦鹉","Burung kakak tua pandai meniru suara manusia.","Parrots can imitate human speech.","鹦鹉会模仿人说话。"],
+["🐔","bird","Ayam","Chicken","鸡","Ayam ialah burung yang paling banyak di dunia.","Chickens are the most common birds in the world.","鸡是世界上数量最多的鸟类。"],
+["🐓","bird","Ayam Jantan","Rooster","公鸡","Ayam jantan berkokok pada waktu pagi untuk menandakan kawasannya.","Roosters crow in the morning to mark their territory.","公鸡清晨打鸣来宣告自己的领地。"],
+["🐤","bird","Anak Ayam","Chick","小鸡","Anak ayam keluar daripada telur selepas 21 hari.","Chicks hatch from eggs after 21 days.","小鸡在蛋里待21天后破壳而出。"],
+["🐣","bird","Anak Ayam Menetas","Hatching Chick","破壳的小鸡","Anak ayam menggunakan 'gigi telur' kecil untuk memecahkan cengkerang.","A chick uses a tiny 'egg tooth' to break out of its shell.","小鸡用小小的“破壳齿”啄开蛋壳。"],
+["🦆","bird","Itik","Duck","鸭子","Bulu itik kalis air kerana lapisan minyak semula jadi.","Duck feathers are waterproof thanks to natural oils.","鸭子的羽毛有天然油脂，所以防水。"],
+["🪿","bird","Angsa","Goose","鹅","Angsa terbang dalam formasi bentuk V untuk menjimatkan tenaga.","Geese fly in a V formation to save energy.","大雁排成V字形飞行来节省体力。"],
+["🦢","bird","Angsa Putih","Swan","天鹅","Angsa putih biasanya mempunyai pasangan yang sama seumur hidup.","Swans usually stay with the same partner for life.","天鹅通常一生只有一个伴侣。"],
+["🐧","bird","Penguin","Penguin","企鹅","Penguin tidak boleh terbang tetapi merupakan perenang yang hebat.","Penguins can't fly but they are excellent swimmers.","企鹅不会飞，但游泳非常厉害。"],
+["🦃","bird","Ayam Belanda","Turkey","火鸡","Ayam belanda boleh berlari sehingga 40 km sejam.","Turkeys can run up to 40 km per hour.","火鸡的奔跑速度可达每小时40公里。"],
+["🕊️","bird","Merpati","Dove","鸽子","Merpati putih adalah lambang keamanan di seluruh dunia.","The white dove is a symbol of peace around the world.","白鸽是全世界和平的象征。"],
+["🐦‍⬛","bird","Gagak","Crow","乌鸦","Gagak sangat bijak dan dapat mengenali wajah manusia.","Crows are very smart and can recognise human faces.","乌鸦非常聪明，能记住人的面孔。"],
+["🐦","bird","Burung","Bird","鸟","Burung ialah satu-satunya haiwan yang mempunyai bulu pelepah.","Birds are the only animals that have feathers.","鸟类是唯一有羽毛的动物。"],
+["🦤","bird","Dodo","Dodo","渡渡鸟","Burung dodo yang tidak boleh terbang telah pupus sekitar tahun 1681.","The flightless dodo bird went extinct around the year 1681.","不会飞的渡渡鸟大约在1681年灭绝。"],
+["🐊","reptile","Buaya","Crocodile","鳄鱼","Buaya telah wujud sejak zaman dinosaur lagi.","Crocodiles have existed since the time of the dinosaurs.","鳄鱼从恐龙时代就已经存在了。"],
+["🐢","reptile","Kura-kura","Tortoise","乌龟","Kura-kura boleh hidup lebih daripada 100 tahun.","Tortoises can live for more than 100 years.","乌龟的寿命可以超过100年。"],
+["🐍","reptile","Ular","Snake","蛇","Ular tidak mempunyai telinga tetapi dapat mengesan getaran di tanah.","Snakes have no ears but can sense vibrations in the ground.","蛇没有耳朵，但能感知地面的震动。"],
+["🦎","reptile","Cicak","Lizard","蜥蜴","Sesetengah cicak boleh menggugurkan ekornya untuk melarikan diri.","Some lizards can drop their tails to escape predators.","有些蜥蜴会断尾逃生。"],
+["🐸","reptile","Katak","Frog","青蛙","Katak menyerap air melalui kulitnya, bukan minum dengan mulut.","Frogs absorb water through their skin instead of drinking.","青蛙通过皮肤吸收水分，而不是用嘴喝水。"],
+["🦕","reptile","Dinosaur","Dinosaur","恐龙","Dinosaur memerintah bumi selama lebih 160 juta tahun.","Dinosaurs ruled the Earth for over 160 million years.","恐龙统治地球超过1.6亿年。"],
+["🦖","reptile","T-Rex","T-Rex","霸王龙","Gigi T-Rex boleh tumbuh sebesar pisang.","A T-Rex tooth could grow as big as a banana.","霸王龙的牙齿可以长到香蕉那么大。"],
+["🐟","water","Ikan","Fish","鱼","Ikan bernafas di dalam air menggunakan insang.","Fish breathe underwater using gills.","鱼用鳃在水中呼吸。"],
+["🐠","water","Ikan Tropika","Tropical Fish","热带鱼","Ikan tropika hidup di lautan yang panas dan berwarna-warni.","Tropical fish live in warm seas and are very colourful.","热带鱼生活在温暖的海域，色彩缤纷。"],
+["🐡","water","Ikan Buntal","Pufferfish","河豚","Ikan buntal mengembangkan badannya seperti belon apabila terancam.","Pufferfish inflate like balloons when threatened.","河豚遇到危险时会把身体鼓成气球状。"],
+["🦈","water","Jerung","Shark","鲨鱼","Jerung tidak mempunyai tulang — rangkanya diperbuat daripada rawan.","Sharks have no bones; their skeletons are made of cartilage.","鲨鱼没有骨头，骨架由软骨组成。"],
+["🐋","water","Ikan Paus","Whale","鲸鱼","Paus biru ialah haiwan terbesar yang pernah hidup di bumi.","The blue whale is the largest animal ever to live on Earth.","蓝鲸是地球上有史以来最大的动物。"],
+["🐳","water","Paus Biru","Blue Whale","蓝鲸","Jantung paus biru sebesar kereta kecil.","A blue whale's heart is as big as a small car.","蓝鲸的心脏有一辆小汽车那么大。"],
+["🐬","water","Lumba-lumba","Dolphin","海豚","Lumba-lumba tidur dengan separuh otaknya berjaga.","Dolphins sleep with half of their brain awake.","海豚睡觉时只有一半大脑在休息。"],
+["🦭","water","Anjing Laut","Seal","海豹","Anjing laut boleh menahan nafas di dalam air hampir 2 jam.","Seals can hold their breath underwater for almost 2 hours.","海豹能在水下屏住呼吸近2个小时。"],
+["🦑","water","Sotong","Squid","鱿鱼","Sotong mempunyai tiga jantung dan darah berwarna biru.","Squids have three hearts and blue blood.","鱿鱼有三颗心脏，血液是蓝色的。"],
+["🐙","water","Kurita","Octopus","章鱼","Kurita mempunyai lapan lengan dan sangat bijak membuka penutup bekas.","Octopuses have eight arms and are clever enough to open jars.","章鱼有八条腕，聪明到会打开瓶盖。"],
+["🦐","water","Udang","Shrimp","虾","Jantung udang terletak di kepalanya.","A shrimp's heart is located in its head.","虾的心脏长在头上。"],
+["🦀","water","Ketam","Crab","螃蟹","Ketam berjalan ke sisi, bukan ke hadapan.","Crabs walk sideways, not forwards.","螃蟹横着走，而不是向前走。"],
+["🦞","water","Lobster","Lobster","龙虾","Lobster boleh hidup sehingga 100 tahun.","Lobsters can live up to 100 years.","龙虾的寿命可达100年。"],
+["🪼","water","Obor-obor","Jellyfish","水母","Obor-obor tidak mempunyai otak, jantung atau tulang.","Jellyfish have no brain, heart, or bones.","水母没有大脑、心脏和骨骼。"],
+["🐚","water","Kerang","Seashell","贝类","Kerang menghasilkan cengkerang keras untuk melindungi badan lembutnya.","Shellfish grow hard shells to protect their soft bodies.","贝类长出坚硬的壳来保护自己柔软的身体。"],
+["🦪","water","Tiram","Oyster","牡蛎","Tiram boleh menghasilkan mutiara yang cantik.","Oysters can produce beautiful pearls.","牡蛎能孕育出美丽的珍珠。"],
+["🦋","insect","Rama-rama","Butterfly","蝴蝶","Rama-rama bermula sebagai ulat sebelum menjadi cantik.","Butterflies start life as caterpillars.","蝴蝶小时候是毛毛虫。"],
+["🐝","insect","Lebah","Bee","蜜蜂","Lebah menghasilkan madu dan membantu bunga membiak.","Bees make honey and help flowers grow.","蜜蜂会酿蜜，还能帮助花朵授粉。"],
+["🐜","insect","Semut","Ant","蚂蚁","Semut boleh mengangkat benda 50 kali lebih berat daripada badannya.","Ants can lift things 50 times heavier than their own body.","蚂蚁能举起比自己体重重50倍的东西。"],
+["🐞","insect","Pepatung","Ladybug","瓢虫","Tompokan pada pepatung menunjukkan usianya.","A ladybug's spots tell us about it; some have up to 24 spots.","瓢虫身上的斑点各不相同，有些多达24个。"],
+["🐛","insect","Ulat","Caterpillar","毛毛虫","Ulat makan banyak sekali sebelum menjadi rama-rama.","Caterpillars eat a lot before turning into butterflies.","毛毛虫在变成蝴蝶之前会吃很多东西。"],
+["🪰","insect","Lalat","Fly","苍蝇","Lalat merasa makanan menggunakan kakinya.","Flies taste food with their feet.","苍蝇用脚来品尝食物。"],
+["🦟","insect","Nyamuk","Mosquito","蚊子","Hanya nyamuk betina yang mengisap darah.","Only female mosquitoes bite and suck blood.","只有雌蚊子才会叮人吸血。"],
+["🪳","insect","Lipas","Cockroach","蟑螂","Lipas telah wujud di bumi lebih 300 juta tahun.","Cockroaches have existed on Earth for over 300 million years.","蟑螂在地球上已经存在超过3亿年。"],
+["🦗","insect","Jangkrik","Cricket","蟋蟀","Jangkrik berbunyi dengan menggeselkan sayapnya.","Crickets chirp by rubbing their wings together.","蟋蟀通过摩擦翅膀发出叫声。"],
+["🕷️","insect","Labah-labah","Spider","蜘蛛","Labah-labah mempunyai lapan kaki dan menghasilkan sarang daripada benang sutera.","Spiders have eight legs and spin webs from silk.","蜘蛛有八条腿，会吐丝织网。"],
+["🦂","insect","Kalajengking","Scorpion","蝎子","Kalajengking menyala di bawah cahaya UV.","Scorpions glow under ultraviolet light.","蝎子在紫外线下会发光。"],
+["🪱","insect","Cacing","Worm","蚯蚓","Cacing membantu menyuburkan tanah untuk tumbuh-tumbuhan.","Worms help make soil fertile for plants.","蚯蚓能让土壤变得肥沃，帮助植物生长。"],
+["🐌","insect","Siput","Snail","蜗牛","Siput boleh tidur selama tiga tahun.","Snails can sleep for up to three years.","蜗牛可以一觉睡上三年。"],
+["🪲","insect","Kumbang","Beetle","甲虫","Kumbang ialah kumpulan serangga paling banyak di dunia.","Beetles are the largest group of insects in the world.","甲虫是世界上种类最多的昆虫。"]
+];
 
-        <!-- SCREEN 2: EXPLORE (KENALI HAIWAN) -->
-        <div id="screen-explore" class="screen">
-            <div class="game-top-bar">
-                <button class="back-btn" onclick="goHome()">UTAMA</button>
-                <div class="score-board"><span id="exp-counter">1 / 100</span></div>
-                <button class="audio-toggle-btn" id="audioToggleBtn" onclick="toggleAudio()">AUDIO</button>
-            </div>
+/* ---------- State & simpanan setempat ---------- */
+let S = {lang:'ms', sound:true, diff:'easy', best:{}};
+try{const s=JSON.parse(localStorage.getItem('mastaxul_save')); if(s) S=Object.assign(S,s);}catch(e){}
+function save(){try{localStorage.setItem('mastaxul_save',JSON.stringify(S));}catch(e){}}
+const T=()=>I18N[S.lang];
+const app=document.getElementById('app');
 
-            <div class="card-container">
-                <div class="animal-img-wrap">
-                    <img id="exp-img" src="" alt="Animal">
-                </div>
-                <h2 class="animal-title-display" id="exp-name">Nama Haiwan</h2>
-                <p class="animal-desc" id="exp-fact">Fakta menarik haiwan akan dipaparkan di sini.</p>
-            </div>
+/* ---------- Utiliti ---------- */
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const sampleWrong=(idx,n)=>{const p=new Set();while(p.size<n){const r=Math.floor(Math.random()*A.length);if(r!==idx)p.add(r);}return [...p];};
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-            <div class="nav-controls">
-                <button class="action-btn secondary" onclick="prevExploreAnimal()" id="btn-prev">Sebelumnya</button>
-                <button class="action-btn" onclick="nextExploreAnimal()" id="btn-next">Seterusnya</button>
-            </div>
-        </div>
+/* ---------- Bunyi (WebAudio, tiada fail luar) ---------- */
+let AC=null;
+function tone(f,d,type='sine',t=0){
+  if(!S.sound)return;
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(),g=AC.createGain();
+    o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.18,AC.currentTime+t);
+    g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+t+d);
+    o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+t);o.stop(AC.currentTime+t+d);
+  }catch(e){}
+}
+const sndOK=()=>{tone(523,.15);tone(784,.25,'sine',.12);};
+const sndNO=()=>{tone(220,.3,'square');};
 
-        <!-- SCREEN 3: QUIZ & FIND NAME -->
-        <div id="screen-game" class="screen">
-            <div class="game-top-bar">
-                <button class="back-btn" onclick="goHome()">UTAMA</button>
-                <div class="score-board"><span id="game-score-lbl">Markah: 0</span></div>
-                <div class="score-board" id="game-timer-box" style="display:none;">MASA: <span id="game-timer">30</span>s</div>
-            </div>
+/* ---------- Sebutan ---------- */
+function speak(text){
+  if(!('speechSynthesis' in window)||!S.sound)return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=SPEECH_LANG[S.lang];u.rate=.85;
+  speechSynthesis.speak(u);
+}
 
-            <div class="card-container" id="game-visual-container">
-                <!-- Dinamik -->
-            </div>
+/* ---------- Rangka atas (logo, bahasa, bunyi) ---------- */
+function header(){
+  const L=S.lang;
+  return `<div class="top">
+    <div class="logo">Masta <span>Xul</span></div>
+    <div class="topbtns">
+      <button class="pillbtn ${L==='ms'?'on':''}" onclick="setLang('ms')">BM</button>
+      <button class="pillbtn ${L==='en'?'on':''}" onclick="setLang('en')">EN</button>
+      <button class="pillbtn ${L==='zh'?'on':''}" onclick="setLang('zh')">中文</button>
+      <button class="pillbtn" onclick="toggleSound()">${S.sound?'🔊':'🔇'}</button>
+    </div></div>`;
+}
+function setLang(l){S.lang=l;save();go(currentScreen,true);}
+function toggleSound(){S.sound=!S.sound;save();go(currentScreen,true);}
+const footerHTML=()=>`<div class="footer">Masta Xul: Kenali Haiwan — Animal World · <a href="https://www.mastaxul.my" target="_blank" rel="noopener">mastaxul.my</a></div>`;
 
-            <div class="options-grid" id="game-options-grid">
-                <!-- Pilihan -->
-            </div>
-        </div>
+/* ---------- Penghala skrin ---------- */
+let currentScreen='menu', cleanup=null;
+function go(screen,keep){
+  if(typeof cleanup==='function'){cleanup();cleanup=null;}
+  currentScreen=screen;
+  ({menu:renderMenu,learn:renderLearn,quiz:()=>renderQuiz('quiz'),
+    find:()=>renderQuiz('find'),match:renderMatch,time:renderTime,gallery:renderGallery}[screen])();
+  window.scrollTo(0,0);
+}
 
-        <!-- SCREEN 4: MATCH GAME -->
-        <div id="screen-match" class="screen">
-            <div class="game-top-bar">
-                <button class="back-btn" onclick="goHome()">UTAMA</button>
-                <div class="score-board" id="match-score-lbl">Padanan: 0 / 4</div>
-            </div>
-
-            <div class="match-grid-container" id="match-grid">
-                <!-- Pasangan -->
-            </div>
-
-            <button class="action-btn" onclick="initMatchGame()" id="match-retry-btn">Muat Semula Padanan</button>
-        </div>
-
-        <!-- SCREEN 5: GALLERY -->
-        <div id="screen-gallery" class="screen">
-            <div class="game-top-bar">
-                <button class="back-btn" onclick="goHome()">UTAMA</button>
-                <div class="brand-title">Koleksi Haiwan</div>
-                <div style="width: 40px;"></div>
-            </div>
-
-            <div class="gallery-header">
-                <div class="search-filter-row">
-                    <input type="text" id="gallerySearch" class="search-input" placeholder="Cari haiwan..." oninput="filterGallery()">
-                    <select id="galleryCategory" class="category-select" onchange="filterGallery()">
-                        <option value="all">Semua</option>
-                        <option value="mamalia">Mamalia</option>
-                        <option value="burung">Burung</option>
-                        <option value="reptilia">Reptilia/Amfibia</option>
-                        <option value="air">Hidupan Air</option>
-                        <option value="lain">Lain-lain</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="gallery-grid" id="galleryGrid">
-                <!-- Galeri -->
-            </div>
-        </div>
-
-        <!-- MODAL -->
-        <div class="modal-overlay" id="modalOverlay">
-            <div class="modal-content">
-                <h2 id="modalTitle">Tahniah!</h2>
-                <p id="modalDesc">Permohonan berjaya diselesaikan.</p>
-                <button class="action-btn" onclick="closeModal()">Teruskan</button>
-            </div>
-        </div>
+/* ---------- Menu utama ---------- */
+function renderMenu(){
+  const t=T();
+  const modes=[
+    ['learn','🦁'],['quiz','❓'],['find','🔎'],['match','🧩'],['time','⏱️'],['gallery','🖼️']
+  ];
+  app.innerHTML=header()+`
+    <h1 class="title">${t.title}</h1><p class="subtitle">${t.subtitle}</p>
+    <div class="diffrow"><b style="width:100%;text-align:center">${t.difficulty}:</b>
+      ${['easy','medium','hard'].map(d=>`<button class="diffbtn ${S.diff===d?'on':''}" onclick="setDiff('${d}')">${t.diff[d]}</button>`).join('')}
     </div>
+    <div class="menugrid">
+      ${modes.map(([m,ic])=>`<button class="modecard" onclick="go('${m}')">
+        <div class="mi">${ic}</div><div class="mn">${t.modes[m]}</div>
+        <div class="hs">${t.best}: ${S.best[m+'_'+S.diff]||S.best[m]||0}</div></button>`).join('')}
+    </div>`+footerHTML();
+}
+function setDiff(d){S.diff=d;save();renderMenu();}
 
-    <script>
-        // --- 100 ANIMAL DATABASE DENGAN URL GAMBAR YANG TEPAT & DISAHKAN ---
-        const animalsData = [
-            { id: 1, category: "mamalia", name: { ms: "Harimau", en: "Tiger", zh: "老虎" }, fact: { ms: "Harimau adalah kucing terbesar di dunia.", en: "Tigers are the largest cat species in the world.", zh: "老虎是世界上最大的猫科动物。" }, img: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=500" },
-            { id: 2, category: "mamalia", name: { ms: "Singa", en: "Lion", zh: "狮子" }, fact: { ms: "Singa dikenali sebagai raja rimba.", en: "Lions are known as the king of the jungle.", zh: "狮子被称为森林之王。" }, img: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=500" },
-            { id: 3, category: "mamalia", name: { ms: "Gajah", en: "Elephant", zh: "大象" }, fact: { ms: "Gajah mempunyai belalai panjang dan ingatan yang kuat.", en: "Elephants have long trunks and excellent memories.", zh: "大象有着长鼻和极好的记忆力。" }, img: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=500" },
-            { id: 4, category: "mamalia", name: { ms: "Zirafah", en: "Giraffe", zh: "长颈鹿" }, fact: { ms: "Zirafah adalah haiwan darat tertinggi di dunia.", en: "Giraffes are the tallest land animals on Earth.", zh: "长颈鹿是地球上最高的陆生动物。" }, img: "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=500" },
-            { id: 5, category: "mamalia", name: { ms: "Panda", en: "Panda", zh: "大熊猫" }, fact: { ms: "Panda menghabiskan sebahagian besar masa untuk makan buluh.", en: "Pandas spend most of their day eating bamboo.", zh: "大猫熊花大部分时间吃竹子。" }, img: "https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=500" },
-            { id: 6, category: "mamalia", name: { ms: "Beruang", en: "Bear", zh: "熊" }, fact: { ms: "Kebanyakan beruang tidur bersarang pada musim sejuk.", en: "Most bears hibernate during the winter months.", zh: "大多数熊在冬季进行冬眠。" }, img: "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=500" },
-            { id: 7, category: "mamalia", name: { ms: "Kuda", en: "Horse", zh: "马" }, fact: { ms: "Kuda boleh tidur secara berdiri.", en: "Horses are capable of sleeping while standing up.", zh: "马能够站着睡觉。" }, img: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=500" },
-            { id: 8, category: "mamalia", name: { ms: "Lembu", en: "Cow", zh: "奶牛" }, fact: { ms: "Lembu menghasilkan susu berkhasiat untuk manusia.", en: "Cows produce nutritious milk for humans.", zh: "奶牛为人类产出营养丰富的牛奶。" }, img: "https://images.unsplash.com/photo-1527153857715-3908f2ae5e61?w=500" },
-            { id: 9, category: "mamalia", name: { ms: "Kambing", en: "Goat", zh: "山羊" }, fact: { ms: "Kambing sangat lincah memanjat kawasan curam.", en: "Goats are exceptionally agile climbers on steep terrain.", zh: "山羊是极其敏捷的攀爬者。" }, img: "https://images.unsplash.com/photo-1533514601397-58925dd44e9e?w=500" },
-            { id: 10, category: "mamalia", name: { ms: "Biri-biri", en: "Sheep", zh: "绵羊" }, fact: { ms: "Biri-biri menghasilkan bulu yang diproses menjadi pakaian.", en: "Sheep produce wool that is processed into clothing.", zh: "绵羊产出的羊毛可加工成衣物。" }, img: "https://images.unsplash.com/photo-1484557077808-b5350cc4cb89?w=500" },
-            { id: 11, category: "mamalia", name: { ms: "Rusa", en: "Deer", zh: "鹿" }, fact: { ms: "Rusa jantan mempunyai tanduk bercabang yang gugur setiap tahun.", en: "Male deer grow antlers that shed and regrow annually.", zh: "雄鹿长有每年脱落并重生的鹿角。" }, img: "https://images.unsplash.com/photo-1484406566165-945b497e74e9?w=500" },
-            { id: 12, category: "mamalia", name: { ms: "Monyet", en: "Monkey", zh: "猴子" }, fact: { ms: "Monyet menggunakan ekor untuk keseimbangan semasa melompat.", en: "Monkeys use their tails for balance while leaping.", zh: "猴子在跳跃时利用尾巴保持平衡。" }, img: "https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?w=500" },
-            { id: 13, category: "mamalia", name: { ms: "Gorila", en: "Gorilla", zh: "大猩猩" }, fact: { ms: "Gorila adalah primat terbesar di dunia.", en: "Gorillas are the largest living primates.", zh: "大猩猩是现存最大的灵长类动物。" }, img: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=500" },
-            { id: 14, category: "mamalia", name: { ms: "Orang utan", en: "Orangutan", zh: "红毛猩猩" }, fact: { ms: "Orang utan banyak menghabiskan masa di atas pokok.", en: "Orangutans spend the majority of their lives in trees.", zh: "红毛猩猩大部分时间都在树上度过。" }, img: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=500" },
-            { id: 15, category: "mamalia", name: { ms: "Arnab", en: "Rabbit", zh: "兔子" }, fact: { ms: "Arnab mempunyai telinga panjang yang sangat tajam pendengarannya.", en: "Rabbits have long ears providing acute hearing.", zh: "兔子长有灵敏听力的长耳朵。" }, img: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=500" },
-            { id: 16, category: "mamalia", name: { ms: "Kucing", en: "Cat", zh: "猫" }, fact: { ms: "Kucing boleh melihat dalam keadaan hampir gelap gelita.", en: "Cats possess exceptional night vision.", zh: "猫在微光下拥有出色的视力。" }, img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500" },
-            { id: 17, category: "mamalia", name: { ms: "Anjing", en: "Dog", zh: "狗" }, fact: { ms: "Anjing dikenali sebagai sahabat karib manusia.", en: "Dogs are universally known as man's best friend.", zh: "狗被广泛认为人类最好的朋友。" }, img: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500" },
-            { id: 18, category: "mamalia", name: { ms: "Musang", en: "Fox", zh: "狐狸" }, fact: { ms: "Musang mempunyai ekor tebal yang membantu mengimbangi badan.", en: "Foxes use their bushy tails to maintain balance.", zh: "狐狸利用蓬松的尾巴保持平衡。" }, img: "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=500" },
-            { id: 19, category: "mamalia", name: { ms: "Serigala", en: "Wolf", zh: "狼" }, fact: { ms: "Serigala hidup secara berkumpulan yang dipanggil 'pack'.", en: "Wolves live and hunt in organized social packs.", zh: "狼以严密的群体组织生活和狩猎。" }, img: "https://images.unsplash.com/photo-1563406274-0f3ed3e903f9?w=500" },
-            { id: 20, category: "mamalia", name: { ms: "Kanggaru", en: "Kangaroo", zh: "袋鼠" }, fact: { ms: "Kanggaru bergerak dengan melompat menggunakan kaki belakang yang kuat.", en: "Kangaroos move by hopping using powerful hind legs.", zh: "袋鼠利用强健的后腿通过跳跃移动。" }, img: "https://images.unsplash.com/photo-1529257414772-1960b76fa755?w=500" },
-            
-            // Burung (Birds)
-            { id: 21, category: "burung", name: { ms: "Helang", en: "Eagle", zh: "鹰" }, fact: { ms: "Helang mempunyai penglihatan yang sangat tajam dari udara.", en: "Eagles have extraordinary visual acuity from high above.", zh: "鹰在空中拥有极度敏锐的视力。" }, img: "https://images.unsplash.com/photo-1611689342806-0863700ce1e4?w=500" },
-            { id: 22, category: "burung", name: { ms: "Burung Hantu", en: "Owl", zh: "猫头鹰" }, fact: { ms: "Burung hantu aktif pada waktu malam dan boleh memusingkan kepala.", en: "Owls are nocturnal and can swivel their heads remarkably far.", zh: "猫头鹰是夜行性动物，头部能转动极大角度。" }, img: "https://images.unsplash.com/photo-1518965949633-44d09f98f6d7?w=500" },
-            { id: 23, category: "burung", name: { ms: "Merak", en: "Peacock", zh: "孔雀" }, fact: { ms: "Burung merak jantan mempunyai bulu ekor berwarna-warni yang indah.", en: "Male peacocks display magnificent, colorful tail feathers.", zh: "雄孔雀展示绚丽多彩的华丽尾羽。" }, img: "https://images.unsplash.com/photo-1526466086782-0d9ed3d76e53?w=500" },
-            { id: 24, category: "burung", name: { ms: "Flamingo", en: "Flamingo", zh: "火烈鸟" }, fact: { ms: "Flamingo berwarna merah jambu kerana pemakanan udang kecil.", en: "Flamingos get their pink coloration from eating small shrimp.", zh: "火烈鸟因摄入小型虾类而呈现粉红色。" }, img: "https://images.unsplash.com/photo-1497206365907-f5e630693adf?w=500" },
-            { id: 25, category: "burung", name: { ms: "Burung Kakaktua", en: "Parrot", zh: "鹦鹉" }, fact: { ms: "Kakaktua boleh meniru pelbagai bunyi termasuk suara manusia.", en: "Parrots are capable of mimicking human speech and sounds.", zh: "鹦鹉能够模仿人类的语言和各种声音。" }, img: "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=500" },
-            { id: 26, category: "burung", name: { ms: "Ayam", en: "Chicken", zh: "鸡" }, fact: { ms: "Ayam jantan berkokok menandakan waktu pagi.", en: "Roosters crow to signal the arrival of morning.", zh: "公鸡啼鸣以宣告早晨的到来。" }, img: "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=500" },
-            { id: 27, category: "burung", name: { ms: "Itik", en: "Duck", zh: "鸭" }, fact: { ms: "Bulu itik mempunyai lapisan kalis air semula jadi.", en: "Duck feathers feature a natural waterproof coating.", zh: "鸭子的羽毛具有天然的防水涂层。" }, img: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=500" },
-            { id: 28, category: "burung", name: { ms: "Angsa", en: "Swan", zh: "天鹅" }, fact: { ms: "Angsa terkenal dengan sifat setia bersama pasangan seumur hidup.", en: "Swans are renowned for mating for life.", zh: "天鹅以一生忠于单一伴侣而闻名。" }, img: "https://images.unsplash.com/photo-1508873696983-2df5c920cf2e?w=500" },
-            { id: 29, category: "burung", name: { ms: "Penguin", en: "Penguin", zh: "企鹅" }, fact: { ms: "Penguin adalah burung yang tidak boleh terbang tetapi pandai berenang.", en: "Penguins are flightless birds that excel at swimming.", zh: "企鹅是不会飞翔但擅长游泳的鸟类。" }, img: "https://images.unsplash.com/photo-1598439210625-5067c578f3f6?w=500" },
+/* ---------- MOD A: Kenali Haiwan ---------- */
+let learnIdx=0;
+function renderLearn(){
+  const t=T();
+  const a=A[learnIdx];
+  const name=S.lang==='ms'?a[2]:S.lang==='en'?a[3]:a[4];
+  const fact=S.lang==='ms'?a[5]:S.lang==='en'?a[6]:a[7];
+  app.innerHTML=header()+`
+    <div class="hud"><button class="pillbtn" onclick="go('menu')">← ${t.menu}</button>
+      <div class="hitem">${t.modes.learn}</div>
+      <button class="pillbtn" onclick="speak('${esc(name).replace(/'/g,"\\'")}')">🔊 ${t.listen}</button></div>
+    <div class="card">
+      <div class="animal-emoji">${a[0]}</div>
+      <div class="animal-name">${esc(name)}</div>
+      <div class="animal-fact"><b>${t.habitat}:</b> ${esc(fact)}</div>
+      <div class="learnnav">
+        <button onclick="learnStep(-1)">◀</button>
+        <span class="counter">${learnIdx+1} / ${A.length}</span>
+        <button onclick="learnStep(1)">▶</button>
+      </div>
+    </div>`+footerHTML();
+  speak(name);
+}
+function learnStep(d){learnIdx=(learnIdx+d+A.length)%A.length;renderLearn();}
 
-            // Reptilia & Amfibia
-            { id: 30, category: "reptilia", name: { ms: "Buaya", en: "Crocodile", zh: "鳄鱼" }, fact: { ms: "Buaya adalah pemangsa purba yang hidup di kawasan air.", en: "Crocodiles are ancient predatory reptiles dwelling near water.", zh: "鳄鱼是生活在水域附近的远古捕食性爬行动物。" }, img: "https://images.unsplash.com/photo-1559563362-c667ba5f5480?w=500" },
-            { id: 31, category: "reptilia", name: { ms: "Kura-kura", en: "Turtle", zh: "海龟" }, fact: { ms: "Kura-kura membawa rumah tempurung keras di belakang badan.", en: "Turtles carry protective hard shells on their backs.", zh: "海龟背负着坚硬的保护性外壳。" }, img: "https://images.unsplash.com/photo-1437622368342-9a3d7b3d3b70?w=500" },
-            { id: 32, category: "reptilia", name: { ms: "Ular", en: "Snake", zh: "蛇" }, fact: { ms: "Ular tidak mempunyai kaki dan bergerak dengan meluncur.", en: "Snakes lack limbs and move in a slithering motion.", zh: "蛇没有四肢，通过蜿蜒滑行移动。" }, img: "https://images.unsplash.com/photo-15313861508cf-37f2080a5d11?w=500" },
-            { id: 33, category: "reptilia", name: { ms: "Cicak", en: "Lizard", zh: "蜥蜴" }, fact: { ms: "Sesetengah cicak boleh memutuskan ekor untuk menyelamatkan diri.", en: "Certain lizards can detach their tails to escape predators.", zh: "某些蜥蜴能够在危险时断尾求生。" }, img: "https://images.unsplash.com/photo-1567113463300-102a7eb3cb26?w=500" },
-            { id: 34, category: "reptilia", name: { ms: "Iguana", en: "Iguana", zh: "鬣蜥" }, fact: { ms: "Iguana adalah haiwan herbivor yang menyukai sinaran matahari.", en: "Iguanas are herbivorous lizards that bask in the sun.", zh: "鬣蜥是喜欢晒太阳的植食性蜥蜴。" }, img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500" },
-            { id: 35, category: "reptilia", name: { ms: "Katak", en: "Frog", zh: "青蛙" }, fact: { ms: "Katak bermula sebagai berudu sebelum menjadi katak dewasa.", en: "Frogs start life as tadpoles before undergoing metamorphosis.", zh: "青蛙在变成成体前经历蝌蚪的发育阶段。" }, img: "https://images.unsplash.com/photo-1520315342629-6ea92e342647?w=500" },
+/* ---------- MOD B & C: Kuiz & Cari Nama ---------- */
+let G=null; // {mode,list,q,score,ans,timerId}
+function qCount(){return S.diff==='easy'?5:S.diff==='medium'?10:15;}
+function nOpt(){return S.diff==='hard'?6:4;}
+function renderQuiz(mode){
+  const t=T();
+  G={mode,list:shuffle(A.map((_,i)=>i)).slice(0,qCount()),q:0,score:0,ans:false};
+  drawQuestion();
+}
+function drawQuestion(){
+  const t=T(), i=G.list[G.q], a=A[i];
+  const wrong=sampleWrong(i,nOpt()-1), opts=shuffle([i,...wrong]);
+  const isQuiz=G.mode==='quiz';
+  const askName=S.lang==='ms'?a[2]:S.lang==='en'?a[3]:a[4];
+  app.innerHTML=header()+`
+    <div class="hud"><button class="pillbtn" onclick="endQuiz(true)">⏹ ${t.stop}</button>
+      <div class="hitem">${t.question} ${G.q+1}/${G.list.length}</div>
+      <div class="hitem">⭐ ${t.score}: ${G.score}</div></div>
+    <div class="card">
+      ${isQuiz
+        ?`<div class="qtext">${t.qWhich}</div><div class="animal-emoji">${a[0]}</div>`
+        :`<div class="qtext">${t.qFind} <b style="color:var(--purple)">${esc(askName)}</b></div>`}
+      <div class="optgrid">
+        ${opts.map(o=>isQuiz
+          ?`<button class="optbtn" onclick="answer(${o},${i},this)">${esc(S.lang==='ms'?A[o][2]:S.lang==='en'?A[o][3]:A[o][4])}</button>`
+          :`<button class="optbtn emoji" onclick="answer(${o},${i},this)">${A[o][0]}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+    </div>`+footerHTML();
+}
+function answer(pick,real,btn){
+  if(G.ans)return; G.ans=true;
+  const t=T(), ok=pick===real;
+  document.querySelectorAll('.optbtn').forEach(b=>{
+    b.disabled=true;
+    if(b===btn)b.classList.add(ok?'correct':'wrong');
+  });
+  if(!ok){ // tunjuk jawapan betul
+    document.querySelectorAll('.optbtn').forEach(b=>{
+      const idx=+b.getAttribute('onclick').match(/answer\((\d+)/)[1];
+      if(idx===real)b.classList.add('correct');
+    });
+  }
+  ok?(G.score++,sndOK()):sndNO();
+  const realName=S.lang==='ms'?A[real][2]:S.lang==='en'?A[real][3]:A[real][4];
+  document.getElementById('fb').innerHTML=
+    ok?`<span class="ok">${t.correct}</span>`:`<span class="no">${t.wrong} ${t.correctAns} ${esc(realName)}</span>`;
+  document.querySelector('.hud .hitem:last-child').textContent=`⭐ ${t.score}: ${G.score}`;
+  setTimeout(()=>{G.q++;G.ans=false;G.q<G.list.length?drawQuestion():endQuiz();},ok?900:1800);
+}
+function endQuiz(stopped){
+  const t=T(), key=G.mode+'_'+S.diff, total=G.list.length;
+  const isBest=G.score>(S.best[key]||0);
+  if(isBest){S.best[key]=G.score;save();}
+  app.innerHTML=header()+`
+    <div class="card">
+      <div class="result-emoji">${G.score===total?'🏆':G.score>=total/2?'🎉':'💪'}</div>
+      <h2>${stopped?t.gameOver:t.great}</h2>
+      <div class="result-score">${G.score} / ${total}</div>
+      ${isBest&&G.score>0?`<p class="newbest">🌟 ${t.newBest}</p>`:''}
+      <p>${t.best}: ${S.best[key]||0}</p>
+      <div class="btnrow">
+        <button class="bigbtn teal" onclick="renderQuiz('${G.mode}')">🔁 ${t.restart}</button>
+        <button class="bigbtn grey" onclick="go('menu')">🏠 ${t.menu}</button>
+      </div>
+    </div>`+footerHTML();
+  G=null;
+}
 
-            // Hidupan Air (Aquatic)
-            { id: 36, category: "air", name: { ms: "Ikan Badut", en: "Clownfish", zh: "小丑鱼" }, fact: { ms: "Ikan badut hidup berlindung di celah batu karang anemon.", en: "Clownfish live safely sheltered among sea anemones.", zh: "小丑鱼生活在海葵的安全庇护之中。" }, img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500" },
-            { id: 37, category: "air", name: { ms: "Jerung", en: "Shark", zh: "鲨鱼" }, fact: { ms: "Jerung mempunyai deria bau yang sangat sensitif dalam air.", en: "Sharks possess an exceptionally acute sense of smell.", zh: "鲨鱼在水中拥有极度敏锐的嗅觉。" }, img: "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=500" },
-            { id: 38, category: "air", name: { ms: "Ikan Paus", en: "Whale", zh: "鲸鱼" }, fact: { ms: "Ikan paus biru adalah haiwan terbesar yang pernah wujud.", en: "Blue whales are the largest animals ever known to exist.", zh: "蓝鲸是有史以来已知存在最大的动物。" }, img: "https://images.unsplash.com/photo-1568430462989-44163eb1752f?w=500" },
-            { id: 39, category: "air", name: { ms: "Ikan Lumba-lumba", en: "Dolphin", zh: "海豚" }, fact: { ms: "Ikan lumba-lumba sangat bijak dan hidup berkumpulan.", en: "Dolphins are highly intelligent and social marine mammals.", zh: "海豚是非常聪明且具高度社交性的海洋哺乳动物。" }, img: "https://images.unsplash.com/photo-1570481662006-a1c1d55d9d70?w=500" },
-            { id: 40, category: "air", name: { ms: "Sotong", en: "Squid", zh: "鱿鱼" }, fact: { ms: "Sotong boleh mengeluarkan dakwat hitam untuk mengelirukan musuh.", en: "Squids can release a cloud of ink to confuse predators.", zh: "鱿鱼能够释放墨汁来迷惑捕食者。" }, img: "https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?w=500" },
-            { id: 41, category: "air", name: { ms: "Kurita", en: "Octopus", zh: "章鱼" }, fact: { ms: "Kurita mempunyai tiga jantung dan lapan lengan yang fleksibel.", en: "Octopuses have three hearts and eight flexible arms.", zh: "章鱼拥有三个心脏和八条灵活的触手。" }, img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500" },
-            { id: 42, category: "air", name: { ms: "Penyu", en: "Sea Turtle", zh: "海龟" }, fact: { ms: "Penyu berhijrah merentasi lautan luas sepanjang hayatnya.", en: "Sea turtles migrate vast distances across oceans.", zh: "海龟在其一生中跨越广阔海洋进行迁徙。" }, img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500" },
-            { id: 43, category: "air", name: { ms: "Obor-obor", en: "Jellyfish", zh: "水母" }, fact: { ms: "Tubuh obor-obor sebahagian besar terdiri daripada air.", en: "Jellyfish bodies are composed predominantly of water.", zh: "水母的身体绝大部分由水分组成。" }, img: "https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?w=500" },
+/* ---------- MOD D: Padankan Haiwan ---------- */
+function pairCount(){return S.diff==='easy'?3:S.diff==='medium'?4:6;}
+function renderMatch(){
+  const t=T();
+  const picks=shuffle(A.map((_,i)=>i)).slice(0,pairCount());
+  let cards=[];
+  picks.forEach(i=>{cards.push({i,type:'emoji'});cards.push({i,type:'name'});});
+  cards=shuffle(cards);
+  let open=null, done=0, moves=0, lock=false;
+  app.innerHTML=header()+`
+    <div class="hud"><button class="pillbtn" onclick="go('menu')">← ${t.menu}</button>
+      <div class="hitem">${t.pairsLeft}: <span id="pairs">${picks.length}</span></div>
+      <div class="hitem">${t.moves}: <span id="moves">0</span></div></div>
+    <div class="card">
+      <div class="qtext">${t.tapMatch}</div>
+      <div class="matchgrid" id="mg">
+        ${cards.map((c,ci)=>`<button class="mcard ${c.type==='name'?'name':''}" data-i="${c.i}" data-t="${c.type}" data-ci="${ci}">?</button>`).join('')}
+      </div>
+    </div>`+footerHTML();
+  const grid=document.getElementById('mg');
+  grid.addEventListener('click',e=>{
+    const b=e.target.closest('.mcard');
+    if(!b||lock||b.classList.contains('open')||b.classList.contains('done'))return;
+    b.classList.add('open');
+    const i=+b.dataset.i;
+    b.textContent=b.dataset.t==='emoji'?A[i][0]:(S.lang==='ms'?A[i][2]:S.lang==='en'?A[i][3]:A[i][4]);
+    if(!open){open=b;return;}
+    moves++;document.getElementById('moves').textContent=moves;
+    if(open.dataset.i===b.dataset.i&&open.dataset.t!==b.dataset.t){
+      open.classList.add('done');b.classList.add('done');open=null;
+      done++;document.getElementById('pairs').textContent=picks.length-done;sndOK();
+      if(done===picks.length){
+        const key='match_'+S.diff, isBest=!(S.best[key])||moves<S.best[key];
+        if(isBest){S.best[key]=moves;save();}
+        setTimeout(()=>{
+          app.innerHTML=header()+`<div class="card">
+            <div class="result-emoji">🧩🎉</div><h2>${t.wellDone}</h2>
+            <div class="result-score">${moves} ${t.moves}</div>
+            ${isBest?`<p class="newbest">🌟 ${t.newBest}</p>`:''}
+            <p>${t.best}: ${S.best[key]}</p>
+            <div class="btnrow">
+              <button class="bigbtn teal" onclick="renderMatch()">🔁 ${t.restart}</button>
+              <button class="bigbtn grey" onclick="go('menu')">🏠 ${t.menu}</button>
+            </div></div>`+footerHTML();
+        },600);
+      }
+    }else{
+      const o=open;lock=true;sndNO();open=null;
+      o.classList.add('wrongf');b.classList.add('wrongf');
+      setTimeout(()=>{[o,b].forEach(x=>{x.classList.remove('open','wrongf');x.textContent='?';});lock=false;},800);
+    }
+  });
+}
 
-            // Lain-lain (Insects & Others)
-            { id: 44, category: "lain", name: { ms: "Rama-rama", en: "Butterfly", zh: "蝴蝶" }, fact: { ms: "Rama-rama melalui proses metamorfosis daripada ulat beluncas.", en: "Butterflies transform through metamorphosis from caterpillars.", zh: "蝴蝶由毛毛虫经历完全变态发育而成。" }, img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500" },
-            { id: 45, category: "lain", name: { ms: "Lebah", en: "Bee", zh: "蜜蜂" }, fact: { ms: "Lebah menghasilkan madu manis dan membantu pendebungaan.", en: "Bees produce sweet honey and aid vital pollination.", zh: "蜜蜂酿造香甜的蜂蜜并协助植物授粉。" }, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500" },
-            { id: 46, category: "lain", name: { ms: "Semut", en: "Ant", zh: "蚂蚁" }, fact: { ms: "Semut adalah serangga rajin yang hidup dalam koloni tersusun.", en: "Ants are industrious insects living in organized colonies.", zh: "蚂蚁是生活在严密群体中的勤劳昆虫。" }, img: "https://images.unsplash.com/photo-1508873696983-2df5c920cf2e?w=500" },
-            { id: 47, category: "lain", name: { ms: "Kumbang", en: "Beetle", zh: "甲虫" }, fact: { ms: "Kumbang mempunyai sayap keras pelindung di bahagian luar.", en: "Beetles possess protective hard wing cases.", zh: "甲虫拥有坚硬的外翅鞘作为保护。" }, img: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=500" },
-            { id: 48, category: "lain", name: { ms: "Siput", en: "Snail", zh: "蜗牛" }, fact: { ms: "Siput bergerak perlahan membawa cengkerang berpusat.", en: "Snails move slowly carrying spiral protective shells.", zh: "蜗牛背着螺旋形的保护壳缓慢移动。" }, img: "https://images.unsplash.com/photo-1526466086782-0d9ed3d76e53?w=500" },
-            { id: 49, category: "lain", name: { ms: "Cacing Tanah", en: "Earthworm", zh: "蚯蚓" }, fact: { ms: "Cacing tanah membantu menyuburkan tanah pertanian.", en: "Earthworms help enrich and aerate agricultural soil.", zh: "蚯蚓有助于疏松和肥沃农业土壤。" }, img: "https://images.unsplash.com/photo-1533514601397-58925dd44e9e?w=500" },
-            { id: 50, category: "lain", name: { ms: "Ketam", en: "Crab", zh: "螃蟹" }, fact: { ms: "Ketam berjalan secara sisi menggunakan sepit kuat.", en: "Crabs walk sideways using powerful claws for defense.", zh: "螃蟹利用强健的钳子横向行走。" }, img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500" },
-            { id: 51, category: "lain", name: { ms: "Udang", en: "Shrimp", zh: "虾" }, fact: { ms: "Udang hidup di perairan air tawar dan masin.", en: "Shrimp inhabit both freshwater and marine environments.", zh: "虾广泛栖息于淡水和咸水环境中。" }, img: "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=500" },
-            { id: 52, category: "mamalia", name: { ms: "Leopard", en: "Leopard", zh: "豹" }, fact: { ms: "Leopard pandai memanjat pokok dengan tangkas.", en: "Leopards are exceptional tree climbers.", zh: "豹是非常敏捷的树木攀爬者。" }, img: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=500" },
-            { id: 53, category: "mamalia", name: { ms: "Puma", en: "Puma", zh: "美洲狮" }, fact: { ms: "Puma mempunyai kebolehan melompat yang sangat jauh.", en: "Pumas possess extraordinary leaping abilities.", zh: "美洲狮拥有极强的跳跃能力。" }, img: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=500" },
-            { id: 54, category: "mamalia", name: { ms: "Badak Sumbu", en: "Rhinoceros", zh: "犀牛" }, fact: { ms: "Badak sumbu mempunyai tanduk unik di atas hidung.", en: "Rhinoceroses feature prominent horns on their snouts.", zh: "犀牛鼻子上长有显著的角。" }, img: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=500" },
-            { id: 55, category: "mamalia", name: { ms: "Badak Air", en: "Hippopotamus", zh: "河马" }, fact: { ms: "Badak air menghabiskan sebahagian besar masa dalam air.", en: "Hippos spend much of their time submerged in water.", zh: "河马大部分时间浸泡在水中。" }, img: "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=500" },
-            { id: 56, category: "mamalia", name: { ms: "Zabbar", en: "Zebra", zh: "斑马" }, fact: { ms: "Zabbar mempunyai corak jalur hitam putih yang unik.", en: "Zebras feature distinctive black and white striped coats.", zh: "斑马拥有独一无二的黑白条纹外衣。" }, img: "https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=500" },
-            { id: 57, category: "mamalia", name: { ms: "Unta", en: "Camel", zh: "骆驼" }, fact: { ms: "Unta menyimpan tenaga di dalam bonggol di belakangnya.", en: "Camels store energy reserves in their humps.", zh: "骆驼在背部的驼峰中储存能量。" }, img: "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=500" },
-            { id: 58, category: "mamalia", name: { ms: "Sloth", en: "Sloth", zh: "树懒" }, fact: { ms: "Sloth bergerak dengan sangat perlahan di atas dahan.", en: "Sloths move at an extremely unhurried pace.", zh: "树懒在树枝上以极其缓慢的速度移动。" }, img: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=500" },
-            { id: 59, category: "mamalia", name: { ms: "Otter", en: "Otter", zh: "水獭" }, fact: { ms: "Otter gemar bermain air dan cerdas.", en: "Otters are playful and intelligent aquatic mammals.", zh: "水獭是顽皮且聪明的水生哺乳动物。" }, img: "https://images.unsplash.com/photo-1527153857715-3908f2ae5e61?w=500" },
-            { id: 60, category: "mamalia", name: { ms: "Skunk", en: "Skunk", zh: "臭鼬" }, fact: { ms: "Skunk mempertahankan diri dengan bau semburan unik.", en: "Skunks defend themselves by releasing potent scents.", zh: "臭鼬通过释放强烈气味来保护自己。" }, img: "https://images.unsplash.com/photo-1533514601397-58925dd44e9e?w=500" },
-            { id: 61, category: "mamalia", name: { ms: "Badak Tanah", en: "Badger", zh: "獾" }, fact: { ms: "Badak tanah mahir menggali terowong bawah tanah.", en: "Badgers are expert underground tunnel diggers.", zh: "獾是擅长地下掘洞的专家。" }, img: "https://images.unsplash.com/photo-1484557077808-b5350cc4cb89?w=500" },
-            { id: 62, category: "mamalia", name: { ms: "Landak", en: "Hedgehog", zh: "刺猬" }, fact: { ms: "Landak melindungi diri dengan duri tajam di badan.", en: "Hedgehogs protect themselves with sharp spines.", zh: "刺猬用身上的尖刺保护自己。" }, img: "https://images.unsplash.com/photo-1484406566165-945b497e74e9?w=500" },
-            { id: 63, category: "mamalia", name: { ms: "Kelawar", en: "Bat", zh: "蝙蝠" }, fact: { ms: "Kelawar adalah satu-satunya mamalia yang boleh terbang.", en: "Bats are the only mammals capable of sustained flight.", zh: "蝙蝠是唯一能够持续飞行的哺乳动物。" }, img: "https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?w=500" },
-            { id: 64, category: "mamalia", name: { ms: "Tupai", en: "Squirrel", zh: "松鼠" }, fact: { ms: "Tupai gemar mengumpul kacang dan bijirin.", en: "Squirrels love collecting nuts and seeds.", zh: "松鼠喜欢收集坚果和种子。" }, img: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=500" },
-            { id: 65, category: "mamalia", name: { ms: "Beaver", en: "Beaver", zh: "海狸" }, fact: { ms: "Beaver membina empangan kayu di sungai.", en: "Beavers build elaborate wooden dams across streams.", zh: "海狸在河流中建造精巧的木质水坝。" }, img: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=500" },
-            { id: 66, category: "burung", name: { ms: "Belanda", en: "Turkey", zh: "火鸡" }, fact: { ms: "Burung belanda mempunyai janggut merah di bawah paruh.", en: "Turkeys feature distinctive snoods above their beaks.", zh: "火鸡喙上方长有独特的肉垂。" }, img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500" },
-            { id: 67, category: "burung", name: { ms: "Merpati", en: "Dove", zh: "鸽子" }, fact: { ms: "Merpati melambangkan keamanan dan kedamaian.", en: "Doves are universal symbols of peace.", zh: "鸽子是和平的普遍象征。" }, img: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500" },
-            { id: 68, category: "burung", name: { ms: "Kondor", en: "Condor", zh: "秃鹰" }, fact: { ms: "Kondor adalah burung terbang dengan rentang sayap luas.", en: "Condors are large flying birds with expansive wingspans.", zh: "秃鹰是具有广阔翼展的大型飞行鸟类。" }, img: "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=500" },
-            { id: 69, category: "burung", name: { ms: "Pelikan", en: "Pelican", zh: "鹈鹕" }, fact: { ms: "Pelikan mempunyai kantung paruh besar untuk menangkap ikan.", en: "Pelicans have large throat pouches to scoop up fish.", zh: "鹈鹕拥有用于捞鱼的大型咽喉囊。" }, img: "https://images.unsplash.com/photo-1563406274-0f3ed3e903f9?w=500" },
-            { id: 70, category: "burung", name: { ms: "Bangau", en: "Stork", zh: "鹳" }, fact: { ms: "Bangau mempunyai kaki dan leher yang panjang.", en: "Storks have long legs and elegant necks.", zh: "鹳拥有修长的双腿和优雅的颈部。" }, img: "https://images.unsplash.com/photo-1529257414772-1960b76fa755?w=500" },
-            { id: 71, category: "burung", name: { ms: "Pipit", en: "Sparrow", zh: "麻雀" }, fact: { ms: "Burung pipit sering ditemui di kawasan perumahan.", en: "Sparrows are commonly found near human settlements.", zh: "麻雀常见于人类聚居区附近。" }, img: "https://images.unsplash.com/photo-1611689342806-0863700ce1e4?w=500" },
-            { id: 72, category: "burung", name: { ms: "Albatros", en: "Albatross", zh: "信天翁" }, fact: { ms: "Albatros menghabiskan sebahagian besar hidup di atas laut.", en: "Albatrosses spend most of their lives soaring over oceans.", zh: "信天翁大部分时间在海洋上空翱翔。" }, img: "https://images.unsplash.com/photo-1518965949633-44d09f98f6d7?w=500" },
-            { id: 73, category: "burung", name: { ms: "Merpati Rimba", en: "Pigeon", zh: "原鸽" }, fact: { ms: "Merpati bandar pandai menyesuaikan diri di bandar.", en: "City pigeons adapt remarkably well to urban environments.", zh: "城市鸽子能够很好地适应都市环境。" }, img: "https://images.unsplash.com/photo-1526466086782-0d9ed3d76e53?w=500" },
-            { id: 74, category: "burung", name: { ms: "Puyuh", en: "Quail", zh: "鹌鹑" }, fact: { ms: "Burung puyuh menghasilkan telur kecil bernutrisi.", en: "Quails produce small, nutritious eggs.", zh: "鹌鹑产出营养丰富的小型鸟蛋。" }, img: "https://images.unsplash.com/photo-1497206365907-f5e630693adf?w=500" },
-            { id: 75, category: "burung", name: { ms: "Burung Kenari", en: "Canary", zh: "金丝雀" }, fact: { ms: "Kenari terkenal dengan suara nyanyian yang merdu.", en: "Canaries are famous for their melodious singing voices.", zh: "金丝雀以悦耳动听的歌声闻名。" }, img: "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=500" },
-            { id: 76, category: "reptilia", name: { ms: "Gecko", en: "Gecko", zh: "壁虎" }, fact: { ms: "Gecko boleh memanjat dinding licin dengan mudah.", en: "Geckos easily scale vertical smooth surfaces.", zh: "壁虎能够轻松爬上垂直的光滑表面。" }, img: "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=500" },
-            { id: 77, category: "reptilia", name: { ms: "Komodo", en: "Komodo Dragon", zh: "科莫多龙" }, fact: { ms: "Komodo adalah cicak terbesar di dunia yang hidup di Indonesia.", en: "Komodo dragons are the largest living lizards, native to Indonesia.", zh: "科莫多龙是世界上最大的蜥蜴，原产于印度尼西亚。" }, img: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=500" },
-            { id: 78, category: "reptilia", name: { ms: "Labi-labi", en: "Softshell Turtle", zh: "鳖" }, fact: { ms: "Labi-labi mempunyai tempurung lembut dan leher panjang.", en: "Softshell turtles feature flexible shells and long necks.", zh: "鳖拥有柔软的外壳和修长的颈部。" }, img: "https://images.unsplash.com/photo-1508873696983-2df5c920cf2e?w=500" },
-            { id: 79, category: "reptilia", name: { ms: "Anang", en: "Python", zh: "蟒蛇" }, fact: { ms: "Python membelit mangsa sebelum menelannya.", en: "Pythons constrict their prey before swallowing.", zh: "蟒蛇在吞食前会缠紧猎物。" }, img: "https://images.unsplash.com/photo-1598439210625-5067c578f3f6?w=500" },
-            { id: 80, category: "reptilia", name: { ms: "Katak Buraq", en: "Toad", zh: "蟾蜍" }, fact: { ms: "Katak buraq mempunyai kulit berbintik kasar.", en: "Toads typically feature rough, bumpy skin textures.", zh: "蟾蜍通常具有粗糙且多疣的皮肤。" }, img: "https://images.unsplash.com/photo-1559563362-c667ba5f5480?w=500" },
-            { id: 81, category: "air", name: { ms: "Ikan Emas", en: "Goldfish", zh: "金鱼" }, fact: { ms: "Ikan emas dipelihara dalam akuarium hiasan.", en: "Goldfish are popular ornamental aquarium pets.", zh: "金鱼是广受欢迎的观赏鱼类宠物。" }, img: "https://images.unsplash.com/photo-1437622368342-9a3d7b3d3b70?w=500" },
-            { id: 82, category: "air", name: { ms: "Ikan Salmon", en: "Salmon", zh: "三文鱼" }, fact: { ms: "Ikan salmon berenang melawan arus sungai untuk bertelur.", en: "Salmon swim upstream against fierce currents to spawn.", zh: "三文鱼逆流而上游回上游产卵。" }, img: "https://images.unsplash.com/photo-15313861508cf-37f2080a5d11?w=500" },
-            { id: 83, category: "air", name: { ms: "Ikan Buntal", en: "Pufferfish", zh: "河鲀" }, fact: { ms: "Ikan buntal boleh mengembangkan badan apabila terancam.", en: "Pufferfish inflate their bodies into spheres when threatened.", zh: "河鲀在受到威胁时会将身体膨胀成球状。" }, img: "https://images.unsplash.com/photo-1567113463300-102a7eb3cb26?w=500" },
-            { id: 84, category: "air", name: { ms: "Paus Pembunuh", en: "Killer Whale", zh: "虎鲸" }, fact: { ms: "Paus pembunuh adalah pemangsa lautan yang cerdik.", en: "Killer whales are highly intelligent apex marine predators.", zh: "虎鲸是高度聪明的顶级海洋掠食者。" }, img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500" },
-            { id: 85, category: "air", name: { ms: "Singa Laut", en: "Sea Lion", zh: "海狮" }, fact: { ms: "Singa laut pandai melakukan akrobatik di akuarium.", en: "Sea lions perform skilled acrobatics in marine shows.", zh: "海狮在海洋表演中展现出色的杂技能力。" }, img: "https://images.unsplash.com/photo-1520315342629-6ea92e342647?w=500" },
-            { id: 86, category: "air", name: { ms: "Anjing Laut", en: "Seal", zh: "海豹" }, fact: { ms: "Anjing laut berehat di atas ketulan ais kutub.", en: "Seals rest comfortably on polar ice floes.", zh: "海豹舒适地在极地浮冰上休息。" }, img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500" },
-            { id: 87, category: "air", name: { ms: "Lobster", en: "Lobster", zh: "龙虾" }, fact: { ms: "Lobster mempunyai sepit besar di bahagian depan.", en: "Lobsters feature heavy protective front claws.", zh: "龙虾长有沉重的前螯。" }, img: "https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=500" },
-            { id: 88, category: "air", name: { ms: "Kerang", en: "Clam", zh: "蛤蜊" }, fact: { ms: "Kerang melindungi mutiara atau isi dalam cengkerang.", en: "Clams protect soft tissue inside hard bivalve shells.", zh: "蛤蜊在坚硬的双壳内保护柔软的身体。" }, img: "https://images.unsplash.com/photo-1568430462989-44163eb1752f?w=500" },
-            { id: 89, category: "lain", name: { ms: "Kumbang Merah", en: "Ladybug", zh: "瓢虫" }, fact: { ms: "Kumbang merah mempunyai bintik hitam yang comel.", en: "Ladybugs feature cute black spots on red wing covers.", zh: "瓢虫在红色的翅鞘上长有可爱的黑斑。" }, img: "https://images.unsplash.com/photo-1570481662006-a1c1d55d9d70?w=500" },
-            { id: 90, category: "lain", name: { ms: "Cengkerik", en: "Cricket", zh: "蟋蟀" }, fact: { ms: "Cengkerik menghasilkan bunyi merdu pada waktu malam.", en: "Crickets produce rhythmic chirping sounds at night.", zh: "蟋蟀在夜间发出有节奏的鸣叫声。" }, img: "https://images.unsplash.com/photo-1545671913-b89ac1b4ac10?w=500" },
-            { id: 91, category: "lain", name: { ms: "Lalat", en: "Housefly", zh: "家蝇" }, fact: { ms: "Lalat mempunyai mata majemuk yang unik.", en: "Houseflies possess complex compound eyes.", zh: "家蝇拥有独特的复眼结构。" }, img: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500" },
-            { id: 92, category: "lain", name: { ms: "Nyamuk", en: "Mosquito", zh: "蚊子" }, fact: { ms: "Nyamuk aktif di kawasan berair bertakung.", en: "Mosquitoes thrive in stagnant standing water areas.", zh: "蚊子在积水区域大量繁殖。" }, img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500" },
-            { id: 93, category: "lain", name: { ms: "Kala Jengking", en: "Scorpion", zh: "蝎子" }, fact: { ms: "Kala jengking mempunyai sengat berbisa di hujung ekor.", en: "Scorpions feature venomous stingers at their tail tips.", zh: "蝎子在尾端长有带毒的刺。" }, img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500" },
-            { id: 94, category: "lain", name: { ms: "Ulat Bulu", en: "Caterpillar", zh: "毛虫" }, fact: { ms: "Ulat bulu memakan daun sebelum menjadi rama-rama.", en: "Caterpillars feed voraciously on leaves.", zh: "毛虫以贪婪地啃食叶片为主。" }, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500" },
-            { id: 95, category: "lain", name: { ms: "Pepatung", en: "Dragonfly", zh: "蜻蜓" }, fact: { ms: "Pepatung adalah penerbang handal di udara.", en: "Dragonflies are exceptionally skilled aerial acrobats.", zh: "蜻蜓是空中出色的飞行特技高手。" }, img: "https://images.unsplash.com/photo-1508873696983-2df5c920cf2e?w=500" },
-            { id: 96, category: "lain", name: { ms: "Termite", en: "Termite", zh: "白蚁" }, fact: { ms: "Termite membina busut kayu di dalam tanah.", en: "Termites construct large wooden mounds.", zh: "白蚁在地下建造庞大的木质巢穴。" }, img: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=500" },
-            { id: 97, category: "lain", name: { ms: "Kumbang Rusa", en: "Stag Beetle", zh: "锹甲" }, fact: { ms: "Kumbang rusa mempunyai rahang kuat menyerupai tanduk rusa.", en: "Stag beetles feature prominent antler-like mandibles.", zh: "锹甲长有类似鹿角般强壮的大颚。" }, img: "https://images.unsplash.com/photo-1526466086782-0d9ed3d76e53?w=500" },
-            { id: 98, category: "mamalia", name: { ms: "Cheetah", en: "Cheetah", zh: "猎豹" }, fact: { ms: "Cheetah adalah haiwan darat paling laju di dunia.", en: "Cheetahs are the fastest land animals on Earth.", zh: "猎豹是地球上奔跑速度最快的陆生动物。" }, img: "https://images.unsplash.com/photo-1497206365907-f5e630693adf?w=500" },
-            { id: 99, category: "mamalia", name: { ms: "Wolverine", en: "Wolverine", zh: "狼獾" }, fact: { ms: "Wolverine terkenal dengan kekuatan dan ketahanan tinggi.", en: "Wolverines are renowned for exceptional strength and stamina.", zh: "狼獾以极其顽强的力量和耐力著称。" }, img: "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=500" },
-            { id: 100, category: "mamalia", name: { ms: "Harimau Kumbang", en: "Black Panther", zh: "黑豹" }, fact: { ms: "Harimau kumbang mempunyai bulu gelap akibat melanin.", en: "Black panthers have dark coats resulting from melanin pigmentation.", zh: "黑豹因黑色素沉着而拥有深色皮毛。" }, img: "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=500" }
-        ];
+/* ---------- MOD E: Cabaran Masa ---------- */
+function timeLimit(){return S.diff==='easy'?60:S.diff==='medium'?45:30;}
+function renderTime(){
+  const t=T();
+  G={mode:'time',q:0,score:0,ans:false,left:timeLimit()};
+  app.innerHTML=header()+`
+    <div class="hud"><button class="pillbtn" onclick="endTime()">⏹ ${t.stop}</button>
+      <div class="hitem">⏱️ <span id="tleft">${G.left}</span>s</div>
+      <div class="hitem">⭐ ${t.score}: <span id="tscore">0</span></div></div>
+    <div class="timerbar"><div id="tbar" style="width:100%"></div></div>
+    <div class="card" id="qcard"></div>`+footerHTML();
+  drawTimeQ();
+  const total=G.left;
+  G.timerId=setInterval(()=>{
+    G.left--;
+    const el=document.getElementById('tleft'),bar=document.getElementById('tbar');
+    if(el){el.textContent=G.left;bar.style.width=(G.left/total*100)+'%';
+      bar.style.background=G.left<=10?'var(--red)':G.left<=total/2?'var(--yellow)':'var(--green)';}
+    if(G.left<=0)endTime();
+  },1000);
+  cleanup=()=>{if(G&&G.timerId){clearInterval(G.timerId);G.timerId=null;}};
+}
+function drawTimeQ(){
+  if(!G||G.mode!=='time')return;
+  const t=T();
+  const i=Math.floor(Math.random()*A.length), a=A[i];
+  const opts=shuffle([i,...sampleWrong(i,nOpt()-1)]);
+  document.getElementById('qcard').innerHTML=`
+    <div class="qtext">${t.qWhich}</div><div class="animal-emoji">${a[0]}</div>
+    <div class="optgrid">${opts.map(o=>`<button class="optbtn" onclick="timeAnswer(${o},${i},this)">
+      ${esc(S.lang==='ms'?A[o][2]:S.lang==='en'?A[o][3]:A[o][4])}</button>`).join('')}</div>
+    <div class="feedback" id="fb"></div>`;
+}
+function timeAnswer(pick,real,btn){
+  if(G.ans)return;G.ans=true;
+  const t=T(),ok=pick===real;
+  document.querySelectorAll('#qcard .optbtn').forEach(b=>b.disabled=true);
+  btn.classList.add(ok?'correct':'wrong');
+  if(ok){G.score++;document.getElementById('tscore').textContent=G.score;sndOK();
+    document.getElementById('fb').innerHTML=`<span class="ok">${t.correct}</span>`;}
+  else{sndNO();
+    document.getElementById('fb').innerHTML=`<span class="no">${t.wrong}</span>`;}
+  setTimeout(()=>{if(G&&G.timerId){G.ans=false;drawTimeQ();}},700);
+}
+function endTime(){
+  if(!G)return;
+  if(G.timerId){clearInterval(G.timerId);G.timerId=null;}
+  const t=T(),key='time_'+S.diff,isBest=G.score>(S.best[key]||0);
+  if(isBest){S.best[key]=G.score;save();}
+  app.innerHTML=header()+`<div class="card">
+    <div class="result-emoji">⏱️🏁</div><h2>${t.gameOver}</h2>
+    <div class="result-score">${G.score}</div>
+    ${isBest&&G.score>0?`<p class="newbest">🌟 ${t.newBest}</p>`:''}
+    <p>${t.best}: ${S.best[key]||0}</p>
+    <div class="btnrow">
+      <button class="bigbtn teal" onclick="renderTime()">🔁 ${t.restart}</button>
+      <button class="bigbtn grey" onclick="go('menu')">🏠 ${t.menu}</button>
+    </div></div>`+footerHTML();
+  G=null;
+}
 
-        const uiText = {
-            ms: {
-                heroTitle: "Jom Kenali Dunia Haiwan!",
-                heroSub: "Pilih mod permainan dan mula belajar dengan menyeronokkan.",
-                explore: "Kenali Haiwan",
-                quiz: "Kuiz Pilihan",
-                findName: "Cari Nama",
-                match: "Padankan Haiwan",
-                time: "Cabaran Masa",
-                gallery: "Koleksi Haiwan",
-                prev: "Sebelumnya",
-                next: "Seterusnya",
-                score: "Markah: ",
-                matchScore: "Padanan: ",
-                retry: "Muat Semula",
-                congrats: "Tahniah!",
-                gameOver: "Masa Tamat!",
-                correct: "Betul! Hebat!",
-                wrong: "Salah! Cuba lagi."
-            },
-            en: {
-                heroTitle: "Explore the Animal World!",
-                heroSub: "Choose a game mode and start learning with fun.",
-                explore: "Explore Animals",
-                quiz: "Multiple Choice Quiz",
-                findName: "Find the Name",
-                match: "Match Animals",
-                time: "Time Attack",
-                gallery: "Animal Gallery",
-                prev: "Previous",
-                next: "Next",
-                score: "Score: ",
-                matchScore: "Matched: ",
-                retry: "Retry",
-                congrats: "Congratulations!",
-                gameOver: "Time's Up!",
-                correct: "Correct! Awesome!",
-                wrong: "Wrong! Try again."
-            },
-            zh: {
-                heroTitle: "探索动物世界！",
-                heroSub: "选择游戏模式，开启快乐学习之旅。",
-                explore: "认识动物",
-                quiz: "选择题测验",
-                findName: "寻找名称",
-                match: "动物配对",
-                time: "限时挑战",
-                gallery: "动物图鉴",
-                prev: "上一个",
-                next: "下一个",
-                score: "得分：",
-                matchScore: "已配对：",
-                retry: "重新开始",
-                congrats: "恭喜你！",
-                gameOver: "时间到！",
-                correct: "答对了！太棒了！",
-                wrong: "答错了！再试一次。"
-            }
-        };
+/* ---------- MOD F: Koleksi Haiwan ---------- */
+let galCat='all', galQ='';
+function renderGallery(){
+  const t=T(),cats=['all','mammal','bird','reptile','water','insect'];
+  const catName=c=>c==='all'?t.all:t.cats[c];
+  const list=A.map((a,i)=>({a,i})).filter(({a})=>{
+    if(galCat!=='all'&&a[1]!==galCat)return false;
+    const q=galQ.toLowerCase();
+    return !q||a[2].toLowerCase().includes(q)||a[3].toLowerCase().includes(q)||a[4].includes(q);
+  });
+  app.innerHTML=header()+`
+    <div class="hud"><button class="pillbtn" onclick="go('menu')">← ${t.menu}</button>
+      <div class="hitem">🖼️ ${t.modes.gallery} (${list.length})</div></div>
+    <div class="galtools">
+      <input class="searchin" placeholder="${t.search}" value="${esc(galQ)}" oninput="galSearch(this.value)">
+      ${cats.map(c=>`<button class="catbtn ${galCat===c?'on':''}" onclick="galFilter('${c}')">${catName(c)}</button>`).join('')}
+    </div>
+    ${list.length?`<div class="galgrid">${list.map(({a,i})=>`
+      <button class="gcard" onclick="showAnimal(${i})">
+        <div class="ge">${a[0]}</div><div class="gn">${esc(S.lang==='ms'?a[2]:S.lang==='en'?a[3]:a[4])}</div>
+      </button>`).join('')}</div>`
+    :`<div class="noresult">😢 ${t.notFound}</div>`}`+footerHTML();
+  const inp=document.querySelector('.searchin');
+  if(inp&&galQ){inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length);}
+}
+function galFilter(c){galCat=c;renderGallery();}
+function galSearch(q){galQ=q;renderGallery();}
+function showAnimal(i){
+  const a=A[i],t=T();
+  document.getElementById('modalroot').innerHTML=`
+    <div class="modalbg" onclick="closeModal(event)"><div class="modal">
+      <div class="me">${a[0]}</div>
+      <div class="mrow"><span>🇲🇾 Bahasa Melayu</span><b>${esc(a[2])}</b></div>
+      <div class="mrow"><span>🇬🇧 English</span><b>${esc(a[3])}</b></div>
+      <div class="mrow"><span>🇨🇳 中文</span><b>${esc(a[4])}</b></div>
+      <div class="mrow"><span>📂</span><b>${t.cats[a[1]]}</b></div>
+      <p class="animal-fact" style="text-align:left"><b>${t.habitat}:</b> ${esc(S.lang==='ms'?a[5]:S.lang==='en'?a[6]:a[7])}</p>
+      <div class="btnrow">
+        <button class="bigbtn purple" onclick="speak('${esc(S.lang==='ms'?a[2]:S.lang==='en'?a[3]:a[4]).replace(/'/g,"\\'")}')">🔊 ${t.listen}</button>
+        <button class="bigbtn grey" onclick="document.getElementById('modalroot').innerHTML=''">✕</button>
+      </div>
+    </div></div>`;
+}
+function closeModal(e){if(e.target.classList.contains('modalbg'))document.getElementById('modalroot').innerHTML='';}
 
-        let currentLang = localStorage.getItem('masta_xul_lang') || 'ms';
-        let currentExploreIndex = 0;
-        let gameScore = 0;
-        let gameActiveMode = '';
-        let currentQuestion = null;
-        let timerInterval = null;
-        let timeLeft = 30;
-        let audioEnabled = true;
-
-        function playSound(type) {
-            if (!audioEnabled) return;
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const ctx = new AudioContext();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-
-                if (type === 'correct') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(440, ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
-                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-                    osc.start();
-                    osc.stop(ctx.currentTime + 0.15);
-                } else if (type === 'wrong') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(220, ctx.currentTime);
-                    osc.frequency.setValueAtTime(150, ctx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-                    osc.start();
-                    osc.stop(ctx.currentTime + 0.2);
-                } else if (type === 'click') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(600, ctx.currentTime);
-                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
-                    osc.start();
-                    osc.stop(ctx.currentTime + 0.05);
-                }
-            } catch (e) {
-                console.log("Audio not supported", e);
-            }
-        }
-
-        function toggleAudio() {
-            audioEnabled = !audioEnabled;
-            document.getElementById('audioToggleBtn').innerText = audioEnabled ? 'AUDIO' : 'SENYAP';
-        }
-
-        function changeLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('masta_xul_lang', lang);
-            document.getElementById('langSelect').value = lang;
-            
-            document.getElementById('txt-hero-title').innerText = uiText[lang].heroTitle;
-            document.getElementById('txt-hero-sub').innerText = uiText[lang].heroSub;
-            document.getElementById('btn-explore').innerText = uiText[lang].explore;
-            document.getElementById('btn-quiz').innerText = uiText[lang].quiz;
-            document.getElementById('btn-findName').innerText = uiText[lang].findName;
-            document.getElementById('btn-match').innerText = uiText[lang].match;
-            document.getElementById('btn-time').innerText = uiText[lang].time;
-            document.getElementById('btn-gallery').innerText = uiText[lang].gallery;
-            document.getElementById('btn-prev').innerText = uiText[lang].prev;
-            document.getElementById('btn-next').innerText = uiText[lang].next;
-            document.getElementById('match-retry-btn').innerText = uiText[lang].retry;
-        }
-
-        function switchScreen(screenId) {
-            playSound('click');
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            if(timerInterval) clearInterval(timerInterval);
-        }
-
-        function goHome() {
-            switchScreen('screen-home');
-        }
-
-        function startGameMode(mode) {
-            if (mode === 'explore') {
-                currentExploreIndex = 0;
-                switchScreen('screen-explore');
-                renderExploreAnimal();
-            } else if (mode === 'quiz' || mode === 'findName' || mode === 'timeAttack') {
-                gameActiveMode = mode;
-                gameScore = 0;
-                switchScreen('screen-game');
-                
-                if (mode === 'timeAttack') {
-                    timeLeft = 30;
-                    document.getElementById('game-timer-box').style.display = 'block';
-                    timerInterval = setInterval(() => {
-                        timeLeft--;
-                        document.getElementById('game-timer').innerText = timeLeft;
-                        if (timeLeft <= 0) {
-                            clearInterval(timerInterval);
-                            showModal(uiText[currentLang].gameOver, `${uiText[currentLang].score} ${gameScore}`);
-                            goHome();
-                        }
-                    }, 1000);
-                } else {
-                    document.getElementById('game-timer-box').style.display = 'none';
-                }
-                nextGameQuestion();
-            } else if (mode === 'match') {
-                switchScreen('screen-match');
-                initMatchGame();
-            }
-        }
-
-        function renderExploreAnimal() {
-            const animal = animalsData[currentExploreIndex];
-            document.getElementById('exp-counter').innerText = `${currentExploreIndex + 1} / ${animalsData.length}`;
-            document.getElementById('exp-name').innerText = animal.name[currentLang];
-            document.getElementById('exp-fact').innerText = animal.fact[currentLang];
-            
-            const imgEl = document.getElementById('exp-img');
-            imgEl.src = animal.img;
-            imgEl.alt = animal.name[currentLang];
-        }
-
-        function nextExploreAnimal() {
-            playSound('click');
-            currentExploreIndex = (currentExploreIndex + 1) % animalsData.length;
-            renderExploreAnimal();
-        }
-
-        function prevExploreAnimal() {
-            playSound('click');
-            currentExploreIndex = (currentExploreIndex - 1 + animalsData.length) % animalsData.length;
-            renderExploreAnimal();
-        }
-
-        function nextGameQuestion() {
-            document.getElementById('game-score-lbl').innerText = `${uiText[currentLang].score} ${gameScore}`;
-            
-            const target = animalsData[Math.floor(Math.random() * animalsData.length)];
-            let options = [target];
-            while (options.length < 4) {
-                let rand = animalsData[Math.floor(Math.random() * animalsData.length)];
-                if (!options.includes(rand)) options.push(rand);
-            }
-            options.sort(() => Math.random() - 0.5);
-            
-            currentQuestion = { target, options };
-            
-            const container = document.getElementById('game-visual-container');
-            const grid = document.getElementById('game-options-grid');
-            grid.innerHTML = '';
-            
-            if (gameActiveMode === 'quiz' || gameActiveMode === 'timeAttack') {
-                container.innerHTML = `
-                    <div class="animal-img-wrap">
-                        <img src="${target.img}" alt="Quiz Image">
-                    </div>
-                    <div style="font-weight: 700; color: #57606f; margin-top: 5px;">Pilih nama haiwan di bawah:</div>
-                `;
-                
-                options.forEach(opt => {
-                    const btn = document.createElement('button');
-                    btn.className = 'option-btn';
-                    btn.innerText = opt.name[currentLang];
-                    btn.onclick = () => checkAnswer(opt.id === target.id, btn);
-                    grid.appendChild(btn);
-                });
-            } else if (gameActiveMode === 'findName') {
-                container.innerHTML = `
-                    <h2 class="animal-title-display">${target.name[currentLang]}</h2>
-                    <div style="font-weight: 700; color: #57606f; margin-top: 5px;">Pilih gambar haiwan yang sepadan:</div>
-                `;
-                
-                options.forEach(opt => {
-                    const btn = document.createElement('button');
-                    btn.className = 'option-btn';
-                    btn.style.padding = '5px';
-                    btn.innerHTML = `<img src="${opt.img}" style="width:100%; height:60px; border-radius:10px; object-fit:cover;" alt="option">`;
-                    btn.onclick = () => checkAnswer(opt.id === target.id, btn);
-                    grid.appendChild(btn);
-                });
-            }
-        }
-
-        function checkAnswer(isCorrect, btnElement) {
-            const buttons = document.querySelectorAll('.option-btn');
-            buttons.forEach(b => b.style.pointerEvents = 'none');
-            
-            if (isCorrect) {
-                playSound('correct');
-                btnElement.classList.add('correct');
-                gameScore += 10;
-                setTimeout(nextGameQuestion, 800);
-            } else {
-                playSound('wrong');
-                btnElement.classList.add('wrong');
-                if (gameActiveMode === 'timeAttack') {
-                    setTimeout(nextGameQuestion, 800);
-                } else {
-                    setTimeout(() => {
-                        showModal(uiText[currentLang].wrong, `${uiText[currentLang].score} ${gameScore}`);
-                        goHome();
-                    }, 800);
-                }
-            }
-        }
-
-        let selectedMatchItem = null;
-        let matchedPairsCount = 0;
-
-        function initMatchGame() {
-            matchedPairsCount = 0;
-            selectedMatchItem = null;
-            document.getElementById('match-score-lbl').innerText = `${uiText[currentLang].matchScore} 0 / 4`;
-            
-            let subset = [...animalsData].sort(() => Math.random() - 0.5).slice(0, 4);
-            let imagesCol = [...subset].sort(() => Math.random() - 0.5);
-            let namesCol = [...subset].sort(() => Math.random() - 0.5);
-            
-            const grid = document.getElementById('match-grid');
-            grid.innerHTML = `
-                <div class="match-column" id="col-imgs"></div>
-                <div class="match-column" id="col-names"></div>
-            `;
-            
-            const imgColEl = document.getElementById('col-imgs');
-            const nameColEl = document.getElementById('col-names');
-            
-            imagesCol.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'match-item';
-                div.dataset.id = item.id;
-                div.innerHTML = `<img src="${item.img}" style="width:100%; height:55px; border-radius:8px; object-fit:cover;" alt="match">`;
-                div.onclick = () => selectMatchElement(div, 'img', item.id);
-                imgColEl.appendChild(div);
-            });
-            
-            namesCol.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'match-item';
-                div.dataset.id = item.id;
-                div.innerText = item.name[currentLang];
-                div.onclick = () => selectMatchElement(div, 'name', item.id);
-                nameColEl.appendChild(div);
-            });
-        }
-
-        function selectMatchElement(element, type, id) {
-            playSound('click');
-            if (element.classList.contains('matched')) return;
-            
-            if (!selectedMatchItem) {
-                selectedMatchItem = { element, type, id };
-                element.classList.add('selected');
-            } else {
-                if (selectedMatchItem.element === element) {
-                    element.classList.remove('selected');
-                    selectedMatchItem = null;
-                    return;
-                }
-                
-                if (selectedMatchItem.type !== type && selectedMatchItem.id === id) {
-                    playSound('correct');
-                    selectedMatchItem.element.classList.remove('selected');
-                    selectedMatchItem.element.classList.add('matched');
-                    element.classList.add('matched');
-                    selectedMatchItem = null;
-                    
-                    matchedPairsCount++;
-                    document.getElementById('match-score-lbl').innerText = `${uiText[currentLang].matchScore} ${matchedPairsCount} / 4`;
-                    
-                    if (matchedPairsCount === 4) {
-                        showModal(uiText[currentLang].congrats, "Semua padanan berjaya diselesaikan!");
-                    }
-                } else {
-                    playSound('wrong');
-                    selectedMatchItem.element.classList.remove('selected');
-                    element.classList.add('wrong');
-                    setTimeout(() => element.classList.remove('wrong'), 400);
-                    selectedMatchItem = null;
-                }
-            }
-        }
-
-        function openGallery() {
-            switchScreen('screen-gallery');
-            renderGallery(animalsData);
-        }
-
-        function renderGallery(data) {
-            const grid = document.getElementById('galleryGrid');
-            grid.innerHTML = '';
-            
-            data.forEach(animal => {
-                const card = document.createElement('div');
-                card.className = 'gallery-card';
-                card.onclick = () => {
-                    playSound('click');
-                    showModal(animal.name[currentLang], `${animal.fact[currentLang]}`);
-                };
-                card.innerHTML = `
-                    <img src="${animal.img}" alt="${animal.name.ms}">
-                    <h4>${animal.name[currentLang]}</h4>
-                    <span>${animal.category.toUpperCase()}</span>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function filterGallery() {
-            const query = document.getElementById('gallerySearch').value.toLowerCase();
-            const category = document.getElementById('galleryCategory').value;
-            
-            const filtered = animalsData.filter(animal => {
-                const matchesQuery = animal.name.ms.toLowerCase().includes(query) || 
-                                     animal.name.en.toLowerCase().includes(query) || 
-                                     animal.name.zh.includes(query);
-                const matchesCategory = category === 'all' || animal.category === category;
-                return matchesQuery && matchesCategory;
-            });
-            
-            renderGallery(filtered);
-        }
-
-        function showModal(title, desc) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalDesc').innerText = desc;
-            document.getElementById('modalOverlay').style.display = 'flex';
-        }
-
-        function closeModal() {
-            playSound('click');
-            document.getElementById('modalOverlay').style.display = 'none';
-        }
-
-        window.onload = function() {
-            changeLanguage(currentLang);
-        };
-    </script>
+/* ---------- Mula ---------- */
+renderMenu();
+</script>
 </body>
 </html>
