@@ -6,6 +6,7 @@
   <title>Admin Dashboard | Masta Xul</title>
   <meta name="robots" content="noindex, nofollow">
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     :root {
       --bg:#030712; --card:rgba(15,23,42,.88); --line:rgba(56,189,248,.28);
@@ -123,6 +124,12 @@
     .login-card{position:relative;z-index:21}
     @media(max-width:700px){.clock-box{align-items:flex-start;width:100%}.topbar-mid{justify-content:stretch}}
 
+    .charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
+    .chart-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;backdrop-filter:blur(12px)}
+    .chart-card h3{font-size:.88rem;color:var(--cyan);margin-bottom:8px;font-weight:700}
+    .chart-wrap{position:relative;height:220px}
+
+
     .blog-tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
     .blog-tabs button{flex:1;min-width:110px;margin:0;padding:9px;border-radius:10px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:var(--muted);font-weight:700;cursor:pointer}
     .blog-tabs button.active{background:rgba(56,189,248,.2);color:#fff;border-color:var(--cyan)}
@@ -229,6 +236,37 @@
         <tbody id="tbodyBlogStats"><tr><td colspan="3" class="empty">—</td></tr></tbody>
       </table></div>
     </div>
+  
+    <div class="card" id="chartsCard">
+      <h2>Carta & analisis</h2>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3>Produk mengikut kategori</h3>
+          <div class="chart-wrap"><canvas id="chartKat"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Badge produk</h3>
+          <div class="chart-wrap"><canvas id="chartBadge"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Top 6 blog (views)</h3>
+          <div class="chart-wrap"><canvas id="chartBlogViews"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Engagement blog (like vs love)</h3>
+          <div class="chart-wrap"><canvas id="chartBlogEngage"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Hubungi (status)</h3>
+          <div class="chart-wrap"><canvas id="chartHubungi"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>Produk: amaran kualiti</h3>
+          <div class="chart-wrap"><canvas id="chartWarn"></canvas></div>
+        </div>
+      </div>
+    </div>
+
   </section>
 
   <section class="panel" id="panel-produk">
@@ -743,6 +781,7 @@ async function loadProduk(){
     const res=await fetch(API.produkRead+"?_="+Date.now());
     allProduk=(await res.json()).filter(p=>p&&p.nama);
     buildFilterOptions();applyFilters();updateStats();
+    try{ updateProdukCharts(); }catch(_){}
   }catch(e){tbody.innerHTML="<tr><td colspan='9' class='empty'>Gagal muat</td></tr>";}
 }
 
@@ -982,6 +1021,7 @@ async function loadHubungi(){
     const hariIni=allHubungi.filter(x=>String(x.timestamp||"").startsWith(today)).length;
     animateValue(document.getElementById("stHariIni"),hariIni);
     renderHubungi();
+    try{ updateHubungiChart(); }catch(_){}
   }catch(e){tbody.innerHTML="<tr><td colspan='7' class='empty'>Gagal</td></tr>";}
 }
 function renderHubungi(){
@@ -1178,6 +1218,126 @@ form.onsubmit=async e=>{
   btn.disabled=false;btn.textContent="Tambah Produk";
 };
 
+
+
+/* ===== CHARTS OVERVIEW ===== */
+const chartInstances = {};
+const CHART_COLORS = ["#38bdf8","#a855f7","#22c55e","#f59e0b","#ef4444","#818cf8","#14b8a6","#f472b6","#94a3b8","#eab308"];
+
+function destroyChart(key){
+  if(chartInstances[key]){ try{ chartInstances[key].destroy(); }catch(_){ } chartInstances[key]=null; }
+}
+
+function makeChart(key, canvasId, config){
+  if(typeof Chart === "undefined") return;
+  const el = document.getElementById(canvasId);
+  if(!el) return;
+  destroyChart(key);
+  Chart.defaults.color = "#94a3b8";
+  Chart.defaults.borderColor = "rgba(255,255,255,0.08)";
+  chartInstances[key] = new Chart(el, config);
+}
+
+function truncateLabel(s, n){
+  s = String(s||"");
+  return s.length > n ? s.slice(0,n-1)+"…" : s;
+}
+
+function updateProdukCharts(){
+  const list = Array.isArray(allProduk) ? allProduk : [];
+  // kategori
+  const katMap = {};
+  list.forEach(p=>{
+    String(p.kategori||"Lain").split(",").map(s=>s.trim()).filter(Boolean).forEach(k=>{
+      katMap[k] = (katMap[k]||0)+1;
+    });
+  });
+  if(!Object.keys(katMap).length) katMap["Tiada"]=1;
+  const katLabels = Object.keys(katMap).sort((a,b)=>katMap[b]-katMap[a]).slice(0,10);
+  makeChart("kat","chartKat",{
+    type:"doughnut",
+    data:{ labels: katLabels, datasets:[{ data: katLabels.map(k=>katMap[k]), backgroundColor: CHART_COLORS, borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ boxWidth:10, font:{ size:10 } } } } }
+  });
+  // badge
+  const badgeMap = {};
+  list.forEach(p=>{
+    const b = (p.badge||"").toString().trim() || "Tiada badge";
+    badgeMap[b] = (badgeMap[b]||0)+1;
+  });
+  const bLabels = Object.keys(badgeMap);
+  makeChart("badge","chartBadge",{
+    type:"pie",
+    data:{ labels: bLabels, datasets:[{ data: bLabels.map(k=>badgeMap[k]), backgroundColor: CHART_COLORS, borderWidth:0 }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ boxWidth:10, font:{ size:10 } } } } }
+  });
+  // warn quality
+  let noImg=0, noLink=0, ok=0;
+  list.forEach(p=>{
+    const img = !(p.gambar||"").toString().trim();
+    const link = !(p.tiktok||p.shopee||p.lazada||"").toString().trim();
+    if(img||link){ if(img)noImg++; if(link)noLink++; }
+    else ok++;
+  });
+  makeChart("warn","chartWarn",{
+    type:"bar",
+    data:{
+      labels:["Lengkap","Tiada gambar","Tiada affiliate"],
+      datasets:[{ label:"Bilangan", data:[ok, noImg, noLink], backgroundColor:["#22c55e","#f59e0b","#ef4444"], borderRadius:6 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } } }
+  });
+}
+
+function updateBlogCharts(){
+  const posts = Array.isArray(allBlogPosts) ? allBlogPosts : [];
+  const top = posts.slice().sort((a,b)=>(+b.views||0)-(+a.views||0)).slice(0,6);
+  makeChart("blogViews","chartBlogViews",{
+    type:"bar",
+    data:{
+      labels: top.map(p=>truncateLabel(p.title,14)),
+      datasets:[{ label:"Views", data: top.map(p=>+p.views||0), backgroundColor:"#38bdf8", borderRadius:6 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } } }
+  });
+  const topE = posts.slice().sort((a,b)=>((+b.likes||0)+(+b.loves||0))-((+a.likes||0)+(+a.loves||0))).slice(0,6);
+  makeChart("blogEngage","chartBlogEngage",{
+    type:"bar",
+    data:{
+      labels: topE.map(p=>truncateLabel(p.title,12)),
+      datasets:[
+        { label:"Like", data: topE.map(p=>+p.likes||0), backgroundColor:"#38bdf8", borderRadius:4 },
+        { label:"Love", data: topE.map(p=>+p.loves||0), backgroundColor:"#f472b6", borderRadius:4 }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ boxWidth:10, font:{ size:10 } } } }, scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } } }
+  });
+}
+
+function updateHubungiChart(){
+  const list = Array.isArray(allHubungi) ? allHubungi : [];
+  let belum=0, sudah=0, lain=0;
+  list.forEach(r=>{
+    const s = String(r.status||"Belum balas");
+    if(s==="Sudah balas") sudah++;
+    else if(s==="Belum balas") belum++;
+    else lain++;
+  });
+  makeChart("hubungi","chartHubungi",{
+    type:"doughnut",
+    data:{
+      labels:["Belum balas","Sudah balas","Lain"],
+      datasets:[{ data:[belum,sudah,lain], backgroundColor:["#ef4444","#22c55e","#64748b"], borderWidth:0 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ boxWidth:10, font:{ size:10 } } } } }
+  });
+}
+
+function updateAllCharts(){
+  try{ updateProdukCharts(); }catch(e){ console.warn(e); }
+  try{ updateBlogCharts(); }catch(e){ console.warn(e); }
+  try{ updateHubungiChart(); }catch(e){ console.warn(e); }
+}
 
 /* ===== BLOG ADMIN (gabung) ===== */
 let tsBlogId = null;
@@ -1470,6 +1630,7 @@ async function loadBlogStats(){
     if(tb) tb.innerHTML = rows.map(r => `<tr><td>${esc(r[0])}</td><td title="${esc(r[1])}">${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("");
     const box = document.getElementById("blogOverviewBox");
     if(box) box.textContent = total ? (total+" artikel · "+pub+" published · "+draft+" draft · "+views+" views") : "Belum ada artikel blog.";
+    try{ updateBlogCharts(); }catch(_){}
   }catch(e){
     setStatus("blog","fail", e.message||"Gagal");
     const box = document.getElementById("blogOverviewBox");
