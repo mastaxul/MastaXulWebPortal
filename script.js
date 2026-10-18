@@ -251,9 +251,11 @@ function renderTurnstileHubungi() {
       try { turnstile.remove(turnstileWidgetId); } catch (e) {}
     }
     el.innerHTML = "";
+    const compact = window.matchMedia("(max-width: 600px)").matches;
     turnstileWidgetId = turnstile.render(el, {
       sitekey: TURNSTILE_SITEKEY,
       theme: "dark",
+      size: compact ? "compact" : "normal",
       callback: function () {},
     });
   } catch (e) {
