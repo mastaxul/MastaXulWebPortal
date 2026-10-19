@@ -351,14 +351,37 @@ header h1 { display:inline-block; animation:h1Float 4s ease-in-out infinite; }
     *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
     .bgfx { display:none; }
 }
+/* ===== V6: bahasa, Mandarin, maklum balas ===== */
+.langbtn { position:absolute; left:10px; top:10px; border:0; border-radius:14px; padding:4px 10px; font-size:13px; font-weight:bold; font-family:inherit; cursor:pointer; background:rgba(255,255,255,.3); color:#fff; }
+.langbtn:active { transform:scale(.94); }
+.hz { font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif; font-weight:bold; color:var(--big); line-height:1.15; }
+.py { font-size:24px; color:var(--accent2); font-weight:bold; margin-top:2px; }
+.hzw { display:flex; flex-direction:column; align-items:center; }
+.hzo { display:block; font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif; font-size:30px; line-height:1.15; }
+.pyo { display:block; font-size:13px; color:var(--muted); font-weight:bold; margin-top:2px; }
+.option .hzo { font-size:28px; }
+.speak.flag { left:10px; right:auto; font-size:16px; width:36px; height:36px; top:12px; opacity:.75; }
+textarea { width:100%; padding:14px; border-radius:14px; border:2px solid var(--border); background:var(--input); color:var(--text); font-family:inherit; font-size:16px; min-height:110px; margin-top:6px; resize:vertical; outline:none; }
+textarea:focus { border-color:var(--accent); }
+.fbstars { display:flex; gap:4px; justify-content:center; margin:6px 0; }
+.fbstar { background:none; border:0; font-size:36px; color:#cfcfcf; cursor:pointer; padding:0 4px; transition:transform .15s; }
+.fbstar.on { color:#ffb300; }
+.fbstar:active { transform:scale(1.25); }
+.fbcap { background:var(--warn-bg); border:2px dashed var(--warn-bd); border-radius:14px; padding:12px; margin-top:14px; text-align:left; }
+.fbcap input { max-width:110px; text-align:center; display:inline-block; margin:0 6px; }
+.fbcap button { border:0; background:none; color:var(--accent2); text-decoration:underline; cursor:pointer; font-family:inherit; font-size:13px; }
+.fbagree { display:flex; gap:10px; align-items:flex-start; margin-top:14px; font-size:13px; font-weight:normal; text-align:left; }
+.fbagree input { width:22px; height:22px; flex:0 0 22px; margin-top:2px; }
+.hp { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; opacity:0; }
 </style>
 </head>
 <body>
 
 <header>
     <label class="theme-sw" title="Tema cerah / gelap">☀️<input type="checkbox" id="themeSwitch" onchange="applyTheme(this.checked?'dark':'light')" aria-label="Tema gelap"><i></i>🌙</label>
+    <button class="langbtn" id="langBtn" onclick="toggleLang()" title="Bahasa / Language">🌐 BM</button>
     <h1>🌈 Jom Belajar!</h1>
-    <p>Rumah Sahabat • 29 Topik & Permainan • Cerita • Pulau Pengembaraan</p>
+    <p>Rumah Sahabat • 50+ Topik & Permainan • Cerita • Pulau Pengembaraan</p>
 </header>
 
 <div class="container">
@@ -480,7 +503,8 @@ header h1 { display:inline-block; animation:h1Float 4s ease-in-out infinite; }
         </div>
         <div class="progress-bar"><div id="progressFill" class="progress-fill" style="width:0%"></div></div>
         <div class="card question-card">
-            <button class="speak" id="speakBtn" onclick="speak(curSpeech,true,curLang)">🔊</button>
+            <button class="speak flag" onclick="reportQuestion()" title="Lapor soalan ini" aria-label="Lapor soalan ini">🚩</button>
+            <button class="speak" id="speakBtn" onclick="replaySpeech()">🔊</button>
             <div class="question-number">Soalan <span id="questionNumber">1</span></div>
             <div id="questionArea" class="question"></div>
             <div id="feedback" class="feedback"></div>
@@ -548,7 +572,7 @@ header h1 { display:inline-block; animation:h1Float 4s ease-in-out infinite; }
             <div class="sbars" id="hubBars"></div>
         </div>
         <div class="hub-grid">
-            <button class="hbtn big" onclick="showStartScreen()"><span class="ic">🎮</span>Main & Belajar (23+ topik)</button>
+            <button class="hbtn big" onclick="showStartScreen()"><span class="ic">🎮</span>Main & Belajar (50+ topik)</button>
             <button class="hbtn" onclick="openCare()"><span class="ic">🍎</span>Jaga Sahabat</button>
             <button class="hbtn" onclick="openWorld()"><span class="ic">🏝️</span>Pulau Pengembaraan</button>
             <button class="hbtn" onclick="openStories()"><span class="ic">📖</span>Cerita Bersuara</button>
@@ -557,12 +581,14 @@ header h1 { display:inline-block; animation:h1Float 4s ease-in-out infinite; }
             <button class="hbtn" onclick="openCert()"><span class="ic">🏅</span>Sijil & Streak</button>
             <button class="hbtn" onclick="openAlbum()"><span class="ic">📒</span>Album Stiker</button>
             <button class="hbtn" onclick="openReport()"><span class="ic">📊</span>Laporan Ibu Bapa</button>
+            <button class="hbtn" onclick="openFeedback()"><span class="ic">💬</span>Maklum Balas</button>
         </div>
         <div class="card" style="margin-top:12px;text-align:center">
             <b>⚡ Main Pantas</b>
             <div class="chips">
                 <button class="chip" onclick="quickPlay('arkad')">🎯 Arkad</button>
-                <button class="chip" onclick="quickPlay('inggeris')">🇬🇧 English</button>
+                <button class="chip" onclick="quickPlay('en_semua')">🇬🇧 English</button>
+                <button class="chip" onclick="quickPlay('zh_semua')">🇨🇳 Mandarin</button>
                 <button class="chip" onclick="quickPlay('duit')">💰 Duit & Kedai</button>
                 <button class="chip" onclick="quickPlay('jam')">🕐 Jam</button>
                 <button class="chip" onclick="quickPlay('malaysia')">🇲🇾 Malaysia</button>
@@ -620,7 +646,7 @@ header h1 { display:inline-block; animation:h1Float 4s ease-in-out infinite; }
             <div class="story-text" id="storyText"></div>
             <div class="btn-row">
                 <button class="btn btn-secondary" onclick="if(storyIdx>0){storyIdx--;renderScene()}">⬅️</button>
-                <button class="btn" onclick="speak(curStory.scenes[storyIdx]||'',true)">🔊 Dengar</button>
+                <button class="btn" onclick="speak(curStory.scenes[storyIdx]||'',true,curStory.lang||'ms-MY')">🔊 Dengar</button>
                 <button class="btn btn-secondary" onclick="if(storyIdx<=curStory.scenes.length-1){storyIdx++;renderScene()}">➡️</button>
             </div>
             <div id="storyEnd" class="hidden" style="margin-top:14px">
@@ -646,6 +672,38 @@ header h1 { display:inline-block; animation:h1Float 4s ease-in-out infinite; }
         <h2>Sijil & Streak</h2>
         <div id="certBody"></div>
         <button class="btn" onclick="makeCertificate()">📄 Muat Turun Sijil (PDF)</button>
+    </div>
+
+    <!-- MAKLUM BALAS -->
+    <div id="feedbackScreen" class="card start-screen hidden">
+        <div class="hub-top"><button class="chip" onclick="closeFeedback()">⬅️ Kembali</button></div>
+        <div class="logo">💬</div>
+        <h2>Maklum Balas & Cadangan</h2>
+        <p style="font-size:14px;color:var(--muted)">Ibu bapa, guru dan penjaga: kongsi testimoni, cadangkan game baharu, laporkan pepijat atau cadangkan penambahbaikan. Terus sampai kepada pembangun.</p>
+        <label>Jenis maklum balas</label>
+        <select id="fbType" onchange="onFbType()">
+            <option value="testimoni">💬 Testimoni (pendapat anda)</option>
+            <option value="game">💡 Cadangan game / topik baharu</option>
+            <option value="bug">🐞 Lapor pepijat (bug)</option>
+            <option value="baik">✨ Cadangan penambahbaikan</option>
+            <option value="lain">❓ Soalan / lain-lain</option>
+        </select>
+        <label>Anda ialah</label>
+        <select id="fbRole"><option>Ibu</option><option>Bapa</option><option>Penjaga</option><option>Guru</option><option>Lain-lain</option></select>
+        <label>Nama (pilihan)</label>
+        <input type="text" id="fbName" maxlength="60" placeholder="Contoh: Siti Aminah">
+        <label>Emel (pilihan, jika mahu dihubungi)</label>
+        <input type="email" id="fbEmail" maxlength="80" placeholder="contoh@email.com">
+        <div id="fbRatingBox"><label>Penilaian keseluruhan</label><div class="fbstars" id="fbStars"></div></div>
+        <label>Topik / game berkaitan (pilihan)</label>
+        <select id="fbTopic"><option value="">- Tiada -</option></select>
+        <label>Mesej anda</label>
+        <textarea id="fbMsg" maxlength="1500" placeholder="Ceritakan pengalaman atau cadangan anda..."></textarea>
+        <label class="fbagree" id="fbConsentBox"><input type="checkbox" id="fbConsent"><span>Saya benarkan testimoni ini dipaparkan di laman beli (nama pertama sahaja).</span></label>
+        <div class="hp" aria-hidden="true"><input type="text" id="fbWebsite" tabindex="-1" autocomplete="off"></div>
+        <div class="fbcap">🤖 <b id="fbCapQ">...</b><input type="number" id="fbCapA" inputmode="numeric" placeholder="?"><button type="button" onclick="loadFbCaptcha()">tukar soalan</button></div>
+        <button class="btn" id="fbSend" onclick="sendFeedback()" disabled>📨 HANTAR</button>
+        <div id="fbDone" class="rbox hidden" style="text-align:center"></div>
     </div>
 
 </div>
@@ -1100,6 +1158,437 @@ function genV5(add, ch) {
 }
 
 /* ============================================================
+   DWIBAHASA: Bahasa Melayu <-> English (antara muka + soalan teras)
+============================================================ */
+let LANG = (() => { try { return localStorage.getItem("jomBelajar_lang") || "ms"; } catch (e) { return "ms"; } })();
+
+const D = {
+    // ---- skrin & butang
+    "Aktifkan Game":"Activate Game", "Gunakan pautan unik dari emel anda, atau masukkan Token ID.":"Use the unique link from your email, or enter your Token ID.",
+    "Token ID":"Token ID", "Contoh: Ali":"Example: Ali", "Contoh: JBL-XXXX-XXXX":"Example: JBL-XXXX-XXXX", "✅ AKTIFKAN":"✅ ACTIVATE", "🎮 CUBA DEMO (5 soalan)":"🎮 TRY DEMO (5 questions)",
+    "dulu. Selepas aktif, terikat pada 1 peranti & pelayar.":"first. After activation it is tied to 1 device & browser.", "💡 Status mesti":"💡 Status must be", "Lulus":"Approved",
+    "Selamat Datang!":"Welcome!", "Mari belajar sambil bermain 🎉":"Let's learn while playing 🎉", "Mod demo: 5 soalan sahaja. Beli untuk semua soalan & permainan!":"Demo mode: 5 questions only. Buy for all questions & games!",
+    "Nama Murid":"Student Name", "Topik / Game":"Topic / Game", "Masa Bermain":"Play Time", "3 minit":"3 minutes", "5 minit":"5 minutes", "10 minit":"10 minutes", "15 minit":"15 minutes", "20 minit":"20 minutes",
+    "Suara bacaan soalan":"Read questions aloud", "🔊 Hidup":"🔊 On", "🔇 Mati":"🔇 Off", "Jenis Soalan":"Question Type", "Semua Jenis":"All Types", "Pilihan Jawapan":"Multiple Choice", "Seret & Lepas":"Drag & Drop",
+    "Padankan":"Match", "Isi Tempat Kosong":"Fill in the Blank", "Susun (huruf / suku kata)":"Arrange (letters / syllables)", "Silang Kata":"Crossword", "Pecah Belon":"Pop Balloons", "Padan Kad":"Memory Cards",
+    "Jejak":"Trace", "Tunjuk Anggota Badan":"Point to Body Parts", "Puzzle":"Puzzle", "Mewarna":"Colouring", "Kedai (bayar)":"Shop (pay)", "Labirin":"Maze", "Cari Tersembunyi":"Hidden Objects", "Tangkap":"Catch",
+    "🚀 MULA BERMAIN":"🚀 START PLAYING", "🔓 Tukar Token":"🔓 Change Token", "🏠 Rumah Sahabat":"🏠 Buddy Home", "🏠 RUMAH SAHABAT":"🏠 BUDDY HOME", "🎮 MENU MAIN":"🎮 PLAY MENU", "🔄 MAIN SEMULA":"🔄 PLAY AGAIN", "🏠 KEMBALI":"🏠 BACK",
+    "Soalan":"Question", "Tahniah!":"Congratulations!", "Hebat,":"Great job,", "⬅️ Kembali":"⬅️ Back", "⬅️ Rumah":"⬅️ Home", "📚 Senarai Cerita":"📚 Story List", "🔊 Dengar":"🔊 Listen", "✓ JAWAB":"✓ ANSWER", "✓ SEMAK":"✓ CHECK",
+    "🧽 Padam":"🧽 Erase", "⏭️ Langkau":"⏭️ Skip", "🧽 Kosongkan":"🧽 Clear", "✓ BAYAR":"✓ PAY", "✓ SIAP":"✓ DONE", "Contoh gambar:":"Example picture:",
+    // ---- rumah sahabat
+    "Jom Kenal Kawan Baru!":"Meet Your New Buddy!", "Taip nama murid dan pilih sahabat pertama.":"Type the student's name and choose a first buddy.", "Pilih Sahabat":"Choose a Buddy", "🚀 MULA!":"🚀 START!",
+    "Rumah Sahabat • 29 Topik & Permainan • Cerita • Pulau Pengembaraan":"Buddy Home • 50+ Topics & Games • Stories • Adventure Island", "hari":"days", "Hai!":"Hi!",
+    "Main & Belajar (23+ topik)":"Play & Learn (50+ topics)", "Main & Belajar (50+ topik)":"Play & Learn (50+ topics)", "Jaga Sahabat":"Care for Buddy", "Pulau Pengembaraan":"Adventure Island", "Cerita Bersuara":"Audio Stories",
+    "Koleksi Sahabat":"Buddy Collection", "Lembaran Kerja":"Worksheets", "Sijil & Streak":"Certificate & Streak", "Album Stiker":"Sticker Album", "Laporan Ibu Bapa":"Parent Report", "Maklum Balas":"Feedback",
+    "⚡ Main Pantas":"⚡ Quick Play", "🎯 Arkad":"🎯 Arcade", "🇬🇧 English":"🇬🇧 English", "💰 Duit & Kedai":"💰 Money & Shop", "🕐 Jam":"🕐 Clock", "🇲🇾 Malaysia":"🇲🇾 Malaysia", "🔬 Sains":"🔬 Science",
+    "🧍 Badan":"🧍 Body", "🐮 Haiwan":"🐮 Animals", "🇨🇳 Mandarin":"🇨🇳 Mandarin", "Makan":"Eat", "Minum":"Drink", "Mandi":"Bath", "Rehat":"Rest", "Pilih makanan":"Choose food",
+    "💡 Jawab soalan untuk kumpul ⭐. Bintang boleh digunakan untuk membuka sahabat dan kawasan baru. Sahabat akan lapar jika lama tidak dijaga!":"💡 Answer questions to collect ⭐. Stars unlock new buddies and areas. Your buddy gets hungry if left alone too long!",
+    "Pilih kawasan, jawab 6 soalan dan dapat bintang. Buka kawasan baru dengan ⭐.":"Pick an area, answer 6 questions and earn stars. Unlock new areas with ⭐.",
+    "Muat turun PDF, cetak di rumah dan biar anak menulis dengan pensel. Lembaran tambah-tolak dijana baru setiap kali.":"Download the PDF, print it at home and let your child write with a pencil. Addition/subtraction sheets are newly generated each time.",
+    "📄 Muat Turun PDF":"📄 Download PDF", "📄 Muat Turun Sijil (PDF)":"📄 Download Certificate (PDF)",
+    // ---- pelbagai
+    "Aktif":"Active", "Pilih":"Choose", "Nanti":"Later", "Buka!":"Unlock!", "Batal":"Cancel", "➕ Murid baru":"➕ New student", "<b>Pilih murid</b>":"<b>Choose student</b>",
+    "Esok lagi":"Tomorrow", "Perut saya berbunyi...":"My tummy is rumbling...", "Saya dahaga...":"I'm thirsty...", "Saya kotor sikit...":"I'm a bit dirty...", "Saya mengantuk...":"I'm sleepy...",
+    "Hai kawan! Jom bermain!":"Hi friend! Let's play!", "Hari ini cerah, kan?":"It's a sunny day, isn't it?", "Saya suka kamu!":"I like you!", "Yeay! Saya gembira sangat!":"Yay! I'm so happy!", "Terima kasih, kawan!":"Thank you, friend!",
+    "Wah, seronoknya!":"Wow, so much fun!", "Jom makan bersama!":"Let's eat together!", "Boleh saya minum?":"May I have a drink?", "Jom mandi!":"Let's take a bath!", "Jom rehat sekejap.":"Let's rest a little.",
+    "Yummy! Terima kasih!":"Yummy! Thank you!", "Segar! Terima kasih!":"Refreshing! Thank you!", "Segar dan bersih!":"Fresh and clean!", "Zzz... selamat tidur...":"Zzz... good night...",
+    "Hebat! Jawapan betul!":"Great! Correct answer!", "🎉 Hebat! Jawapan betul!":"🎉 Great! Correct answer!", "😊 Tak apa, cuba soalan seterusnya!":"😊 It's okay, try the next question!", "😊 Tak apa! Cuba lagi nanti.":"😊 It's okay! Try again later.",
+    "😊 Tak apa, cuba yang lain!":"😊 It's okay, try another one!", "🙂 Bukan yang ini, cuba lagi!":"🙂 Not this one, try again!", "🙂 Belum betul, cuba lagi!":"🙂 Not quite, try again!", "🙂 Belum sama, cuba ingat!":"🙂 Not a match, try to remember!",
+    "🙂 Ada yang belum betul, cuba lagi!":"🙂 Some are wrong, try again!", "👍 Padan!":"👍 Match!", "👍 Bagus! Terus pecah!":"👍 Good! Keep popping!", "👍 Jumpa!":"👍 Found it!", "✏️ Isi semua kotak dulu ya!":"✏️ Fill in all the boxes first!",
+    "✏️ Ikut garisan ya, jangan conteng banyak! Tekan Padam untuk cuba semula.":"✏️ Follow the line, don't scribble! Tap Erase to try again.", "✏️ Perlahan-lahan ya, jejak sampai habis!":"✏️ Slowly now, trace all the way!",
+    "🖍️ Warnakan sekurang-kurangnya 3 bahagian dulu ya!":"🖍️ Colour at least 3 parts first!", "Cuba fikir lagi":"Think again", "Pandainya!":"Well done!",
+    "Sila masukkan nama murid 😊":"Please enter the student's name 😊", "Sila taip nama murid dulu 😊":"Please type the student's name first 😊", "Tiada soalan untuk pilihan ini. Cuba pilih 'Semua'.":"No questions for this choice. Try 'All'.",
+    "Peranti ini sudah diaktifkan dengan akaun lain.":"This device is already activated with another account.", "Gagal berhubung dengan server. Cuba lagi.":"Could not connect to the server. Try again.",
+    "Diluluskan! Selamat datang.":"Approved! Welcome.", "Menyemak akses...":"Checking access...", "Sedang menyemak kelulusan...":"Checking approval...",
+    "Sila masukkan Token ID atau guna pautan dari emel.":"Please enter the Token ID or use the link from your email.", "Format Link / Token tidak sah.":"Invalid link / token format.",
+    // ---- laporan
+    "Betul":"Correct", "Betul percubaan pertama":"Correct on first try", "Soalan dijawab":"Questions answered", "Bintang sahabat":"Buddy stars", "Stiker dikumpul":"Stickers collected",
+    "Laporan Kemajuan Belajar":"Learning Progress Report", "Laporan Ibu Bapa  •  Jom Belajar!":"Parent Report  •  Jom Belajar!", "Prestasi mengikut topik":"Performance by topic", "Sesi terkini":"Recent sessions",
+    "Tarikh":"Date", "Topik":"Topic", "Markah":"Score", "Belum ada rekod. Main beberapa permainan dahulu.":"No records yet. Play a few games first.", "Belum ada rekod murid. Main dulu ya!":"No student records yet. Play first!",
+    "Rekod disimpan dalam peranti murid dan dijana oleh Jom Belajar! (mastaxul.my).":"Records are stored on the student's device and generated by Jom Belajar! (mastaxul.my).",
+    "Nota: 'Betul percubaan pertama' bermaksud jawapan betul tanpa tersilap dahulu.":"Note: 'Correct on first try' means answered correctly without a mistake first.",
+    "Gelaran:":"Title:", "Soalan betul (percubaan pertama):":"Correct questions (first try):", "Bintang:":"Stars:", "Cerita:":"Stories:", "Stiker:":"Stickers:", "Streak terbaik:":"Best streak:", "Jumlah bintang:":"Total stars:",
+    "Pelajar Cilik":"Little Learner", "Bintang Rajin":"Diligent Star", "Juara Cilik":"Little Champion", "Wira Ilmu":"Knowledge Hero", "Raja Ilmu":"Knowledge King",
+    // ---- label topik
+    "🔤 Huruf Rumi":"🔤 Rumi Letters", "🕌 Huruf Jawi":"🕌 Jawi Letters (BM)", "🔢 Nombor":"🔢 Numbers", "🖼️ Teka Gambar":"🖼️ Picture Guess (BM)", "🧩 Silang Kata":"🧩 Crossword (BM)", "🔠 Silang Kata":"🔠 Crossword (BM)",
+    "🎨 Warna & Bentuk":"🎨 Colours & Shapes", "✍️ Jejak Huruf":"✍️ Trace Letters", "✍️ Jejak Huruf & Nombor":"✍️ Trace Letters & Numbers", "🔁 Teka Corak":"🔁 Patterns", "🎈 Pecah Belon":"🎈 Pop Balloons",
+    "🃏 Padan Kad":"🃏 Memory Cards", "🧍 Anggota Badan":"🧍 Body Parts", "🔡 Suku Kata":"🔡 Malay Syllables (BM)", "🐮 Haiwan & Bunyi":"🐮 Animals & Sounds", "🧩 Puzzle Gambar":"🧩 Picture Puzzle", "🍎 Buah & Sayur":"🍎 Fruits & Vegetables",
+    "🚗 Kenderaan":"🚗 Vehicles", "👩‍⚕️ Pekerjaan":"👩‍⚕️ Jobs", "↔️ Lawan Kata":"↔️ Opposites (BM)", "😊 Perasaan & Adab":"😊 Feelings & Manners (BM)", "📅 Hari & Bulan":"📅 Days & Months (BM)",
+    "🕌 Islam & Hijaiyah":"🕌 Islam & Hijaiyah (BM)", "🖍️ Mewarna":"🖍️ Colouring", "🧼 Rutin & Kebersihan":"🧼 Routines & Hygiene (BM)", "🇬🇧 Bahasa Inggeris":"🇬🇧 English Basics", "💰 Duit RM & Kedai":"💰 Malaysian Money & Shop",
+    "🕐 Baca Jam":"🕐 Reading the Clock", "🇲🇾 Malaysia Kita":"🇲🇾 Malaysia (BM)", "🔬 Sains Mudah":"🔬 Simple Science (BM)", "🎯 Arkad Laju":"🎯 Fast Arcade", "🌈 Semua Topik (campuran)":"🌈 All Topics (mixed)",
+    "🌈 Semua Topik":"🌈 All Topics", "🎈 Pecah Belon":"🎈 Pop Balloons", "🌈 Jom Belajar!":"🌈 Jom Belajar!", "🏝️ Pengembaraan":"🏝️ Adventure",
+    // ---- umum perkataan
+    "Kiri":"Left", "Kanan":"Right", "Cukup":"Enough", "Tidak cukup":"Not enough", "Darat":"Land", "Air":"Water", "Udara":"Air", "Buah":"Fruit", "Sayur":"Vegetable", "Terapung":"Floats", "Tenggelam":"Sinks"
+};
+
+/* Corak parametrik: [regex, fungsi/terjemahan] — dipadankan pada teks yang sudah dipangkas */
+const W_ = s => trw(s);
+const PAT = [
+    [/^Soalan (\d+)$/, "Question $1"], [/^Betul: (\d+) \| Dijawab: (\d+) soalan$/, "Correct: $1 | Answered: $2 questions"], [/^Markah: (\d+)$/, "Score: $1"],
+    [/^(.+) • Tahap (\d+)$/, (a, b) => a + " • Level " + b], [/^Tahap (\d+)$/, "Level $1"], [/^Mod demo/, "Demo mode"],
+    [/^Dijumpai: (.+)$/, "Found: $1"], [/^Tangkap: (.+?)\s+\|\s+Masa: (.+)$/, "Caught: $1  |  Time: $2"], [/^Dibayar: (.+) \/ (.+)$/, (a, b) => "Paid: " + trs(a) + " / " + trs(b)],
+    [/^(\d+) sen$/, "$1 cents"], [/^(\d+) keping$/, "$1 pieces"],
+    [/^😊 Tak apa! Jawapan: (.+)$/, (a) => "😊 It's okay! Answer: " + W_(a)],
+    [/^🙂 Itu (.+)\. Cari (.+)!$/, (a, b) => "🙂 That is the " + W_(a) + ". Find the " + W_(b) + "!"], [/^🙂 Bukan itu, cari (.+)!$/, (a) => "🙂 Not that one, find " + W_(a) + "!"],
+    [/^🙂 Cari (.+) dulu!$/, (a) => "🙂 Find " + W_(a) + " first!"], [/^🙂 Itu bukan (.+)\. Cari lagi!$/, (a) => "🙂 That's not " + W_(a) + ". Keep looking!"],
+    [/^🙂 Bukan itu! Cari (.+)$/, (a) => "🙂 Not that! Find " + W_(a)], [/^🙂 Kurang lagi (.+)!$/, (a) => "🙂 Still short by " + trs(a) + "!"], [/^🙂 Terlebih (.+)\. Tekan Kosongkan\.$/, (a) => "🙂 Over by " + trs(a) + ". Tap Clear."],
+    [/^🔥 Hari ke-(\d+) berturut-turut! \+1 ⭐(.*)$/, (a, b) => "🔥 Day " + a + " in a row! +1 ⭐" + b.replace("bonus", "bonus")],
+    [/^Tahniah! Naik tahap (\d+)$/, "Congratulations! Level $1"], [/^🎉 Sahabat naik tahap (\d+)! \+2 ⭐$/, "🎉 Buddy reached level $1! +2 ⭐"],
+    [/^Perlu (\d+) ⭐\. Jawab soalan untuk kumpul bintang!$/, "You need $1 ⭐. Answer questions to collect stars!"], [/^(\d+) ⭐ untuk buka$/, "$1 ⭐ to unlock"],
+    [/^Hai, (.+)!$/, "Hi, $1!"],
+    // soalan
+    [/^Seret huruf (.+) ke kotak!$/, "Drag the letter $1 to the box!"], [/^Seret nombor (.+) ke kotak!$/, "Drag the number $1 to the box!"], [/^Seret warna (.+) ke kotak!$/, (a) => "Drag the colour " + W_(a) + " to the box!"],
+    [/^Seret (.+) ke kotak!$/, (a) => "Drag the " + W_(a) + " to the box!"], [/^Seret lawan kata/, (m) => m],
+    [/^Mana warna (.+)\?$/, (a) => "Which is the colour " + W_(a) + "?"], [/^Mana bentuk (.+)\?$/, (a) => "Which is the shape " + W_(a) + "?"], [/^Mana gambar (.+)\?$/, (a) => "Which picture is the " + W_(a) + "?"],
+    [/^Huruf apa selepas (.+)\?$/, "Which letter comes after $1?"], [/^Huruf apa sebelum (.+)\?$/, "Which letter comes before $1?"], [/^Nombor apa selepas (.+)\?$/, "Which number comes after $1?"], [/^Nombor apa sebelum (.+)\?$/, "Which number comes before $1?"],
+    [/^(Huruf apa yang hilang\?)\n([\s\S]+)$/, (a, b) => "Which letter is missing?\n" + b], [/^(Nombor apa yang hilang\?)\n([\s\S]+)$/, (a, b) => "Which number is missing?\n" + b],
+    [/^Berapa banyak\?\n([\s\S]+)$/, (a) => "How many?\n" + a], [/^Cari (\d+) huruf (.+)!$/, "Find $1 of the letter $2!"], [/^Cari (\d+) nombor (.+)!$/, "Find $1 of the number $2!"],
+    [/^Cari (\d+) (.+) yang tersembunyi!$/, "Find $1 hidden $2!"], [/^Tangkap huruf (.+) yang jatuh!$/, "Catch the falling letter $1!"], [/^Tangkap nombor (.+) yang jatuh!$/, "Catch the falling number $1!"],
+    [/^Pecah belon ikut turutan: (.+)!$/, "Pop the balloons in order: $1!"], [/^Pecah semua belon nombor (.+)!$/, "Pop all the balloons with the number $1!"], [/^Pecah semua belon huruf (.+)!$/, "Pop all the balloons with the letter $1!"],
+    [/^Bantu (.+) cari (.+)! \((.+)\)$/, "Help $1 find $2! ($3)"], [/^Jejak huruf besar (.+) ikut garisan!$/, "Trace the capital letter $1 along the line!"], [/^Jejak huruf kecil (.+) ikut garisan!$/, "Trace the small letter $1 along the line!"],
+    [/^Jejak nombor (.+) ikut garisan!$/, "Trace the number $1 along the line!"], [/^Warnakan (.+) dengan cantik!$/, (a) => "Colour the " + W_(a) + " nicely!"], [/^Mari mewarna (.+)!$/, (a) => "Let's colour the " + W_(a) + "!"],
+    [/^Warnakan (.+) guna warna kegemaran anda!$/, (a) => "Colour the " + W_(a) + " with your favourite colours!"],
+    [/^Sentuh (.+) pada gambar!$/, (a) => "Touch the " + W_(a) + " on the picture!"], [/^Tekan (.+)!$/, (a) => "Tap the " + W_(a) + "!"], [/^Mana (.+)\?$/, (a) => "Where is the " + W_(a) + "?"],
+    [/^Kita guna (.+) untuk apa\?$/, (a) => "What do we use the " + W_(a) + " for?"], [/^Kita guna apa untuk (.+)\?$/, (a) => "What do we use for " + W_(a) + "?"], [/^Berapa banyak (.+) yang kita ada\?$/, (a) => "How many " + W_(a) + " do we have?"],
+    [/^Apakah bunyi (.+)\?$/, (a) => "What sound does the " + W_(a) + " make?"], [/^Berapa kaki (.+)\?$/, (a) => "How many legs does the " + W_(a) + " have?"],
+    [/^Mana haiwan yang boleh (.+)\?$/, (a) => "Which animal can " + W_(a) + "?"], [/^Mana satu bergerak di (.+)\?$/, (a) => "Which one moves on " + W_(a) + "?"],
+    [/^Siapa yang (.+)\?$/, (a) => "Who " + W_(a) + "?"], [/^Apa kerja (.+)\?$/, (a) => "What does the " + W_(a) + " do?"],
+    [/^Mana wang (.+)\?$/, (a) => "Which is " + trs(a) + "?"], [/^Beli (.+) (RM[\d.]+|\d+ sen)\. Bayar (RM[\d.]+)\. Berapa baki\?$/, (a, b, c) => "Buy " + W_(a) + " " + trs(b) + ". Pay " + c + ". How much change?"],
+    [/^Ada (.+)\. (.+) harga (.+)\. Cukup tak\?$/, (a, b, c) => "You have " + trs(a) + ". The " + W_(b) + " costs " + trs(c) + ". Is it enough?"],
+    [/^Kedai mini: beli (.+)\. Harganya (.+)\. Bayar tepat!$/, (a, b) => "Mini shop: buy " + W_(a) + ". The price is " + trs(b) + ". Pay the exact amount!"],
+    [/^Apakah "(.+)" dalam Bahasa Inggeris\?$/, 'What is "$1" in English?'], [/^"(.+)" dalam Bahasa Melayu ialah\?$/, 'What is "$1" in Malay?'],
+    [/^Susun semula gambar!\n[\s\S]*$/, "Rearrange the picture!\nTap two pieces to swap them."],
+    [/^Padankan (.+)$/, (a) => "Match " + trs("Padankan " + a).replace(/^Match /, "")]
+];
+// fungsi pembantu supaya corak "Padankan" menggunakan kamus
+Object.assign(D, {
+    "Padankan huruf besar dan kecil":"Match capital and small letters", "Padankan huruf besar dan kecil!":"Match capital and small letters!", "Padankan nombor dengan perkataan":"Match the numbers with the words",
+    "Padankan nombor dengan perkataan!":"Match the numbers with the words!", "Padankan warna dengan namanya":"Match the colours with their names", "Padankan gambar dengan nama":"Match the pictures with the names",
+    "Padankan gambar dengan nama!":"Match the pictures with the names!", "Padankan haiwan dengan bunyinya":"Match the animals with their sounds", "Padankan haiwan dengan makanannya":"Match the animals with their food",
+    "Padankan haiwan dengan makanannya!":"Match the animals with their food!", "Padankan kenderaan dengan namanya":"Match the vehicles with their names", "Padankan pekerjaan dengan namanya":"Match the jobs with their names",
+    "Huruf besar apakah ini?":"Which capital letter is this?", "Huruf kecil apakah ini?":"Which small letter is this?", "Huruf apa yang hilang?":"Which letter is missing?", "Mana satu huruf vokal?":"Which one is a vowel letter?",
+    "Dengar dan pilih huruf yang betul":"Listen and choose the right letter", "Dengar dan pilih nombor yang betul":"Listen and choose the right number", "Nombor apakah ini?":"Which number is this?", "Berapa banyak?":"How many?",
+    "Berapa jumlahnya?":"What is the total?", "Berapa bakinya?":"What is left?", "Nombor apa yang hilang?":"Which number is missing?", "Mana nombor yang lebih besar?":"Which number is bigger?", "Mana nombor yang lebih kecil?":"Which number is smaller?",
+    "Sebelah mana yang lebih banyak?":"Which side has more?", "Warna apakah ini?":"What colour is this?", "Bentuk apakah ini?":"What shape is this?", "Apakah warna benda ini?":"What colour is this thing?",
+    "Apa yang seterusnya?":"What comes next?", "Mana yang berbeza?":"Which one is different?", "Cari kad gambar yang sama!":"Find the matching picture cards!", "Cari huruf yang sama!":"Find the matching letters!", "Cari nombor yang sama!":"Find the matching numbers!",
+    "Bahagian badan apakah ini?":"Which body part is this?", "Berapa jari di dua tangan kita?":"How many fingers are on two hands?", "Haiwan apa yang berbunyi macam ini?":"Which animal makes this sound?", "Haiwan apakah ini?":"Which animal is this?",
+    "Apa yang dimakan oleh haiwan ini?":"What does this animal eat?", "Buah apakah ini?":"Which fruit is this?", "Sayur apakah ini?":"Which vegetable is this?", "Ini buah atau sayur?":"Is this a fruit or a vegetable?", "Mana satu buah?":"Which one is a fruit?",
+    "Mana satu sayur?":"Which one is a vegetable?", "Kenderaan apakah ini?":"Which vehicle is this?", "Kenderaan ini bergerak di mana?":"Where does this vehicle travel?", "Siapakah ini?":"Who is this?", "Berapakah nilai wang ini?":"What is the value of this money?",
+    "Mana nilai yang lebih besar?":"Which value is bigger?", "Pukul berapa sekarang?":"What time is it?", "Terapung atau tenggelam dalam air?":"Does it float or sink in water?", "Jejak":"Trace"
+});
+
+Object.assign(D, {
+    "Jejak Huruf A - Z":"Trace Letters A - Z", "Jejak Nombor 0 - 9":"Trace Numbers 0 - 9", "Kira dan Tulis Nombor":"Count and Write the Number", "Warnakan Bentuk":"Colour the Shapes",
+    "Tambah (sehingga 10)":"Addition (up to 10)", "Tolak (sehingga 10)":"Subtraction (up to 10)", "Jawapan (untuk ibu bapa)":"Answers (for parents)", "Nama:":"Name:", "Tarikh:":"Date:", "Ada berapa?":"How many?",
+    "Warnakan setiap bentuk dengan cantik!":"Colour each shape nicely!", "Bulatan":"Circle", "Segi empat":"Square", "Segi tiga":"Triangle", "Bintang":"Star", "Tambah:":"Addition:", "Tolak:":"Subtraction:",
+    "Dongeng Haiwan":"Animal Tales (BM)", "Pahlawan Melayu":"Malay Heroes (BM)", "Cerita Teladan":"Moral Stories (BM)", "Sahabat Fantasia":"Fantasy Friends (BM)", "Cerita Sebelum Tidur":"Bedtime Stories (BM)",
+    "English Stories":"English Stories", "Tamat cerita! 🎉":"The end! 🎉", "Cerita Bersuara":"Audio Stories",
+    "🇨🇳 Semua Mandarin":"🇨🇳 All Mandarin", "🇬🇧 Semua English":"🇬🇧 All English", "💬 Maklum Balas":"💬 Feedback"
+});
+PAT.push(
+    [/^\((\d+) cerita\)$/, "($1 stories)"], [/^Paling kuat: (.+) \((\d+)%\)$/, (a, b) => "Strongest: " + trs(a) + " (" + b + "%)"],
+    [/^Perlu latihan lagi: (.+) \((\d+)%\)$/, (a, b) => "Needs more practice: " + trs(a) + " (" + b + "%)"],
+    [/^Gelaran: (.+?)\s+\|\s+Tarikh laporan: (.+)$/, (a, b) => "Title: " + trs(a) + "    |    Report date: " + b],
+    [/^Streak terbaik: (\d+) hari\s+\|\s+Cerita dibaca: (\d+)$/, "Best streak: $1 days    |    Stories read: $2"],
+    [/^Seterusnya: (.+) \((\d+) betul\)$/, (a, b) => "Next: " + trs(a) + " (" + b + " correct)"]);
+// buang corak berpotensi rekursi
+for (let i = PAT.length - 1; i >= 0; i--) { const s = String(PAT[i][0]); if (s.indexOf("Padankan (.+)") >= 0 || s.indexOf("Seret lawan kata") >= 0) PAT.splice(i, 1); }
+PAT.push([/^Apa yang seterusnya\?\n([\s\S]+)\nSeret ke kotak!$/, (a) => "What comes next?\n" + a + "\nDrag it to the box!"]);
+// corak umum "Mana ..." mesti paling akhir supaya corak khusus dipadankan dahulu
+(function () { const i = PAT.findIndex(x => String(x[0]) === "/^Mana (.+)\\?$/"); if (i >= 0) PAT.push(PAT.splice(i, 1)[0]); })();
+PAT.forEach(p => { if (String(p[0]).indexOf("Mana satu bergerak di") >= 0) p[1] = a => "Which one travels by " + W_(a) + "?"; });
+
+/* ---- terjemah ---- */
+function trs(s) {
+    if (LANG !== "en" || typeof s !== "string" || !s) return s;
+    const k = s.trim(); if (!k) return s;
+    if (D[k] !== undefined) return s.replace(k, () => D[k]);
+    for (let i = 0; i < PAT.length; i++) {
+        const re = PAT[i][0], rep = PAT[i][1], m = k.match(re);
+        if (m) { const out = typeof rep === "function" ? rep.apply(null, m.slice(1)) : k.replace(re, rep); return s.replace(k, () => out); }
+    }
+    return s;
+}
+
+let VOCL = null;
+const MAN = {
+    "bulatan":"circle", "segi empat":"square", "segi tiga":"triangle", "bintang":"star", "hati":"heart", "bulan sabit":"crescent", "berlian":"diamond",
+    "strawberi":"strawberry", "nanas":"pineapple", "tembikai":"watermelon", "mangga":"mango", "kelapa":"coconut", "pic":"peach", "ceri":"cherry", "terung":"eggplant", "brokoli":"broccoli",
+    "kentang":"potato", "bawang":"onion", "cili":"chili", "sawi":"cabbage", "karot":"carrot", "timun":"cucumber", "jagung":"corn", "anggur":"grapes", "epal":"apple", "pisang":"banana", "oren":"orange",
+    "kereta":"car", "bas":"bus", "basikal":"bicycle", "motosikal":"motorcycle", "lori":"truck", "ambulans":"ambulance", "kereta bomba":"fire truck", "kereta polis":"police car", "traktor":"tractor",
+    "kereta api":"train", "kapal terbang":"airplane", "helikopter":"helicopter", "roket":"rocket", "kapal":"ship", "bot layar":"sailboat",
+    "doktor":"doctor", "polis":"police officer", "guru":"teacher", "bomba":"firefighter", "tukang masak":"chef", "petani":"farmer", "juruterbang":"pilot", "pekerja binaan":"builder", "mekanik":"mechanic",
+    "merawat orang sakit":"treats sick people", "menjaga keselamatan":"keeps people safe", "mengajar murid":"teaches students", "memadam api":"puts out fires", "memasak makanan":"cooks food",
+    "menanam sayur":"grows vegetables", "menerbangkan kapal terbang":"flies airplanes", "membina rumah":"builds houses", "membaiki kereta":"repairs cars",
+    "mata":"eyes", "telinga":"ears", "hidung":"nose", "mulut":"mouth", "lidah":"tongue", "gigi":"teeth", "tangan":"hands", "kaki":"feet", "otak":"brain", "lengan":"arms",
+    "rambut":"hair", "muka":"face", "leher":"neck", "badan":"body", "lutut":"knee",
+    "melihat":"seeing", "mendengar":"hearing", "menghidu bau":"smelling", "makan dan bercakap":"eating and talking", "merasa makanan":"tasting food", "mengunyah makanan":"chewing food",
+    "memegang benda":"holding things", "berjalan dan berlari":"walking and running", "berfikir":"thinking", "mengangkat benda":"lifting things",
+    "terbang":"fly", "berenang di dalam air":"swim in water", "berjalan di atas tanah":"walk on land", "darat":"land", "air":"water", "udara":"air",
+    "gula-gula":"candy", "aiskrim":"ice cream", "biskut":"cookie", "belon":"balloon", "pensil":"pencil", "roti":"bread", "jus":"juice", "donat":"donut", "coklat":"chocolate", "susu":"milk",
+    "hitam dan putih":"black and white", "wajah":"face", "gembira":"happy", "sedih":"sad", "marah":"angry", "mengantuk":"sleepy", "terkejut":"surprised", "takut":"scared", "sakit":"sick", "sayang":"loving"
+};
+function buildVoc() {
+    VOCL = {};
+    const put = (ms, en) => { if (ms && en) VOCL[String(ms).toLowerCase()] = String(en).toLowerCase(); };
+    const byE = {};
+    [EN_ANIMALS, EN_FRUIT, EN_THINGS, EN_BODY, EN_COLORS].forEach(l => l.forEach(x => { byE[x[0]] = x[1]; }));
+    const link = (list, ie, im) => list.forEach(x => { const en = byE[x[ie]]; if (en) put(x[im], en); });
+    link(WORDS, 1, 0); link(ANIMALS, 0, 1); link(BODY, 0, 1); link(COLORS, 0, 1); link(FRUIT, 0, 1); link(VEG, 0, 1);
+    NUM_WORDS.forEach((w, i) => put(w, EN_NUMS[i]));
+    Object.keys(MAN).forEach(k => put(k, MAN[k]));
+    if (typeof VOCAB_SETS !== "undefined") VOCAB_SETS.forEach(S => S.items.forEach(x => { if (x.ms && x.en) put(x.ms, x.en); }));
+}
+function trw(w) {
+    if (LANG !== "en" || typeof w !== "string") return w;
+    if (!VOCL) buildVoc();
+    const k = w.trim(); if (!k) return w;
+    if (D[k] !== undefined) return w.replace(k, () => D[k]);
+    const v = VOCL[k.toLowerCase()];
+    if (v === undefined) return w;
+    let out = v;
+    if (k.length > 1 && k === k.toUpperCase()) out = v.toUpperCase(); else if (k[0] === k[0].toUpperCase()) out = v[0].toUpperCase() + v.slice(1);
+    return w.replace(k, () => out);
+}
+const tw2 = x => (typeof x === "string" ? trs(trw(x)) : x);
+
+/* Salinan soalan dalam bahasa semasa (BM kekal sama) */
+function localizeQ(q) {
+    if (LANG !== "en" || q.msOnly) return q;
+    const o = Object.assign({}, q);
+    o.question = q.qen || trs(q.question);
+    if (!q.html && typeof q.display === "string") o.display = tw2(q.display);
+    if (q.type === "choice" && q.options && !q.htmlOpts) { const m = q.options.map(tw2); if (new Set(m).size === m.length) { o.options = m; o.answer = tw2(q.answer); } }
+    if (q.type === "drag" && q.items) { const m = q.items.map(tw2); if (new Set(m).size === m.length) { o.items = m; o.answer = tw2(q.answer); } }
+    if ((q.type === "match" || q.type === "memory") && q.pairs) o.pairs = q.pairs.map(p => [tw2(p[0]), tw2(p[1])]);
+    return o;
+}
+
+/* ---- penterjemah DOM (teks statik & dinamik) ---- */
+const ORIG = new WeakMap(), ATTRS = ["placeholder", "title", "aria-label"];
+let obs = null;
+function trNode(n) {
+    const v = n.nodeValue;
+    if (!v || !/[A-Za-z]/.test(v)) return;
+    const t = trs(v);
+    if (t !== v) { if (!ORIG.has(n)) ORIG.set(n, v); n.nodeValue = t; }
+}
+function trTree(root) {
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: x => (x.parentNode && /^(SCRIPT|STYLE|TEXTAREA)$/.test(x.parentNode.nodeName)) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+    let n; while ((n = w.nextNode())) trNode(n);
+    if (root.querySelectorAll) root.querySelectorAll("[placeholder],[title],[aria-label]").forEach(el => ATTRS.forEach(a => {
+        const v = el.getAttribute(a);
+        if (v) { const t = trs(v); if (t !== v) { el.setAttribute("data-ms-" + a, v); el.setAttribute(a, t); } }
+    }));
+}
+function restoreMs() {
+    const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let n; while ((n = w.nextNode())) if (ORIG.has(n)) { n.nodeValue = ORIG.get(n); ORIG.delete(n); }
+    document.querySelectorAll("*").forEach(el => ATTRS.forEach(a => { const v = el.getAttribute("data-ms-" + a); if (v !== null) { el.setAttribute(a, v); el.removeAttribute("data-ms-" + a); } }));
+}
+function startObs() {
+    if (obs) return;
+    obs = new MutationObserver(muts => {
+        if (LANG !== "en") { obs.takeRecords(); return; }
+        muts.forEach(m => {
+            if (m.type === "characterData") trNode(m.target);
+            else m.addedNodes.forEach(a => { if (a.nodeType === 3) trNode(a); else if (a.nodeType === 1) trTree(a); });
+        });
+        obs.takeRecords();
+    });
+    obs.observe(document.body, { childList:true, subtree:true, characterData:true });
+}
+function refreshDynamic() {
+    const vis = SCREENS.find(s => !$(s).classList.contains("hidden"));
+    const m = { hubScreen:() => renderHub(), careScreen:() => renderCare(), worldScreen:() => renderWorld(), petsScreen:() => renderPets(), reportScreen:() => renderReport(), albumScreen:() => renderAlbum() };
+    if (m[vis]) m[vis]();
+}
+function setLang(l) {
+    LANG = l; try { localStorage.setItem("jomBelajar_lang", l); } catch (e) {}
+    document.documentElement.lang = l === "en" ? "en" : "ms";
+    if (l === "en") { trTree(document.body); startObs(); } else restoreMs();
+    const b = $("langBtn"); if (b) b.textContent = l === "en" ? "🌐 EN" : "🌐 BM";
+    try { refreshDynamic(); } catch (e) {}
+}
+function toggleLang() { setLang(LANG === "en" ? "ms" : "en"); }
+
+/* ---- suara berurutan (arahan dalam bahasa UI + perkataan dalam bahasa sasaran) ---- */
+function speakSeq(list, force) {
+    if ((!soundOn && !force) || !("speechSynthesis" in window)) return;
+    try {
+        speechSynthesis.cancel();
+        list.forEach(it => {
+            const ui = !it.l || it.l === "ui";
+            const t0 = String(it.t).replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, " ").replace(/\n/g, ", ").trim();
+            const t = ui ? trs(t0) : t0;
+            if (!t) return;
+            const u = new SpeechSynthesisUtterance(t);
+            u.lang = ui ? (LANG === "en" ? "en-US" : "ms-MY") : it.l; u.rate = it.l === "zh-CN" ? .75 : .85;
+            speechSynthesis.speak(u);
+        });
+    } catch (e) {}
+}
+
+/* ============================================================
+   MANDARIN ASAS + ENGLISH (set kosa kata dan penjana)
+============================================================ */
+const ZH = "zh-CN", EN_L = "en-US";
+const zi = (e, w, py, ms, en) => ({ e, w, py, ms, en });
+const ei = (e, w) => ({ e, w });
+const VOCAB_SETS = [
+    { cat:"zh_nombor", lang:ZH, count:true, items:[zi("0", "零", "líng", "sifar", "zero"), zi("1", "一", "yī", "satu", "one"), zi("2", "二", "èr", "dua", "two"), zi("3", "三", "sān", "tiga", "three"), zi("4", "四", "sì", "empat", "four"),
+        zi("5", "五", "wǔ", "lima", "five"), zi("6", "六", "liù", "enam", "six"), zi("7", "七", "qī", "tujuh", "seven"), zi("8", "八", "bā", "lapan", "eight"), zi("9", "九", "jiǔ", "sembilan", "nine"), zi("10", "十", "shí", "sepuluh", "ten")] },
+    { cat:"zh_warna", lang:ZH, items:[zi("🔴", "红色", "hóngsè", "merah", "red"), zi("🔵", "蓝色", "lánsè", "biru", "blue"), zi("🟡", "黄色", "huángsè", "kuning", "yellow"), zi("🟢", "绿色", "lǜsè", "hijau", "green"),
+        zi("🟠", "橙色", "chéngsè", "jingga", "orange"), zi("🟣", "紫色", "zǐsè", "ungu", "purple"), zi("⚫", "黑色", "hēisè", "hitam", "black"), zi("⚪", "白色", "báisè", "putih", "white"), zi("🟤", "棕色", "zōngsè", "coklat", "brown")] },
+    { cat:"zh_haiwan", lang:ZH, items:[zi("🐱", "猫", "māo", "kucing", "cat"), zi("🐶", "狗", "gǒu", "anjing", "dog"), zi("🐟", "鱼", "yú", "ikan", "fish"), zi("🐦", "鸟", "niǎo", "burung", "bird"), zi("🐔", "鸡", "jī", "ayam", "chicken"),
+        zi("🦆", "鸭子", "yāzi", "itik", "duck"), zi("🐄", "牛", "niú", "lembu", "cow"), zi("🐴", "马", "mǎ", "kuda", "horse"), zi("🐐", "羊", "yáng", "kambing", "goat"), zi("🐰", "兔子", "tùzi", "arnab", "rabbit"),
+        zi("🐯", "老虎", "lǎohǔ", "harimau", "tiger"), zi("🦁", "狮子", "shīzi", "singa", "lion"), zi("🐘", "大象", "dàxiàng", "gajah", "elephant"), zi("🐒", "猴子", "hóuzi", "monyet", "monkey"), zi("🐼", "熊猫", "xióngmāo", "panda", "panda"),
+        zi("🐢", "乌龟", "wūguī", "kura-kura", "turtle"), zi("🐸", "青蛙", "qīngwā", "katak", "frog"), zi("🦋", "蝴蝶", "húdié", "rama-rama", "butterfly"), zi("🐝", "蜜蜂", "mìfēng", "lebah", "bee"), zi("🦒", "长颈鹿", "chángjǐnglù", "zirafah", "giraffe")] },
+    { cat:"zh_buah", lang:ZH, items:[zi("🍎", "苹果", "píngguǒ", "epal", "apple"), zi("🍌", "香蕉", "xiāngjiāo", "pisang", "banana"), zi("🍊", "橙子", "chéngzi", "oren", "orange"), zi("🍇", "葡萄", "pútao", "anggur", "grapes"),
+        zi("🍉", "西瓜", "xīguā", "tembikai", "watermelon"), zi("🍓", "草莓", "cǎoméi", "strawberi", "strawberry"), zi("🍍", "菠萝", "bōluó", "nanas", "pineapple"), zi("🥭", "芒果", "mángguǒ", "mangga", "mango"),
+        zi("🍋", "柠檬", "níngméng", "lemon", "lemon"), zi("🥥", "椰子", "yēzi", "kelapa", "coconut"), zi("🥕", "胡萝卜", "húluóbo", "karot", "carrot"), zi("🌽", "玉米", "yùmǐ", "jagung", "corn")] },
+    { cat:"zh_badan", lang:ZH, items:[zi("👁️", "眼睛", "yǎnjing", "mata", "eyes"), zi("👂", "耳朵", "ěrduo", "telinga", "ears"), zi("👃", "鼻子", "bízi", "hidung", "nose"), zi("👄", "嘴巴", "zuǐba", "mulut", "mouth"),
+        zi("✋", "手", "shǒu", "tangan", "hand"), zi("🦶", "脚", "jiǎo", "kaki", "foot"), zi("🦷", "牙齿", "yáchǐ", "gigi", "teeth"), zi("👅", "舌头", "shétou", "lidah", "tongue")] },
+    { cat:"zh_keluarga", lang:ZH, items:[zi("👨", "爸爸", "bàba", "ayah", "dad"), zi("👩", "妈妈", "māma", "ibu", "mum"), zi("👦", "哥哥", "gēge", "abang", "older brother"), zi("👧", "姐姐", "jiějie", "kakak", "older sister"),
+        zi("👴", "爷爷", "yéye", "datuk", "grandpa"), zi("👵", "奶奶", "nǎinai", "nenek", "grandma"), zi("👶", "宝宝", "bǎobao", "bayi", "baby"), zi("🧑‍🏫", "老师", "lǎoshī", "cikgu", "teacher")] },
+    { cat:"zh_salam", lang:ZH, noEmoji:true, items:[zi("", "你好", "nǐ hǎo", "Helo", "Hello"), zi("", "谢谢", "xièxie", "Terima kasih", "Thank you"), zi("", "再见", "zàijiàn", "Selamat tinggal", "Goodbye"), zi("", "对不起", "duìbuqǐ", "Maaf", "Sorry"),
+        zi("", "早上好", "zǎoshang hǎo", "Selamat pagi", "Good morning"), zi("", "晚安", "wǎn'ān", "Selamat malam", "Good night"), zi("", "不客气", "bú kèqi", "Sama-sama", "You're welcome"), zi("", "请", "qǐng", "Tolong", "Please")] },
+    { cat:"zh_makanan", lang:ZH, items:[zi("🍚", "米饭", "mǐfàn", "nasi", "rice"), zi("🍜", "面条", "miàntiáo", "mi", "noodles"), zi("🍞", "面包", "miànbāo", "roti", "bread"), zi("🥛", "牛奶", "niúnǎi", "susu", "milk"),
+        zi("💧", "水", "shuǐ", "air", "water"), zi("🥚", "鸡蛋", "jīdàn", "telur", "egg"), zi("🍪", "饼干", "bǐnggān", "biskut", "cookie"), zi("🍰", "蛋糕", "dàngāo", "kek", "cake"), zi("🍲", "汤", "tāng", "sup", "soup"), zi("🧃", "果汁", "guǒzhī", "jus", "juice")] },
+    { cat:"zh_benda", lang:ZH, items:[zi("📖", "书", "shū", "buku", "book"), zi("⚽", "球", "qiú", "bola", "ball"), zi("🚗", "车", "chē", "kereta", "car"), zi("🏠", "房子", "fángzi", "rumah", "house"), zi("☀️", "太阳", "tàiyáng", "matahari", "sun"),
+        zi("🌙", "月亮", "yuèliang", "bulan", "moon"), zi("⭐", "星星", "xīngxing", "bintang", "star"), zi("🌸", "花", "huā", "bunga", "flower"), zi("🌳", "树", "shù", "pokok", "tree"), zi("🔥", "火", "huǒ", "api", "fire"),
+        zi("⛰️", "山", "shān", "gunung", "mountain"), zi("🎒", "书包", "shūbāo", "beg sekolah", "school bag"), zi("✏️", "铅笔", "qiānbǐ", "pensel", "pencil"), zi("🧢", "帽子", "màozi", "topi", "cap"), zi("👟", "鞋", "xié", "kasut", "shoe"), zi("🚪", "门", "mén", "pintu", "door")] },
+    { cat:"zh_bentuk", lang:ZH, items:[zi("⭕", "圆形", "yuánxíng", "bulatan", "circle"), zi("🟦", "正方形", "zhèngfāngxíng", "segi empat sama", "square"), zi("🔺", "三角形", "sānjiǎoxíng", "segi tiga", "triangle"),
+        zi("⭐", "星形", "xīngxíng", "bentuk bintang", "star shape"), zi("❤️", "心形", "xīnxíng", "bentuk hati", "heart shape")] },
+    { cat:"en_haiwan", lang:EN_L, items:EN_ANIMALS.map(x => ei(x[0], x[1])) },
+    { cat:"en_buah", lang:EN_L, items:EN_FRUIT.map(x => ei(x[0], x[1])) },
+    { cat:"en_warna", lang:EN_L, items:EN_COLORS.map(x => ei(x[0], x[1])) },
+    { cat:"en_badan", lang:EN_L, items:EN_BODY.map(x => ei(x[0], x[1])) },
+    { cat:"en_nombor", lang:EN_L, count:true, items:Array.from({ length:10 }, (_, i) => ei(String(i + 1), EN_NUMS[i + 1])) },
+    { cat:"en_keluarga", lang:EN_L, items:[ei("👩", "mother"), ei("👨", "father"), ei("👦", "brother"), ei("👧", "sister"), ei("👵", "grandma"), ei("👴", "grandpa"), ei("👶", "baby"), ei("🧑‍🏫", "teacher"), ei("👫", "friends")] },
+    { cat:"en_makanan", lang:EN_L, items:[ei("🍚", "rice"), ei("🍞", "bread"), ei("🥚", "egg"), ei("🥛", "milk"), ei("🧃", "juice"), ei("🍰", "cake"), ei("🍪", "cookie"), ei("🍕", "pizza"), ei("🍔", "burger"),
+        ei("🍦", "ice cream"), ei("🧀", "cheese"), ei("🍜", "noodles"), ei("🍲", "soup"), ei("💧", "water"), ei("🍗", "chicken leg")] },
+    { cat:"en_pakaian", lang:EN_L, items:[ei("👕", "shirt"), ei("👖", "pants"), ei("👗", "dress"), ei("👟", "shoes"), ei("🧢", "cap"), ei("🧦", "socks"), ei("🧥", "jacket"), ei("👓", "glasses"), ei("🎒", "bag"), ei("⌚", "watch"), ei("🧣", "scarf"), ei("🧤", "gloves")] },
+    { cat:"en_kenderaan", lang:EN_L, items:[ei("🚗", "car"), ei("🚌", "bus"), ei("🚲", "bicycle"), ei("🏍️", "motorbike"), ei("🚆", "train"), ei("✈️", "airplane"), ei("⛵", "boat"), ei("🚢", "ship"), ei("🚚", "truck"),
+        ei("🚕", "taxi"), ei("🚑", "ambulance"), ei("🚁", "helicopter"), ei("🚀", "rocket"), ei("🚒", "fire truck"), ei("🚓", "police car"), ei("🚜", "tractor")] },
+    { cat:"en_tindakan", lang:EN_L, items:[ei("🏃", "run"), ei("🚶", "walk"), ei("🏊", "swim"), ei("😴", "sleep"), ei("🍽️", "eat"), ei("🥤", "drink"), ei("📖", "read"), ei("✏️", "write"), ei("🎤", "sing"), ei("💃", "dance"),
+        ei("😢", "cry"), ei("😂", "laugh"), ei("👏", "clap"), ei("🪑", "sit"), ei("🧍", "stand"), ei("🚴", "ride a bike")] },
+    { cat:"en_cuaca", lang:EN_L, items:[ei("☀️", "sunny"), ei("🌧️", "rainy"), ei("☁️", "cloudy"), ei("💨", "windy"), ei("❄️", "snowy"), ei("⛈️", "stormy"), ei("🌈", "rainbow"), ei("🥵", "hot"), ei("🥶", "cold")] },
+    { cat:"en_kata", lang:EN_L, items:[ei("👋", "hello"), ei("🌅", "good morning"), ei("🌙", "good night"), ei("🙏", "please"), ei("😊", "thank you"), ei("😔", "sorry"), ei("✅", "yes"), ei("❌", "no"), ei("❤️", "I love you"), ei("🤝", "nice to meet you")] }
+];
+const ZH_CATS = VOCAB_SETS.filter(s => s.cat.indexOf("zh_") === 0).map(s => s.cat);
+const EN_CATS = VOCAB_SETS.filter(s => s.cat.indexOf("en_") === 0).map(s => s.cat).concat(["en_abc", "en_lawan"]);
+const LANG_CATS = ZH_CATS.concat(EN_CATS);
+Object.assign(CAT_LABEL, {
+    zh_nombor:"🇨🇳 Cina: Nombor 数字", zh_warna:"🇨🇳 Cina: Warna 颜色", zh_haiwan:"🇨🇳 Cina: Haiwan 动物", zh_buah:"🇨🇳 Cina: Buah 水果", zh_badan:"🇨🇳 Cina: Badan 身体",
+    zh_keluarga:"🇨🇳 Cina: Keluarga 家人", zh_salam:"🇨🇳 Cina: Salam 你好", zh_makanan:"🇨🇳 Cina: Makanan 食物", zh_benda:"🇨🇳 Cina: Benda 东西", zh_bentuk:"🇨🇳 Cina: Bentuk 形状",
+    en_abc:"🇬🇧 English: ABC", en_haiwan:"🇬🇧 English: Animals", en_buah:"🇬🇧 English: Fruits", en_nombor:"🇬🇧 English: Numbers", en_warna:"🇬🇧 English: Colours", en_badan:"🇬🇧 English: Body",
+    en_keluarga:"🇬🇧 English: Family", en_makanan:"🇬🇧 English: Food", en_pakaian:"🇬🇧 English: Clothes", en_kenderaan:"🇬🇧 English: Vehicles", en_tindakan:"🇬🇧 English: Actions",
+    en_cuaca:"🇬🇧 English: Weather", en_lawan:"🇬🇧 English: Opposites", en_kata:"🇬🇧 English: Greetings"
+});
+Object.assign(D, {
+    "🇨🇳 Cina: Nombor 数字":"🇨🇳 Chinese: Numbers 数字", "🇨🇳 Cina: Warna 颜色":"🇨🇳 Chinese: Colours 颜色", "🇨🇳 Cina: Haiwan 动物":"🇨🇳 Chinese: Animals 动物", "🇨🇳 Cina: Buah 水果":"🇨🇳 Chinese: Fruits 水果",
+    "🇨🇳 Cina: Badan 身体":"🇨🇳 Chinese: Body 身体", "🇨🇳 Cina: Keluarga 家人":"🇨🇳 Chinese: Family 家人", "🇨🇳 Cina: Salam 你好":"🇨🇳 Chinese: Greetings 你好", "🇨🇳 Cina: Makanan 食物":"🇨🇳 Chinese: Food 食物",
+    "🇨🇳 Cina: Benda 东西":"🇨🇳 Chinese: Things 东西", "🇨🇳 Cina: Bentuk 形状":"🇨🇳 Chinese: Shapes 形状",
+    "🍎 Kenyang":"🍎 Full", "💧 Dahaga":"💧 Thirst", "✨ Bersih":"✨ Clean", "😊 Gembira":"😊 Happy", "⚡ Tenaga":"⚡ Energy", "💝 Sahabat":"💝 Bond",
+    "Kampung Awan":"Cloud Village", "Akademi Ilmu":"Knowledge Academy", "Hutan Ajaib":"Magic Forest", "Gunung Naga":"Dragon Mountain", "Laut Kristal":"Crystal Sea", "Taman Peri":"Fairy Garden", "Lembah Api":"Fire Valley",
+    "Gua Ais":"Ice Cave", "Kota Bahasa":"Language City"
+});
+
+/* ---- penjana generik untuk setiap set ---- */
+function genVocab(add, ch) {
+    VOCAB_SETS.forEach(S => {
+        const I = S.items, zh = S.lang === ZH, cat = S.cat, L = S.lang, noE = !!S.noEmoji, n = I.length;
+        const hzs = w => (w.length === 1 ? 92 : w.length === 2 ? 72 : w.length === 3 ? 56 : 44);
+        const dispH = x => `<div class="hz" style="font-size:${hzs(x.w)}px">${x.w}</div><div class="py">${x.py}</div>`;
+        const optH = x => `<span class="hzw"><span class="hzo">${x.w}</span><span class="pyo">${x.py}</span></span>`;
+        const oth = (x, k) => shuffle(I.filter(y => y !== x)).slice(0, k);
+        const Q = (ms, en, o) => Object.assign({ question:ms, qen:en }, o);
+        const short = I.filter(x => x.w.length <= (zh ? 2 : 4) && !/\s/.test(x.w));
+        const noise = (x, k) => shuffle(I.filter(y => y !== x && y.e)).slice(0, k).map(y => y.e);
+
+        if (!noE) {
+            add(cat, n * 4, () => { const x = pick(I), o = shuffle([x, ...oth(x, 2)]);
+                return zh ? Q("Apakah ini dalam Bahasa Cina?", "What is this in Chinese?", { type:"choice", display:x.e, options:o.map(optH), htmlOpts:true, answer:optH(x), say:{ t:x.w, l:L } })
+                          : { type:"choice", question:"What is this?", display:x.e, options:o.map(y => y.w), answer:x.w, lang:L, say:{ t:x.w, l:L } }; });
+            add(cat, n * 4, () => { const x = pick(I), o = shuffle([x, ...oth(x, 2)]);
+                return zh ? Q("Pilih gambar yang sepadan dengan perkataan ini", "Pick the picture that matches this word", { type:"choice", html:true, display:dispH(x), options:o.map(y => y.e), answer:x.e, tap:{ t:x.w, l:L } })
+                          : { type:"choice", question:"Which picture is \"" + x.w + "\"?", display:x.w, options:o.map(y => y.e), answer:x.e, lang:L, tap:{ t:x.w, l:L } }; });
+            add(cat, n * 3, () => { const x = pick(I), o = shuffle([x, ...oth(x, 2)]), ins = zh ? "Dengar dan pilih gambar yang betul" : "Listen and pick the picture";
+                return Object.assign(zh ? Q(ins, "Listen and pick the picture", {}) : { question:ins, lang:L }, { type:"choice", display:"🔊", options:o.map(y => y.e), answer:x.e,
+                    sp:[{ t:ins, l:zh ? "ui" : L }, { t:x.w, l:L }], tap:{ t:x.w, l:L } }); });
+            add(cat, n * 3, () => { const x = pick(I), o = shuffle([x, ...oth(x, 2)]), ins = zh ? "Dengar dan pilih perkataan yang betul" : "Listen and pick the word";
+                return Object.assign(zh ? Q(ins, "Listen and pick the word", { htmlOpts:true }) : { question:ins, lang:L }, { type:"choice", display:"🔊", options:o.map(y => zh ? optH(y) : y.w), answer:zh ? optH(x) : x.w,
+                    sp:[{ t:ins, l:zh ? "ui" : L }, { t:x.w, l:L }], tap:{ t:x.w, l:L } }); });
+            add(cat, n * 3, () => { const s = shuffle(I).slice(0, 2 + rnd(2));
+                return zh ? Q("Padankan gambar dengan perkataan Cina", "Match the pictures with the Chinese words", { type:"match", pairs:s.map(x => [x.e, x.w]) })
+                          : { type:"match", question:"Match the picture and the word", pairs:s.map(x => [x.e, x.w]), lang:L }; });
+            add(cat, n * 3, () => { const s = shuffle(I).slice(0, 2 + rnd(3));
+                return zh ? Q("Cari pasangan: gambar dan perkataan Cina!", "Find the pairs: picture and Chinese word!", { type:"memory", pairs:s.map(x => [x.e, x.w]) })
+                          : { type:"memory", question:"Find the pairs: picture and word!", pairs:s.map(x => [x.e, x.w]), lang:L }; });
+            add(cat, n * 3, () => { const x = pick(I), c = 2 + rnd(3);
+                return zh ? Q("Cari " + c + " " + x.w + " (" + x.py + ")!", "Find " + c + " " + x.w + " (" + x.py + ")!", { type:"hidden", target:x.e, count:c, noise:noise(x, 5), sp:[{ t:"Cari " + c, l:"ui" }, { t:x.w, l:ZH }] })
+                          : { type:"hidden", question:"Find " + c + " \"" + x.w + "\"!", target:x.e, count:c, noise:noise(x, 5), lang:L }; });
+            add(cat, n * 2, () => { const x = pick(I);
+                return zh ? Q("Tangkap " + x.w + " (" + x.py + ") yang jatuh!", "Catch the falling " + x.w + " (" + x.py + ")!", { type:"catch", target:x.e, pool:noise(x, 5), need:5, secs:22, sp:[{ t:"Tangkap", l:"ui" }, { t:x.w, l:ZH }] })
+                          : { type:"catch", question:"Catch the falling \"" + x.w + "\"!", target:x.e, pool:noise(x, 5), need:5, secs:22, lang:L }; });
+            add(cat, n * 3, () => { const x = pick(I), o = shuffle([x.e, ...oth(x, 2).map(y => y.e)]);
+                return zh ? Q("Seret " + x.w + " ke kotak!", "Drag " + x.w + " to the box!", { type:"drag", items:o, answer:x.e, sp:[{ t:"Seret", l:"ui" }, { t:x.w, l:ZH }] })
+                          : { type:"drag", question:"Drag the \"" + x.w + "\" to the box!", items:o, answer:x.e, lang:L }; });
+            if (short.length >= 4) add(cat, n * 2, () => { const x = pick(short), c = 2 + rnd(2), dec = pickWrong(x.w, short.map(y => y.w), 6 - c);
+                if (dec.length < 6 - c) return null;
+                return zh ? Q("Pecah semua belon " + x.w + "!", "Pop all the balloons with " + x.w + "!", { type:"balloon", mode:"find", target:x.w, count:c, decoys:dec, sp:[{ t:"Pecah belon", l:"ui" }, { t:x.w, l:ZH }] })
+                          : { type:"balloon", mode:"find", target:x.w, count:c, decoys:dec, question:"Pop all the \"" + x.w + "\" balloons!", lang:L }; });
+            if (!zh) add(cat, n * 2, () => { const x = pick(I.filter(y => /^[a-z]{3,7}$/.test(y.w)) );
+                return x ? { type:"spell", question:"Spell the word!", display:x.e, answer:x.w.toUpperCase(), lang:L } : null; });
+        }
+        if (zh) {
+            add(cat, n * 3, () => { const x = pick(I), o = shuffle([x, ...oth(x, 2)]);
+                return Q("Pilih perkataan Cina yang sepadan dengan bunyi ini", "Choose the Chinese word that matches this sound", { type:"choice", display:x.py, options:o.map(y => y.w), answer:x.w, tap:{ t:x.w, l:L } }); });
+            add(cat, n * 3, () => { const x = pick(I), o = shuffle([x, ...oth(x, 2)]);
+                return Q("Apakah sebutan pinyin perkataan ini?", "What is the pinyin of this word?", { type:"choice", html:true, display:`<div class="hz" style="font-size:${hzs(x.w)}px">${x.w}</div>`, options:o.map(y => y.py), answer:x.py, tap:{ t:x.w, l:L } }); });
+            add(cat, n * 3, () => { const x = pick(I), o = shuffle([x, ...oth(x, 2)]);
+                return Q("Apakah maksud perkataan Cina ini?", "What does this Chinese word mean?", { type:"choice", html:true, display:dispH(x), options:o.map(y => y.ms), answer:x.ms, say:{ t:x.w, l:L }, tap:{ t:x.w, l:L } }); });
+            add(cat, n * 3, () => { const x = pick(I), o = shuffle([x, ...oth(x, 2)]);
+                return Q("Pilih perkataan Cina untuk \"" + x.ms + "\"", "Choose the Chinese word for \"" + x.en + "\"", { type:"choice", display:x.e || "💬", options:o.map(optH), htmlOpts:true, answer:optH(x), say:{ t:x.w, l:L } }); });
+            add(cat, n * 2, () => { const x = pick(I), o = shuffle([x, ...oth(x, 2)]);
+                return Q("Dengar dan pilih maksudnya", "Listen and choose the meaning", { type:"choice", display:"🔊", options:o.map(y => y.ms), answer:x.ms, sp:[{ t:"Dengar dan pilih maksudnya", l:"ui" }, { t:x.w, l:ZH }], tap:{ t:x.w, l:L } }); });
+            if (noE) add(cat, n * 3, () => { const s = shuffle(I).slice(0, 2 + rnd(2));
+                return Q("Padankan perkataan Cina dengan maksudnya", "Match the Chinese words with their meanings", { type:"match", pairs:s.map(x => [x.w, x.ms]) }); });
+        }
+        if (S.count) {
+            const nz = I.filter(x => +x.e >= 1);
+            add(cat, 120, () => { const x = pick(nz), c = +x.e, em = pick(COUNT_EMOJI), o = shuffle([x, ...shuffle(nz.filter(y => y !== x)).slice(0, 2)]);
+                return zh ? Q("Berapa banyak? (dalam Bahasa Cina)", "How many? (in Chinese)", { type:"choice", display:em.repeat(c), options:o.map(optH), htmlOpts:true, answer:optH(x), say:{ t:x.w, l:L } })
+                          : { type:"choice", question:"How many?", display:em.repeat(c), options:o.map(y => y.w), answer:x.w, lang:L, say:{ t:x.w, l:L } }; });
+        }
+    });
+}
+
+/* ---- English: ABC, huruf hilang, lawan kata ---- */
+const CVC = [["cat", "🐱"], ["dog", "🐶"], ["pig", "🐷"], ["hen", "🐔"], ["bus", "🚌"], ["cup", "🥤"], ["hat", "🎩"], ["sun", "☀️"], ["bed", "🛏️"], ["bag", "🎒"], ["pen", "🖊️"], ["jam", "🍓"], ["box", "📦"], ["fox", "🦊"], ["map", "🗺️"], ["leg", "🦵"]];
+const OPP_EN = [["big", "small"], ["hot", "cold"], ["up", "down"], ["happy", "sad"], ["fast", "slow"], ["day", "night"], ["open", "close"], ["full", "empty"], ["old", "new"], ["clean", "dirty"], ["tall", "short"], ["hard", "soft"], ["wet", "dry"], ["heavy", "light"]];
+function genEnLang(add, ch) {
+    const EN = { lang:EN_L }, LET = EN_ABC, OW = OPP_EN.flat();
+    add("en_abc", 150, () => { const [l, w, e] = pick(LET); return ch("Which letter does \"" + w + "\" start with?", e, l, RUMI, { ...EN, sayAfter:w }); });
+    add("en_abc", 120, () => { const [l, w] = pick(LET); return ch(l + " is for...?", l, w, LET.map(x => x[1]), { ...EN, sayAfter:l + " is for " + w }); });
+    add("en_abc", 100, () => { const l = pick(RUMI); return ch("Listen and choose the letter", "🔊", l, RUMI, { ...EN, speak:l }); });
+    add("en_abc", 100, () => { const l = pick(RUMI); return ch("Which small letter matches " + l + "?", l, l.toLowerCase(), RUMI_LOWER, { ...EN, speak:l }); });
+    add("en_abc", 100, () => { const l = pick(RUMI_LOWER); return ch("Which capital letter matches " + l + "?", l, l.toUpperCase(), RUMI, { ...EN, speak:l }); });
+    add("en_abc", 100, () => { const [w, e] = pick(CVC), a = w[1];
+        return { type:"fill", question:"Fill in the missing letter:\n" + e + "   " + w[0].toUpperCase() + " _ " + w[2].toUpperCase(), answer:a, lang:L_EN }; });
+    add("en_abc", 60, () => { const i = rnd(25); return ch("Which letter comes after " + RUMI[i] + "?", RUMI[i], RUMI[i + 1], RUMI, EN); });
+    add("en_abc", 100, () => { const s = shuffle(RUMI).slice(0, 2 + rnd(2)); return { type:"match", question:"Match the capital and small letters", pairs:s.map(a => [a, a.toLowerCase()]), lang:EN_L }; });
+    add("en_abc", 80, () => { const t = pick(RUMI), c = 2 + rnd(3); return { type:"hidden", question:"Find " + c + " of the letter " + t + "!", target:t, count:c, noise:pickWrong(t, RUMI, 5), lang:EN_L }; });
+    add("en_abc", 80, () => { const [l, w] = pick(LET.filter(x => !/\s/.test(x[1]) && x[1].length <= 6)); return { type:"spell", question:"Spell the word!", display:LET.find(x => x[0] === l)[2], answer:w.toUpperCase(), lang:EN_L }; });
+    add("en_lawan", 100, () => { const p = pick(OPP_EN), r = rnd(2), a = p[r], b = p[1 - r]; return ch("The opposite of \"" + a + "\" is...?", a, b, OW, { ...EN, sayAfter:a + " and " + b }); });
+    add("en_lawan", 100, () => { const s = shuffle(OPP_EN).slice(0, 2 + rnd(2)); return { type:"match", question:"Match the opposites", pairs:s.map(p => [p[0], p[1]]), lang:EN_L }; });
+    add("en_lawan", 80, () => { const p = pick(OPP_EN), r = rnd(2), a = p[r], b = p[1 - r]; return { type:"drag", question:"Drag the opposite of \"" + a + "\" to the box!", items:shuffle([b, ...pickWrong(b, OW, 2)]), answer:b, lang:EN_L }; });
+    add("en_lawan", 60, () => { const p = pick(OPP_EN), a = p[rnd(2)]; return ch("Listen and choose the word", "🔊", a, OW, { ...EN, speak:a }); });
+}
+const L_EN = EN_L;
+
+/* ============================================================
    GENERATOR SOALAN
    - Hanya soalan unik dijana (tiada pendua)
    - Setiap soalan ada "ck" (kunci kandungan) untuk elak soalan sama dalam satu sesi
@@ -1163,7 +1652,7 @@ function qaGen(list, icon, poolFallback) {
     return () => {
         const e = pick(list);
         const wr = e[2] || pickWrong(e[1], poolFallback, 2);
-        return { type:"choice", question:e[0], display:icon, options:shuffle([e[1], ...wr]), answer:e[1] };
+        return { type:"choice", question:e[0], display:icon, options:shuffle([e[1], ...wr]), answer:e[1], msOnly:true };
     };
 }
 
@@ -1451,9 +1940,13 @@ function generateQuestions() {
 
     genV2(add, ch);
     genV5(add, ch);
+    genVocab(add, ch);
+    genEnLang(add, ch);
     return shuffle(qs);
 }
 const ALL_QUESTIONS = generateQuestions();
+const MS_ONLY_CATS = new Set(["jawi", "sukukata", "gambar", "silang", "lawan", "agama", "malaysia", "perasaan", "masa", "rutin", "sains"]);
+ALL_QUESTIONS.forEach(q => { if (MS_ONLY_CATS.has(q.category) || /bermula dengan huruf apa\?$/.test(q.question) || (q.type === "spell" && !q.lang)) q.msOnly = true; });
 console.log("Jumlah soalan:", ALL_QUESTIONS.length, "| kandungan berbeza:", new Set(ALL_QUESTIONS.map(q => q.ck)).size);
 
 /* Bina senarai soalan satu sesi: gilir antara topik, elak kandungan sama,
@@ -1491,7 +1984,7 @@ const TOKEN_KEY = "jomBelajar_token", LINK_ID_KEY = "jomBelajar_linkId",
       DEVICE_ID_KEY = "jomBelajar_deviceId", ACTIVATED_KEY = "jomBelajar_activated";
 const DEMO_TOKEN = "JBL-DEMO-0000";
 const $ = id => document.getElementById(id);
-const SCREENS = ["tokenScreen", "startScreen", "gameScreen", "resultScreen", "albumScreen", "reportScreen", "setupScreen", "hubScreen", "careScreen", "petsScreen", "worldScreen", "storyScreen", "workScreen", "certScreen"];
+const SCREENS = ["tokenScreen", "startScreen", "gameScreen", "resultScreen", "albumScreen", "reportScreen", "feedbackScreen", "setupScreen", "hubScreen", "careScreen", "petsScreen", "worldScreen", "storyScreen", "workScreen", "certScreen"];
 function showScreen(id) {
     SCREENS.forEach(s => $(s).classList.add("hidden"));
     $(id).classList.remove("hidden");
@@ -1691,14 +2184,17 @@ let soundOn = true, curSpeech = "";
 function speak(text, force, lang) {
     if ((!soundOn && !force) || !text || !("speechSynthesis" in window)) return;
     try {
-        const t = String(text).replace(/___/g, " apa ").replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, " ").replace(/\n/g, ", ").trim();
+        const ui = !lang || lang === "ui";
+        let t = String(text).replace(/___/g, (ui && LANG === "en") ? " blank " : " apa ").replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, " ").replace(/\n/g, ", ").trim();
+        if (ui && LANG === "en") t = trs(t);
         if (!t) return;
         speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(t);
-        u.lang = lang || "ms-MY"; u.rate = .85;
+        u.lang = ui ? (LANG === "en" ? "en-US" : "ms-MY") : lang; u.rate = .85;
         speechSynthesis.speak(u);
     } catch (e) {}
 }
+function replaySpeech() { const q = window._curQ; if (q && q.sp) speakSeq(q.sp, true); else speak(curSpeech, true, curLang); }
 
 /* ============================================================
    GAME STATE
@@ -1714,7 +2210,10 @@ function startGame() {
     const category = $("category").value, qType = $("qType").value;
 
     let pool = [...ALL_QUESTIONS];
-    if (category !== "semua") pool = pool.filter(q => q.category === category);
+    if (category === "zh_semua") pool = pool.filter(q => q.category.indexOf("zh_") === 0);
+    else if (category === "en_semua") pool = pool.filter(q => q.category.indexOf("en_") === 0 || q.category === "inggeris");
+    else if (category !== "semua") pool = pool.filter(q => q.category === category);
+    if (LANG === "en" && category === "semua") pool = pool.filter(q => !q.msOnly);
     if (qType !== "semua") pool = pool.filter(q => q.type === qType);
     if (!pool.length) { alert("Tiada soalan untuk pilihan ini. Cuba pilih 'Semua'."); return; }
 
@@ -1751,7 +2250,7 @@ function showQuestion() {
     if (cleanupFn) { try { cleanupFn(); } catch (e) {} cleanupFn = null; }
     if (currentIndex >= currentQuestions.length) return finishGame();
     isAnswering = false; qMistakes = 0;
-    const q = currentQuestions[currentIndex];
+    const q = localizeQ(currentQuestions[currentIndex]);
     if (profile) { profile.seen = profile.seen || {}; profile.seen[q.ck] = (profile.seen[q.ck] || 0) + 1; }
     $("questionNumber").textContent = currentIndex + 1;
     $("feedback").textContent = "";
@@ -1764,9 +2263,10 @@ function showQuestion() {
        body:showBody, puzzle:showPuzzle, color:showColor,
        pay:showPay, maze:showMaze, hidden:showHidden, catch:showCatch })[q.type](q, area);
     curSpeech = q.question + (q.speak ? ". " + q.speak : "");
-    curLang = q.lang || "ms-MY";
+    curLang = q.lang || (LANG === "en" && !q.msOnly ? "en-US" : "ms-MY");
     reAnim($("questionArea"), "qin");
-    speak(curSpeech, false, curLang);
+    window._curQ = q;
+    if (q.sp) speakSeq(q.sp); else speak(curSpeech, false, curLang);
 }
 
 /* ---------- CHOICE ---------- */
@@ -1778,7 +2278,8 @@ function showChoice(q, area) {
         <div class="options">
             ${q.options.map(o => `<button class="option" style="font-size:${o.length > 5 ? 20 : 26}px" data-value="${escapeHTML(o)}">${q.htmlOpts ? o : escapeHTML(o)}</button>`).join("")}
         </div>`;
-    if (q.speak) { $("bigDisp").style.cursor = "pointer"; $("bigDisp").onclick = () => speak(q.speak, true, q.lang); }
+    const tapS = q.tap || (q.speak ? { t:q.speak, l:q.lang } : null);
+    if (tapS) { $("bigDisp").style.cursor = "pointer"; $("bigDisp").onclick = () => speak(tapS.t, true, tapS.l); }
     area.querySelectorAll(".option").forEach(btn => btn.addEventListener("click", () => {
         if (isAnswering) return;
         isAnswering = true;
@@ -1792,6 +2293,7 @@ function showChoice(q, area) {
             wrong("😊 Tak apa! Jawapan: " + q.answer);
         }
         if (q.sayAfter) speak(q.sayAfter, true, q.lang);
+        if (q.say) speak(q.say.t, true, q.say.l);
         nextQuestion(ok ? 1100 : 1900);
     }));
 }
@@ -2806,6 +3308,7 @@ function renderPets() {
 const AREAS = [
     { id:"kampung", name:"Kampung Awan", emoji:"☁️", cost:0, cats:["rumi", "badan", "haiwan", "buah"], bg:"#BFE6FF,#CFF0D0" },
     { id:"akademi", name:"Akademi Ilmu", emoji:"🏛️", cost:0, cats:"semua", bg:"#FFE7A8,#FFD0E0" },
+    { id:"bahasa", name:"Kota Bahasa", emoji:"🏮", cost:8, cats:LANG_CATS, bg:"#FFE0E0,#FFD180" },
     { id:"hutan", name:"Hutan Ajaib", emoji:"🌳", cost:5, cats:["haiwan", "buah", "sukukata", "kenderaan"], bg:"#C8E6C9,#81C784" },
     { id:"gunung", name:"Gunung Naga", emoji:"⛰️", cost:8, cats:["nombor", "duit", "jam", "corak"], bg:"#B3E5FC,#90A4AE" },
     { id:"laut", name:"Laut Kristal", emoji:"🌊", cost:10, cats:["warna", "sains", "gambar", "inggeris"], bg:"#E1F5FE,#4FC3F7" },
@@ -2830,7 +3333,7 @@ function renderWorld() {
 function startAdventure(a) {
     const name = curName(); profile = loadProfile(name); touchStreak();
     soundOn = $("soundSel").value === "1";
-    const pool = ALL_QUESTIONS.filter(q => a.cats === "semua" || a.cats.includes(q.category));
+    const pool = ALL_QUESTIONS.filter(q => (a.cats === "semua" || a.cats.includes(q.category)) && !(LANG === "en" && q.msOnly));
     currentQuestions = buildSession(pool, profile.seen || {}).slice(0, 6);
     adventure = a.id; totalSeconds = 1800;
     $("studentName").value = name; $("playerName").textContent = name;
@@ -3120,6 +3623,45 @@ function openStories() {
     showScreen("storyScreen");
 }
 
+/* ============================================================
+   ENGLISH STORIES
+============================================================ */
+const STORIES_ENG = [
+    { id:"en-mousedeer", emoji:"🦌", lang:"en-US", title:"The Clever Mouse-deer", scenes:[
+        "Once upon a time, a little mouse-deer lived in the forest.", "One sunny morning, he saw sweet fruits on the other side of the river.", "But the river was full of hungry crocodiles!",
+        "The mouse-deer thought and thought. Then he had a clever idea.", "\"Hello, crocodiles!\" he called. \"The king wants to count all of you!\"", "The crocodiles felt proud. They lined up across the river.",
+        "The mouse-deer hopped on their backs. \"One, two, three, four...\"", "He counted all the way to the other side.", "\"Thank you, friends!\" he laughed, and ran to the fruit trees.",
+        "He ate the sweet fruits happily. Using your brain is a great superpower!"],
+      moral:"Think carefully. A clever idea can solve a big problem.", quiz:["Who was clever in this story?", "The mouse-deer", ["The crocodile", "The elephant"]] },
+    { id:"en-lionmouse", emoji:"🦁", lang:"en-US", title:"The Lion and the Little Mouse", scenes:[
+        "A big lion was sleeping under a tree.", "A tiny mouse ran past and woke him up by accident.", "\"Roar! Who woke me up?\" said the lion, and he caught the mouse.",
+        "\"Please let me go,\" said the mouse. \"One day I will help you.\"", "The lion laughed. \"How can a tiny mouse help a big lion?\" But he let the mouse go.", "A few days later, the lion got stuck in a hunter's net.",
+        "He roared and roared, but he could not get out.", "The little mouse heard him and ran to help.", "She chewed the ropes, one by one, until the net broke.", "\"Thank you, little friend,\" said the lion. \"Even small friends can do big things.\""],
+      moral:"Be kind to everyone. Small friends can help in big ways.", quiz:["Who helped the lion?", "The little mouse", ["The hunter", "The monkey"]] },
+    { id:"en-antdove", emoji:"🐜", lang:"en-US", title:"The Ant and the Dove", scenes:[
+        "A little ant was drinking water by the river.", "Oh no! She slipped and fell into the water.", "\"Help! Help!\" cried the ant as the water pushed her away.",
+        "A dove in a tree heard her cry. She picked a leaf and dropped it into the river.", "The ant climbed onto the leaf and floated safely to the bank.", "\"Thank you, dove!\" said the ant.",
+        "The next day, a hunter tried to catch the dove with a net.", "The ant saw him and quickly bit his foot. \"Ouch!\" he shouted.", "The net fell, and the dove flew away safely.", "They became the best of friends."],
+      moral:"One good deed deserves another.", quiz:["What did the dove drop into the river?", "A leaf", ["A stone", "A stick"]] },
+    { id:"en-tortoise", emoji:"🐢", lang:"en-US", title:"The Tortoise and the Rabbit", scenes:[
+        "A rabbit loved to say, \"I am the fastest animal in the forest!\"", "A slow little tortoise smiled. \"Let's have a race,\" he said.", "The animals gathered to watch. \"Ready, set, go!\"",
+        "The rabbit zoomed ahead and was soon far away.", "\"I have so much time,\" he said. \"I will take a little nap.\"", "The tortoise kept walking. Step by step, he did not stop.",
+        "The sun went down. The rabbit was still fast asleep.", "The tortoise passed him and crossed the finish line.", "Everyone cheered! The rabbit woke up and felt ashamed.", "\"Slow and steady wins the race,\" said the tortoise."],
+      moral:"Slow and steady wins the race.", quiz:["Who won the race?", "The tortoise", ["The rabbit", "The fox"]] },
+    { id:"en-sharing", emoji:"🍎", lang:"en-US", title:"Sharing Is Caring", scenes:[
+        "Amir had a big red apple and a piece of bread for lunch.", "At lunchtime, he sat under a tree.", "His friend Siti sat quietly. She did not bring any food today.",
+        "Siti's tummy rumbled. Amir felt sorry for her.", "\"Siti, let's share,\" said Amir. He cut the apple in two.", "\"Thank you, Amir!\" said Siti with a big smile.",
+        "They ate together, and the apple tasted even sweeter.", "Their teacher smiled. \"Sharing is a beautiful thing,\" she said.", "The next day, Siti brought some fruit to share with Amir."],
+      moral:"Sharing makes everyone happy.", quiz:["What did Amir do with his apple?", "He shared it", ["He threw it", "He hid it"]] },
+    { id:"en-truth", emoji:"🏺", lang:"en-US", title:"Lina Tells the Truth", scenes:[
+        "Lina was playing in the living room.", "She ran fast and bumped into a flower vase. Crash! It broke.", "Lina felt scared. \"Maybe I should stay quiet,\" she thought.",
+        "But her heart felt heavy.", "Mum came in. \"Who broke the vase?\" she asked.", "Lina took a deep breath. \"I did, Mum. I'm sorry.\"", "Mum gave her a big hug. \"Thank you for telling the truth.\"",
+        "They cleaned the floor together.", "Lina felt light and happy inside. Telling the truth makes our hearts feel calm."],
+      moral:"Telling the truth makes your heart feel calm.", quiz:["What did Lina do?", "She told the truth", ["She told a lie", "She ran away"]] }
+];
+STORIES.english = STORIES_ENG;
+STORY_CATS.english = ["🇬🇧", "English Stories"];
+
 let curStory = null, storyIdx = 0;
 function showStoryList(cat) {
     $("storyCats").classList.add("hidden"); $("storyList").classList.remove("hidden");
@@ -3137,7 +3679,7 @@ function renderScene() {
     $("storyTitle").textContent = s.title; $("storyEmoji").textContent = s.emoji;
     $("storyDots").innerHTML = s.scenes.map((_, i) => `<i class="${i <= storyIdx ? "on" : ""}"></i>`).join("");
     if (storyIdx < n) {
-        $("storyText").textContent = s.scenes[storyIdx]; reAnim($("storyText"), "fbpop"); $("storyEnd").classList.add("hidden"); speak(s.scenes[storyIdx]);
+        $("storyText").textContent = s.scenes[storyIdx]; reAnim($("storyText"), "fbpop"); $("storyEnd").classList.add("hidden"); speak(s.scenes[storyIdx], false, s.lang || "ms-MY");
     } else {
         $("storyText").textContent = "Tamat cerita! 🎉"; $("storyEnd").classList.remove("hidden");
         $("storyMoral").textContent = "💡 " + s.moral;
@@ -3212,9 +3754,9 @@ function PDFB(landscape, noFooter, bg) {
     const o = {
         W, H, mix,
         page() { c = []; pages.push(c); return o; },
-        T(x, y, s, size, bold, color) { c.push(`BT /${bold ? "F2" : "F1"} ${size} Tf ${col(color || "#263238")} rg ${f(x)} ${f(H - y)} Td (${esc(clean(s))}) Tj ET`); },
-        TO(x, y, s, size, color) { c.push(`q BT /F1 ${size} Tf 1 Tr ${col(color || "#9e9e9e")} RG 1.2 w [3 3] 0 d ${f(x)} ${f(H - y)} Td (${esc(clean(s))}) Tj ET Q`); },
-        tw(s, size, bold) { let w = 0; clean(s).split("").forEach(ch => { w += (bold ? (HWB[ch] || HW[ch]) : HW[ch]) || 556; }); return w * size / 1000; },
+        T(x, y, s, size, bold, color) { c.push(`BT /${bold ? "F2" : "F1"} ${size} Tf ${col(color || "#263238")} rg ${f(x)} ${f(H - y)} Td (${esc(clean(trs(s)))}) Tj ET`); },
+        TO(x, y, s, size, color) { c.push(`q BT /F1 ${size} Tf 1 Tr ${col(color || "#9e9e9e")} RG 1.2 w [3 3] 0 d ${f(x)} ${f(H - y)} Td (${esc(clean(trs(s)))}) Tj ET Q`); },
+        tw(s, size, bold) { let w = 0; clean(trs(s)).split("").forEach(ch => { w += (bold ? (HWB[ch] || HW[ch]) : HW[ch]) || 556; }); return w * size / 1000; },
         TC(cx, y, s, size, bold, color) { o.T(cx - o.tw(s, size, bold) / 2, y, s, size, bold, color); },
         TR(rx, y, s, size, bold, color) { o.T(rx - o.tw(s, size, bold), y, s, size, bold, color); },
         R(x, y, w, h, color) { c.push(`${col(color)} rg ${f(x)} ${f(H - y - h)} ${f(w)} ${f(h)} re f`); },
@@ -3580,6 +4122,93 @@ function rain(n) {
 }
 
 /* ============================================================
+   MAKLUM BALAS (testimoni, cadangan, bug) -> Google Sheet (tab "Maklum Balas")
+============================================================ */
+let fbRating = 0, fbCap = null, fbBack = null, fbCtx = "";
+Object.assign(D, {
+    "Maklum Balas & Cadangan":"Feedback & Suggestions", "Ibu bapa, guru dan penjaga: kongsi testimoni, cadangkan game baharu, laporkan pepijat atau cadangkan penambahbaikan. Terus sampai kepada pembangun.":"Parents, teachers and guardians: share a testimonial, suggest a new game, report a bug or suggest an improvement. It goes straight to the developer.",
+    "Jenis maklum balas":"Type of feedback", "💬 Testimoni (pendapat anda)":"💬 Testimonial (your opinion)", "💡 Cadangan game / topik baharu":"💡 Suggest a new game / topic", "🐞 Lapor pepijat (bug)":"🐞 Report a bug",
+    "✨ Cadangan penambahbaikan":"✨ Suggest an improvement", "❓ Soalan / lain-lain":"❓ Question / other", "Anda ialah":"You are a", "Ibu":"Mother", "Bapa":"Father", "Penjaga":"Guardian", "Guru":"Teacher", "Lain-lain":"Other",
+    "Nama (pilihan)":"Name (optional)", "Emel (pilihan, jika mahu dihubungi)":"Email (optional, if you want a reply)", "Penilaian keseluruhan":"Overall rating", "Topik / game berkaitan (pilihan)":"Related topic / game (optional)",
+    "- Tiada -":"- None -", "Mesej anda":"Your message", "📨 HANTAR":"📨 SEND", "tukar soalan":"change question", "Contoh: Siti Aminah":"Example: Siti Aminah", "contoh@email.com":"example@email.com",
+    "Ceritakan pengalaman atau cadangan anda...":"Tell us about your experience or suggestion...", "Saya benarkan testimoni ini dipaparkan di laman beli (nama pertama sahaja).":"I allow this testimonial to be shown on the purchase page (first name only).",
+    "Terima kasih! Maklum balas anda telah dihantar kepada pembangun.":"Thank you! Your feedback has been sent to the developer.", "🎮 Permainan":"🎮 Games", "📚 Belajar":"📚 Learn", "🌐 Bahasa":"🌐 Languages",
+    "🇨🇳 Mandarin Asas (中文)":"🇨🇳 Basic Mandarin (中文)", "🇬🇧 English Fun":"🇬🇧 English Fun", "Sila tulis mesej sekurang-kurangnya 10 huruf.":"Please write at least 10 characters.", "Sila beri penilaian bintang untuk testimoni.":"Please give a star rating for the testimonial.",
+    "Sila jawab soalan keselamatan 🤖":"Please answer the security question 🤖", "Gagal menghantar. Semak internet dan cuba lagi.":"Could not send. Check your internet and try again.", "Lapor soalan ini":"Report this question"
+});
+ATTRS.push("label");
+
+function renderFbStars() {
+    $("fbStars").innerHTML = [1, 2, 3, 4, 5].map(i => `<button type="button" class="fbstar${i <= fbRating ? " on" : ""}" data-i="${i}" aria-label="${i}">★</button>`).join("");
+    $("fbStars").querySelectorAll("button").forEach(b => b.onclick = () => { fbRating = +b.dataset.i; renderFbStars(); });
+}
+function onFbType() {
+    const t = $("fbType").value;
+    $("fbRatingBox").classList.toggle("hidden", t !== "testimoni");
+    $("fbConsentBox").classList.toggle("hidden", t !== "testimoni");
+}
+async function loadFbCaptcha() {
+    $("fbCapQ").textContent = "..."; $("fbCapA").value = ""; $("fbSend").disabled = true;
+    try { fbCap = await (await fetch(APPS_SCRIPT_URL + "?action=captcha")).json(); $("fbCapQ").textContent = fbCap.q; $("fbSend").disabled = false; }
+    catch (e) { $("fbCapQ").textContent = "(gagal muat)"; }
+}
+function openFeedback(ctx) {
+    const c = ctx || {};
+    fbBack = c.back || null; fbCtx = c.konteks || "";
+    if (!$("fbTopic").options[1]) Object.keys(CAT_LABEL).forEach(k => { const o = document.createElement("option"); o.value = k; o.textContent = CAT_LABEL[k]; $("fbTopic").appendChild(o); });
+    $("fbType").value = c.type || "testimoni"; $("fbTopic").value = c.topik || ""; $("fbMsg").value = c.msg || "";
+    $("fbName").value = $("fbName").value || ""; fbRating = 0; renderFbStars(); onFbType();
+    $("fbDone").classList.add("hidden"); $("fbConsent").checked = false;
+    showScreen("feedbackScreen"); loadFbCaptcha();
+}
+function closeFeedback() {
+    if (fbBack === "game") { fbBack = null; showScreen("gameScreen"); startTimer(); }
+    else goHome();
+}
+function reportQuestion() {
+    const q = window._curQ || currentQuestions[currentIndex];
+    if (!q) return;
+    clearInterval(timerInterval);
+    const label = CAT_LABEL[q.category] || q.category;
+    openFeedback({ type:"bug", back:"game", topik:q.category, konteks:"cat=" + q.category + "; type=" + q.type + "; ck=" + q.ck,
+        msg:"[Soalan] " + String(q.question).replace(/\n/g, " ") + " (" + label + ", jenis " + q.type + ")\nMasalah: " });
+}
+async function sendFeedback() {
+    const msg = $("fbMsg").value.trim(), type = $("fbType").value;
+    if (msg.length < 10) { toast(trs("Sila tulis mesej sekurang-kurangnya 10 huruf.")); return; }
+    if (type === "testimoni" && fbRating < 1) { toast(trs("Sila beri penilaian bintang untuk testimoni.")); return; }
+    if (!fbCap || !$("fbCapA").value) { toast(trs("Sila jawab soalan keselamatan 🤖")); return; }
+    $("fbSend").disabled = true;
+    const demo = isDemo(), data = {
+        action:"feedback", website:$("fbWebsite").value, captchaAnswer:$("fbCapA").value, captchaTs:fbCap.ts, captchaSig:fbCap.sig,
+        jenis:type, peranan:$("fbRole").value, nama:$("fbName").value.trim(), emel:$("fbEmail").value.trim(), rating:type === "testimoni" ? fbRating : 0,
+        mesej:msg, topik:$("fbTopic").value ? (CAT_LABEL[$("fbTopic").value] || $("fbTopic").value) : "", consent:type === "testimoni" && $("fbConsent").checked,
+        token:demo ? "" : (localStorage.getItem(TOKEN_KEY) || ""), linkId:demo ? "" : (localStorage.getItem(LINK_ID_KEY) || ""), deviceId:getOrCreateDeviceId(), konteks:fbCtx,
+        app:{ v:"v6", lang:LANG, theme:document.documentElement.getAttribute("data-theme"), ua:navigator.userAgent.slice(0, 90), sc:innerWidth + "x" + innerHeight, name:curName() }
+    };
+    try {
+        const r = await (await fetch(APPS_SCRIPT_URL, { method:"POST", body:JSON.stringify(data) })).json();
+        if (r.success) {
+            $("fbDone").innerHTML = "🎉 " + trs("Terima kasih! Maklum balas anda telah dihantar kepada pembangun.");
+            $("fbDone").classList.remove("hidden"); $("fbMsg").value = ""; fbRating = 0; renderFbStars(); fireworks(30);
+        } else { toast(r.message || trs("Gagal menghantar. Semak internet dan cuba lagi.")); if (r.captcha) loadFbCaptcha(); else $("fbSend").disabled = false; }
+    } catch (e) { toast(trs("Gagal menghantar. Semak internet dan cuba lagi.")); $("fbSend").disabled = false; }
+}
+
+/* senarai kategori bahasa dalam pemilih topik */
+function buildLangCats() {
+    const sel = $("category");
+    const group = (label, items) => {
+        const g = document.createElement("optgroup"); g.label = label;
+        items.forEach(it => { const o = document.createElement("option"); o.value = it[0]; o.textContent = it[1]; g.appendChild(o); });
+        sel.appendChild(g);
+    };
+    group("🌐 Bahasa", [["zh_semua", "🇨🇳 Semua Mandarin"], ["en_semua", "🇬🇧 Semua English"]]);
+    group("🇨🇳 Mandarin Asas (中文)", ZH_CATS.map(c => [c, CAT_LABEL[c]]));
+    group("🇬🇧 English Fun", EN_CATS.map(c => [c, CAT_LABEL[c]]));
+}
+
+/* ============================================================
    MARKAH / FEEDBACK
 ============================================================ */
 function curCat() { const q = currentQuestions[currentIndex]; return q ? q.category : ""; }
@@ -3676,6 +4305,7 @@ function escapeHTML(v) {
    INIT - sentiasa semak semula dengan server (kecuali demo / offline)
 ============================================================ */
 (async function init() {
+    try { buildLangCats(); setLang(LANG); } catch (e) { console.warn(e); }
     setTimeout(() => { try { ensureLogo(); } catch (e) {} }, 1500);
     applyTheme(document.documentElement.getAttribute("data-theme") || "light");
     if (!("speechSynthesis" in window)) $("speakBtn").style.display = "none";
