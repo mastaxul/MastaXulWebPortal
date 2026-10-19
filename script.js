@@ -733,3 +733,54 @@ if (document.readyState === "loading") {
   loadHomeBlog();
   loadHomeProduk();
 }
+
+
+/* ========== LANDING STATS ========== */
+function animateCount(el, end, duration) {
+  if (!el) return;
+  end = Number(end) || 0;
+  const start = 0;
+  const t0 = performance.now();
+  duration = duration || 900;
+  function frame(t) {
+    const p = Math.min(1, (t - t0) / duration);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(start + (end - start) * eased);
+    if (p < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function initLandingStats() {
+  document.querySelectorAll(".stat-num[data-count]").forEach(el => {
+    const n = parseInt(el.getAttribute("data-count"), 10);
+    if (!isNaN(n)) animateCount(el, n, 800);
+  });
+  // Live produk & blog dari Worker
+  const elP = document.getElementById("statProdukLive");
+  const elB = document.getElementById("statBlogLive");
+  if (elP) {
+    fetch("/api/produk?_=" + Date.now())
+      .then(r => r.json())
+      .then(d => {
+        const n = Array.isArray(d) ? d.filter(p => p && p.nama).length : 0;
+        animateCount(elP, n, 1000);
+      })
+      .catch(() => { elP.textContent = "—"; });
+  }
+  if (elB) {
+    fetch("/api/blog?_=" + Date.now())
+      .then(r => r.json())
+      .then(d => {
+        const posts = Array.isArray(d.posts) ? d.posts : (Array.isArray(d) ? d : []);
+        animateCount(elB, posts.length, 1000);
+      })
+      .catch(() => { elB.textContent = "—"; });
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initLandingStats);
+} else {
+  initLandingStats();
+}
