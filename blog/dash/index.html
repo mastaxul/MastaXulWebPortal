@@ -2,17 +2,26 @@
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0f19">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Blog Admin">
-  <link rel="apple-touch-icon" href="/blog/dash/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MX Admin">
+  <link rel="apple-touch-icon" href="/blog/dash/icons/icon-192.png" sizes="180x180">
+  <link rel="apple-touch-icon" href="/blog/dash/icons/icon-192.png" sizes="192x192">
+  <link rel="icon" type="image/png" href="/blog/dash/icons/icon-192.png">
   <link rel="manifest" href="/blog/dash/manifest.json">
-  <meta http-equiv="refresh" content="0; url=admin.html">
-  <script>location.replace("admin.html");</script>
-  <title>Blog Admin</title>
+  <title>MX Admin</title>
+  <script>
+    // Delay singkat supaya Safari sempat baca icon sebelum redirect
+    setTimeout(function () {
+      location.replace("/blog/dash/admin.html");
+    }, 400);
+  </script>
 </head>
 <body style="background:#0b0f19;color:#94a3b8;text-align:center;padding:40px;font-family:system-ui">
-  <img src="/blog/dash/icons/icon-192.png" width="96" height="96" alt="Logo" style="border-radius:20px">
-  <p>Membuka Admin…</p>
+  <img src="/blog/dash/icons/icon-192.png" width="120" height="120" alt="Masta Xul" style="border-radius:26px;background:#030712">
+  <p style="margin-top:16px;font-weight:700;color:#f8fafc">MX Admin</p>
+  <p>Membuka dashboard…</p>
 </body>
 </html>
