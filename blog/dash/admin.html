@@ -1691,7 +1691,7 @@ setInterval(updateClockKL,1000);
 /* PWA register — Admin Dashboard */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./sw.js", { scope: "/admindashboard/" })
+    navigator.serviceWorker.register("/blog/dash/sw.js", { scope: "/blog/dash/" })
       .then(function (reg) {
         reg.update();
         console.log("MX Admin SW ok", reg.scope);
