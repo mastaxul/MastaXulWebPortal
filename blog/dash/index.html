@@ -2,9 +2,15 @@
 <html lang="ms">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Admin Dashboard | Masta Xul</title>
   <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#030712">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MX Admin">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
@@ -1678,5 +1684,20 @@ updateClockKL();
 setInterval(updateClockKL,1000);
 
 </script>
+
+<script>
+/* PWA register — Admin Dashboard */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./sw.js", { scope: "/admindashboard/" })
+      .then(function (reg) {
+        reg.update();
+        console.log("MX Admin SW ok", reg.scope);
+      })
+      .catch(function (err) { console.warn("SW gagal", err); });
+  });
+}
+</script>
 </body>
+
 </html>
