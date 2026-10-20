@@ -71,6 +71,20 @@ input:focus, select:focus { border-color:var(--accent); }
 .option.wrong { background:var(--bad-bg); border-color:var(--bad-bd); }
 .option:disabled { pointer-events:none; }
 
+/* ===== Modul Belajar Sebutan ===== */
+.pronounce-box { text-align:center; padding:8px 0 4px; }
+.pronounce-pic { font-size:92px; line-height:1.1; margin:8px 0; filter:drop-shadow(0 4px 10px var(--shadow)); }
+.pronounce-word { font-size:40px; font-weight:bold; color:var(--accent2); margin:6px 0; line-height:1.2; }
+.pronounce-py { font-size:22px; color:var(--muted); margin-bottom:4px; }
+.pronounce-ms { font-size:16px; color:var(--muted); margin-bottom:12px; }
+.pronounce-actions { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:12px 0; }
+.pronounce-actions .btn { width:auto; min-width:120px; margin:0; padding:12px 16px; font-size:15px; }
+.pronounce-mode { font-size:13px; color:var(--muted); margin:8px 0 4px; }
+.pronounce-mode label { display:inline-flex; align-items:center; gap:6px; margin:0 8px; font-weight:normal; cursor:pointer; }
+.pronounce-count { font-size:14px; color:var(--accent2); font-weight:bold; margin-top:6px; }
+.pronounce-auto-bar { height:6px; background:var(--track); border-radius:4px; overflow:hidden; margin:10px auto 0; max-width:220px; }
+.pronounce-auto-fill { height:100%; width:0; background:linear-gradient(90deg,var(--accent),#8e7dff); transition:width .2s linear; }
+
 /* Drag */
 .drag-area { display:flex; flex-direction:column; align-items:center; gap:22px; margin-top:20px; }
 .drag-row { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
@@ -442,6 +456,8 @@ textarea:focus { border-color:var(--accent); }
                 <option value="agama">🕌 Islam & Hijaiyah</option>
                 <option value="rutin">🧼 Rutin & Kebersihan</option>
                 <option value="inggeris">🇬🇧 Bahasa Inggeris</option>
+                <option value="en_sebut">🗣️ English: Belajar Sebutan</option>
+                <option value="zh_sebut">🗣️ Mandarin: Belajar Sebutan</option>
                 <option value="duit">💰 Duit RM & Kedai</option>
                 <option value="jam">🕐 Baca Jam</option>
                 <option value="malaysia">🇲🇾 Malaysia Kita</option>
@@ -587,6 +603,8 @@ textarea:focus { border-color:var(--accent); }
             <b>⚡ Main Pantas</b>
             <div class="chips">
                 <button class="chip" onclick="quickPlay('arkad')">🎯 Arkad</button>
+                <button class="chip" onclick="quickPlay('en_sebut')">🗣️ EN Sebutan</button>
+                <button class="chip" onclick="quickPlay('zh_sebut')">🗣️ 中文 Sebutan</button>
                 <button class="chip" onclick="quickPlay('en_semua')">🇬🇧 English</button>
                 <button class="chip" onclick="quickPlay('zh_semua')">🇨🇳 Mandarin</button>
                 <button class="chip" onclick="quickPlay('duit')">💰 Duit & Kedai</button>
@@ -732,8 +750,8 @@ const JAWI_MAP = [
 
 // Huruf hijaiyah (nama unik sahaja; Ha ه dan Hamzah tidak dimasukkan kerana nama berulang)
 const HIJA = [["ا","Alif"],["ب","Ba"],["ت","Ta"],["ث","Tha"],["ج","Jim"],["ح","Ha"],["خ","Kha"],["د","Dal"],["ذ","Zal"],
-    ["ر","Ra"],["ز","Zai"],["س","Sin"],["ش","Syin"],["ص","Sod"],["ض","Dod"],["ط","Tho"],["ظ","Zho"],["ع","Ain"],
-    ["غ","Ghain"],["ف","Fa"],["ق","Qaf"],["ك","Kaf"],["ل","Lam"],["م","Mim"],["ن","Nun"],["و","Wau"],["ي","Ya"]];
+‎    ["ر","Ra"],["ز","Zai"],["س","Sin"],["ش","Syin"],["ص","Sod"],["ض","Dod"],["ط","Tho"],["ظ","Zho"],["ع","Ain"],
+‎    ["غ","Ghain"],["ف","Fa"],["ق","Qaf"],["ك","Kaf"],["ل","Lam"],["م","Mim"],["ن","Nun"],["و","Wau"],["ي","Ya"]];
 
 const NUM_WORDS = ["sifar","satu","dua","tiga","empat","lima","enam","tujuh","lapan","sembilan","sepuluh"];
 const COUNT_EMOJI = ["🍎","⭐","🐱","🐶","🎈","🌸","🐟","🚗","🍓","🦋"];
@@ -1484,7 +1502,8 @@ Object.assign(CAT_LABEL, {
     zh_keluarga:"🇨🇳 Cina: Keluarga 家人", zh_salam:"🇨🇳 Cina: Salam 你好", zh_makanan:"🇨🇳 Cina: Makanan 食物", zh_benda:"🇨🇳 Cina: Benda 东西", zh_bentuk:"🇨🇳 Cina: Bentuk 形状",
     en_abc:"🇬🇧 English: ABC", en_haiwan:"🇬🇧 English: Animals", en_buah:"🇬🇧 English: Fruits", en_nombor:"🇬🇧 English: Numbers", en_warna:"🇬🇧 English: Colours", en_badan:"🇬🇧 English: Body",
     en_keluarga:"🇬🇧 English: Family", en_makanan:"🇬🇧 English: Food", en_pakaian:"🇬🇧 English: Clothes", en_kenderaan:"🇬🇧 English: Vehicles", en_tindakan:"🇬🇧 English: Actions",
-    en_cuaca:"🇬🇧 English: Weather", en_lawan:"🇬🇧 English: Opposites", en_kata:"🇬🇧 English: Greetings"
+    en_cuaca:"🇬🇧 English: Weather", en_lawan:"🇬🇧 English: Opposites", en_kata:"🇬🇧 English: Greetings",
+    en_sebut:"🗣️ English: Belajar Sebutan", zh_sebut:"🗣️ Mandarin: Belajar Sebutan"
 });
 Object.assign(D, {
     "🇨🇳 Cina: Nombor 数字":"🇨🇳 Chinese: Numbers 数字", "🇨🇳 Cina: Warna 颜色":"🇨🇳 Chinese: Colours 颜色", "🇨🇳 Cina: Haiwan 动物":"🇨🇳 Chinese: Animals 动物", "🇨🇳 Cina: Buah 水果":"🇨🇳 Chinese: Fruits 水果",
@@ -1654,6 +1673,54 @@ function qaGen(list, icon, poolFallback) {
         const wr = e[2] || pickWrong(e[1], poolFallback, 2);
         return { type:"choice", question:e[0], display:icon, options:shuffle([e[1], ...wr]), answer:e[1], msOnly:true };
     };
+}
+
+
+/* ============================================================
+   BELAJAR SEBUTAN (English + Mandarin) — modul pemula
+   - Mod ibu bapa: tekan "Sudah ulang"
+   - Mod auto: auto terus selepas dengar N kali
+============================================================ */
+function genPronounce(add) {
+    const mk = (cat, lang, items, zh) => {
+        items.forEach((x, i) => {
+            // satu item = satu "kad sebutan" (dijana sekali; sesi ambil rawak)
+            add(cat, 1, () => ({
+                type: "pronounce",
+                category: cat,
+                question: zh ? "Dengar dan ulang sebutan Mandarin" : "Listen and repeat the English word",
+                qen: zh ? "Listen and repeat the Mandarin word" : "Listen and repeat the English word",
+                display: x.e || "🔊",
+                word: zh ? x.w : x.w,
+                pinyin: zh ? (x.py || "") : "",
+                meaning: zh ? (x.ms || x.en || "") : "",
+                speakWord: zh ? x.w : x.w,
+                lang: lang,
+                answer: "ok",
+                ck: "pronounce|" + cat + "|" + (x.w || x.e) + "|" + i
+            }));
+        });
+        // ulangan tambahan supaya pool lebih besar (item dikitar)
+        add(cat, Math.max(8, items.length), () => {
+            const x = items[Math.floor(Math.random() * items.length)];
+            return {
+                type: "pronounce",
+                category: cat,
+                question: zh ? "Dengar dan ulang sebutan Mandarin" : "Listen and repeat the English word",
+                qen: zh ? "Listen and repeat the Mandarin word" : "Listen and repeat the English word",
+                display: x.e || "🔊",
+                word: x.w,
+                pinyin: zh ? (x.py || "") : "",
+                meaning: zh ? (x.ms || x.en || "") : "",
+                speakWord: x.w,
+                lang: lang,
+                answer: "ok",
+                ck: "pronounce|" + cat + "|" + (x.w || "") + "|r" + Math.random().toString(36).slice(2, 7)
+            };
+        });
+    };
+    VOCAB_SETS.filter(s => s.cat.indexOf("zh_") === 0).forEach(s => mk("zh_sebut", ZH, s.items, true));
+    VOCAB_SETS.filter(s => s.cat.indexOf("en_") === 0).forEach(s => mk("en_sebut", EN_L, s.items, false));
 }
 
 function generateQuestions() {
@@ -1941,6 +2008,7 @@ function generateQuestions() {
     genV2(add, ch);
     genV5(add, ch);
     genVocab(add, ch);
+    genPronounce(add);
     genEnLang(add, ch);
     return shuffle(qs);
 }
@@ -2261,12 +2329,122 @@ function showQuestion() {
     ({ choice:showChoice, fill:showFill, drag:showDrag, match:showMatch, spell:showSpell,
        cross:showCross, balloon:showBalloon, memory:showMemory, trace:showTrace,
        body:showBody, puzzle:showPuzzle, color:showColor,
-       pay:showPay, maze:showMaze, hidden:showHidden, catch:showCatch })[q.type](q, area);
+       pay:showPay, maze:showMaze, hidden:showHidden, catch:showCatch,
+       pronounce:showPronounce })[q.type](q, area);
     curSpeech = q.question + (q.speak ? ". " + q.speak : "");
     curLang = q.lang || (LANG === "en" && !q.msOnly ? "en-US" : "ms-MY");
     reAnim($("questionArea"), "qin");
     window._curQ = q;
     if (q.sp) speakSeq(q.sp); else speak(curSpeech, false, curLang);
+}
+
+
+/* ---------- PRONOUNCE (Belajar Sebutan) ---------- */
+let pronounceAutoTimer = null;
+function getPronounceMode() {
+    try { return localStorage.getItem("jomBelajar_pronounceMode") || "parent"; } catch (e) { return "parent"; }
+}
+function setPronounceMode(m) {
+    try { localStorage.setItem("jomBelajar_pronounceMode", m); } catch (e) {}
+}
+function showPronounce(q, area) {
+    if (pronounceAutoTimer) { clearInterval(pronounceAutoTimer); pronounceAutoTimer = null; }
+    const mode = getPronounceMode();
+    const zh = (q.lang || "").indexOf("zh") === 0;
+    const pic = q.display && q.display !== "🔊" ? q.display : "🔊";
+    const word = q.word || "";
+    const py = q.pinyin || "";
+    const meaning = q.meaning || "";
+    let heard = 0;
+    const need = 2; // auto: selepas 2 kali dengar + jeda
+
+    area.innerHTML = `
+        <div class="pronounce-box">
+            <div class="pronounce-mode">
+                Mod:
+                <label><input type="radio" name="pMode" value="parent" ${mode === "parent" ? "checked" : ""}> Ibu bapa tekan</label>
+                <label><input type="radio" name="pMode" value="auto" ${mode === "auto" ? "checked" : ""}> Auto</label>
+            </div>
+            <div class="pronounce-pic" id="pPic">${pic}</div>
+            <div class="pronounce-word" id="pWord">${escapeHTML(word)}</div>
+            ${py ? `<div class="pronounce-py">${escapeHTML(py)}</div>` : ""}
+            ${meaning ? `<div class="pronounce-ms">(${escapeHTML(meaning)})</div>` : ""}
+            <div class="pronounce-actions">
+                <button type="button" class="btn" id="pHear">🔊 Dengar</button>
+                <button type="button" class="btn btn-secondary" id="pSlow">🐢 Perlahan</button>
+                <button type="button" class="btn" id="pDone" style="${mode === "auto" ? "display:none" : ""}">✓ Sudah ulang</button>
+            </div>
+            <div class="pronounce-count" id="pCount">Dengar: 0</div>
+            <div class="pronounce-auto-bar" id="pBar" style="${mode === "auto" ? "" : "display:none"}"><div class="pronounce-auto-fill" id="pFill"></div></div>
+        </div>`;
+
+    const say = (slow) => {
+        const t = q.speakWord || word;
+        if (!t || !("speechSynthesis" in window)) return;
+        try {
+            speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(t);
+            u.lang = q.lang || (zh ? "zh-CN" : "en-US");
+            u.rate = slow ? 0.55 : (zh ? 0.75 : 0.85);
+            speechSynthesis.speak(u);
+        } catch (e) {}
+        heard++;
+        const el = $("pCount");
+        if (el) el.textContent = "Dengar: " + heard;
+        if (getPronounceMode() === "auto" && heard >= need) startAutoAdvance();
+    };
+
+    const startAutoAdvance = () => {
+        if (pronounceAutoTimer) return;
+        let pct = 0;
+        const fill = $("pFill");
+        pronounceAutoTimer = setInterval(() => {
+            pct += 4;
+            if (fill) fill.style.width = Math.min(100, pct) + "%";
+            if (pct >= 100) {
+                clearInterval(pronounceAutoTimer);
+                pronounceAutoTimer = null;
+                if (isAnswering) return;
+                isAnswering = true;
+                correct();
+                nextQuestion(400);
+            }
+        }, 40);
+    };
+
+    area.querySelectorAll('input[name="pMode"]').forEach(r => {
+        r.addEventListener("change", () => {
+            setPronounceMode(r.value);
+            const done = $("pDone"), bar = $("pBar");
+            if (r.value === "auto") {
+                if (done) done.style.display = "none";
+                if (bar) bar.style.display = "";
+            } else {
+                if (done) done.style.display = "";
+                if (bar) bar.style.display = "none";
+                if (pronounceAutoTimer) { clearInterval(pronounceAutoTimer); pronounceAutoTimer = null; }
+                const fill = $("pFill"); if (fill) fill.style.width = "0";
+            }
+        });
+    });
+
+    $("pHear").onclick = () => say(false);
+    $("pSlow").onclick = () => say(true);
+    const doneBtn = $("pDone");
+    if (doneBtn) doneBtn.onclick = () => {
+        if (isAnswering) return;
+        isAnswering = true;
+        if (pronounceAutoTimer) { clearInterval(pronounceAutoTimer); pronounceAutoTimer = null; }
+        correct();
+        nextQuestion(700);
+    };
+
+    // Auto sebut sekali bila masuk kad
+    setTimeout(() => say(false), 350);
+
+    cleanupFn = () => {
+        if (pronounceAutoTimer) { clearInterval(pronounceAutoTimer); pronounceAutoTimer = null; }
+    };
 }
 
 /* ---------- CHOICE ---------- */
@@ -4203,6 +4381,10 @@ function buildLangCats() {
         items.forEach(it => { const o = document.createElement("option"); o.value = it[0]; o.textContent = it[1]; g.appendChild(o); });
         sel.appendChild(g);
     };
+    group("🗣️ Belajar Sebutan (Pemula)", [
+        ["en_sebut", "🗣️ English: Belajar Sebutan"],
+        ["zh_sebut", "🗣️ Mandarin: Belajar Sebutan"]
+    ]);
     group("🌐 Bahasa", [["zh_semua", "🇨🇳 Semua Mandarin"], ["en_semua", "🇬🇧 Semua English"]]);
     group("🇨🇳 Mandarin Asas (中文)", ZH_CATS.map(c => [c, CAT_LABEL[c]]));
     group("🇬🇧 English Fun", EN_CATS.map(c => [c, CAT_LABEL[c]]));
