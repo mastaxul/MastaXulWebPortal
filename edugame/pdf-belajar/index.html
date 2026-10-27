@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PDF Belajar Menulis & Melukis | Masta Xul</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(180deg, #81d4fa, #c8e6c9 40%, #fff59d);
+      min-height: 100vh; color: #1a237e;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; }
+    .hero {
+      background: #fff; border-radius: 24px; padding: 28px 20px; text-align: center;
+      border: 4px solid #ffca28; box-shadow: 0 10px 30px rgba(0,0,0,.1); margin-bottom: 20px;
+    }
+    .hero h1 { font-size: 1.5rem; color: #6a1b9a; margin: 8px 0; }
+    .badge {
+      display: inline-block; background: #e53935; color: #fff; padding: 6px 14px;
+      border-radius: 20px; font-weight: 700; font-size: .9rem;
+    }
+    .old { text-decoration: line-through; color: #999; margin-left: 8px; }
+    .cta {
+      display: inline-block; margin-top: 16px; padding: 14px 28px; border-radius: 14px;
+      background: linear-gradient(90deg, #7c4dff, #ec407a); color: #fff;
+      font-weight: 700; text-decoration: none;
+    }
+    .mods {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;
+    }
+    @media (min-width: 600px) { .mods { grid-template-columns: 1fr 1fr 1fr; } }
+    .mod {
+      background: #fff; border: 3px solid #7e57c2; border-radius: 16px; padding: 14px 10px;
+      text-align: center; cursor: pointer; font-weight: 600; font-size: .85rem;
+      transition: transform .15s;
+    }
+    .mod:hover { transform: scale(1.03); background: #f3e5f5; }
+    .mod:disabled, .mod.off { opacity: .5; pointer-events: none; }
+    #gate, #portal { display: none; }
+    #portal.show, #gate.show { display: block; }
+    .status {
+      background: #fff3e0; border-radius: 12px; padding: 12px; margin-bottom: 12px;
+      font-size: .9rem; text-align: center;
+    }
+    .status.ok { background: #e8f5e9; }
+    .status.err { background: #ffebee; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- LANDING -->
+    <section class="hero" id="landing">
+      <div class="badge">PROMO RM9.90 <span class="old">RM59.90</span></div>
+      <h1>🌈 PDF Belajar Menulis & Melukis</h1>
+      <p>Tema ceria macam sijil Masta Xul · Nama anak, tarikh, ibu bapa & umur pada setiap PDF</p>
+      <p style="margin-top:12px;font-size:.9rem">
+        A–Z · a–z · 1–100 · Jawi · Buah · Haiwan · Kenderaan · Tumbuhan · Sukan · Benda · & lagi
+      </p>
+      <a class="cta" href="beli.html">Beli & Muat Turun →</a>
+      <p style="margin-top:14px;font-size:.8rem">www.mastaxul.my · 1 pelayar sahaja selepas beli</p>
+    </section>
+
+    <!-- GATE / PORTAL -->
+    <section id="gate">
+      <div class="status" id="statusBox">Memeriksa akses…</div>
+    </section>
+
+    <section id="portal">
+      <div class="hero">
+        <h1>📥 Modul PDF Anda</h1>
+        <p id="profilLine"></p>
+        <p style="font-size:.8rem;margin-top:6px">Tekan modul untuk jana & muat turun PDF</p>
+      </div>
+      <div class="mods" id="modList"></div>
+    </section>
+  </div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/TUKAR_ID_DEPLOYMENT/exec";
+const LOGO_URL = ""; // optional: URL logo MX PNG
+
+const MODULES = [
+  { id: "az", title: "Huruf A–Z", type: "letters", data: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("") },
+  { id: "azs", title: "Huruf a–z", type: "letters", data: "abcdefghijklmnopqrstuvwxyz".split("") },
+  { id: "n1", title: "Nombor 1–20", type: "nums", data: range(1, 20) },
+  { id: "n2", title: "Nombor 21–50", type: "nums", data: range(21, 50) },
+  { id: "n3", title: "Nombor 51–100", type: "nums", data: range(51, 100) },
+  { id: "jawi", title: "Huruf Jawi (asas)", type: "words", data: ["ا","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"] },
+  { id: "njawi", title: "Nombor Jawi 1–20", type: "words", data: ["١","٢","٣","٤","٥","٦","٧","٨","٩","١٠","١١","١٢","١٣","١٤","١٥","١٦","١٧","١٨","١٩","٢٠"] },
+  { id: "buah", title: "Buah-buahan", type: "words", data: ["Epal","Pisang","Oren","Mangga","Durian","Rambutan","Anggur","Strawberi","Tembikai","Nanas","Jambu","Duku"] },
+  { id: "haiwan", title: "Haiwan", type: "words", data: ["Kucing","Anjing","Arnab","Ayam","Itik","Lembu","Kambing","Gajah","Harimau","Ikan","Burung","Kura-kura"] },
+  { id: "kenderaan", title: "Kenderaan", type: "words", data: ["Kereta","Bas","Motosikal","Basikal","Kapal","Kapal terbang","Keretapi","Lori","Teksi","Ambulans"] },
+  { id: "tumbuhan", title: "Pokok & Sayur", type: "words", data: ["Pokok","Bunga","Rumput","Bayam","Sawi","Tomato","Peria","Cili","Jagung","Kelapa"] },
+  { id: "sukan", title: "Sukan", type: "words", data: ["Bola sepak","Badminton","Renang","Lari","Memanah","Bolatampar","Tennis","Berbasikal"] },
+  { id: "benda", title: "Barang & Benda", type: "words", data: ["Meja","Kerusi","Buku","Pensel","Beg","Botol","Jam","Telefon","Payung","Kasut","Topi","Cawan"] },
+  { id: "warna", title: "Warna", type: "words", data: ["Merah","Biru","Kuning","Hijau","Jingga","Ungu","Hitam","Putih","Kelabu","Merah jambu"] },
+  { id: "keluarga", title: "Keluarga", type: "words", data: ["Ibu","Bapa","Adik","Abang","Kakak","Nenek","Datuk","Cikgu"] }
+];
+
+function range(a, b) {
+  const arr = [];
+  for (let i = a; i <= b; i++) arr.push(String(i));
+  return arr;
+}
+
+function deviceId() {
+  let id = localStorage.getItem("mx_pdf_device");
+  if (!id) {
+    id = "d_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem("mx_pdf_device", id);
+  }
+  return id;
+}
+
+const params = new URLSearchParams(location.search);
+const linkId = params.get("id") || "";
+const token = params.get("token") || "";
+
+let profile = { namaAnak: "", umur: "", namaIbuBapa: "" };
+
+async function boot() {
+  if (!linkId || !token) {
+    document.getElementById("landing").style.display = "block";
+    return;
+  }
+  document.getElementById("landing").style.display = "none";
+  document.getElementById("gate").classList.add("show");
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "verify",
+        linkId: linkId,
+        token: token,
+        deviceId: deviceId()
+      })
+    });
+    const d = await res.json();
+    const box = document.getElementById("statusBox");
+    if (!d.success) {
+      box.className = "status err";
+      box.textContent = d.message || "Akses ditolak.";
+      return;
+    }
+    profile = d.profile || profile;
+    box.className = "status ok";
+    box.textContent = d.message || "Akses diluluskan.";
+    document.getElementById("portal").classList.add("show");
+    document.getElementById("profilLine").textContent =
+      (profile.namaAnak || "Murid") +
+      (profile.umur ? " · " + profile.umur + " tahun" : "") +
+      (profile.namaIbuBapa ? " · " + profile.namaIbuBapa : "");
+    renderMods();
+  } catch (e) {
+    document.getElementById("statusBox").className = "status err";
+    document.getElementById("statusBox").textContent = "Gagal sambung. Cuba lagi.";
+  }
+}
+
+function renderMods() {
+  const list = document.getElementById("modList");
+  list.innerHTML = "";
+  MODULES.forEach(m => {
+    const b = document.createElement("button");
+    b.className = "mod";
+    b.textContent = m.title;
+    b.onclick = () => genPdf(m);
+    list.appendChild(b);
+  });
+}
+
+function genPdf(mod) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const pageW = 210;
+  const margin = 14;
+  const today = new Date().toLocaleDateString("ms-MY", {
+    day: "numeric", month: "long", year: "numeric"
+  });
+
+  function header(title) {
+    doc.setFillColor(129, 212, 250);
+    doc.rect(0, 0, pageW, 28, "F");
+    doc.setFillColor(255, 202, 40);
+    doc.rect(0, 28, pageW, 3, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.setTextColor(106, 27, 154);
+    doc.text("Masta Xul · PDF Belajar", pageW / 2, 12, { align: "center" });
+    doc.setFontSize(11);
+    doc.setTextColor(40, 40, 40);
+    doc.text(title, pageW / 2, 22, { align: "center" });
+  }
+
+  function footer() {
+    doc.setFontSize(8);
+    doc.setTextColor(80, 80, 80);
+    doc.text(
+      (profile.namaAnak || "") + " | " + (profile.namaIbuBapa || "") +
+      " | Umur " + (profile.umur || "-") + " | " + today,
+      pageW / 2, 287, { align: "center" }
+    );
+    doc.text("www.mastaxul.my · Jom Belajar", pageW / 2, 292, { align: "center" });
+  }
+
+  function newPage(title) {
+    if (doc.internal.getNumberOfPages() > 0 && doc.internal.getCurrentPageInfo().pageNumber >= 1) {
+      /* first call still ok */
+    }
+    header(title);
+    footer();
+  }
+
+  // Cover-style first page block
+  header(mod.title);
+  doc.setFontSize(12);
+  doc.setTextColor(50, 50, 50);
+  doc.text("Dengan ini diperakui bahawa", pageW / 2, 45, { align: "center" });
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.setTextColor(106, 27, 154);
+  doc.text(profile.namaAnak || "Murid", pageW / 2, 58, { align: "center" });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(11);
+  doc.setTextColor(40, 40, 40);
+  doc.text("Ibu/Bapa: " + (profile.namaIbuBapa || "-") + "   Umur: " + (profile.umur || "-"), pageW / 2, 68, { align: "center" });
+  doc.text("Tarikh: " + today, pageW / 2, 76, { align: "center" });
+  doc.setFontSize(10);
+  doc.text("Latih tulis / eja / warnakan. Tema Jom Belajar – Masta Xul", pageW / 2, 88, { align: "center" });
+  footer();
+
+  let y = 0;
+  const items = mod.data;
+
+  function ensureSpace(need) {
+    if (y + need > 275) {
+      doc.addPage();
+      header(mod.title);
+      footer();
+      y = 40;
+    }
+  }
+
+  doc.addPage();
+  header(mod.title);
+  footer();
+  y = 40;
+
+  items.forEach((item, idx) => {
+    if (mod.type === "letters" || mod.type === "nums") {
+      ensureSpace(42);
+      doc.setDrawColor(126, 87, 194);
+      doc.setLineWidth(0.4);
+      doc.roundedRect(margin, y, pageW - margin * 2, 38, 3, 3, "S");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(28);
+      doc.setTextColor(63, 81, 181);
+      doc.text(String(item), margin + 10, y + 24);
+      // garis tulis
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.3);
+      for (let g = 0; g < 3; g++) {
+        const gy = y + 12 + g * 9;
+        doc.line(margin + 35, gy, pageW - margin - 8, gy);
+      }
+      doc.setFontSize(9);
+      doc.setTextColor(120, 120, 120);
+      doc.text("Contoh → tulis di sini", margin + 35, y + 8);
+      y += 42;
+    } else {
+      ensureSpace(28);
+      doc.setDrawColor(76, 175, 80);
+      doc.roundedRect(margin, y, pageW - margin * 2, 24, 3, 3, "S");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.setTextColor(46, 125, 50);
+      doc.text(String(item), margin + 8, y + 15);
+      doc.setDrawColor(220, 220, 220);
+      doc.line(margin + 60, y + 16, pageW - margin - 8, y + 16);
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 150);
+      doc.text("tulis / eja", pageW - margin - 28, y + 12);
+      y += 28;
+    }
+  });
+
+  const fname = "MastaXul_" + mod.id + "_" + (profile.namaAnak || "murid").replace(/\s+/g, "_") + ".pdf";
+  doc.save(fname);
+}
+
+boot();
+</script>
+</body>
+</html>
