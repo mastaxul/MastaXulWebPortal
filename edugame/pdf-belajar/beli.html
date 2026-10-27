@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Beli PDF Belajar | Masta Xul</title>
+  <style>
+    :root {
+      --sky: #7ec8f5; --leaf: #5cb85c; --sun: #ffc107;
+      --pink: #ff6b9d; --purple: #7c4dff; --cream: #fff9e6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(180deg, #b3e5fc 0%, #e8f5e9 50%, #fff9e6 100%);
+      min-height: 100vh; color: #1a237e; padding: 16px;
+    }
+    .card {
+      max-width: 480px; margin: 20px auto; background: #fff;
+      border-radius: 24px; padding: 24px; box-shadow: 0 12px 40px rgba(0,0,0,.12);
+      border: 4px solid #ffc107;
+    }
+    h1 { text-align: center; font-size: 1.4rem; color: #6a1b9a; margin-bottom: 8px; }
+    .price {
+      text-align: center; margin: 12px 0 20px;
+    }
+    .price .now { font-size: 2rem; font-weight: 800; color: #e53935; }
+    .price .old { text-decoration: line-through; color: #999; margin-left: 8px; }
+    label { display: block; font-size: .85rem; font-weight: 600; margin: 10px 0 4px; }
+    input, textarea {
+      width: 100%; padding: 12px; border: 2px solid #ce93d8; border-radius: 12px;
+      font-size: 1rem;
+    }
+    .btn {
+      width: 100%; margin-top: 16px; padding: 14px; border: none; border-radius: 14px;
+      background: linear-gradient(90deg, #7c4dff, #ff6b9d); color: #fff;
+      font-size: 1.05rem; font-weight: 700; cursor: pointer;
+    }
+    .btn:disabled { opacity: .6; }
+    .hint { font-size: .8rem; color: #666; margin-top: 8px; text-align: center; }
+    .msg { margin-top: 12px; padding: 12px; border-radius: 12px; display: none; }
+    .msg.ok { background: #e8f5e9; color: #2e7d32; display: block; }
+    .msg.err { background: #ffebee; color: #c62828; display: block; }
+    .qr-box {
+      text-align: center; background: var(--cream); padding: 12px; border-radius: 12px;
+      margin: 12px 0; font-size: .9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>📚 PDF Belajar Menulis & Melukis</h1>
+    <div class="price">
+      <span class="now">RM9.90</span>
+      <span class="old">RM59.90</span>
+    </div>
+    <p class="hint">A–Z · a–z · Nombor · Jawi · Buah · Haiwan · & lagi · Sijil berwarna</p>
+
+    <div class="qr-box">
+      Bayar <strong>RM9.90</strong> melalui DuitNow/QR ke akaun Masta Xul,<br>
+      kemudian muat naik resit di bawah.
+      <!-- Ganti dengan QR imej anda jika ada -->
+    </div>
+
+    <form id="formBeli">
+      <label>Nama pembeli *</label>
+      <input id="nama" required>
+
+      <label>Emel *</label>
+      <input id="email" type="email" required>
+
+      <label>Telefon *</label>
+      <input id="telefon" required>
+
+      <label>Nama anak (untuk sijil/PDF) *</label>
+      <input id="namaAnak" required>
+
+      <label>Umur anak *</label>
+      <input id="umur" type="number" min="3" max="12" required>
+
+      <label>Nama ibu/bapa *</label>
+      <input id="namaIbuBapa" required>
+
+      <label>No. rujukan bayaran</label>
+      <input id="rujukan">
+
+      <label>Kod affiliate (jika ada)</label>
+      <input id="ref" placeholder="contoh SITI01">
+
+      <label>Resit bayaran (JPG/PNG) *</label>
+      <input id="resit" type="file" accept="image/*" required>
+
+      <input type="text" name="website" id="website" style="display:none" tabindex="-1" autocomplete="off">
+
+      <button type="submit" class="btn" id="btnHantar">Hantar & Dapatkan Akses</button>
+    </form>
+    <div id="msg" class="msg"></div>
+    <p class="hint"><a href="./">← Kembali ke senarai modul</a></p>
+  </div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/TUKAR_ID_DEPLOYMENT/exec";
+
+// Auto isi ?ref=
+const q = new URLSearchParams(location.search);
+if (q.get("ref")) document.getElementById("ref").value = q.get("ref");
+
+document.getElementById("formBeli").onsubmit = async function (e) {
+  e.preventDefault();
+  const btn = document.getElementById("btnHantar");
+  const msg = document.getElementById("msg");
+  btn.disabled = true;
+  msg.className = "msg";
+  msg.textContent = "Memuat naik…";
+  msg.style.display = "block";
+
+  const file = document.getElementById("resit").files[0];
+  if (!file) {
+    msg.className = "msg err";
+    msg.textContent = "Sila pilih resit.";
+    btn.disabled = false;
+    return;
+  }
+
+  const base64 = await new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(",")[1]);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+
+  const payload = {
+    nama: document.getElementById("nama").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    telefon: document.getElementById("telefon").value.trim(),
+    namaAnak: document.getElementById("namaAnak").value.trim(),
+    umur: document.getElementById("umur").value.trim(),
+    namaIbuBapa: document.getElementById("namaIbuBapa").value.trim(),
+    rujukan: document.getElementById("rujukan").value.trim(),
+    ref: document.getElementById("ref").value.trim(),
+    website: document.getElementById("website").value,
+    fileBase64: base64,
+    fileMimeType: file.type || "image/jpeg",
+    fileName: file.name
+  };
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+    const d = await res.json();
+    if (d.success) {
+      msg.className = "msg ok";
+      msg.innerHTML = "Berjaya dihantar! Semak emel. Selepas admin lulus, buka pautan akses dalam <b>satu pelayar</b> sahaja.";
+      if (d.accessUrl) {
+        msg.innerHTML += "<br><small>Pautan (selepas lulus): " + d.accessUrl + "</small>";
+      }
+    } else {
+      msg.className = "msg err";
+      msg.textContent = d.message || "Gagal.";
+      btn.disabled = false;
+    }
+  } catch (err) {
+    msg.className = "msg err";
+    msg.textContent = "Ralat rangkaian.";
+    btn.disabled = false;
+  }
+};
+</script>
+</body>
+</html>
