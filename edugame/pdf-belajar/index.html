@@ -8,37 +8,26 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: system-ui, sans-serif;
-      background: linear-gradient(180deg, #81d4fa, #c8e6c9 40%, #fff59d);
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(165deg, #4fc3f7 0%, #81c784 45%, #fff176 100%);
       min-height: 100vh; color: #1a237e;
     }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; }
+    .wrap { max-width: 740px; margin: 0 auto; padding: 16px 14px 70px; }
     .hero {
-      background: #fff; border-radius: 24px; padding: 28px 20px; text-align: center;
-      border: 4px solid #ffca28; box-shadow: 0 10px 30px rgba(0,0,0,.1); margin-bottom: 20px;
+      background: #fff; border-radius: 22px; padding: 22px 16px; text-align: center;
+      border: 4px solid #ffca28; box-shadow: 0 10px 28px rgba(0,0,0,.12); margin-bottom: 14px;
     }
-    .hero h1 { font-size: 1.5rem; color: #6a1b9a; margin: 8px 0; }
+    .hero h1 { font-size: 1.35rem; color: #6a1b9a; margin: 6px 0; }
     .badge {
-      display: inline-block; background: #e53935; color: #fff; padding: 6px 14px;
-      border-radius: 20px; font-weight: 700; font-size: .9rem;
+      display: inline-block; background: #e53935; color: #fff; padding: 5px 12px;
+      border-radius: 16px; font-weight: 700; font-size: .85rem;
     }
-    .old { text-decoration: line-through; color: #999; margin-left: 8px; }
+    .old { text-decoration: line-through; color: #999; margin-left: 6px; }
     .cta {
-      display: inline-block; margin-top: 16px; padding: 14px 28px; border-radius: 14px;
+      display: inline-block; margin-top: 14px; padding: 12px 24px; border-radius: 14px;
       background: linear-gradient(90deg, #7c4dff, #ec407a); color: #fff;
       font-weight: 700; text-decoration: none;
     }
-    .mods {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;
-    }
-    @media (min-width: 600px) { .mods { grid-template-columns: 1fr 1fr 1fr; } }
-    .mod {
-      background: #fff; border: 3px solid #7e57c2; border-radius: 16px; padding: 14px 10px;
-      text-align: center; cursor: pointer; font-weight: 600; font-size: .85rem;
-      transition: transform .15s;
-    }
-    .mod:hover { transform: scale(1.03); background: #f3e5f5; }
-    .mod:disabled, .mod.off { opacity: .5; pointer-events: none; }
     #gate, #portal { display: none; }
     #portal.show, #gate.show { display: block; }
     .status {
@@ -47,57 +36,197 @@
     }
     .status.ok { background: #e8f5e9; }
     .status.err { background: #ffebee; }
+    .profile-box {
+      background: #fff; border-radius: 16px; padding: 14px; margin-bottom: 14px;
+      border: 3px solid #7e57c2;
+    }
+    .profile-box label { display: block; font-size: .75rem; font-weight: 700; margin: 8px 0 4px; color: #4527a0; }
+    .profile-box input {
+      width: 100%; padding: 10px 12px; border: 2px solid #ce93d8; border-radius: 10px; font-size: 1rem;
+    }
+    .profile-box input:disabled {
+      background: #f3e5f5; color: #555; border-color: #ddd;
+    }
+    .mods { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 520px) { .mods { grid-template-columns: 1fr 1fr; } }
+    .mod {
+      display: flex; align-items: center; gap: 10px;
+      background: #fff; border: 3px solid #7e57c2; border-radius: 16px;
+      padding: 12px; text-align: left; cursor: pointer; transition: .15s;
+    }
+    .mod:hover { transform: scale(1.02); background: #f3e5f5; }
+    .mod .emoji { font-size: 1.8rem; line-height: 1; }
+    .mod .info { flex: 1; }
+    .mod .info strong { display: block; font-size: .92rem; color: #4a148c; }
+    .mod .info span { font-size: .72rem; color: #666; }
+    .mod .dl {
+      background: linear-gradient(90deg, #43a047, #66bb6a); color: #fff;
+      border: none; border-radius: 10px; padding: 8px 12px; font-weight: 700;
+      font-size: .75rem; white-space: nowrap; pointer-events: none;
+    }
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: #333; color: #fff; padding: 10px 18px; border-radius: 20px;
+      font-size: .85rem; display: none; z-index: 99;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <!-- LANDING -->
     <section class="hero" id="landing">
       <div class="badge">PROMO RM9.90 <span class="old">RM59.90</span></div>
       <h1>🌈 PDF Belajar Menulis & Melukis</h1>
-      <p>Tema ceria macam sijil Masta Xul · Nama anak, tarikh, ibu bapa & umur pada setiap PDF</p>
-      <p style="margin-top:12px;font-size:.9rem">
-        A–Z · a–z · 1–100 · Jawi · Buah · Haiwan · Kenderaan · Tumbuhan · Sukan · Benda · & lagi
+      <p style="font-size:.9rem;margin-top:6px">
+        Huruf · Nombor · Jawi · Buah 🍎 · Haiwan 🐱 · Bangunan 🏠 · Warna 🎨
+      </p>
+      <p style="font-size:.8rem;margin-top:8px;color:#555">
+        Jejak titik-titik · Contoh warna · Nama anak pada setiap PDF
       </p>
       <a class="cta" href="beli.html">Beli & Muat Turun →</a>
-      <p style="margin-top:14px;font-size:.8rem">www.mastaxul.my · 1 pelayar sahaja selepas beli</p>
+      <p style="margin-top:12px;font-size:.75rem">www.mastaxul.my · 1 pelayar sahaja</p>
     </section>
 
-    <!-- GATE / PORTAL -->
     <section id="gate">
       <div class="status" id="statusBox">Memeriksa akses…</div>
     </section>
 
     <section id="portal">
-      <div class="hero">
-        <h1>📥 Modul PDF Anda</h1>
-        <p id="profilLine"></p>
-        <p style="font-size:.8rem;margin-top:6px">Tekan modul untuk jana & muat turun PDF</p>
+      <div class="hero" style="padding:16px">
+        <h1>📥 Modul PDF</h1>
+        <p style="font-size:.8rem">Edit nama anak & umur, kemudian tekan muat turun</p>
       </div>
+
+      <div class="profile-box">
+        <label>Nama anak (boleh edit)</label>
+        <input type="text" id="editNamaAnak" maxlength="40" placeholder="Nama anak">
+
+        <label>Umur (boleh edit)</label>
+        <input type="number" id="editUmur" min="3" max="15" placeholder="Umur">
+
+        <label>Nama ibu / bapa (tidak boleh edit)</label>
+        <input type="text" id="editIbuBapa" disabled>
+      </div>
+
       <div class="mods" id="modList"></div>
     </section>
   </div>
+  <div class="toast" id="toast">Menjana PDF…</div>
 
 <script>
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYypSvbEY4oAYSDs0gJn34vEV92vJG-Eks6Kj63evviLVery8TeLScTb4D-80d3Uzi/exec";
-const LOGO_URL = ""; // optional: URL logo MX PNG
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/TUKAR_ID_DEPLOYMENT/exec";
 
+/* ===== MODUL ===== */
 const MODULES = [
-  { id: "az", title: "Huruf A–Z", type: "letters", data: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("") },
-  { id: "azs", title: "Huruf a–z", type: "letters", data: "abcdefghijklmnopqrstuvwxyz".split("") },
-  { id: "n1", title: "Nombor 1–20", type: "nums", data: range(1, 20) },
-  { id: "n2", title: "Nombor 21–50", type: "nums", data: range(21, 50) },
-  { id: "n3", title: "Nombor 51–100", type: "nums", data: range(51, 100) },
-  { id: "jawi", title: "Huruf Jawi (asas)", type: "words", data: ["ا","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"] },
-  { id: "njawi", title: "Nombor Jawi 1–20", type: "words", data: ["١","٢","٣","٤","٥","٦","٧","٨","٩","١٠","١١","١٢","١٣","١٤","١٥","١٦","١٧","١٨","١٩","٢٠"] },
-  { id: "buah", title: "Buah-buahan", type: "words", data: ["Epal","Pisang","Oren","Mangga","Durian","Rambutan","Anggur","Strawberi","Tembikai","Nanas","Jambu","Duku"] },
-  { id: "haiwan", title: "Haiwan", type: "words", data: ["Kucing","Anjing","Arnab","Ayam","Itik","Lembu","Kambing","Gajah","Harimau","Ikan","Burung","Kura-kura"] },
-  { id: "kenderaan", title: "Kenderaan", type: "words", data: ["Kereta","Bas","Motosikal","Basikal","Kapal","Kapal terbang","Keretapi","Lori","Teksi","Ambulans"] },
-  { id: "tumbuhan", title: "Pokok & Sayur", type: "words", data: ["Pokok","Bunga","Rumput","Bayam","Sawi","Tomato","Peria","Cili","Jagung","Kelapa"] },
-  { id: "sukan", title: "Sukan", type: "words", data: ["Bola sepak","Badminton","Renang","Lari","Memanah","Bolatampar","Tennis","Berbasikal"] },
-  { id: "benda", title: "Barang & Benda", type: "words", data: ["Meja","Kerusi","Buku","Pensel","Beg","Botol","Jam","Telefon","Payung","Kasut","Topi","Cawan"] },
-  { id: "warna", title: "Warna", type: "words", data: ["Merah","Biru","Kuning","Hijau","Jingga","Ungu","Hitam","Putih","Kelabu","Merah jambu"] },
-  { id: "keluarga", title: "Keluarga", type: "words", data: ["Ibu","Bapa","Adik","Abang","Kakak","Nenek","Datuk","Cikgu"] }
+  { id: "az", emoji: "🔤", title: "Huruf A–Z", type: "traceLetter",
+    data: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("") },
+  { id: "azs", emoji: "🔡", title: "Huruf a–z", type: "traceLetter",
+    data: "abcdefghijklmnopqrstuvwxyz".split("") },
+  { id: "n1", emoji: "🔢", title: "Nombor 1–20", type: "traceLetter",
+    data: range(1, 20) },
+  { id: "n2", emoji: "🔢", title: "Nombor 21–50", type: "traceLetter",
+    data: range(21, 50) },
+  { id: "n3", emoji: "🔢", title: "Nombor 51–100", type: "traceLetter",
+    data: range(51, 100) },
+  { id: "jawi", emoji: "📖", title: "Huruf Jawi asas", type: "traceLetter",
+    data: ["ا","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"] },
+  { id: "warna", emoji: "🎨", title: "Warna + contoh", type: "color",
+    data: [
+      { name: "Merah", rgb: [229, 57, 53], emoji: "🔴" },
+      { name: "Biru", rgb: [30, 136, 229], emoji: "🔵" },
+      { name: "Kuning", rgb: [253, 216, 53], emoji: "🟡" },
+      { name: "Hijau", rgb: [67, 160, 71], emoji: "🟢" },
+      { name: "Jingga", rgb: [255, 152, 0], emoji: "🟠" },
+      { name: "Ungu", rgb: [142, 36, 170], emoji: "🟣" },
+      { name: "Merah jambu", rgb: [236, 64, 122], emoji: "💗" },
+      { name: "Perang", rgb: [141, 110, 99], emoji: "🟤" },
+      { name: "Hitam", rgb: [33, 33, 33], emoji: "⚫" },
+      { name: "Putih", rgb: [245, 245, 245], emoji: "⚪" },
+      { name: "Kelabu", rgb: [158, 158, 158], emoji: "⚪" },
+      { name: "Biru langit", rgb: [79, 195, 247], emoji: "🩵" }
+    ]},
+  { id: "buah", emoji: "🍎", title: "Buah-buahan", type: "wordColor",
+    data: [
+      { name: "Epal", rgb: [229, 57, 53], emoji: "🍎" },
+      { name: "Pisang", rgb: [253, 216, 53], emoji: "🍌" },
+      { name: "Oren", rgb: [255, 152, 0], emoji: "🍊" },
+      { name: "Anggur", rgb: [142, 36, 170], emoji: "🍇" },
+      { name: "Strawberi", rgb: [236, 64, 122], emoji: "🍓" },
+      { name: "Tembikai", rgb: [67, 160, 71], emoji: "🍉" },
+      { name: "Nanas", rgb: [255, 193, 7], emoji: "🍍" },
+      { name: "Mangga", rgb: [255, 167, 38], emoji: "🥭" },
+      { name: "Durian", rgb: [158, 157, 36], emoji: "榴莲" },
+      { name: "Ceri", rgb: [198, 40, 40], emoji: "🍒" },
+      { name: "Blueberi", rgb: [57, 73, 171], emoji: "🫐" },
+      { name: "Kelapa", rgb: [141, 110, 99], emoji: "🥥" }
+    ]},
+  { id: "haiwan", emoji: "🐱", title: "Haiwan", type: "wordColor",
+    data: [
+      { name: "Kucing", rgb: [255, 167, 38], emoji: "🐱" },
+      { name: "Anjing", rgb: [141, 110, 99], emoji: "🐶" },
+      { name: "Arnab", rgb: [240, 244, 195], emoji: "🐰" },
+      { name: "Ayam", rgb: [255, 235, 59], emoji: "🐔" },
+      { name: "Ikan", rgb: [3, 169, 244], emoji: "🐟" },
+      { name: "Burung", rgb: [79, 195, 247], emoji: "🐦" },
+      { name: "Gajah", rgb: [158, 158, 158], emoji: "🐘" },
+      { name: "Harimau", rgb: [255, 152, 0], emoji: "🐯" },
+      { name: "Kura-kura", rgb: [67, 160, 71], emoji: "🐢" },
+      { name: "Kupu-kupu", rgb: [236, 64, 122], emoji: "🦋" },
+      { name: "Lembu", rgb: [93, 64, 55], emoji: "🐮" },
+      { name: "Kambing", rgb: [189, 189, 189], emoji: "🐐" }
+    ]},
+  { id: "bangunan", emoji: "🏠", title: "Bangunan", type: "wordColor",
+    data: [
+      { name: "Rumah", rgb: [239, 83, 80], emoji: "🏠" },
+      { name: "Sekolah", rgb: [66, 165, 245], emoji: "🏫" },
+      { name: "Masjid", rgb: [38, 166, 154], emoji: "🕌" },
+      { name: "Hospital", rgb: [236, 64, 122], emoji: "🏥" },
+      { name: "Kedai", rgb: [255, 167, 38], emoji: "🏪" },
+      { name: "Menara", rgb: [92, 107, 192], emoji: "🏢" },
+      { name: "Jambatan", rgb: [120, 144, 156], emoji: "🌉" },
+      { name: "Istana", rgb: [171, 71, 188], emoji: "🏰" }
+    ]},
+  { id: "kenderaan", emoji: "🚗", title: "Kenderaan", type: "wordColor",
+    data: [
+      { name: "Kereta", rgb: [30, 136, 229], emoji: "🚗" },
+      { name: "Bas", rgb: [253, 216, 53], emoji: "🚌" },
+      { name: "Motosikal", rgb: [66, 66, 66], emoji: "🏍️" },
+      { name: "Basikal", rgb: [67, 160, 71], emoji: "🚲" },
+      { name: "Kapal terbang", rgb: [79, 195, 247], emoji: "✈️" },
+      { name: "Kapal", rgb: [3, 169, 244], emoji: "🚢" },
+      { name: "Keretapi", rgb: [121, 85, 72], emoji: "🚆" },
+      { name: "Ambulans", rgb: [229, 57, 53], emoji: "🚑" }
+    ]},
+  { id: "tumbuhan", emoji: "🌳", title: "Pokok & Sayur", type: "wordColor",
+    data: [
+      { name: "Pokok", rgb: [46, 125, 50], emoji: "🌳" },
+      { name: "Bunga", rgb: [236, 64, 122], emoji: "🌸" },
+      { name: "Bayam", rgb: [56, 142, 60], emoji: "🥬" },
+      { name: "Tomato", rgb: [229, 57, 53], emoji: "🍅" },
+      { name: "Jagung", rgb: [253, 216, 53], emoji: "🌽" },
+      { name: "Cili", rgb: [198, 40, 40], emoji: "🌶️" },
+      { name: "Peria", rgb: [104, 159, 56], emoji: "🥒" },
+      { name: "Lobak", rgb: [255, 152, 0], emoji: "🥕" }
+    ]},
+  { id: "sukan", emoji: "⚽", title: "Sukan", type: "wordColor",
+    data: [
+      { name: "Bola sepak", rgb: [33, 33, 33], emoji: "⚽" },
+      { name: "Badminton", rgb: [67, 160, 71], emoji: "🏸" },
+      { name: "Renang", rgb: [3, 169, 244], emoji: "🏊" },
+      { name: "Lari", rgb: [255, 112, 67], emoji: "🏃" },
+      { name: "Bolatampar", rgb: [255, 202, 40], emoji: "🏐" },
+      { name: "Berbasikal", rgb: [30, 136, 229], emoji: "🚴" }
+    ]},
+  { id: "benda", emoji: "✏️", title: "Barang & Benda", type: "wordColor",
+    data: [
+      { name: "Buku", rgb: [63, 81, 181], emoji: "📘" },
+      { name: "Pensel", rgb: [255, 193, 7], emoji: "✏️" },
+      { name: "Beg", rgb: [121, 85, 72], emoji: "🎒" },
+      { name: "Botol", rgb: [3, 169, 244], emoji: "🧴" },
+      { name: "Jam", rgb: [66, 66, 66], emoji: "⌚" },
+      { name: "Payung", rgb: [236, 64, 122], emoji: "☂️" },
+      { name: "Kasut", rgb: [141, 110, 99], emoji: "👟" },
+      { name: "Cawan", rgb: [255, 167, 38], emoji: "☕" }
+    ]}
 ];
 
 function range(a, b) {
@@ -115,10 +244,16 @@ function deviceId() {
   return id;
 }
 
+function toast(t) {
+  const el = document.getElementById("toast");
+  el.textContent = t;
+  el.style.display = "block";
+  setTimeout(() => { el.style.display = "none"; }, 2000);
+}
+
 const params = new URLSearchParams(location.search);
 const linkId = params.get("id") || "";
 const token = params.get("token") || "";
-
 let profile = { namaAnak: "", umur: "", namaIbuBapa: "" };
 
 async function boot() {
@@ -133,10 +268,7 @@ async function boot() {
     const res = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
       body: JSON.stringify({
-        action: "verify",
-        linkId: linkId,
-        token: token,
-        deviceId: deviceId()
+        action: "verify", linkId, token, deviceId: deviceId()
       })
     });
     const d = await res.json();
@@ -150,146 +282,213 @@ async function boot() {
     box.className = "status ok";
     box.textContent = d.message || "Akses diluluskan.";
     document.getElementById("portal").classList.add("show");
-    document.getElementById("profilLine").textContent =
-      (profile.namaAnak || "Murid") +
-      (profile.umur ? " · " + profile.umur + " tahun" : "") +
-      (profile.namaIbuBapa ? " · " + profile.namaIbuBapa : "");
+
+    document.getElementById("editNamaAnak").value = profile.namaAnak || "";
+    document.getElementById("editUmur").value = profile.umur || "";
+    document.getElementById("editIbuBapa").value = profile.namaIbuBapa || "";
+
     renderMods();
   } catch (e) {
     document.getElementById("statusBox").className = "status err";
-    document.getElementById("statusBox").textContent = "Gagal sambung. Cuba lagi.";
+    document.getElementById("statusBox").textContent = "Gagal sambung.";
   }
+}
+
+function getProfileNow() {
+  return {
+    namaAnak: document.getElementById("editNamaAnak").value.trim() || profile.namaAnak || "Murid",
+    umur: document.getElementById("editUmur").value.trim() || profile.umur || "-",
+    namaIbuBapa: profile.namaIbuBapa || document.getElementById("editIbuBapa").value || "-"
+  };
 }
 
 function renderMods() {
   const list = document.getElementById("modList");
   list.innerHTML = "";
   MODULES.forEach(m => {
-    const b = document.createElement("button");
-    b.className = "mod";
-    b.textContent = m.title;
-    b.onclick = () => genPdf(m);
-    list.appendChild(b);
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "mod";
+    btn.innerHTML =
+      '<span class="emoji">' + m.emoji + '</span>' +
+      '<span class="info"><strong>' + m.title + '</strong><span>Jejak titik · warna · sijil</span></span>' +
+      '<span class="dl">⬇ Muat turun PDF</span>';
+    btn.onclick = () => {
+      toast("Menjana PDF…");
+      setTimeout(() => genPdf(m), 50);
+    };
+    list.appendChild(btn);
   });
 }
 
+/* ===== PDF helpers: dotted lines ===== */
+function dottedLine(doc, x1, y1, x2, y2, step) {
+  step = step || 1.2;
+  const dx = x2 - x1, dy = y2 - y1;
+  const len = Math.sqrt(dx * dx + dy * dy) || 1;
+  const n = Math.floor(len / step);
+  doc.setFillColor(160, 160, 180);
+  for (let i = 0; i <= n; i++) {
+    if (i % 2 === 1) continue;
+    const t = i / n;
+    doc.circle(x1 + dx * t, y1 + dy * t, 0.35, "F");
+  }
+}
+
+function drawTraceBox(doc, x, y, w, h, label) {
+  doc.setDrawColor(180, 160, 220);
+  doc.setLineWidth(0.4);
+  doc.roundedRect(x, y, w, h, 2, 2, "S");
+  // 3 dotted writing lines
+  const gap = h / 4;
+  for (let i = 1; i <= 3; i++) {
+    dottedLine(doc, x + 4, y + gap * i, x + w - 4, y + gap * i, 1.4);
+  }
+  // ghost label (light)
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(22);
+  doc.setTextColor(210, 205, 230);
+  doc.text(String(label), x + 8, y + h * 0.72);
+}
+
 function genPdf(mod) {
+  const p = getProfileNow();
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
-  const pageW = 210;
-  const margin = 14;
+  const pageW = 210, margin = 12;
   const today = new Date().toLocaleDateString("ms-MY", {
     day: "numeric", month: "long", year: "numeric"
   });
 
-  function header(title) {
-    doc.setFillColor(129, 212, 250);
-    doc.rect(0, 0, pageW, 28, "F");
+  function paintHeader(title) {
+    doc.setFillColor(79, 195, 247);
+    doc.rect(0, 0, pageW, 26, "F");
     doc.setFillColor(255, 202, 40);
-    doc.rect(0, 28, pageW, 3, "F");
+    doc.rect(0, 26, pageW, 3, "F");
+    doc.setFillColor(129, 199, 132);
+    doc.rect(0, 29, pageW, 2, "F");
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.setTextColor(106, 27, 154);
-    doc.text("Masta Xul · PDF Belajar", pageW / 2, 12, { align: "center" });
+    doc.setFontSize(14);
+    doc.setTextColor(74, 20, 140);
+    doc.text("Masta Xul · PDF Belajar", pageW / 2, 11, { align: "center" });
     doc.setFontSize(11);
-    doc.setTextColor(40, 40, 40);
-    doc.text(title, pageW / 2, 22, { align: "center" });
+    doc.setTextColor(40, 40, 60);
+    doc.text(title, pageW / 2, 20, { align: "center" });
   }
 
-  function footer() {
+  function paintFooter() {
     doc.setFontSize(8);
-    doc.setTextColor(80, 80, 80);
+    doc.setTextColor(70, 70, 90);
     doc.text(
-      (profile.namaAnak || "") + " | " + (profile.namaIbuBapa || "") +
-      " | Umur " + (profile.umur || "-") + " | " + today,
+      p.namaAnak + " · " + p.umur + " thn · " + p.namaIbuBapa + " · " + today,
       pageW / 2, 287, { align: "center" }
     );
-    doc.text("www.mastaxul.my · Jom Belajar", pageW / 2, 292, { align: "center" });
+    doc.setTextColor(100, 80, 140);
+    doc.text("www.mastaxul.my  ·  Jom Belajar  ·  Jejak titik-titik", pageW / 2, 292, { align: "center" });
   }
 
-  function newPage(title) {
-    if (doc.internal.getNumberOfPages() > 0 && doc.internal.getCurrentPageInfo().pageNumber >= 1) {
-      /* first call still ok */
-    }
-    header(title);
-    footer();
-  }
+  // ----- Muka depan -----
+  paintHeader(mod.title);
+  doc.setFillColor(255, 249, 230);
+  doc.roundedRect(margin, 40, pageW - margin * 2, 55, 4, 4, "F");
+  doc.setDrawColor(255, 202, 40);
+  doc.setLineWidth(0.8);
+  doc.roundedRect(margin, 40, pageW - margin * 2, 55, 4, 4, "S");
 
-  // Cover-style first page block
-  header(mod.title);
-  doc.setFontSize(12);
-  doc.setTextColor(50, 50, 50);
-  doc.text("Dengan ini diperakui bahawa", pageW / 2, 45, { align: "center" });
+  doc.setFontSize(11);
+  doc.setTextColor(80, 80, 80);
+  doc.text("Dengan ini diperakui bahawa", pageW / 2, 52, { align: "center" });
   doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
   doc.setTextColor(106, 27, 154);
-  doc.text(profile.namaAnak || "Murid", pageW / 2, 58, { align: "center" });
+  doc.text(p.namaAnak, pageW / 2, 64, { align: "center" });
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(11);
-  doc.setTextColor(40, 40, 40);
-  doc.text("Ibu/Bapa: " + (profile.namaIbuBapa || "-") + "   Umur: " + (profile.umur || "-"), pageW / 2, 68, { align: "center" });
-  doc.text("Tarikh: " + today, pageW / 2, 76, { align: "center" });
   doc.setFontSize(10);
-  doc.text("Latih tulis / eja / warnakan. Tema Jom Belajar – Masta Xul", pageW / 2, 88, { align: "center" });
-  footer();
+  doc.setTextColor(50, 50, 50);
+  doc.text("Ibu/Bapa: " + p.namaIbuBapa + "    Umur: " + p.umur + " tahun", pageW / 2, 74, { align: "center" });
+  doc.text("Tarikh: " + today, pageW / 2, 82, { align: "center" });
+  paintFooter();
 
-  let y = 0;
-  const items = mod.data;
+  // ----- Kandungan -----
+  doc.addPage();
+  paintHeader(mod.title);
+  paintFooter();
+  let y = 40;
 
-  function ensureSpace(need) {
-    if (y + need > 275) {
+  function need(h) {
+    if (y + h > 275) {
       doc.addPage();
-      header(mod.title);
-      footer();
+      paintHeader(mod.title);
+      paintFooter();
       y = 40;
     }
   }
 
-  doc.addPage();
-  header(mod.title);
-  footer();
-  y = 40;
-
-  items.forEach((item, idx) => {
-    if (mod.type === "letters" || mod.type === "nums") {
-      ensureSpace(42);
-      doc.setDrawColor(126, 87, 194);
-      doc.setLineWidth(0.4);
-      doc.roundedRect(margin, y, pageW - margin * 2, 38, 3, 3, "S");
+  if (mod.type === "traceLetter") {
+    mod.data.forEach(ch => {
+      need(36);
+      const boxH = 32;
+      drawTraceBox(doc, margin, y, pageW - margin * 2, boxH, ch);
+      // dark example on the left strip
+      doc.setFillColor(245, 240, 255);
+      doc.roundedRect(margin + 1, y + 1, 28, boxH - 2, 2, 2, "F");
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(28);
-      doc.setTextColor(63, 81, 181);
-      doc.text(String(item), margin + 10, y + 24);
-      // garis tulis
-      doc.setDrawColor(200, 200, 200);
-      doc.setLineWidth(0.3);
-      for (let g = 0; g < 3; g++) {
-        const gy = y + 12 + g * 9;
-        doc.line(margin + 35, gy, pageW - margin - 8, gy);
-      }
-      doc.setFontSize(9);
-      doc.setTextColor(120, 120, 120);
-      doc.text("Contoh → tulis di sini", margin + 35, y + 8);
-      y += 42;
-    } else {
-      ensureSpace(28);
-      doc.setDrawColor(76, 175, 80);
-      doc.roundedRect(margin, y, pageW - margin * 2, 24, 3, 3, "S");
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(14);
-      doc.setTextColor(46, 125, 50);
-      doc.text(String(item), margin + 8, y + 15);
-      doc.setDrawColor(220, 220, 220);
-      doc.line(margin + 60, y + 16, pageW - margin - 8, y + 16);
-      doc.setFontSize(8);
-      doc.setTextColor(150, 150, 150);
-      doc.text("tulis / eja", pageW - margin - 28, y + 12);
-      y += 28;
-    }
-  });
+      doc.setFontSize(20);
+      doc.setTextColor(94, 53, 177);
+      doc.text(String(ch), margin + 8, y + 22);
+      doc.setFontSize(7);
+      doc.setTextColor(140, 140, 160);
+      doc.text("jejak →", margin + 32, y + 7);
+      y += boxH + 4;
+    });
+  }
 
-  const fname = "MastaXul_" + mod.id + "_" + (profile.namaAnak || "murid").replace(/\s+/g, "_") + ".pdf";
-  doc.save(fname);
+  if (mod.type === "color" || mod.type === "wordColor") {
+    mod.data.forEach(item => {
+      need(30);
+      const boxH = 26;
+      const [r, g, b] = item.rgb;
+
+      // border
+      doc.setDrawColor(200, 180, 220);
+      doc.setLineWidth(0.35);
+      doc.roundedRect(margin, y, pageW - margin * 2, boxH, 2, 2, "S");
+
+      // color swatch (contoh warna)
+      doc.setFillColor(r, g, b);
+      doc.circle(margin + 12, y + boxH / 2, 7, "F");
+      doc.setDrawColor(80, 80, 80);
+      doc.setLineWidth(0.25);
+      doc.circle(margin + 12, y + boxH / 2, 7, "S");
+
+      // second empty circle to colour
+      doc.setDrawColor(150, 150, 170);
+      doc.setLineDashPattern([1, 1], 0);
+      doc.circle(margin + 32, y + boxH / 2, 7, "S");
+      doc.setLineDashPattern([], 0);
+
+      // name
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.setTextColor(40, 40, 60);
+      doc.text(item.name, margin + 46, y + 11);
+
+      // dotted writing line
+      dottedLine(doc, margin + 46, y + 18, pageW - margin - 8, y + 18, 1.3);
+
+      doc.setFontSize(7);
+      doc.setTextColor(150, 150, 160);
+      doc.text("warna contoh", margin + 5, y + boxH - 3);
+      doc.text("warnakan", margin + 24, y + boxH - 3);
+      doc.text("tulis nama", margin + 46, y + boxH - 3);
+
+      y += boxH + 4;
+    });
+  }
+
+  const safe = p.namaAnak.replace(/[^\w\u00C0-\u024f]+/g, "_").slice(0, 30);
+  doc.save("MastaXul_" + mod.id + "_" + safe + ".pdf");
+  toast("PDF dimuat turun ✓");
 }
 
 boot();
