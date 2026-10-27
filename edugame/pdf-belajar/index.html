@@ -73,6 +73,23 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYypSvbEY4oAYS
 function range(a, b) { const r = []; for (let i = a; i <= b; i++) r.push(String(i)); return r; }
 
 /* ===== MODUL ===== */
+const W = t => t.trim().split("\n").map(l => { const [n, e, r] = l.split("|"); return { name: n.trim(), emoji: e.trim(), rgb: r.split(",").map(Number) }; });
+
+// Perkataan + emoji untuk huruf (A–Z) dan Jawi
+const WORDS = {
+  A:["Ayam","🐔"],B:["Bola","⚽"],C:["Cawan","☕"],D:["Dadu","🎲"],E:["Epal","🍎"],F:["Flamingo","🦩"],
+  G:["Gajah","🐘"],H:["Harimau","🐯"],I:["Ikan","🐟"],J:["Jam","⌚"],K:["Kucing","🐱"],L:["Lembu","🐮"],
+  M:["Mangga","🥭"],N:["Nanas","🍍"],O:["Oren","🍊"],P:["Pisang","🍌"],Q:["Quran","📖"],R:["Roti","🍞"],
+  S:["Singa","🦁"],T:["Tikus","🐭"],U:["Ular","🐍"],V:["Van","🚐"],W:["Wau","🪁"],X:["Pangkah","❌"],
+  Y:["Yoyo","🪀"],Z:["Zirafah","🦒"]
+};
+const JAWI_WORDS = {
+  "ا":["Ayam","🐔"],"ب":["Bola","⚽"],"ت":["Topi","🧢"],"ج":["Jam","⌚"],"د":["Dadu","🎲"],"ر":["Roti","🍞"],
+  "ز":["Zebra","🦓"],"س":["Singa","🦁"],"ك":["Kucing","🐱"],"ل":["Lembu","🐮"],"م":["Monyet","🐒"],
+  "ن":["Nanas","🍍"],"ه":["Helang","🦅"],"و":["Wau","🪁"],"ي":["Yoyo","🪀"]
+};
+const COUNT_EMOJI = ["🍎","⭐","🐟","🌸","🚗"];
+
 const MODULES = [
   { id: "az", emoji: "🔤", title: "Huruf A–Z", type: "traceLetter", data: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("") },
   { id: "azs", emoji: "🔡", title: "Huruf a–z", type: "traceLetter", data: "abcdefghijklmnopqrstuvwxyz".split("") },
@@ -81,51 +98,170 @@ const MODULES = [
   { id: "n3", emoji: "🔢", title: "Nombor 51–100", type: "traceLetter", data: range(51, 100) },
   { id: "jawi", emoji: "📖", title: "Huruf Jawi asas", type: "traceLetter",
     data: ["ا","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"] },
-  { id: "warna", emoji: "🎨", title: "Warna + contoh", type: "color", data: [
-    { name: "Merah", rgb: [229,57,53] }, { name: "Biru", rgb: [30,136,229] },
-    { name: "Kuning", rgb: [253,216,53] }, { name: "Hijau", rgb: [67,160,71] },
-    { name: "Jingga", rgb: [255,152,0] }, { name: "Ungu", rgb: [142,36,170] },
-    { name: "Merah jambu", rgb: [236,64,122] }, { name: "Perang", rgb: [141,110,99] },
-    { name: "Hitam", rgb: [33,33,33] }, { name: "Putih", rgb: [245,245,245] },
-    { name: "Kelabu", rgb: [158,158,158] }, { name: "Biru langit", rgb: [79,195,247] } ]},
-  { id: "buah", emoji: "🍎", title: "Buah-buahan", type: "wordColor", data: [
-    { name: "Epal", rgb: [229,57,53] }, { name: "Pisang", rgb: [253,216,53] },
-    { name: "Oren", rgb: [255,152,0] }, { name: "Anggur", rgb: [142,36,170] },
-    { name: "Strawberi", rgb: [236,64,122] }, { name: "Tembikai", rgb: [67,160,71] },
-    { name: "Nanas", rgb: [255,193,7] }, { name: "Mangga", rgb: [255,167,38] },
-    { name: "Durian", rgb: [158,157,36] }, { name: "Ceri", rgb: [198,40,40] },
-    { name: "Blueberi", rgb: [57,73,171] }, { name: "Kelapa", rgb: [141,110,99] } ]},
-  { id: "haiwan", emoji: "🐱", title: "Haiwan", type: "wordColor", data: [
-    { name: "Kucing", rgb: [255,167,38] }, { name: "Anjing", rgb: [141,110,99] },
-    { name: "Arnab", rgb: [240,244,195] }, { name: "Ayam", rgb: [255,235,59] },
-    { name: "Ikan", rgb: [3,169,244] }, { name: "Burung", rgb: [79,195,247] },
-    { name: "Gajah", rgb: [158,158,158] }, { name: "Harimau", rgb: [255,152,0] },
-    { name: "Kura-kura", rgb: [67,160,71] }, { name: "Kupu-kupu", rgb: [236,64,122] },
-    { name: "Lembu", rgb: [93,64,55] }, { name: "Kambing", rgb: [189,189,189] } ]},
-  { id: "bangunan", emoji: "🏠", title: "Bangunan", type: "wordColor", data: [
-    { name: "Rumah", rgb: [239,83,80] }, { name: "Sekolah", rgb: [66,165,245] },
-    { name: "Masjid", rgb: [38,166,154] }, { name: "Hospital", rgb: [236,64,122] },
-    { name: "Kedai", rgb: [255,167,38] }, { name: "Menara", rgb: [92,107,192] },
-    { name: "Jambatan", rgb: [120,144,156] }, { name: "Istana", rgb: [171,71,188] } ]},
-  { id: "kenderaan", emoji: "🚗", title: "Kenderaan", type: "wordColor", data: [
-    { name: "Kereta", rgb: [30,136,229] }, { name: "Bas", rgb: [253,216,53] },
-    { name: "Motosikal", rgb: [66,66,66] }, { name: "Basikal", rgb: [67,160,71] },
-    { name: "Kapal terbang", rgb: [79,195,247] }, { name: "Kapal", rgb: [3,169,244] },
-    { name: "Keretapi", rgb: [121,85,72] }, { name: "Ambulans", rgb: [229,57,53] } ]},
-  { id: "tumbuhan", emoji: "🌳", title: "Pokok & Sayur", type: "wordColor", data: [
-    { name: "Pokok", rgb: [46,125,50] }, { name: "Bunga", rgb: [236,64,122] },
-    { name: "Bayam", rgb: [56,142,60] }, { name: "Tomato", rgb: [229,57,53] },
-    { name: "Jagung", rgb: [253,216,53] }, { name: "Cili", rgb: [198,40,40] },
-    { name: "Peria", rgb: [104,159,56] }, { name: "Lobak", rgb: [255,152,0] } ]},
-  { id: "sukan", emoji: "⚽", title: "Sukan", type: "wordColor", data: [
-    { name: "Bola sepak", rgb: [33,33,33] }, { name: "Badminton", rgb: [67,160,71] },
-    { name: "Renang", rgb: [3,169,244] }, { name: "Lari", rgb: [255,112,67] },
-    { name: "Bola tampar", rgb: [255,202,40] }, { name: "Berbasikal", rgb: [30,136,229] } ]},
-  { id: "benda", emoji: "✏️", title: "Barang & Benda", type: "wordColor", data: [
-    { name: "Buku", rgb: [63,81,181] }, { name: "Pensel", rgb: [255,193,7] },
-    { name: "Beg", rgb: [121,85,72] }, { name: "Botol", rgb: [3,169,244] },
-    { name: "Jam", rgb: [66,66,66] }, { name: "Payung", rgb: [236,64,122] },
-    { name: "Kasut", rgb: [141,110,99] }, { name: "Cawan", rgb: [255,167,38] } ]}
+  { id: "warna", emoji: "🎨", title: "Warna + contoh", type: "wordColor", data: W(`
+Merah|🍎|229,57,53
+Biru|🌊|30,136,229
+Kuning|🍌|253,216,53
+Hijau|🥬|67,160,71
+Jingga|🍊|255,152,0
+Ungu|🍇|142,36,170
+Merah jambu|🌸|236,64,122
+Perang|🥥|141,110,99
+Hitam|🎱|33,33,33
+Putih|☁️|245,245,245
+Kelabu|🐘|158,158,158
+Biru langit|🌤️|79,195,247`) },
+  { id: "buah", emoji: "🍎", title: "Buah-buahan", type: "wordColor", data: W(`
+Epal|🍎|229,57,53
+Pisang|🍌|253,216,53
+Oren|🍊|255,152,0
+Anggur|🍇|142,36,170
+Strawberi|🍓|236,64,122
+Tembikai|🍉|67,160,71
+Nanas|🍍|255,193,7
+Mangga|🥭|255,167,38
+Pir|🍐|156,204,101
+Ceri|🍒|198,40,40
+Blueberi|🫐|57,73,171
+Kelapa|🥥|141,110,99
+Limau|🍋|253,216,53
+Pic|🍑|255,138,101
+Kiwi|🥝|104,159,56
+Avokado|🥑|85,139,47`) },
+  { id: "haiwan", emoji: "🐱", title: "Haiwan", type: "wordColor", data: W(`
+Kucing|🐱|255,167,38
+Anjing|🐶|141,110,99
+Arnab|🐰|189,189,189
+Ayam|🐔|255,152,0
+Ikan|🐟|3,169,244
+Burung|🐦|79,195,247
+Gajah|🐘|158,158,158
+Harimau|🐯|255,152,0
+Kura-kura|🐢|67,160,71
+Kupu-kupu|🦋|236,64,122
+Lembu|🐮|93,64,55
+Kambing|🐐|189,189,189
+Singa|🦁|255,193,7
+Beruang|🐻|121,85,72
+Monyet|🐒|141,110,99
+Zirafah|🦒|255,193,7
+Zebra|🦓|66,66,66
+Kuda|🐴|121,85,72
+Itik|🦆|253,216,53
+Ular|🐍|67,160,71
+Katak|🐸|102,187,106
+Tikus|🐭|158,158,158
+Lebah|🐝|253,216,53
+Semut|🐜|93,64,55
+Siput|🐌|161,136,127
+Ketam|🦀|229,57,53
+Udang|🦐|255,112,67
+Paus|🐋|30,136,229
+Lumba-lumba|🐬|79,195,247
+Burung hantu|🦉|141,110,99
+Helang|🦅|121,85,72
+Merak|🦚|0,150,136
+Burung kakak tua|🦜|67,160,71
+Kelawar|🦇|66,66,66
+Serigala|🐺|158,158,158
+Rusa|🦌|161,136,127
+Kanggaru|🦘|188,143,100
+Koala|🐨|158,158,158
+Panda|🐼|66,66,66
+Landak|🦔|121,85,72
+Tupai|🐿️|161,136,127
+Unta|🐫|215,170,110
+Badak sumbu|🦏|158,158,158
+Kuda nil|🦛|126,87,194
+Buaya|🐊|56,142,60
+Cicak|🦎|139,195,74
+Labah-labah|🕷️|33,33,33
+Gurita|🐙|236,64,122
+Sotong|🦑|240,98,146
+Biri-biri|🐑|224,224,224
+Ayam belanda|🦃|141,110,99
+Angsa|🦢|245,245,245
+Flamingo|🦩|244,143,177
+Ikan paus|🐳|3,169,244
+Ikan yu|🦈|120,144,156
+Penguin|🐧|33,33,33`) },
+  { id: "bangunan", emoji: "🏠", title: "Bangunan", type: "wordColor", data: W(`
+Rumah|🏠|239,83,80
+Sekolah|🏫|66,165,245
+Masjid|🕌|38,166,154
+Hospital|🏥|236,64,122
+Kedai|🏪|255,167,38
+Menara|🏢|92,107,192
+Jambatan|🌉|120,144,156
+Istana|🏰|171,71,188
+Kilang|🏭|120,144,156
+Bank|🏦|121,85,72
+Stesen bomba|🚒|229,57,53
+Lapangan terbang|🛫|79,195,247`) },
+  { id: "kenderaan", emoji: "🚗", title: "Kenderaan", type: "wordColor", data: W(`
+Kereta|🚗|30,136,229
+Bas|🚌|253,216,53
+Motosikal|🏍️|66,66,66
+Basikal|🚲|67,160,71
+Kapal terbang|✈️|79,195,247
+Kapal|🚢|3,169,244
+Keretapi|🚆|121,85,72
+Ambulans|🚑|229,57,53
+Lori|🚚|255,152,0
+Teksi|🚕|253,216,53
+Trak bomba|🚒|229,57,53
+Traktor|🚜|67,160,71
+Helikopter|🚁|158,158,158
+Roket|🚀|229,57,53
+Bot|⛵|30,136,229
+Kereta polis|🚓|66,66,66`) },
+  { id: "tumbuhan", emoji: "🌳", title: "Pokok & Sayur", type: "wordColor", data: W(`
+Pokok|🌳|46,125,50
+Bunga|🌸|236,64,122
+Bayam|🥬|56,142,60
+Tomato|🍅|229,57,53
+Jagung|🌽|253,216,53
+Cili|🌶️|198,40,40
+Peria|🥒|104,159,56
+Lobak|🥕|255,152,0
+Bunga matahari|🌻|253,216,53
+Cendawan|🍄|229,57,53
+Terung|🍆|126,87,194
+Kentang|🥔|188,143,100
+Bawang|🧅|215,170,110
+Brokoli|🥦|56,142,60
+Kaktus|🌵|67,160,71
+Pokok palma|🌴|46,125,50`) },
+  { id: "sukan", emoji: "⚽", title: "Sukan", type: "wordColor", data: W(`
+Bola sepak|⚽|33,33,33
+Badminton|🏸|67,160,71
+Renang|🏊|3,169,244
+Lari|🏃|255,112,67
+Bola tampar|🏐|255,202,40
+Berbasikal|🚴|30,136,229
+Bola keranjang|🏀|255,112,67
+Tenis|🎾|205,220,57
+Tinju|🥊|229,57,53
+Golf|⛳|67,160,71
+Ping pong|🏓|229,57,53
+Memanah|🏹|141,110,99`) },
+  { id: "benda", emoji: "✏️", title: "Barang & Benda", type: "wordColor", data: W(`
+Buku|📘|63,81,181
+Pensel|✏️|255,193,7
+Beg|🎒|121,85,72
+Botol|🧴|3,169,244
+Jam|⌚|66,66,66
+Payung|☂️|236,64,122
+Kasut|👟|141,110,99
+Cawan|☕|255,167,38
+Topi|🧢|30,136,229
+Kunci|🔑|253,216,53
+Gunting|✂️|229,57,53
+Lampu|💡|253,216,53
+Telefon|📱|66,66,66
+Kerusi|🪑|141,110,99
+Sudu|🥄|158,158,158
+Bola|⚽|33,33,33`) }
 ];
 
 /* ===== Util ===== */
@@ -242,17 +378,42 @@ function glyphImg(ch, color) {
 }
 const isArabic = ch => /[\u0600-\u06FF]/.test(ch);
 
-function drawTraceRow(doc, x, y, w, h, ch) {
+// Emoji tak boleh dilukis terus oleh jsPDF, jadi dilukis ke canvas dahulu.
+// shadow = true -> bayang (siluet kelabu muda) untuk diwarnakan / dijejak
+const emojiCache = {};
+function emojiImg(e, shadow) {
+  const key = e + (shadow ? "#s" : "");
+  if (emojiCache[key]) return emojiCache[key];
+  const c = document.createElement("canvas");
+  c.width = c.height = 200;
+  const ctx = c.getContext("2d");
+  ctx.font = "150px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(e, 100, 108);
+  if (shadow) {
+    ctx.globalCompositeOperation = "source-in";
+    ctx.fillStyle = "#d9d5e8";
+    ctx.fillRect(0, 0, 200, 200);
+  }
+  return (emojiCache[key] = c.toDataURL("image/png"));
+}
+
+function traceInfo(mod, ch) {
+  if (/^\d+$/.test(ch)) return { count: parseInt(ch, 10), emoji: COUNT_EMOJI[parseInt(ch, 10) % 5] };
+  if (mod.id === "jawi") { const j = JAWI_WORDS[ch]; return j ? { word: j[0], emoji: j[1] } : { word: "", emoji: "⭐" }; }
+  const w = WORDS[ch.toUpperCase()];
+  return w ? { word: w[0], emoji: w[1] } : null;
+}
+
+function drawTraceRow(doc, x, y, w, h, ch, info) {
   doc.setDrawColor(180, 160, 220);
   doc.setLineWidth(0.4);
   doc.roundedRect(x, y, w, h, 2, 2, "S");
-  const gap = h / 4;
-  for (let i = 1; i <= 3; i++) dottedLine(doc, x + 34, y + gap * i, x + w - 4, y + gap * i, 1.4);
 
   // kotak contoh (kiri)
   doc.setFillColor(245, 240, 255);
   doc.roundedRect(x + 1, y + 1, 28, h - 2, 2, 2, "F");
-
   const arab = isArabic(ch);
   if (arab) {
     doc.addImage(glyphImg(ch, "#5e35b1"), "PNG", x + 5, y + 5, 20, 20);
@@ -267,10 +428,39 @@ function drawTraceRow(doc, x, y, w, h, ch) {
   doc.setTextColor(140, 140, 160);
   doc.text("contoh", x + 15, y + h - 3, { align: "center" });
 
-  // huruf pudar untuk dijejak (berulang)
-  const cnt = Math.min(5, Math.floor((w - 40) / 28));
+  // kotak gambar emoji
+  let tx = x + 36;
+  if (info) {
+    tx = x + 60;
+    doc.setFillColor(255, 249, 230);
+    doc.roundedRect(x + 31, y + 1, 25, h - 2, 2, 2, "F");
+    if (info.count && info.count <= 20) {
+      const sz = 4.4, gap = 4.7, cols = 5, rows = Math.ceil(info.count / cols);
+      const x0 = x + 31 + (25 - cols * gap) / 2 + 0.2, y0 = y + 1 + (h - 2 - rows * gap) / 2;
+      for (let i = 0; i < info.count; i++) {
+        doc.addImage(emojiImg(info.emoji), "PNG", x0 + (i % cols) * gap, y0 + Math.floor(i / cols) * gap, sz, sz);
+      }
+    } else if (info.count) {
+      doc.addImage(emojiImg(info.emoji), "PNG", x + 37, y + 4, 13, 13);
+      doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(120, 100, 40);
+      doc.text("x " + info.count, x + 43.5, y + h - 5, { align: "center" });
+    } else {
+      doc.addImage(emojiImg(info.emoji), "PNG", x + 36, y + 3, 15, 15);
+      if (info.word) {
+        doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(120, 100, 40);
+        doc.text(info.word, x + 43.5, y + h - 5, { align: "center", maxWidth: 24 });
+      }
+    }
+  }
+
+  // garisan titik
+  const gap = h / 4;
+  for (let i = 1; i <= 3; i++) dottedLine(doc, tx - 2, y + gap * i, x + w - 4, y + gap * i, 1.4);
+
+  // huruf pudar untuk dijejak
+  const cnt = Math.max(1, Math.min(5, Math.floor((x + w - 4 - tx) / 26)));
   for (let k = 0; k < cnt; k++) {
-    const gx = x + 36 + k * 28;
+    const gx = tx + k * 26;
     if (arab) {
       doc.addImage(glyphImg(ch, "#d2cde6"), "PNG", gx, y + 5, 20, 20);
     } else {
@@ -337,35 +527,35 @@ function genPdf(mod) {
   if (mod.type === "traceLetter") {
     mod.data.forEach(ch => {
       need(36);
-      drawTraceRow(doc, margin, y, pageW - margin * 2, 32, ch);
+      drawTraceRow(doc, margin, y, pageW - margin * 2, 32, ch, traceInfo(mod, ch));
       y += 36;
     });
   } else {
     mod.data.forEach(item => {
-      need(30);
-      const boxH = 26, [r, g, b] = item.rgb;
+      need(32);
+      const boxH = 28, [r, g, b] = item.rgb;
       doc.setDrawColor(200, 180, 220); doc.setLineWidth(0.35);
       doc.roundedRect(margin, y, pageW - margin * 2, boxH, 2, 2, "S");
+      // gambar emoji (contoh)
+      doc.addImage(emojiImg(item.emoji), "PNG", margin + 3, y + 3, 17, 17);
+      // bayang untuk diwarnakan
+      doc.addImage(emojiImg(item.emoji, true), "PNG", margin + 25, y + 3, 17, 17);
       // warna contoh
       doc.setFillColor(r, g, b);
-      doc.circle(margin + 12, y + boxH / 2 - 2, 7, "F");
+      doc.circle(margin + 54, y + 11.5, 6.5, "F");
       doc.setDrawColor(80, 80, 80); doc.setLineWidth(0.25);
-      doc.circle(margin + 12, y + boxH / 2 - 2, 7, "S");
-      // bulatan kosong untuk diwarnakan
-      doc.setDrawColor(150, 150, 170);
-      doc.setLineDashPattern([1, 1], 0);
-      doc.circle(margin + 32, y + boxH / 2 - 2, 7, "S");
-      doc.setLineDashPattern([], 0);
-      // nama
+      doc.circle(margin + 54, y + 11.5, 6.5, "S");
+      // nama + garisan tulis
       doc.setFont("helvetica", "bold");
       doc.setFontSize(12); doc.setTextColor(40, 40, 60);
-      doc.text(item.name, margin + 46, y + 11);
-      dottedLine(doc, margin + 46, y + 17, pageW - margin - 8, y + 17, 1.3);
+      doc.text(item.name, margin + 66, y + 11, { maxWidth: pageW - margin * 2 - 70 });
+      dottedLine(doc, margin + 66, y + 18, pageW - margin - 8, y + 18, 1.3);
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(7); doc.setTextColor(150, 150, 160);
-      doc.text("warna contoh", margin + 5, y + boxH - 2);
-      doc.text("warnakan", margin + 26, y + boxH - 2);
-      doc.text("tulis nama", margin + 46, y + boxH - 2);
+      doc.setFontSize(6.5); doc.setTextColor(150, 150, 160);
+      doc.text("contoh", margin + 11.5, y + boxH - 3, { align: "center" });
+      doc.text("bayang (warnakan)", margin + 33.5, y + boxH - 3, { align: "center" });
+      doc.text("warna", margin + 54, y + boxH - 3, { align: "center" });
+      doc.text("tulis nama", margin + 66, y + boxH - 3);
       y += boxH + 4;
     });
   }
