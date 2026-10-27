@@ -1,169 +1,233 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Beli PDF Belajar | Masta Xul</title>
-  <style>
-    :root {
-      --sky: #7ec8f5; --leaf: #5cb85c; --sun: #ffc107;
-      --pink: #ff6b9d; --purple: #7c4dff; --cream: #fff9e6;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: system-ui, sans-serif;
-      background: linear-gradient(180deg, #b3e5fc 0%, #e8f5e9 50%, #fff9e6 100%);
-      min-height: 100vh; color: #1a237e; padding: 16px;
-    }
-    .card {
-      max-width: 480px; margin: 20px auto; background: #fff;
-      border-radius: 24px; padding: 24px; box-shadow: 0 12px 40px rgba(0,0,0,.12);
-      border: 4px solid #ffc107;
-    }
-    h1 { text-align: center; font-size: 1.4rem; color: #6a1b9a; margin-bottom: 8px; }
-    .price {
-      text-align: center; margin: 12px 0 20px;
-    }
-    .price .now { font-size: 2rem; font-weight: 800; color: #e53935; }
-    .price .old { text-decoration: line-through; color: #999; margin-left: 8px; }
-    label { display: block; font-size: .85rem; font-weight: 600; margin: 10px 0 4px; }
-    input, textarea {
-      width: 100%; padding: 12px; border: 2px solid #ce93d8; border-radius: 12px;
-      font-size: 1rem;
-    }
-    .btn {
-      width: 100%; margin-top: 16px; padding: 14px; border: none; border-radius: 14px;
-      background: linear-gradient(90deg, #7c4dff, #ff6b9d); color: #fff;
-      font-size: 1.05rem; font-weight: 700; cursor: pointer;
-    }
-    .btn:disabled { opacity: .6; }
-    .hint { font-size: .8rem; color: #666; margin-top: 8px; text-align: center; }
-    .msg { margin-top: 12px; padding: 12px; border-radius: 12px; display: none; }
-    .msg.ok { background: #e8f5e9; color: #2e7d32; display: block; }
-    .msg.err { background: #ffebee; color: #c62828; display: block; }
-    .qr-box {
-      text-align: center; background: var(--cream); padding: 12px; border-radius: 12px;
-      margin: 12px 0; font-size: .9rem;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beli PDF Belajar Menulis & Melukis RM9.90 | Masta Xul</title>
+<meta name="description" content="PDF jejak titik-titik untuk anak: huruf A–Z, nombor, Jawi, buah, haiwan dan warna. Nama anak tercetak pada setiap PDF. Promo RM9.90 sahaja.">
+<link rel="canonical" href="https://www.mastaxul.my/beli.html">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="Masta Xul">
+<meta property="og:title" content="PDF Belajar Menulis & Melukis - Promo RM9.90">
+<meta property="og:description" content="Jejak titik-titik, warnakan dan tulis nama. Siap dengan nama anak anda. Harga promo RM9.90.">
+<meta property="og:url" content="https://www.mastaxul.my/beli.html">
+<meta property="og:image" content="https://i.ibb.co/4RNdnWfw/8-C91-AD94-DDE3-42-BD-BA89-12-D3-CCE6-D82-D.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PDF Belajar Menulis & Melukis - Promo RM9.90">
+<meta name="twitter:description" content="Jejak titik-titik, warnakan dan tulis nama. Siap dengan nama anak anda.">
+<meta name="twitter:image" content="https://i.ibb.co/4RNdnWfw/8-C91-AD94-DDE3-42-BD-BA89-12-D3-CCE6-D82-D.jpg">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(180deg,#b3e5fc 0%,#e8f5e9 50%,#fff9e6 100%);min-height:100vh;color:#1a237e;padding:16px;line-height:1.5}
+.card{max-width:480px;margin:16px auto;background:#fff;border-radius:24px;padding:24px;box-shadow:0 12px 40px rgba(0,0,0,.12);border:4px solid #ffc107}
+.logo{display:block;margin:0 auto 8px;width:64px;height:64px;border-radius:50%;object-fit:cover}
+h1{text-align:center;font-size:1.4rem;color:#6a1b9a;margin-bottom:4px}
+h2{font-size:1rem;color:#4527a0;margin:18px 0 8px}
+.tagline{text-align:center;font-size:.9rem;color:#555}
+.price{text-align:center;margin:12px 0 4px}
+.price .now{font-size:2.2rem;font-weight:800;color:#e53935}
+.price .old{text-decoration:line-through;color:#999;margin-left:8px}
+.promo{background:#ffebee;color:#c62828;border-radius:12px;padding:10px;text-align:center;font-size:.85rem;font-weight:600;margin-bottom:12px}
+ul.list{list-style:none}
+ul.list li{padding:4px 0 4px 26px;position:relative;font-size:.9rem}
+ul.list li::before{content:"✅";position:absolute;left:0}
+ol.steps{padding-left:20px;font-size:.88rem}
+ol.steps li{margin:4px 0}
+label{display:block;font-size:.85rem;font-weight:600;margin:10px 0 4px}
+input[type=text],input[type=email],input[type=tel],input[type=number],input[type=file]{width:100%;padding:12px;border:2px solid #ce93d8;border-radius:12px;font-size:1rem;background:#fff}
+.btn{width:100%;margin-top:16px;padding:14px;border:none;border-radius:14px;background:linear-gradient(90deg,#7c4dff,#ff6b9d);color:#fff;font-size:1.05rem;font-weight:700;cursor:pointer}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.hint{font-size:.8rem;color:#666;margin-top:8px;text-align:center}
+.msg{margin-top:12px;padding:12px;border-radius:12px;display:none;font-size:.9rem}
+.msg.ok{background:#e8f5e9;color:#2e7d32;display:block}
+.msg.err{background:#ffebee;color:#c62828;display:block}
+.msg.wait{background:#fff3e0;color:#e65100;display:block}
+.qr-box{text-align:center;background:#fff9e6;padding:12px;border-radius:12px;margin:12px 0;font-size:.9rem}
+.agree{display:flex;gap:8px;align-items:flex-start;font-weight:400;font-size:.82rem;margin-top:14px}
+.agree input{width:auto;margin-top:3px}
+details{border:2px solid #e1bee7;border-radius:12px;padding:10px 12px;margin:8px 0;font-size:.85rem}
+summary{font-weight:700;cursor:pointer;color:#4a148c}
+details p,details li{margin-top:6px}
+details ul{padding-left:18px}
+.hp{position:absolute;left:-9999px;height:0;overflow:hidden}
+</style>
 </head>
 <body>
-  <div class="card">
-    <h1>📚 PDF Belajar Menulis & Melukis</h1>
-    <div class="price">
-      <span class="now">RM9.90</span>
-      <span class="old">RM59.90</span>
-    </div>
-    <p class="hint">A–Z · a–z · Nombor · Jawi · Buah · Haiwan · & lagi · Sijil berwarna</p>
+<div class="card">
+  <img class="logo" src="https://i.ibb.co/4RNdnWfw/8-C91-AD94-DDE3-42-BD-BA89-12-D3-CCE6-D82-D.jpg" alt="Logo Masta Xul">
+  <h1>📚 PDF Belajar Menulis &amp; Melukis</h1>
+  <p class="tagline">Anak belajar menulis sambil bermain, nama dia tercetak pada setiap muka surat.</p>
 
-    <div class="qr-box">
-      Bayar <strong>RM9.90</strong> melalui DuitNow/QR ke akaun Masta Xul,<br>
-      kemudian muat naik resit di bawah.
-      <!-- Ganti dengan QR imej anda jika ada -->
-    </div>
+  <div class="price"><span class="now">RM9.90</span><span class="old">RM59.90</span></div>
+  <div class="promo">🔥 Harga promo untuk tempoh terhad. Harga akan naik semula tanpa notis.</div>
 
-    <form id="formBeli">
-      <label>Nama pembeli *</label>
-      <input id="nama" required>
+  <h2>Apa anak anda dapat</h2>
+  <ul class="list">
+    <li>Huruf A–Z, a–z, nombor 1–100 dan huruf Jawi asas</li>
+    <li>Modul buah, haiwan, bangunan, kenderaan, sayur, sukan dan barang</li>
+    <li>Jejak titik-titik, warnakan dan tulis nama sendiri</li>
+    <li>Nama anak, umur dan nama ibu/bapa pada setiap PDF</li>
+    <li>Muat turun bila-bila masa, cetak sebanyak mana anak perlu berlatih</li>
+  </ul>
+  <p class="hint">Kurang RM10 pun, anak dah boleh mula berlatih menulis hari ini. Tak perlu beli buku latihan berulang kali.</p>
 
-      <label>Emel *</label>
-      <input id="email" type="email" required>
+  <h2>Cara beli</h2>
+  <ol class="steps">
+    <li>Bayar <strong>RM9.90</strong> melalui DuitNow/QR</li>
+    <li>Isi borang dan muat naik resit</li>
+    <li>Admin semak dan luluskan (biasanya dalam masa 24 jam)</li>
+    <li>Buka pautan akses di emel, pilih modul dan muat turun</li>
+  </ol>
 
-      <label>Telefon *</label>
-      <input id="telefon" required>
-
-      <label>Nama anak (untuk sijil/PDF) *</label>
-      <input id="namaAnak" required>
-
-      <label>Umur anak *</label>
-      <input id="umur" type="number" min="3" max="12" required>
-
-      <label>Nama ibu/bapa *</label>
-      <input id="namaIbuBapa" required>
-
-      <label>No. rujukan bayaran</label>
-      <input id="rujukan">
-
-      <label>Kod affiliate (jika ada)</label>
-      <input id="ref" placeholder="contoh SITI01">
-
-      <label>Resit bayaran (JPG/PNG) *</label>
-      <input id="resit" type="file" accept="image/*" required>
-
-      <input type="text" name="website" id="website" style="display:none" tabindex="-1" autocomplete="off">
-
-      <button type="submit" class="btn" id="btnHantar">Hantar & Dapatkan Akses</button>
-    </form>
-    <div id="msg" class="msg"></div>
-    <p class="hint"><a href="./">← Kembali ke senarai modul</a></p>
+  <div class="qr-box">
+    Bayar <strong>RM9.90</strong> melalui DuitNow/QR ke akaun <strong>Masta Xul</strong>,<br>kemudian muat naik resit di bawah.
+    <!-- Letak imej QR anda di sini: <img src="qr.jpg" alt="QR DuitNow" style="max-width:220px;margin-top:8px"> -->
   </div>
+
+  <form id="formBeli" novalidate>
+    <label for="nama">Nama pembeli *</label>
+    <input id="nama" type="text" autocomplete="name" required>
+
+    <label for="email">Emel * (pautan akses dihantar ke sini)</label>
+    <input id="email" type="email" autocomplete="email" required>
+
+    <label for="telefon">Telefon *</label>
+    <input id="telefon" type="tel" autocomplete="tel" placeholder="01x-xxxxxxx" required>
+
+    <label for="namaAnak">Nama anak (untuk PDF) *</label>
+    <input id="namaAnak" type="text" maxlength="40" required>
+
+    <label for="umur">Umur anak *</label>
+    <input id="umur" type="number" min="3" max="15" required>
+
+    <label for="namaIbuBapa">Nama ibu/bapa *</label>
+    <input id="namaIbuBapa" type="text" required>
+
+    <label for="rujukan">No. rujukan bayaran</label>
+    <input id="rujukan" type="text">
+
+    <label for="ref">Kod affiliate (jika ada)</label>
+    <input id="ref" type="text" placeholder="contoh SITI01">
+
+    <label for="resit">Resit bayaran (JPG/PNG) *</label>
+    <input id="resit" type="file" accept="image/*" required>
+
+    <div class="hp" aria-hidden="true"><input type="text" id="website" name="website" tabindex="-1" autocomplete="off"></div>
+
+    <label class="agree"><input type="checkbox" id="setuju" required>
+      <span>Saya telah baca dan setuju dengan <a href="#terma">terma &amp; syarat</a> di bawah.</span></label>
+
+    <button type="submit" class="btn" id="btnHantar">Hantar &amp; Dapatkan Akses</button>
+  </form>
+  <div id="msg" class="msg" role="status" aria-live="polite"></div>
+
+  <h2>Soalan lazim</h2>
+  <details><summary>Berapa lama untuk dapat akses?</summary><p>Biasanya dalam masa 24 jam selepas resit disemak. Pautan akses dihantar ke emel anda. Semak juga folder spam.</p></details>
+  <details><summary>Umur berapa sesuai?</summary><p>Sesuai untuk kanak-kanak 3 tahun ke atas yang mula belajar mengenal dan menulis huruf serta nombor.</p></details>
+  <details><summary>Boleh cetak berapa kali?</summary><p>Boleh. Anda boleh muat turun dan cetak semula untuk anak sendiri bila-bila masa melalui pautan akses.</p></details>
+  <details><summary>Nama anak salah, boleh tukar?</summary><p>Boleh. Anda boleh edit nama anak dan umur terus di halaman muat turun sebelum menjana PDF.</p></details>
+
+  <h2 id="terma">Terma &amp; syarat</h2>
+  <details open><summary>Sila baca sebelum membeli</summary>
+    <ul>
+      <li>Ini produk digital (PDF). Tiada barang fizikal dihantar.</li>
+      <li>Akses diberi selepas bayaran disahkan oleh admin.</li>
+      <li>Pautan akses untuk <strong>1 pelayar sahaja</strong>. Jangan kongsi pautan dengan orang lain.</li>
+      <li>Untuk kegunaan peribadi, keluarga atau kelas sendiri. Dilarang jual semula, edar atau muat naik semula PDF tanpa kebenaran bertulis.</li>
+      <li>Disebabkan sifat produk digital, bayaran yang telah disahkan tidak boleh dikembalikan. Jika ada masalah teknikal, hubungi kami dan kami akan bantu selesaikan.</li>
+      <li>Pastikan maklumat dan resit yang dihantar adalah betul. Resit palsu atau tidak sah akan ditolak.</li>
+      <li>Harga promo boleh berubah pada bila-bila masa tanpa notis.</li>
+      <li>Maklumat anda hanya digunakan untuk memproses pesanan dan tidak dikongsi kepada pihak lain.</li>
+    </ul>
+  </details>
+
+  <p class="hint"><a href="./">← Kembali ke senarai modul</a></p>
+  <p class="hint">© Masta Xul · www.mastaxul.my</p>
+</div>
 
 <script>
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYypSvbEY4oAYSDs0gJn34vEV92vJG-Eks6Kj63evviLVery8TeLScTb4D-80d3Uzi/exec";
+const $ = id => document.getElementById(id);
 
 // Auto isi ?ref=
 const q = new URLSearchParams(location.search);
-if (q.get("ref")) document.getElementById("ref").value = q.get("ref");
+if (q.get("ref")) $("ref").value = q.get("ref");
 
-document.getElementById("formBeli").onsubmit = async function (e) {
-  e.preventDefault();
-  const btn = document.getElementById("btnHantar");
-  const msg = document.getElementById("msg");
-  btn.disabled = true;
-  msg.className = "msg";
-  msg.textContent = "Memuat naik…";
-  msg.style.display = "block";
+function showMsg(cls, text) {
+  const m = $("msg");
+  m.className = "msg " + cls;
+  m.textContent = text;
+  return m;
+}
 
-  const file = document.getElementById("resit").files[0];
-  if (!file) {
-    msg.className = "msg err";
-    msg.textContent = "Sila pilih resit.";
-    btn.disabled = false;
-    return;
-  }
-
-  const base64 = await new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(String(r.result).split(",")[1]);
-    r.onerror = reject;
-    r.readAsDataURL(file);
+// Kecilkan gambar resit supaya muat naik tak gagal (had Apps Script)
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const max = 1400, s = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * s);
+      c.height = Math.round(img.height * s);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL("image/jpeg", 0.8).split(",")[1]);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("img")); };
+    img.src = url;
   });
+}
 
-  const payload = {
-    nama: document.getElementById("nama").value.trim(),
-    email: document.getElementById("email").value.trim(),
-    telefon: document.getElementById("telefon").value.trim(),
-    namaAnak: document.getElementById("namaAnak").value.trim(),
-    umur: document.getElementById("umur").value.trim(),
-    namaIbuBapa: document.getElementById("namaIbuBapa").value.trim(),
-    rujukan: document.getElementById("rujukan").value.trim(),
-    ref: document.getElementById("ref").value.trim(),
-    website: document.getElementById("website").value,
-    fileBase64: base64,
-    fileMimeType: file.type || "image/jpeg",
-    fileName: file.name
-  };
+$("formBeli").onsubmit = async function (e) {
+  e.preventDefault();
+  const btn = $("btnHantar");
+
+  if (!this.checkValidity()) { this.reportValidity(); return; }
+  if (!$("setuju").checked) { showMsg("err", "Sila tandakan persetujuan terma & syarat."); return; }
+
+  const file = $("resit").files[0];
+  if (!file || !file.type.startsWith("image/")) { showMsg("err", "Sila pilih gambar resit (JPG/PNG)."); return; }
+  if (file.size > 15 * 1024 * 1024) { showMsg("err", "Gambar terlalu besar. Sila pilih gambar bawah 15MB."); return; }
+
+  btn.disabled = true;
+  showMsg("wait", "Memuat naik… jangan tutup halaman ini.");
 
   try {
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
+    const base64 = await compressImage(file);
+    const payload = {
+      nama: $("nama").value.trim(),
+      email: $("email").value.trim(),
+      telefon: $("telefon").value.trim(),
+      namaAnak: $("namaAnak").value.trim(),
+      umur: $("umur").value.trim(),
+      namaIbuBapa: $("namaIbuBapa").value.trim(),
+      rujukan: $("rujukan").value.trim(),
+      ref: $("ref").value.trim(),
+      setuju: true,
+      website: $("website").value,
+      fileBase64: base64,
+      fileMimeType: "image/jpeg",
+      fileName: file.name.replace(/\.[^.]+$/, "") + ".jpg"
+    };
+    const res = await fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
     const d = await res.json();
     if (d.success) {
-      msg.className = "msg ok";
-      msg.innerHTML = "Berjaya dihantar! Semak emel. Selepas admin lulus, buka pautan akses dalam <b>satu pelayar</b> sahaja.";
+      const m = showMsg("ok", "Berjaya dihantar! Semak emel anda. Selepas admin lulus, buka pautan akses dalam satu pelayar sahaja.");
       if (d.accessUrl) {
-        msg.innerHTML += "<br><small>Pautan (selepas lulus): " + d.accessUrl + "</small>";
+        m.appendChild(document.createElement("br"));
+        const s = document.createElement("small");
+        s.textContent = "Pautan (selepas lulus): " + d.accessUrl;
+        m.appendChild(s);
       }
+      $("formBeli").style.display = "none";
     } else {
-      msg.className = "msg err";
-      msg.textContent = d.message || "Gagal.";
+      showMsg("err", d.message || "Gagal menghantar. Cuba lagi.");
       btn.disabled = false;
     }
   } catch (err) {
-    msg.className = "msg err";
-    msg.textContent = "Ralat rangkaian.";
+    showMsg("err", "Ralat rangkaian atau gambar tidak sah. Cuba lagi.");
     btn.disabled = false;
   }
 };
