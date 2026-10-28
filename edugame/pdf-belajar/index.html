@@ -63,10 +63,22 @@ body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(1
       <input type="number" id="editUmur" min="3" max="15">
       <label for="editIbuBapa">Ibu / bapa (tidak boleh edit)</label>
       <input type="text" id="editIbuBapa" disabled>
+      <label style="display:flex;gap:8px;align-items:center;font-weight:600;font-size:.78rem"><input type="checkbox" id="ink" style="width:auto"> 🖨️ Jimat dakwat / Ink saver (hitam putih, tanpa hiasan)</label>
       <label for="lvl">Tahap / Level</label>
       <select id="lvl"><option value="1">1 · Mudah / Easy (3 thn, jejak jelas)</option><option value="2">2 · Biasa / Normal (4 thn)</option><option value="3">3 · Lanjutan / Advanced (5 thn, tulis sendiri)</option></select>
     </div>
     <div id="modList"></div>
+    <div class="profile-box" style="margin-top:18px">
+      <strong style="color:#4a148c">🏆 Sijil Penghargaan / Certificate</strong>
+      <p style="font-size:.78rem;color:#666;margin-top:4px">Cetak sekali sahaja apabila anak siap. Isi nama dan tarikh. / Print once when your child is done.</p>
+      <label for="certName">Nama / Name</label>
+      <input type="text" id="certName" maxlength="40">
+      <label for="certAch">Pencapaian / Achievement</label>
+      <input type="text" id="certAch" maxlength="60" value="PDF Belajar Menulis & Melukis">
+      <label for="certDate">Tarikh / Date</label>
+      <input type="date" id="certDate">
+      <button class="cta" id="certBtn" type="button" style="border:0;cursor:pointer;width:100%;font:inherit;font-weight:700">🏆 Muat turun sijil / Download certificate</button>
+    </div>
     <div class="profile-box" style="margin-top:18px">
       <strong style="color:#4a148c">💬 Maklum balas / Feedback</strong>
       <label for="fbRate">Penilaian / Rating</label>
@@ -161,6 +173,21 @@ Ulat|Bug|🐛`) },
  { g:"Nombor / Numbers", id:"n1", ico:"🔢", t:"Nombor 1-20 / Numbers 1-20", k:"chars", d:range(1, 20) },
  { g:"Nombor / Numbers", id:"n2", ico:"🔢", t:"Nombor 21-50 / Numbers 21-50", k:"chars", d:range(21, 50) },
  { g:"Nombor / Numbers", id:"n3", ico:"🔢", t:"Nombor 51-100 / Numbers 51-100", k:"chars", d:range(51, 100) },
+ { g:"Matematik / Maths", id:"add1", ico:"➕", t:"Tambah Gambar / Add with Pictures", k:"math", op:"+", pic:true, d:["1|1","1|2","2|1","2|2","3|1","1|3","2|3","3|2","4|1","1|4","3|3","4|2","2|4","5|1","1|5","4|3","3|4","5|2","2|5","5|3"] },
+ { g:"Matematik / Maths", id:"sub1", ico:"➖", t:"Tolak Gambar / Subtract with Pictures", k:"math", op:"-", pic:true, d:["2|1","3|1","3|2","4|1","4|2","4|3","5|1","5|2","5|3","5|4","6|2","6|3","7|2","7|4","8|3","8|5","9|4","9|6","10|3","10|7"] },
+ { g:"Matematik / Maths", id:"add2", ico:"➕", t:"Tambah Nombor / Adding Numbers (to 20)", k:"math", op:"+", pic:false, d:["6|4","7|3","8|5","9|6","10|5","11|4","12|3","9|9","8|7","10|10","13|5","14|4","15|3","12|6","11|7","16|2","13|7","14|6","12|8","9|8"] },
+ { g:"Matematik / Maths", id:"sub2", ico:"➖", t:"Tolak Nombor / Subtracting Numbers (to 20)", k:"math", op:"-", pic:false, d:["10|4","10|6","12|5","13|6","14|7","15|8","16|9","17|8","18|9","20|10","11|3","12|4","13|5","14|6","15|7","16|8","17|9","18|10","19|9","20|5"] },
+ { g:"Matematik / Maths", id:"story", ico:"📖", t:"Soalan Cerita / Story Sums", k:"story", d:[
+  "Ali ada 3 epal. Ibu beri 2 lagi. Berapa semuanya?|Ali has 3 apples. Mum gives him 2 more. How many in all?|🍎|+|3|2",
+  "Ada 4 ikan di kolam. 3 ikan lagi datang. Berapa semuanya?|There are 4 fish in the pond. 3 more come. How many in all?|🐟|+|4|3",
+  "Siti ada 5 belon. Dia beri 2 kepada adik. Berapa tinggal?|Siti has 5 balloons. She gives 2 to her sister. How many are left?|🎈|-|5|2",
+  "Ada 6 biskut. Abang makan 4. Berapa tinggal?|There are 6 biscuits. Brother eats 4. How many are left?|🍪|-|6|4",
+  "Ayah petik 7 bunga dan Ibu petik 3. Berapa semuanya?|Dad picks 7 flowers and Mum picks 3. How many in all?|🌸|+|7|3",
+  "Ada 8 burung di pokok. 5 burung terbang pergi. Berapa tinggal?|There are 8 birds in the tree. 5 fly away. How many are left?|🐦|-|8|5",
+  "Aiman ada 6 kereta mainan. Dia dapat 4 lagi. Berapa semuanya?|Aiman has 6 toy cars. He gets 4 more. How many in all?|🚗|+|6|4",
+  "Ada 9 bintang. 4 bintang jatuh. Berapa tinggal?|There are 9 stars. 4 stars fall. How many are left?|⭐|-|9|4",
+  "Kakak ada 10 gula-gula. Dia makan 3. Berapa tinggal?|Sister has 10 sweets. She eats 3. How many are left?|🍬|-|10|3",
+  "Di kebun ada 5 ayam dan 8 itik. Berapa semuanya?|On the farm there are 5 chickens and 8 ducks. How many in all?|🐔|+|5|8"] },
  { g:"Jawi", id:"jawi", ico:"📖", t:"Huruf Jawi / Jawi Letters", k:"chars", d:["ا","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ظ","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي"] },
  { g:"Jawi", id:"njawi", ico:"🔢", t:"Nombor Jawi 0-20 / Jawi Numbers", k:"chars", d:range(0, 20).map(toAr) },
  { g:"Jawi", id:"jawiw", ico:"📜", t:"Perkataan Jawi / Jawi Words", k:"imgword", rtl:true, d:C(`
@@ -519,6 +546,8 @@ async function boot() {
     document.getElementById("editNamaAnak").value = profile.namaAnak || "";
     document.getElementById("editUmur").value = profile.umur || "";
     document.getElementById("editIbuBapa").value = profile.namaIbuBapa || "";
+    document.getElementById("certName").value = profile.namaAnak || "";
+    document.getElementById("certDate").value = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
     renderMods();
   } catch (e) { box.className = "status err"; box.textContent = "Gagal sambung. Semak internet dan cuba muat semula."; }
 }
@@ -556,15 +585,22 @@ function renderMods() {
  - Huruf/nombor jejak: 32pt (+-11mm); perkataan: 30pt; ayat: 14-17pt
  - Warna jejak kelabu-ungu muda, garisan tulis bertitik, titik hijau = mula
  - Satu perkataan/huruf setiap baris, ruang menulis semula di atas garisan yang sama */
-let GH = [200, 195, 225], GHX = "#c8c3e1", LV = 1, CERT = null;
+let GH = [200, 195, 225], GHX = "#c8c3e1", LV = 1, CERT = null, INK = false;
 function applyLevel(l) {
   GH = l === 1 ? [178, 170, 212] : l === 2 ? [203, 198, 227] : [226, 223, 238];
   GHX = "#" + GH.map(v => v.toString(16).padStart(2, "0")).join("");
 }
-function loadCert() {
-  fetch("sijil-bg.jpg").then(r => { if (!r.ok) throw 0; return r.blob(); })
-    .then(b => new Promise(res => { const f = new FileReader(); f.onload = () => res(f.result); f.readAsDataURL(b); }))
-    .then(u => { CERT = u; }).catch(() => {});
+const CERT_SRC = ["sijil-bg.jpg", "https://i.ibb.co/SXYHc451/A492-C461-1-ADA-4194-9369-D8194-FB6697-D.png"];
+let CERT_FMT = "JPEG";
+async function loadCert() {
+  for (const u of CERT_SRC) {
+    try {
+      const r = await fetch(u); if (!r.ok) continue;
+      const bl = await r.blob();
+      CERT = await new Promise(res => { const f = new FileReader(); f.onload = () => res(f.result); f.readAsDataURL(bl); });
+      CERT_FMT = /png/.test(bl.type) ? "PNG" : "JPEG"; return;
+    } catch (e) {}
+  }
 }
 const AR = "'Noto Naskh Arabic','Amiri','Traditional Arabic','Arial',serif";
 const ZH = "'Noto Sans SC','PingFang SC','Microsoft YaHei','SimHei',sans-serif";
@@ -582,13 +618,18 @@ function startDot(doc, x, y) { doc.setFillColor(67, 160, 71); doc.circle(x, y, 1
 // Emoji & teks bukan-Latin dilukis ke canvas kerana jsPDF tak sokong
 const iCache = {};
 function emojiImg(e, shadow) {
-  const k = "e" + e + (shadow ? "s" : "");
+  const k = "e" + e + (shadow ? "s" : "") + (INK ? "g" : "");
   if (iCache[k]) return iCache[k];
   const c = document.createElement("canvas"); c.width = c.height = 200;
   const x = c.getContext("2d");
   x.font = "150px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif";
   x.textAlign = "center"; x.textBaseline = "middle"; x.fillText(e, 100, 108);
   if (shadow) { x.globalCompositeOperation = "source-in"; x.fillStyle = "#d9d5e8"; x.fillRect(0, 0, 200, 200); }
+  if (INK && !shadow) {
+    const id = x.getImageData(0, 0, 200, 200), px = id.data;
+    for (let i = 0; i < px.length; i += 4) px[i] = px[i + 1] = px[i + 2] = Math.round(0.3 * px[i] + 0.59 * px[i + 1] + 0.11 * px[i + 2]);
+    x.putImageData(id, 0, 0);
+  }
   return (iCache[k] = { u: c.toDataURL("image/png"), r: 1, k });
 }
 function textImg(s, color, fam, rtl) {
@@ -819,6 +860,45 @@ function drawShape(doc, x, y, w, h, it, idx) {
   shapePaths(idx, x + 6, y + 8).forEach(p => pathDots(doc, p));
 }
 
+/* ===== MATEMATIK ===== */
+const MATHE = ["🍎", "⭐", "🐟", "🌸", "🚗", "🐥", "🍪", "🎈"];
+function ansBox(doc, bx, by, wd, ans) {
+  doc.setDrawColor(126, 87, 194); doc.setLineWidth(0.5); doc.roundedRect(bx, by - 11, wd, 14, 2, 2, "S");
+  if (LV < 3) { doc.setTextColor(GH[0], GH[1], GH[2]); doc.text(String(ans), bx + wd / 2, by, { align: "center" }); }
+  label(doc, "jawapan / answer", bx + wd / 2, by + 5.5, { align: "center" });
+}
+function drawMath(doc, x, y, w, h, it, mod, idx) {
+  const [a, b] = it.split("|").map(Number), add = mod.op === "+", ans = add ? a + b : a - b, e = MATHE[idx % MATHE.length];
+  doc.setDrawColor(200, 180, 220); doc.setLineWidth(0.35); doc.roundedRect(x, y, w, h, 2, 2, "S");
+  if (mod.pic) {
+    const sz = 7, g = 7.8, ex = x + 6;
+    for (let i = 0; i < a; i++) {
+      const cross = !add && i >= a - b, px = ex + i * g;
+      putImg(doc, emojiImg(e, cross), px, y + 4, sz);
+      if (cross) { doc.setDrawColor(229, 57, 53); doc.setLineWidth(0.7); doc.line(px, y + 4, px + sz, y + 4 + sz); doc.line(px + sz, y + 4, px, y + 4 + sz); }
+    }
+    if (add) {
+      doc.setFont("helvetica", "bold"); doc.setFontSize(16); doc.setTextColor(126, 87, 194); doc.text("+", ex + a * g + 2, y + 10);
+      for (let i = 0; i < b; i++) putImg(doc, emojiImg(e), ex + a * g + 10 + i * g, y + 4, sz);
+    }
+  }
+  const by = y + h - (mod.pic ? 8 : 9), eq = a + (add ? " + " : " - ") + b + " =";
+  doc.setFont("helvetica", "bold"); doc.setFontSize(26); doc.setTextColor(60, 40, 120);
+  doc.text(eq, x + 8, by);
+  ansBox(doc, x + 8 + doc.getTextWidth(eq) + 5, by, 22, ans);
+}
+function drawStory(doc, x, y, w, h, it) {
+  const [bm, en, e, op, a, b] = it.split("|"), add = op === "+", ans = add ? +a + +b : a - b;
+  doc.setDrawColor(200, 180, 220); doc.setLineWidth(0.35); doc.roundedRect(x, y, w, h, 2, 2, "S");
+  putImg(doc, emojiImg(e), x + 3, y + 6, 16);
+  const tx = x + 24, mw = w - 28;
+  doc.setFont("helvetica", "bold"); doc.setFontSize(10.5); doc.setTextColor(60, 40, 120); doc.text(bm, tx, y + 9, { maxWidth: mw });
+  doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(110, 110, 130); doc.text(en, tx, y + 16, { maxWidth: mw });
+  const by = y + h - 8, eq = a + (add ? " + " : " - ") + b + " =";
+  doc.setFont("helvetica", "bold"); doc.setFontSize(22); doc.setTextColor(60, 40, 120); doc.text(eq, tx, by);
+  ansBox(doc, tx + doc.getTextWidth(eq) + 5, by, 22, ans);
+}
+
 /* ===== SAMBUNG TITIK ===== */
 function drawDots(doc, x, y, w, h, it) {
   const [bm, en, e, co] = it.split("|"), P = co.split(" ").map(q => q.split(",").map(Number));
@@ -835,10 +915,17 @@ function drawDots(doc, x, y, w, h, it) {
 }
 
 /* ===== TEMA HALAMAN ===== */
-const THEME = { "Asas / Basics": [255, 183, 77], "Bahasa Melayu": [79, 195, 247], "English": [255, 152, 0], "Nombor / Numbers": [102, 187, 106], "Jawi": [38, 166, 154], "中文 Mandarin": [239, 83, 80], "Tema / Themes": [149, 117, 205] };
+const THEME = { "Asas / Basics": [255, 183, 77], "Bahasa Melayu": [79, 195, 247], "English": [255, 152, 0], "Nombor / Numbers": [102, 187, 106], "Jawi": [38, 166, 154], "中文 Mandarin": [239, 83, 80], "Tema / Themes": [149, 117, 205], "Matematik / Maths": [255, 112, 67] };
 const tint = (c, t) => c.map(v => Math.round(v + (255 - v) * t));
-const SAMPLE = [["az", 5], ["bentuk", 2], ["haiwan", 3], ["ayat1", 2], ["cn3", 2], ["dots", 1]];
+const SAMPLE = [["az", 5], ["bentuk", 2], ["haiwan", 3], ["ayat1", 2], ["cn3", 2], ["dots", 1], ["add1", 2]];
 function pageDeco(doc, cur, pageW, title) {
+  if (INK) {
+    doc.setDrawColor(150, 150, 150); doc.setLineWidth(0.4); doc.line(10, 26, pageW - 10, 26);
+    doc.setFont("helvetica", "bold"); doc.setFontSize(12); doc.setTextColor(40, 40, 60);
+    doc.text("Masta Xul - PDF Belajar", pageW / 2, 12, { align: "center" });
+    doc.setFontSize(10.5); doc.text(title || cur.t, pageW / 2, 20, { align: "center", maxWidth: pageW - 50 });
+    return;
+  }
   const c = THEME[cur.g] || [149, 117, 205], lt = tint(c, 0.55), md = tint(c, 0.25);
   doc.setFillColor(lt[0], lt[1], lt[2]); doc.rect(0, 0, pageW, 26, "F");
   doc.setFillColor(md[0], md[1], md[2]); doc.rect(0, 26, pageW, 2.5, "F");
@@ -855,15 +942,17 @@ function pageDeco(doc, cur, pageW, title) {
 }
 
 /* ===== JANA PDF ===== */
-const KIND_H = { shapes: 27, chars: 34, vocab: 36, imgword: 40, sent: 48, cnsent: 44, dots: 88 };
+const KIND_H = { shapes: 27, chars: 34, vocab: 36, imgword: 40, sent: 48, cnsent: 44, dots: 88, story: 42 };
 function genPdf(mod, opt) {
   opt = opt || {};
+  INK = opt.sample ? false : !!document.getElementById("ink").checked;
   LV = opt.sample ? 1 : (parseInt(document.getElementById("lvl").value, 10) || 1);
   applyLevel(LV);
   const p = opt.sample ? { namaAnak: "Anak Hebat", umur: "3", namaIbuBapa: "Ibu / Bapa" } : getProfileNow();
   const parts = opt.sample ? SAMPLE.map(([id, n]) => { const m = MODULES.find(q => q.id === id); return { m, items: m.d.slice(0, n) }; }) : [{ m: mod, items: mod.d }];
   const title = opt.sample ? "Sampel Percuma / Free Sample" : mod.t;
   const { jsPDF } = window.jspdf, doc = new jsPDF({ unit: "mm", format: "a4" });
+  if (INK) { const sf = doc.setFillColor.bind(doc); doc.setFillColor = (r, g, b) => { (0.3 * r + 0.59 * g + 0.11 * b) > 200 ? sf(255, 255, 255) : sf(r, g, b); return doc; }; }
   const pageW = 210, margin = 12, w = pageW - margin * 2;
   const today = new Date().toLocaleDateString("ms-MY", { day: "numeric", month: "long", year: "numeric" });
   let cur = { g: parts[0].m.g, ico: opt.sample ? "🎁" : parts[0].m.ico, t: title }, hTitle = title;
@@ -903,7 +992,7 @@ function genPdf(mod, opt) {
   // ---- kandungan ----
   let y = 40, nPages = 0;
   parts.forEach(pt => {
-    cur = pt.m; hTitle = pt.m.t; const h = KIND_H[cur.k];
+    cur = pt.m; hTitle = pt.m.t; const h = cur.k === "math" ? (cur.pic ? 46 : 30) : KIND_H[cur.k];
     doc.addPage(); nPages++; header(); footer(); y = 40;
     pt.items.forEach((it, i) => {
       if (y + h > 280) { doc.addPage(); nPages++; header(); footer(); y = 40; }
@@ -913,6 +1002,8 @@ function genPdf(mod, opt) {
       else if (cur.k === "sent") drawSent(doc, margin, y, w, h, it);
       else if (cur.k === "cnsent") drawCnSent(doc, margin, y, w, h, it);
       else if (cur.k === "dots") drawDots(doc, margin, y, w, h, it);
+      else if (cur.k === "math") drawMath(doc, margin, y, w, h, it, cur, i);
+      else if (cur.k === "story") drawStory(doc, margin, y, w, h, it);
       else drawShape(doc, margin, y, w, h, it, i);
       y += h + 3;
     });
@@ -955,34 +1046,48 @@ function genPdf(mod, opt) {
    "Tahap 3 (lanjutan): anak menulis sendiri tanpa jejak. / Level 3: child writes without tracing."]
     .forEach((t, i) => doc.text("• " + t, margin + 6, ty + 20 + i * 9.5, { maxWidth: w - 12 }));
 
-  // ---- sijil ----
-  doc.addPage("a4", "landscape");
   const nm = p.namaAnak;
-  if (CERT) {
-    doc.addImage(CERT, "JPEG", 0, 0, 297, 210, "cert");
-    doc.setFont("helvetica", "bold"); let fs = 30; doc.setFontSize(fs);
-    while (doc.getTextWidth(nm) > 150 && fs > 12) { fs--; doc.setFontSize(fs); }
-    doc.setTextColor(74, 20, 140); doc.text(nm, 148.5, 103, { align: "center" });
-    doc.setFont("helvetica", "normal"); doc.setFontSize(11.5); doc.setTextColor(26, 35, 126);
-    doc.text("telah berjaya menyiapkan modul / has completed", 148.5, 115.5, { align: "center" });
-    doc.setFont("helvetica", "bold"); fs = 15; doc.setFontSize(fs);
-    while (doc.getTextWidth(mod.t) > 100 && fs > 8) { fs -= 0.5; doc.setFontSize(fs); }
-    doc.text(mod.t, 148.5, 124.5, { align: "center" });
-    doc.setFontSize(12); doc.text(today, 128, 170, {});
-  } else {
-    doc.setDrawColor(255, 202, 40); doc.setLineWidth(2); doc.roundedRect(8, 8, 281, 194, 8, 8, "S");
-    doc.setFont("helvetica", "bold"); doc.setFontSize(34); doc.setTextColor(106, 27, 154); doc.text("SIJIL PENGHARGAAN", 148.5, 45, { align: "center" });
-    doc.setFontSize(12); doc.setTextColor(26, 35, 126); doc.text("Dengan ini diperakui bahawa / This certifies that", 148.5, 70, { align: "center" });
-    doc.setFontSize(28); doc.setTextColor(74, 20, 140); doc.text(nm, 148.5, 95, { align: "center", maxWidth: 240 });
-    doc.setFontSize(12); doc.setTextColor(26, 35, 126); doc.text("telah berjaya menyiapkan modul / has completed", 148.5, 115, { align: "center" });
-    doc.setFontSize(16); doc.text(mod.t, 148.5, 128, { align: "center", maxWidth: 240 });
-    doc.setFont("helvetica", "normal"); doc.setFontSize(11); doc.text("Tarikh / Date: " + today + "     www.mastaxul.my", 148.5, 170, { align: "center" });
-  }
 
   const safe = (nm.replace(/[^\w\u00C0-\u024f]+/g, "_").replace(/^_+|_+$/g, "") || "anak").slice(0, 30);
   doc.save("MastaXul_" + mod.id + "_" + safe + ".pdf");
   toast("PDF dimuat turun ✓");
 }
+
+/* ===== SIJIL (butang berasingan) ===== */
+function genCert() {
+  const { jsPDF } = window.jspdf, doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  const nm = document.getElementById("certName").value.trim() || getProfileNow().namaAnak;
+  const ach = document.getElementById("certAch").value.trim() || "PDF Belajar Menulis & Melukis";
+  const dv = document.getElementById("certDate").value, d = dv ? new Date(dv + "T00:00:00") : new Date();
+  const today = d.toLocaleDateString("ms-MY", { day: "numeric", month: "long", year: "numeric" });
+  if (CERT) {
+    doc.addImage(CERT, CERT_FMT, 0, 0, 297, 210, "cert");
+    doc.setFillColor(252, 251, 240); doc.rect(100, 109.5, 97, 15.8, "F");   // tutup teks asal pada gambar
+    doc.setFont("helvetica", "bold"); let fs = 30; doc.setFontSize(fs);
+    while (doc.getTextWidth(nm) > 150 && fs > 12) { fs--; doc.setFontSize(fs); }
+    doc.setTextColor(74, 20, 140); doc.text(nm, 148.5, 103, { align: "center" });
+    doc.setFont("helvetica", "normal"); doc.setFontSize(11.5); doc.setTextColor(26, 35, 126);
+    doc.text("telah berjaya menyiapkan / has successfully completed", 148.5, 115.5, { align: "center" });
+    doc.setFont("helvetica", "bold"); fs = 15; doc.setFontSize(fs);
+    while (doc.getTextWidth(ach) > 95 && fs > 8) { fs -= 0.5; doc.setFontSize(fs); }
+    doc.text(ach, 148.5, 124, { align: "center" });
+    doc.setFontSize(12); doc.text(today, 128, 170);
+  } else {
+    doc.setDrawColor(255, 202, 40); doc.setLineWidth(2); doc.roundedRect(8, 8, 281, 194, 8, 8, "S");
+    doc.setFont("helvetica", "bold"); doc.setFontSize(34); doc.setTextColor(106, 27, 154); doc.text("SIJIL PENGHARGAAN", 148.5, 45, { align: "center" });
+    doc.setFontSize(12); doc.setTextColor(26, 35, 126); doc.text("Dengan ini diperakui bahawa / This certifies that", 148.5, 70, { align: "center" });
+    doc.setFontSize(28); doc.setTextColor(74, 20, 140); doc.text(nm, 148.5, 95, { align: "center", maxWidth: 240 });
+    doc.setFontSize(12); doc.setTextColor(26, 35, 126); doc.text("telah berjaya menyiapkan / has successfully completed", 148.5, 115, { align: "center" });
+    doc.setFontSize(16); doc.text(ach, 148.5, 128, { align: "center", maxWidth: 240 });
+    doc.setFont("helvetica", "normal"); doc.setFontSize(11); doc.text("Tarikh / Date: " + today + "     www.mastaxul.my", 148.5, 170, { align: "center" });
+  }
+  doc.save("Sijil_" + (nm.replace(/[^\w\u00C0-\u024f]+/g, "_").replace(/^_+|_+$/g, "") || "anak").slice(0, 30) + ".pdf");
+  toast("Sijil dimuat turun ✓");
+}
+document.getElementById("certBtn").onclick = () => {
+  toast("Menjana sijil…");
+  setTimeout(() => { try { genCert(); } catch (e) { console.error(e); toast("Gagal jana sijil."); } }, 50);
+};
 
 document.getElementById("btnSample").onclick = () => {
   toast("Menjana sampel… / Creating sample…");
