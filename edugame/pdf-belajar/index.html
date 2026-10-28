@@ -34,6 +34,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(1
 .mod .info strong{display:block;font-size:.9rem;color:#4a148c}
 .mod .info span{font-size:.72rem;color:#666}
 .mod .dl{background:linear-gradient(90deg,#43a047,#66bb6a);color:#fff;border-radius:10px;padding:8px 10px;font-weight:700;font-size:.72rem;white-space:nowrap}
+.cta.alt{background:linear-gradient(90deg,#43a047,#00acc1);border:0;cursor:pointer;font:inherit;font-weight:700;margin-left:6px}
+.profile-box select,.profile-box textarea{width:100%;padding:10px 12px;border:2px solid #ce93d8;border-radius:10px;font:inherit}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 18px;border-radius:20px;font-size:.85rem;display:none;z-index:99}
 </style>
 </head>
@@ -45,6 +47,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(1
     <p style="font-size:.9rem;margin-top:6px">Melayu · English · 中文 · Jawi · Nombor · Bentuk · Perkataan · Ayat</p>
     <p style="font-size:.8rem;margin-top:8px;color:#555">Dwibahasa · Jejak titik-titik · Bayang untuk diwarnakan · Nama anak pada setiap PDF</p>
     <a class="cta" href="beli.html">Beli &amp; Muat Turun →</a>
+    <button class="cta alt" id="btnSample" type="button">🎁 Sampel percuma / Free sample</button>
     <p style="margin-top:12px;font-size:.75rem">www.mastaxul.my · 1 pelayar sahaja</p>
   </section>
   <section id="gate"><div class="status" id="statusBox">Memeriksa akses…</div></section>
@@ -60,8 +63,18 @@ body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(1
       <input type="number" id="editUmur" min="3" max="15">
       <label for="editIbuBapa">Ibu / bapa (tidak boleh edit)</label>
       <input type="text" id="editIbuBapa" disabled>
+      <label for="lvl">Tahap / Level</label>
+      <select id="lvl"><option value="1">1 · Mudah / Easy (3 thn, jejak jelas)</option><option value="2">2 · Biasa / Normal (4 thn)</option><option value="3">3 · Lanjutan / Advanced (5 thn, tulis sendiri)</option></select>
     </div>
     <div id="modList"></div>
+    <div class="profile-box" style="margin-top:18px">
+      <strong style="color:#4a148c">💬 Maklum balas / Feedback</strong>
+      <label for="fbRate">Penilaian / Rating</label>
+      <select id="fbRate"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select>
+      <label for="fbMsg">Cadangan modul / komen anda</label>
+      <textarea id="fbMsg" rows="3" maxlength="300" placeholder="Modul apa anda mahu seterusnya?"></textarea>
+      <button class="cta" id="fbBtn" type="button" style="border:0;cursor:pointer;width:100%;font:inherit;font-weight:700">Hantar / Send</button>
+    </div>
   </section>
 </div>
 <div class="toast" id="toast">Menjana PDF…</div>
@@ -93,6 +106,11 @@ const SHAPES = ["Garis tegak|Standing lines", "Garis mendatar|Sleeping lines", "
 
 const MODULES = [
  { g:"Asas / Basics", id:"bentuk", ico:"〰️", t:"Garisan & Bentuk / Lines & Shapes", k:"shapes", d:SHAPES },
+ { g:"Asas / Basics", id:"dots", ico:"🔢", t:"Sambung Titik / Connect the Dots", k:"dots", d:[
+  "Rumah|House|🏠|0,5 5,0 10,5 8,5 8,10 2,10 2,5",
+  "Bintang|Star|⭐|5,0 6.2,3.5 10,3.6 7,5.8 8,9.5 5,7.3 2,9.5 3,5.8 0,3.6 3.8,3.5",
+  "Hati|Heart|❤️|5,3 4,1 2,0 0,2 0,4 2,7 5,10 8,7 10,4 10,2 8,0 6,1",
+  "Ikan|Fish|🐟|1,5 3,2 6,1 8,3 10,2 10,8 8,6 6,9 3,8"] },
  { g:"Bahasa Melayu", id:"az", ico:"🔤", t:"Huruf A-Z / Letters A-Z", k:"chars", d:"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("") },
  { g:"Bahasa Melayu", id:"azs", ico:"🔡", t:"Huruf a-z / Letters a-z", k:"chars", d:"abcdefghijklmnopqrstuvwxyz".split("") },
  { g:"Bahasa Melayu", id:"suku", ico:"🧩", t:"Suku Kata / Syllables", k:"chars", d:Object.keys(SUKU) },
@@ -158,6 +176,19 @@ Ulat|Bug|🐛`) },
 ناسي||Nasi|Rice|🍚
 سوسو||Susu|Milk|🥛
 کريتا||Kereta|Car|🚗`) },
+ { g:"Jawi", id:"doa", ico:"🤲", t:"Doa & Zikir / Prayers & Dhikr", k:"imgword", rtl:true, d:C(`
+بِسْمِ اللَّهِ|Bismillah|Dengan nama Allah|In the name of Allah|🤲
+الْحَمْدُ لِلَّهِ|Alhamdulillah|Segala puji bagi Allah|Praise be to Allah|🥰
+السَّلَامُ عَلَيْكُمْ|Assalamualaikum|Salam sejahtera ke atas kamu|Peace be upon you|👋
+سُبْحَانَ اللَّهِ|Subhanallah|Maha Suci Allah|Glory be to Allah|🌙
+اللَّهُ أَكْبَرُ|Allahu Akbar|Allah Maha Besar|Allah is the Greatest|🕌
+مَا شَاءَ اللَّهُ|Masya-Allah|Apa yang Allah kehendaki|What Allah has willed|✨
+إِنْ شَاءَ اللَّهُ|Insya-Allah|Jika Allah mengizinkan|If Allah wills|🌟
+جَزَاكَ اللَّهُ خَيْرًا|Jazakallah khairan|Semoga Allah membalas kebaikan|May Allah reward you|💐
+قُلْ هُوَ اللَّهُ أَحَدٌ|Qul huwallahu ahad|Katakanlah: Dialah Allah Yang Maha Esa|Say: He is Allah, the One|📖
+اللَّهُ الصَّمَدُ|Allahus-samad|Allah tempat bergantung|Allah, the Eternal Refuge|📖
+لَمْ يَلِدْ وَلَمْ يُولَدْ|Lam yalid wa lam yulad|Dia tidak beranak dan tidak diperanakkan|He neither begets nor is born|📖
+وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ|Wa lam yakun lahu kufuwan ahad|Dan tiada sesuatu pun yang setara dengan-Nya|And none is equal to Him|📖`) },
  { g:"中文 Mandarin", id:"cn1", ico:"🇨🇳", t:"Mandarin: Nombor 1-10 / Numbers", k:"imgword", d:C(`
 一|yī|Satu|One|1️⃣
 二|èr|Dua|Two|2️⃣
@@ -434,6 +465,15 @@ Gunung|Mountain|⛰️
 Laut|Sea|🌊
 Pulau|Island|🏝️
 Angin|Wind|💨`) },
+ { g:"Tema / Themes", id:"bentuk2", ico:"🔷", t:"Bentuk / Shapes", k:"vocab", d:V(`
+Bulatan|Circle|🔵
+Segi tiga|Triangle|🔺
+Segi empat sama|Square|🟦
+Bintang|Star|⭐
+Hati|Heart|❤️
+Berlian|Diamond|🔷
+Segi empat tepat|Rectangle|🟧
+Bulan sabit|Crescent|🌙`) },
  { g:"Tema / Themes", id:"kerja", ico:"🧑‍⚕️", t:"Pekerjaan / Jobs", k:"vocab", d:V(`
 Doktor|Doctor|🧑‍⚕️
 Guru|Teacher|🧑‍🏫
@@ -464,6 +504,7 @@ const linkId = params.get("id") || "", token = params.get("token") || "";
 let profile = { namaAnak: "", umur: "", namaIbuBapa: "" };
 
 async function boot() {
+  loadCert();
   const box = document.getElementById("statusBox");
   if (!linkId || !token) return;
   document.getElementById("landing").classList.remove("show");
@@ -515,7 +556,16 @@ function renderMods() {
  - Huruf/nombor jejak: 32pt (+-11mm); perkataan: 30pt; ayat: 14-17pt
  - Warna jejak kelabu-ungu muda, garisan tulis bertitik, titik hijau = mula
  - Satu perkataan/huruf setiap baris, ruang menulis semula di atas garisan yang sama */
-const GH = [200, 195, 225];
+let GH = [200, 195, 225], GHX = "#c8c3e1", LV = 1, CERT = null;
+function applyLevel(l) {
+  GH = l === 1 ? [178, 170, 212] : l === 2 ? [203, 198, 227] : [226, 223, 238];
+  GHX = "#" + GH.map(v => v.toString(16).padStart(2, "0")).join("");
+}
+function loadCert() {
+  fetch("sijil-bg.jpg").then(r => { if (!r.ok) throw 0; return r.blob(); })
+    .then(b => new Promise(res => { const f = new FileReader(); f.onload = () => res(f.result); f.readAsDataURL(b); }))
+    .then(u => { CERT = u; }).catch(() => {});
+}
 const AR = "'Noto Naskh Arabic','Amiri','Traditional Arabic','Arial',serif";
 const ZH = "'Noto Sans SC','PingFang SC','Microsoft YaHei','SimHei',sans-serif";
 const LT = "'Arial','Helvetica',sans-serif";
@@ -579,6 +629,38 @@ function blankLine(doc, x, by, mw, lab) {
   if (lab) label(doc, lab, x + 3, by - 1.5);
 }
 
+/* ===== ARAH COretan (0-9 grid, y ke bawah). Setiap strok = pasangan xy ===== */
+const STK = Object.fromEntries(("A=5009 5099 2686;B=0009 006081836404 046496976909;C=8160301217396988;D=0009 006082876909;E=0009 0090 0474 0999;F=0009 0090 0474;G=81603012173979979555;H=0009 9099 0494;I=5059;J=7077693917;K=0009 9015 3499;L=0009 0999;M=0900569099;N=09009990;O=5021040528598895948150;P=0009 006082836404;Q=5021040528598895948150 6699;R=0009 006082836404 4499;S=816030111334658688693918;T=0090 5059;U=000629799690;V=0059 9059;W=0029537990;X=0099 9009;Y=0055 9055 5559;Z=00900999;" +
+"a=74533325375776 7377;b=0007 04235375572706;c=74533325375776;d=74533325375776 7007;e=257574533325375776;f=7160504147 2363;g=74533325375776 7378693928;h=0007 0423537477;i=5357 5051;j=6368593928 6061;k=0007 7315 3477;l=4007;m=1317 1423435457 5463839497;n=1317 1433638487;o=5333253757767453;p=1319 14335375573716;q=74533325375776 7379;r=2327 25345373;s=74533324356576673726;t=41465777 2363;u=2326376776 7377;v=235783;w=1337547793;x=2377 7327;y=2357 83573929;z=23732777;" +
+"0=5021040528598895948150;1=325059;2=12207092841999;3=1130709284549698793918;4=79700696;5=802014538588592918;6=815023161839698886653516;7=009049;8=50212354858859282554838150;9=846535141230608285785939").split(";").map(t => t.split("=")));
+function drawStroke(doc, c, gx, gy, gw, gh) {
+  doc.setLineCap("round"); doc.setLineJoin("round");
+  STK[c].split(" ").forEach((st, i) => {
+    const P = []; for (let k = 0; k < st.length; k += 2) P.push([gx + (+st[k]) / 9 * gw, gy + (+st[k + 1]) / 9 * gh]);
+    doc.setDrawColor(126, 87, 194); doc.setLineWidth(1);
+    for (let k = 1; k < P.length; k++) doc.line(P[k - 1][0], P[k - 1][1], P[k][0], P[k][1]);
+    const a = P[P.length - 2], b = P[P.length - 1];
+    if (a) {
+      const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy);
+      if (l > 1) {
+        const ux = dx / l, uy = dy / l, bx = b[0] + ux * 1.2, by = b[1] + uy * 1.2;
+        doc.setFillColor(126, 87, 194);
+        doc.triangle(bx, by, bx - ux * 2.6 - uy * 1.3, by - uy * 2.6 + ux * 1.3, bx - ux * 2.6 + uy * 1.3, by - uy * 2.6 - ux * 1.3, "F");
+      }
+    }
+    doc.setFillColor(67, 160, 71); doc.circle(P[0][0], P[0][1], 1.8, "F");
+    doc.setFont("helvetica", "bold"); doc.setFontSize(6); doc.setTextColor(255, 255, 255);
+    doc.text(String(i + 1), P[0][0], P[0][1] + 0.8, { align: "center" });
+  });
+}
+function drawGuide(doc, ch, x, y, h) {
+  const g = ch.split(""); if (!g.every(c => STK[c])) return false;
+  const n = g.length, gw = Math.min(14, 22 / n), gap = 3, tot = n * gw + (n - 1) * gap, x0 = x + 15 - tot / 2;
+  g.forEach((c, k) => drawStroke(doc, c, x0 + k * (gw + gap), y + 5, gw, h - 15));
+  label(doc, "ikut nombor / follow", x + 15, y + h - 2.5, { align: "center" });
+  return true;
+}
+
 /* ===== MAKLUMAT HURUF / NOMBOR ===== */
 function charInfo(mod, ch) {
   if (mod.id === "suku") { const s = SUKU[ch]; return { a: s[0], b: s[1], e: s[2] }; }
@@ -604,8 +686,10 @@ function drawChar(doc, x, y, w, h, ch, mod) {
     }
     const t = textImg(ch, color, AR, rtl), iw = putImg(doc, t, cx - 10, y + 5, 22, 26); return iw;
   };
-  draw("#5e35b1", x + 15, [94, 53, 177]);
-  label(doc, "contoh / example", x + 15, y + h - 2.5, { align: "center" });
+  if (!(latin && drawGuide(doc, ch, x, y, h))) {
+    draw("#5e35b1", x + 15, [94, 53, 177]);
+    label(doc, "contoh / example", x + 15, y + h - 2.5, { align: "center" });
+  }
   // gambar
   let tx = x + 36;
   if (info) {
@@ -633,10 +717,10 @@ function drawChar(doc, x, y, w, h, ch, mod) {
   let gx = tx;
   doc.setFont("helvetica", "bold"); doc.setFontSize(32);
   const cw = (latin ? doc.getTextWidth(ch) : 22 * textImg(ch, "#000", AR, rtl).r) + 7;
-  for (let k = 0; k < 6 && gx + cw - 4 <= x + w; k++, gx += cw) {
+  for (let k = 0; k < (LV === 3 ? 2 : 6) && gx + cw - 4 <= x + w; k++, gx += cw) {
     if (k === 0) startDot(doc, gx - 0.5, y + 8);
     if (latin) { doc.setFont("helvetica", "bold"); doc.setFontSize(32); doc.setTextColor(GH[0], GH[1], GH[2]); doc.text(ch, gx + 2, y + 24); }
-    else putImg(doc, textImg(ch, "#c8c3e1", AR, rtl), gx + 2, y + 5, 22, 26);
+    else putImg(doc, textImg(ch, GHX, AR, rtl), gx + 2, y + 5, 22, 26);
   }
 }
 
@@ -652,28 +736,34 @@ function drawVocab(doc, x, y, w, h, it, mod) {
   label(doc, it.rgb && mod.id === "warna" ? "warna / colour" : "warnakan / colour me", x + 35, y + h - 3, { align: "center" });
   const tx = x + 49, mw = w - 53, en = mod.p === "en";
   ghostLine(doc, en ? it.en : it.bm, tx, y + 16, mw, 30, en ? "English" : "Bahasa Melayu");
-  ghostLine(doc, en ? it.bm : it.en, tx, y + 31, mw, 22, en ? "Bahasa Melayu" : "English");
+  if (LV === 3) blankLine(doc, tx, y + 31, mw, en ? "Bahasa Melayu" : "English");
+  else ghostLine(doc, en ? it.bm : it.en, tx, y + 31, mw, 22, en ? "Bahasa Melayu" : "English");
 }
 
-// perkataan Mandarin / Jawi (imej): atas = pinyin, tengah = tulisan jejak berulang
+// perkataan Mandarin / Jawi / Doa (imej): contoh pekat + salinan pudar untuk dijejak
 function drawImgWord(doc, x, y, w, h, it, mod) {
   doc.setDrawColor(200, 180, 220); doc.setLineWidth(0.35); doc.roundedRect(x, y, w, h, 2, 2, "S");
   putImg(doc, emojiImg(it.e), x + 3, y + 10, 18);
   putImg(doc, emojiImg(it.e, true), x + 24, y + 10, 18);
   label(doc, "contoh", x + 12, y + h - 3, { align: "center" }); label(doc, "warnakan", x + 33, y + h - 3, { align: "center" });
   const tx = x + 47, mw = w - 51, rtl = !!mod.rtl, fam = rtl ? AR : ZH;
-  if (it.top) putImg(doc, textImg(it.top, "#7e57c2", LT), tx, y + 3, 5.5, 60);
-  doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(90, 80, 120);
-  doc.text(it.bm + " / " + it.en, x + w - 4, y + 7, { align: "right" });
-  const hh = 20, r = textImg(it.img, "#000", fam, rtl).r, cw = hh * r + 5;
-  let gx = tx, k = 0;
-  if (cw > mw) { putImg(doc, textImg(it.img, "#5e35b1", fam, rtl), tx, y + 10, mw / r, mw); }
-  else for (; k < 4 && gx + cw <= tx + mw + 5; k++, gx += cw) {
-    if (k === 0) startDot(doc, gx - 0.5, y + 12);
-    putImg(doc, textImg(it.img, k === 0 ? "#5e35b1" : "#c8c3e1", fam, rtl), gx + 2, y + 10, hh);
+  const r = textImg(it.img, "#000", fam, rtl).r, hh = 20, cw = hh * r + 5, long = cw > mw;
+  if (long) {
+    putImg(doc, textImg(it.img, "#5e35b1", fam, rtl), tx, y + 3, 9, mw);
+    startDot(doc, tx - 0.5, y + 16);
+    putImg(doc, textImg(it.img, GHX, fam, rtl), tx + 2, y + 11, 19, mw - 2);
+  } else {
+    if (it.top) putImg(doc, textImg(it.top, "#7e57c2", LT), tx, y + 3, 5.5, mw);
+    for (let k = 0, gx = tx; k < (LV === 3 ? 2 : 4) && gx + cw <= tx + mw + 5; k++, gx += cw) {
+      if (k === 0) startDot(doc, gx - 0.5, y + 12);
+      putImg(doc, textImg(it.img, k === 0 ? "#5e35b1" : GHX, fam, rtl), gx + 2, y + 10, hh);
+    }
   }
   dottedLine(doc, tx, y + 32, tx + mw, y + 32);
-  label(doc, "tulis sendiri / write it", tx, y + 36);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(150, 150, 160);
+  doc.text(long && it.top ? it.top : "tulis sendiri / write it", tx, y + 36, { maxWidth: 55 });
+  doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(90, 80, 120);
+  doc.text(it.bm + " / " + it.en, x + w - 4, y + 36, { align: "right", maxWidth: 100 });
 }
 
 /* ===== AYAT ===== */
@@ -692,7 +782,7 @@ function drawCnSent(doc, x, y, w, h, it) {
   const tx = x + 22, mw = w - 26;
   putImg(doc, textImg(it.py, "#7e57c2", LT), tx, y + 2.5, 5, mw);
   startDot(doc, tx - 0.5, y + 14);
-  putImg(doc, textImg(it.zh, "#c8c3e1", ZH), tx + 2, y + 9, 14, mw - 2);
+  putImg(doc, textImg(it.zh, GHX, ZH), tx + 2, y + 9, 14, mw - 2);
   dottedLine(doc, tx, y + 25, tx + mw, y + 25); label(doc, "tulis sendiri / write it", tx, y + 23.5 - 0);
   doc.setFont("helvetica", "bold"); doc.setFontSize(8.5); doc.setTextColor(90, 80, 120);
   doc.text(it.bm, tx, y + 33, { maxWidth: mw }); doc.setFont("helvetica", "normal"); doc.text(it.en, tx, y + 39, { maxWidth: mw });
@@ -729,72 +819,187 @@ function drawShape(doc, x, y, w, h, it, idx) {
   shapePaths(idx, x + 6, y + 8).forEach(p => pathDots(doc, p));
 }
 
+/* ===== SAMBUNG TITIK ===== */
+function drawDots(doc, x, y, w, h, it) {
+  const [bm, en, e, co] = it.split("|"), P = co.split(" ").map(q => q.split(",").map(Number));
+  doc.setDrawColor(200, 180, 220); doc.setLineWidth(0.35); doc.roundedRect(x, y, w, h, 2, 2, "S");
+  doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(90, 80, 120); doc.text(bm + " / " + en, x + 5, y + 8);
+  putImg(doc, emojiImg(e), x + w - 22, y + 3, 15);
+  const u = 6.2, ox = x + (w - 10 * u) / 2, oy = y + 18;
+  P.forEach(([a, b], i) => {
+    const cx = ox + a * u, cy = oy + b * u;
+    doc.setFillColor(126, 87, 194); doc.circle(cx, cy, 1.5, "F");
+    doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(60, 40, 120); doc.text(String(i + 1), cx + 2.3, cy - 1.8);
+  });
+  label(doc, "Sambung 1 ke " + P.length + ", kemudian kembali ke 1 dan warnakan / Join the dots 1 to " + P.length + ", back to 1, then colour", x + 5, y + h - 4);
+}
+
+/* ===== TEMA HALAMAN ===== */
+const THEME = { "Asas / Basics": [255, 183, 77], "Bahasa Melayu": [79, 195, 247], "English": [255, 152, 0], "Nombor / Numbers": [102, 187, 106], "Jawi": [38, 166, 154], "中文 Mandarin": [239, 83, 80], "Tema / Themes": [149, 117, 205] };
+const tint = (c, t) => c.map(v => Math.round(v + (255 - v) * t));
+const SAMPLE = [["az", 5], ["bentuk", 2], ["haiwan", 3], ["ayat1", 2], ["cn3", 2], ["dots", 1]];
+function pageDeco(doc, cur, pageW, title) {
+  const c = THEME[cur.g] || [149, 117, 205], lt = tint(c, 0.55), md = tint(c, 0.25);
+  doc.setFillColor(lt[0], lt[1], lt[2]); doc.rect(0, 0, pageW, 26, "F");
+  doc.setFillColor(md[0], md[1], md[2]); doc.rect(0, 26, pageW, 2.5, "F");
+  doc.setFillColor(255, 255, 255);
+  for (let x = 0; x <= pageW + 9; x += 9) doc.circle(x, 28.5, 3.4, "F");
+  doc.setDrawColor(md[0], md[1], md[2]); doc.setLineWidth(0.6); doc.setLineDashPattern([2, 2], 0);
+  doc.roundedRect(4, 34, pageW - 8, 249, 4, 4, "S"); doc.setLineDashPattern([], 0);
+  putImg(doc, emojiImg(cur.ico), 7, 5, 15); putImg(doc, emojiImg(cur.ico), pageW - 22, 5, 15);
+  putImg(doc, emojiImg("⭐"), 6, 284, 7); putImg(doc, emojiImg("🌈"), pageW - 13, 284, 7);
+  doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.setTextColor(74, 20, 140);
+  doc.text("Masta Xul - PDF Belajar", pageW / 2, 11, { align: "center" });
+  doc.setFontSize(10.5); doc.setTextColor(40, 40, 60);
+  doc.text(title || cur.t, pageW / 2, 20, { align: "center", maxWidth: pageW - 50 });
+}
+
 /* ===== JANA PDF ===== */
-const KIND_H = { shapes: 27, chars: 34, vocab: 36, imgword: 40, sent: 48, cnsent: 44 };
-function genPdf(mod) {
-  const p = getProfileNow(), { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
-  const pageW = 210, margin = 12;
+const KIND_H = { shapes: 27, chars: 34, vocab: 36, imgword: 40, sent: 48, cnsent: 44, dots: 88 };
+function genPdf(mod, opt) {
+  opt = opt || {};
+  LV = opt.sample ? 1 : (parseInt(document.getElementById("lvl").value, 10) || 1);
+  applyLevel(LV);
+  const p = opt.sample ? { namaAnak: "Anak Hebat", umur: "3", namaIbuBapa: "Ibu / Bapa" } : getProfileNow();
+  const parts = opt.sample ? SAMPLE.map(([id, n]) => { const m = MODULES.find(q => q.id === id); return { m, items: m.d.slice(0, n) }; }) : [{ m: mod, items: mod.d }];
+  const title = opt.sample ? "Sampel Percuma / Free Sample" : mod.t;
+  const { jsPDF } = window.jspdf, doc = new jsPDF({ unit: "mm", format: "a4" });
+  const pageW = 210, margin = 12, w = pageW - margin * 2;
   const today = new Date().toLocaleDateString("ms-MY", { day: "numeric", month: "long", year: "numeric" });
-  const header = () => {
-    doc.setFillColor(79, 195, 247); doc.rect(0, 0, pageW, 26, "F");
-    doc.setFillColor(255, 202, 40); doc.rect(0, 26, pageW, 3, "F");
-    doc.setFillColor(129, 199, 132); doc.rect(0, 29, pageW, 2, "F");
-    doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.setTextColor(74, 20, 140);
-    doc.text("Masta Xul - PDF Belajar", pageW / 2, 11, { align: "center" });
-    doc.setFontSize(10.5); doc.setTextColor(40, 40, 60);
-    doc.text(mod.t, pageW / 2, 20, { align: "center", maxWidth: pageW - 20 });
-  };
+  let cur = { g: parts[0].m.g, ico: opt.sample ? "🎁" : parts[0].m.ico, t: title }, hTitle = title;
+  const header = () => pageDeco(doc, cur, pageW, hTitle);
   const footer = () => {
     doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(70, 70, 90);
-    doc.text(p.namaAnak + " | " + p.umur + " thn | " + p.namaIbuBapa + " | " + today, pageW / 2, 287, { align: "center" });
+    doc.text(opt.sample ? "SAMPEL PERCUMA / FREE SAMPLE" : p.namaAnak + " | " + p.umur + " thn | " + p.namaIbuBapa + " | " + today, pageW / 2, 288, { align: "center" });
     doc.setTextColor(100, 80, 140);
-    doc.text("www.mastaxul.my | Jom Belajar | Jejak, warna & tulis / Trace, colour & write", pageW / 2, 292, { align: "center" });
+    doc.text("www.mastaxul.my | Jom Belajar | Jejak, warna & tulis / Trace, colour & write", pageW / 2, 292.5, { align: "center" });
   };
 
-  // muka depan + panduan
+  // ---- muka depan + panduan ----
   header();
-  doc.setFillColor(255, 249, 230); doc.roundedRect(margin, 40, pageW - margin * 2, 62, 4, 4, "F");
-  doc.setDrawColor(255, 202, 40); doc.setLineWidth(0.8); doc.roundedRect(margin, 40, pageW - margin * 2, 62, 4, 4, "S");
+  doc.setFillColor(255, 249, 230); doc.roundedRect(margin, 42, w, 62, 4, 4, "F");
+  doc.setDrawColor(255, 202, 40); doc.setLineWidth(0.8); doc.roundedRect(margin, 42, w, 62, 4, 4, "S");
   doc.setFont("helvetica", "normal"); doc.setFontSize(11); doc.setTextColor(80, 80, 80);
-  doc.text("Modul ini disediakan khas untuk / Made especially for", pageW / 2, 52, { align: "center" });
+  doc.text("Modul ini disediakan khas untuk / Made especially for", pageW / 2, 54, { align: "center" });
   doc.setFont("helvetica", "bold"); doc.setFontSize(18); doc.setTextColor(106, 27, 154);
-  doc.text(p.namaAnak, pageW / 2, 64, { align: "center", maxWidth: pageW - 50 });
+  doc.text(p.namaAnak, pageW / 2, 66, { align: "center", maxWidth: pageW - 50 });
   doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(50, 50, 50);
-  doc.text("Ibu/Bapa: " + p.namaIbuBapa + "    Umur / Age: " + p.umur, pageW / 2, 76, { align: "center" });
-  doc.text("Tarikh / Date: " + today, pageW / 2, 84, { align: "center" });
-  doc.setFont("helvetica", "bold"); doc.text(mod.t, pageW / 2, 94, { align: "center", maxWidth: pageW - 40 });
-  doc.setFillColor(240, 248, 255); doc.roundedRect(margin, 112, pageW - margin * 2, 70, 4, 4, "F");
+  doc.text("Ibu/Bapa: " + p.namaIbuBapa + "    Umur / Age: " + p.umur, pageW / 2, 78, { align: "center" });
+  doc.text("Tarikh / Date: " + today + "    Tahap / Level: " + LV, pageW / 2, 86, { align: "center" });
+  doc.setFont("helvetica", "bold"); doc.text(title, pageW / 2, 96, { align: "center", maxWidth: pageW - 40 });
+  doc.setFillColor(240, 248, 255); doc.roundedRect(margin, 114, w, 70, 4, 4, "F");
   doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.setTextColor(74, 20, 140);
-  doc.text("Panduan / Guide (3+ tahun / years)", margin + 6, 122);
-  startDot(doc, margin + 8, 132);
+  doc.text("Panduan / Guide (3+ tahun / years)", margin + 6, 124);
+  startDot(doc, margin + 8, 134);
   doc.setFont("helvetica", "normal"); doc.setFontSize(9.5); doc.setTextColor(40, 40, 60);
-  [["Titik hijau = mula menulis / Green dot = start here", 133],
-   ["Jejak tulisan kelabu, kemudian tulis sendiri di atas garisan titik.", 143],
-   ["Trace the grey writing, then write it yourself on the dotted line.", 149],
-   ["Warnakan bayang gambar dengan pensel warna / Colour the shadow picture.", 159],
-   ["Pegang pensel dengan 3 jari. Puji setiap usaha! / Hold the pencil with 3 fingers. Praise every try!", 169],
-   ["Tulisan besar & satu perkataan setiap baris supaya mudah diikuti.", 177]].forEach(([t, yy]) => doc.text(t, margin + 13, yy, { maxWidth: pageW - 50 }));
+  [["Titik hijau = mula menulis. Ikut nombor dan anak panah. / Green dot = start. Follow the numbers and arrows.", 135],
+   ["Jejak tulisan kelabu, kemudian tulis sendiri di atas garisan titik.", 146],
+   ["Trace the grey writing, then write it yourself on the dotted line.", 152],
+   ["Warnakan bayang gambar dengan pensel warna / Colour the shadow picture.", 161],
+   ["Pegang pensel dengan 3 jari. Puji setiap usaha! / Hold the pencil with 3 fingers. Praise every try!", 171],
+   ["Tulisan besar & satu perkataan setiap baris supaya mudah diikuti.", 180]].forEach(([t, yy]) => doc.text(t, margin + 13, yy, { maxWidth: w - 20 }));
   footer();
 
-  doc.addPage(); header(); footer();
-  let y = 40;
-  const h = KIND_H[mod.k], w = pageW - margin * 2;
-  mod.d.forEach((it, i) => {
-    if (y + h > 280) { doc.addPage(); header(); footer(); y = 40; }
-    if (mod.k === "chars") drawChar(doc, margin, y, w, h, it, mod);
-    else if (mod.k === "vocab") drawVocab(doc, margin, y, w, h, it, mod);
-    else if (mod.k === "imgword") drawImgWord(doc, margin, y, w, h, it, mod);
-    else if (mod.k === "sent") drawSent(doc, margin, y, w, h, it);
-    else if (mod.k === "cnsent") drawCnSent(doc, margin, y, w, h, it);
-    else drawShape(doc, margin, y, w, h, it, i);
-    y += h + 3;
+  // ---- kandungan ----
+  let y = 40, nPages = 0;
+  parts.forEach(pt => {
+    cur = pt.m; hTitle = pt.m.t; const h = KIND_H[cur.k];
+    doc.addPage(); nPages++; header(); footer(); y = 40;
+    pt.items.forEach((it, i) => {
+      if (y + h > 280) { doc.addPage(); nPages++; header(); footer(); y = 40; }
+      if (cur.k === "chars") drawChar(doc, margin, y, w, h, it, cur);
+      else if (cur.k === "vocab") drawVocab(doc, margin, y, w, h, it, cur);
+      else if (cur.k === "imgword") drawImgWord(doc, margin, y, w, h, it, cur);
+      else if (cur.k === "sent") drawSent(doc, margin, y, w, h, it);
+      else if (cur.k === "cnsent") drawCnSent(doc, margin, y, w, h, it);
+      else if (cur.k === "dots") drawDots(doc, margin, y, w, h, it);
+      else drawShape(doc, margin, y, w, h, it, i);
+      y += h + 3;
+    });
   });
 
-  const safe = (p.namaAnak.replace(/[^\w\u00C0-\u024f]+/g, "_").replace(/^_+|_+$/g, "") || "anak").slice(0, 30);
+  if (opt.sample) {
+    cur = { g: "Asas / Basics", ico: "🎁", t: title }; hTitle = title;
+    doc.addPage(); header(); footer();
+    doc.setFont("helvetica", "bold"); doc.setFontSize(16); doc.setTextColor(106, 27, 154);
+    doc.text("Suka sampel ini? / Like this sample?", pageW / 2, 70, { align: "center" });
+    doc.setFont("helvetica", "normal"); doc.setFontSize(11); doc.setTextColor(40, 40, 60);
+    ["Dapatkan semua modul: huruf, nombor, Jawi, Mandarin, English, ayat, doa dan banyak lagi.",
+     "Get every module: letters, numbers, Jawi, Mandarin, English, sentences, prayers and more.",
+     "Nama anak anda tercetak pada setiap PDF + sijil + jadual bintang.", "Beli di / Buy at: www.mastaxul.my/beli.html"]
+      .forEach((t, i) => doc.text(t, pageW / 2, 90 + i * 12, { align: "center", maxWidth: w - 20 }));
+    doc.save("MastaXul_Sampel_Percuma.pdf"); toast("Sampel dimuat turun ✓"); return;
+  }
+
+  // ---- jadual bintang + tips ----
+  cur = { g: mod.g, ico: "⭐", t: "Jadual Bintang / Star Chart" }; hTitle = cur.t;
+  doc.addPage(); header(); footer();
+  doc.setFont("helvetica", "normal"); doc.setFontSize(9.5); doc.setTextColor(40, 40, 60);
+  doc.text("Warnakan satu bintang setiap kali siap satu muka surat. / Colour one star for every page you finish.", pageW / 2, 46, { align: "center", maxWidth: w });
+  const cols = 6, cell = w / cols;
+  for (let i = 0; i < nPages; i++) {
+    const cx = margin + cell * (i % cols) + cell / 2, cy = 66 + Math.floor(i / cols) * 30;
+    pathDots(doc, Array.from({ length: 11 }, (_, t) => { const r = t % 2 ? 5 : 11.5, an = Math.PI * t / 5 - Math.PI / 2; return [cx + r * Math.cos(an), cy + r * Math.sin(an)]; }).concat([[cx, cy - 11.5]]));
+    doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(150, 140, 180); doc.text(String(i + 1), cx, cy + 1.5, { align: "center" });
+  }
+  let ty = 66 + Math.ceil(nPages / cols) * 30 + 8;
+  doc.setFillColor(240, 248, 255); doc.roundedRect(margin, ty, w, 74, 4, 4, "F");
+  doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.setTextColor(74, 20, 140);
+  doc.text("Tips ibu bapa / Parent tips", margin + 6, ty + 10);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(40, 40, 60);
+  ["10 minit sehari lebih baik daripada 1 jam sekali. / 10 minutes a day beats 1 hour once a week.",
+   "Biar anak pilih halaman yang dia suka dahulu. / Let your child pick the page they like first.",
+   "Puji usaha, bukan hanya hasil. / Praise the effort, not only the result.",
+   "Berhenti bila anak penat, sambung esok. / Stop when your child is tired, continue tomorrow.",
+   "Pensel 2B atau pensel warna tebal sesuai untuk 3 tahun. / A thick 2B or colouring pencil suits 3-year-olds.",
+   "Tahap 3 (lanjutan): anak menulis sendiri tanpa jejak. / Level 3: child writes without tracing."]
+    .forEach((t, i) => doc.text("• " + t, margin + 6, ty + 20 + i * 9.5, { maxWidth: w - 12 }));
+
+  // ---- sijil ----
+  doc.addPage("a4", "landscape");
+  const nm = p.namaAnak;
+  if (CERT) {
+    doc.addImage(CERT, "JPEG", 0, 0, 297, 210, "cert");
+    doc.setFont("helvetica", "bold"); let fs = 30; doc.setFontSize(fs);
+    while (doc.getTextWidth(nm) > 150 && fs > 12) { fs--; doc.setFontSize(fs); }
+    doc.setTextColor(74, 20, 140); doc.text(nm, 148.5, 103, { align: "center" });
+    doc.setFont("helvetica", "normal"); doc.setFontSize(11.5); doc.setTextColor(26, 35, 126);
+    doc.text("telah berjaya menyiapkan modul / has completed", 148.5, 115.5, { align: "center" });
+    doc.setFont("helvetica", "bold"); fs = 15; doc.setFontSize(fs);
+    while (doc.getTextWidth(mod.t) > 100 && fs > 8) { fs -= 0.5; doc.setFontSize(fs); }
+    doc.text(mod.t, 148.5, 124.5, { align: "center" });
+    doc.setFontSize(12); doc.text(today, 128, 170, {});
+  } else {
+    doc.setDrawColor(255, 202, 40); doc.setLineWidth(2); doc.roundedRect(8, 8, 281, 194, 8, 8, "S");
+    doc.setFont("helvetica", "bold"); doc.setFontSize(34); doc.setTextColor(106, 27, 154); doc.text("SIJIL PENGHARGAAN", 148.5, 45, { align: "center" });
+    doc.setFontSize(12); doc.setTextColor(26, 35, 126); doc.text("Dengan ini diperakui bahawa / This certifies that", 148.5, 70, { align: "center" });
+    doc.setFontSize(28); doc.setTextColor(74, 20, 140); doc.text(nm, 148.5, 95, { align: "center", maxWidth: 240 });
+    doc.setFontSize(12); doc.setTextColor(26, 35, 126); doc.text("telah berjaya menyiapkan modul / has completed", 148.5, 115, { align: "center" });
+    doc.setFontSize(16); doc.text(mod.t, 148.5, 128, { align: "center", maxWidth: 240 });
+    doc.setFont("helvetica", "normal"); doc.setFontSize(11); doc.text("Tarikh / Date: " + today + "     www.mastaxul.my", 148.5, 170, { align: "center" });
+  }
+
+  const safe = (nm.replace(/[^\w\u00C0-\u024f]+/g, "_").replace(/^_+|_+$/g, "") || "anak").slice(0, 30);
   doc.save("MastaXul_" + mod.id + "_" + safe + ".pdf");
   toast("PDF dimuat turun ✓");
 }
+
+document.getElementById("btnSample").onclick = () => {
+  toast("Menjana sampel… / Creating sample…");
+  setTimeout(() => { try { genPdf(null, { sample: true }); } catch (e) { console.error(e); toast("Gagal jana sampel."); } }, 50);
+};
+document.getElementById("fbBtn").onclick = async () => {
+  const b = document.getElementById("fbBtn"), msg = document.getElementById("fbMsg").value.trim();
+  if (!msg) { toast("Sila tulis komen / Please write a comment"); return; }
+  b.disabled = true;
+  try {
+    const r = await fetch(APPS_SCRIPT_URL, { method: "POST", body: JSON.stringify({ action: "feedback", linkId, token, rating: document.getElementById("fbRate").value, message: msg }) });
+    const d = await r.json();
+    toast(d.success ? "Terima kasih! / Thank you! 💜" : (d.message || "Gagal"));
+    if (d.success) document.getElementById("fbMsg").value = "";
+  } catch (e) { toast("Gagal hantar / Failed to send"); }
+  b.disabled = false;
+};
 boot();
 </script>
 </body>
