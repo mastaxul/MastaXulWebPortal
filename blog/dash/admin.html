@@ -347,7 +347,11 @@
           <p class="ocr-status" id="ocrStatus"></p>
           <img id="preview" class="preview" alt="">
         </div>
-        <label>Link gambar</label><input type="url" id="gambar">
+        <label>Link gambar (R2 utama)</label>
+        <input type="url" id="gambar" placeholder="https://img.mastaxul.my/...">
+        <label>Link ImgBB (backup)</label>
+        <input type="url" id="gambarImgbb" placeholder="https://i.ibb.co/...">
+        <p class="hint">Upload auto isi kedua-dua. Shop pakai R2; ImgBB backup.</p>
         <label>ID (kosong = auto)</label><input type="text" id="id">
         <label>Nama *</label><input type="text" id="nama" required>
         <div class="row">
@@ -535,7 +539,8 @@
     <label>Terjual</label><input type="text" id="editTerjual">
     <label>Kategori</label><input type="text" id="editKategori">
     <label>Badge</label><input type="text" id="editBadge">
-    <label>Gambar</label><input type="url" id="editGambar">
+    <label>Gambar (R2 utama)</label><input type="url" id="editGambar">
+    <label>Gambar ImgBB (backup)</label><input type="url" id="editGambarImgbb">
     <label>TikTok</label><input type="url" id="editTiktok">
     <label>Shopee</label><input type="url" id="editShopee">
     <label>Lazada</label><input type="url" id="editLazada">
@@ -569,6 +574,7 @@ const API = {
   produkRead: "/api/produk",
   produkRefresh: "/api/produk/refresh",
   upload: "/api/upload-gambar",
+  r2Upload: "https://mastaxul-media-upload.2ulfpv.workers.dev/",
   ocr: "/api/ocr-gemini",
   hubungi: "https://script.google.com/macros/s/AKfycbxsWSCyKSOiEx-Syg1dGuNT21U0Qqv_4GPBiFhJgvU-t014SXvbOwKAWL4TZiQk8NJE/exec",
   edugame: "https://script.google.com/macros/s/AKfycbzvU1sok6V2OWFrwomgtTxAm3O5mAaDxqjwzF_UoV41M1qLM7uyai_73pLkUqz_2Z3A/exec",
@@ -1127,6 +1133,8 @@ function openEdit(id){
   document.getElementById("editKategori").value=p.kategori||"";
   document.getElementById("editBadge").value=p.badge||"";
   document.getElementById("editGambar").value=p.gambar||"";
+  const _eig=document.getElementById("editGambarImgbb");
+  if(_eig) _eig.value=p.gambar_imgbb||"";
   document.getElementById("editTiktok").value=p.tiktok||"";
   document.getElementById("editShopee").value=p.shopee||"";
   document.getElementById("editLazada").value=p.lazada||"";
@@ -1139,7 +1147,7 @@ document.getElementById("btnSaveEdit").onclick=async()=>{
   const payload={password:adminPass,action:"update",id:document.getElementById("editId").value,
     nama:document.getElementById("editNama").value,harga:document.getElementById("editHarga").value,
     terjual:document.getElementById("editTerjual").value,kategori:document.getElementById("editKategori").value,
-    badge:document.getElementById("editBadge").value,gambar:document.getElementById("editGambar").value,
+    badge:document.getElementById("editBadge").value,gambar:document.getElementById("editGambar").value,gambar_imgbb:(document.getElementById("editGambarImgbb")&&document.getElementById("editGambarImgbb").value)||"",
     tiktok:document.getElementById("editTiktok").value,shopee:document.getElementById("editShopee").value,
     lazada:document.getElementById("editLazada").value,deskripsi:document.getElementById("editDeskripsi").value};
   const msg=document.getElementById("editMsg");
@@ -1344,14 +1352,46 @@ fileInput.onchange=async()=>{
   const password=document.getElementById("password").value.trim();
   if(!password){uploadStatus.textContent="Isi password dulu";fileInput.value="";return;}
   preview.src=URL.createObjectURL(file);preview.style.display="block";
-  uploadStatus.textContent="Upload...";ocrStatus.textContent="";btn.disabled=true;
+  uploadStatus.textContent="Upload R2 + ImgBB...";ocrStatus.textContent="";btn.disabled=true;
+  const gambarImgbbInput=document.getElementById("gambarImgbb");
   const up=(async()=>{
+    let urlR2="",urlImgbb="";
+    const notes=[];
+    // 1) Cloudflare R2
+    try{
+      const fdR2=new FormData();
+      fdR2.append("password",password);
+      fdR2.append("folder","produk");
+      fdR2.append("image",file,file.name||"img.jpg");
+      const r1=await fetch(API.r2Upload,{method:"POST",body:fdR2});
+      const d1=await r1.json();
+      if((d1.ok||d1.success)&&d1.url) urlR2=d1.url;
+      else notes.push("R2: "+(d1.message||"gagal"));
+    }catch(e){ notes.push("R2: "+(e.message||"ralat")); }
+    // 2) ImgBB (endpoint sedia ada /api/upload-gambar)
     try{
       const fd=new FormData();fd.append("password",password);fd.append("image",file);
-      const res=await fetch(API.upload,{method:"POST",body:fd});const data=await res.json();
-      if(data.success&&data.url){gambarInput.value=data.url;uploadStatus.textContent="Upload OK";}
-      else{uploadStatus.textContent="Upload gagal";await serverLog("upload_fail",data.message||"","");}
-    }catch(e){uploadStatus.textContent="Ralat upload";await serverLog("upload_fail",e.message||"","");}
+      const res=await fetch(API.upload,{method:"POST",body:fd});
+      const data=await res.json();
+      const u=data.url||(data.data&&data.data.url)||"";
+      if((data.success||data.ok)&&u) urlImgbb=u;
+      else{
+        notes.push("ImgBB: "+(data.message||"gagal"));
+        await serverLog("upload_fail",data.message||"ImgBB gagal","");
+      }
+    }catch(e){
+      notes.push("ImgBB: "+(e.message||"ralat"));
+      await serverLog("upload_fail",e.message||"","");
+    }
+    // Utama = R2; fallback ImgBB jika R2 gagal
+    gambarInput.value=urlR2||urlImgbb||"";
+    if(gambarImgbbInput) gambarImgbbInput.value=urlImgbb||"";
+    if(urlR2||urlImgbb){
+      uploadStatus.textContent=(urlR2?"R2 OK":"R2 —")+" · "+(urlImgbb?"ImgBB OK":"ImgBB —")+(notes.length?" ("+notes.join("; ")+")":"");
+      if(urlR2||urlImgbb){ preview.src=urlR2||urlImgbb; preview.style.display="block"; }
+    }else{
+      uploadStatus.textContent="Upload gagal: "+(notes.join(" | ")||"tiada URL");
+    }
   })();
   await Promise.all([up,jalankanOCR(file,password)]);btn.disabled=false;
 };
@@ -1370,7 +1410,9 @@ form.onsubmit=async e=>{
   const payload={password:document.getElementById("password").value.trim(),id:document.getElementById("id").value.trim(),
     nama:namaInput.value.trim(),harga:document.getElementById("harga").value.trim(),terjual:document.getElementById("terjual").value.trim(),
     kategori:ambilKategori(),badge:badgeSelect.value==="__lain__"?badgeLain.value.trim():badgeSelect.value,
-    gambar:gambarInput.value.trim(),tiktok:document.getElementById("tiktok").value.trim(),
+    gambar:gambarInput.value.trim(),
+    gambar_imgbb:(document.getElementById("gambarImgbb")&&document.getElementById("gambarImgbb").value||"").trim(),
+    tiktok:document.getElementById("tiktok").value.trim(),
     shopee:document.getElementById("shopee").value.trim(),lazada:document.getElementById("lazada").value.trim(),
     deskripsi:deskripsiInput.value.trim()};
   try{
@@ -1380,6 +1422,7 @@ form.onsubmit=async e=>{
       msg.className="msg ok";msg.textContent=(data.message||"OK")+" (ID "+data.id+")";
       const pass=payload.password;form.reset();document.getElementById("password").value=pass;
       preview.style.display="none";uploadStatus.textContent="";ocrStatus.textContent="";
+      const _gi=document.getElementById("gambarImgbb"); if(_gi) _gi.value="";
       await refreshCache();await loadProduk();loadLog();
     }else{msg.className="msg err";msg.textContent=data.message||"Gagal";}
   }catch(err){msg.className="msg warn";msg.textContent="Status tak pasti — semak sheet";}
