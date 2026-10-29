@@ -202,6 +202,7 @@
     <button type="button" class="tab" data-tab="edugame">EduGame <span class="badge-n hidden" id="badgeEdu">0</span></button>
     <button type="button" class="tab" data-tab="blog">Blog <span class="badge-n hidden" id="badgeBlog">0</span></button>
     <button type="button" class="tab" data-tab="log">Log</button>
+    <button type="button" class="tab" data-tab="media">Media R2</button>
   </div>
 
   <section class="panel active" id="panel-overview">
@@ -528,6 +529,31 @@
       </div>
     </div>
   </section>
+
+  <section class="panel" id="panel-media">
+    <div class="card">
+      <h2>📁 Media hosting (Cloudflare R2 + ImgBB backup)</h2>
+      <p class="hint">Upload gambar untuk sebarang projek. URL R2 untuk production; ImgBB sebagai backup. Password admin digunakan untuk Worker.</p>
+      <label>Folder R2</label>
+      <select id="mediaFolder">
+        <option value="produk">produk</option>
+        <option value="blog">blog</option>
+        <option value="portal">portal</option>
+        <option value="umum">umum</option>
+        <option value="edugame">edugame</option>
+      </select>
+      <label style="margin-top:10px">Pilih gambar</label>
+      <div class="upload-box">
+        <input type="file" id="mediaFile" accept="image/*" multiple>
+        <p class="hint">Boleh pilih beberapa fail sekali gus</p>
+        <p class="upload-status" id="mediaUploadStatus"></p>
+        <button type="button" class="btn" id="btnMediaUpload" style="margin-top:10px">Upload ke R2 + ImgBB</button>
+      </div>
+      <label style="margin-top:12px">Hasil URL (boleh salin)</label>
+      <textarea id="mediaResult" style="min-height:140px;font-size:0.8rem" placeholder="URL akan muncul di sini…" readonly></textarea>
+      <div class="preview-grid" id="mediaPreviewGrid" style="margin-top:10px"></div>
+    </div>
+  </section>
 </div>
 
 <div class="modal-bg" id="editModal">
@@ -539,6 +565,13 @@
     <label>Terjual</label><input type="text" id="editTerjual">
     <label>Kategori</label><input type="text" id="editKategori">
     <label>Badge</label><input type="text" id="editBadge">
+    <label>Upload gambar baru</label>
+    <div class="upload-box">
+      <input type="file" id="editFileGambar" accept="image/*">
+      <p class="hint">Auto upload R2 + ImgBB, kemudian isi field di bawah</p>
+      <p class="upload-status" id="editUploadStatus"></p>
+      <img id="editPreview" class="preview" alt="">
+    </div>
     <label>Gambar (R2 utama)</label><input type="url" id="editGambar">
     <label>Gambar ImgBB (backup)</label><input type="url" id="editGambarImgbb">
     <label>TikTok</label><input type="url" id="editTiktok">
@@ -585,6 +618,41 @@ const CAPTCHA_EVERY = 3;
 const STORAGE_KEY = "mx_admin_submit_count";
 const PASS_KEY = "mx_admin_session";
 const PRODUK_PER_PAGE = 10;
+
+/** Upload dual: R2 (utama) + ImgBB (backup). Return { r2, imgbb, notes[] } */
+async function dualUploadImage(file, password, folder) {
+  let r2 = "", imgbb = "";
+  const notes = [];
+  folder = (folder || "produk").toString().replace(/[^a-z0-9/_-]/gi, "") || "produk";
+  // R2
+  try {
+    const fd = new FormData();
+    fd.append("password", password);
+    fd.append("folder", folder);
+    fd.append("image", file, file.name || "img.jpg");
+    const res = await fetch(API.r2Upload, { method: "POST", body: fd });
+    const data = await res.json();
+    if ((data.ok || data.success) && data.url) r2 = data.url;
+    else notes.push("R2: " + (data.message || "gagal"));
+  } catch (e) {
+    notes.push("R2: " + (e.message || "ralat"));
+  }
+  // ImgBB via existing worker
+  try {
+    const fd = new FormData();
+    fd.append("password", password);
+    fd.append("image", file, file.name || "img.jpg");
+    const res = await fetch(API.upload, { method: "POST", body: fd });
+    const data = await res.json();
+    const u = data.url || (data.data && data.data.url) || "";
+    if ((data.success || data.ok) && u) imgbb = u;
+    else notes.push("ImgBB: " + (data.message || "gagal"));
+  } catch (e) {
+    notes.push("ImgBB: " + (e.message || "ralat"));
+  }
+  return { r2, imgbb, notes };
+}
+
 
 (function galaxy(){
   const c=document.getElementById("galaxyCanvas");
@@ -1142,7 +1210,86 @@ function openEdit(id){
   document.getElementById("editMsg").className="msg";
   document.getElementById("editModal").classList.add("show");
 }
-document.getElementById("btnCloseEdit").onclick=()=>document.getElementById("editModal").classList.remove("show");
+document.getElementById("btnCloseEdit").onclick=()=>{
+  document.getElementById("editModal").classList.remove("show");
+  const ef=document.getElementById("editFileGambar"); if(ef) ef.value="";
+  const ep=document.getElementById("editPreview"); if(ep){ ep.style.display="none"; ep.removeAttribute("src"); }
+  const es=document.getElementById("editUploadStatus"); if(es) es.textContent="";
+};
+
+// Upload dalam modal Edit produk
+const editFileGambar=document.getElementById("editFileGambar");
+if(editFileGambar){
+  editFileGambar.onchange=async()=>{
+    const file=editFileGambar.files&&editFileGambar.files[0];
+    if(!file) return;
+    const st=document.getElementById("editUploadStatus");
+    const prev=document.getElementById("editPreview");
+    if(!adminPass){ if(st) st.textContent="Login / password admin diperlukan"; return; }
+    if(prev){ prev.src=URL.createObjectURL(file); prev.style.display="block"; }
+    if(st) st.textContent="Upload R2 + ImgBB...";
+    try{
+      const { r2, imgbb, notes } = await dualUploadImage(file, adminPass, "produk");
+      document.getElementById("editGambar").value = r2 || imgbb || "";
+      const eig=document.getElementById("editGambarImgbb");
+      if(eig) eig.value = imgbb || "";
+      if(r2 || imgbb){
+        if(st) st.textContent=(r2?"R2 OK":"R2 —")+" · "+(imgbb?"ImgBB OK":"ImgBB —")+(notes.length?" ("+notes.join("; ")+")":"");
+        if(prev){ prev.src=r2||imgbb; prev.style.display="block"; }
+      }else{
+        if(st) st.textContent="Gagal: "+(notes.join(" | ")||"tiada URL");
+      }
+    }catch(e){
+      if(st) st.textContent="Ralat: "+(e.message||e);
+    }
+  };
+}
+
+// ===== Media R2 hosting panel =====
+const btnMediaUpload=document.getElementById("btnMediaUpload");
+if(btnMediaUpload){
+  btnMediaUpload.onclick=async()=>{
+    const files=document.getElementById("mediaFile").files;
+    const st=document.getElementById("mediaUploadStatus");
+    const out=document.getElementById("mediaResult");
+    const grid=document.getElementById("mediaPreviewGrid");
+    const folder=(document.getElementById("mediaFolder")&&document.getElementById("mediaFolder").value)||"umum";
+    if(!files||!files.length){ if(st) st.textContent="Pilih fail dulu"; return; }
+    if(!adminPass){ if(st) st.textContent="Password admin (login) diperlukan"; return; }
+    btnMediaUpload.disabled=true;
+    const lines=[];
+    if(grid) grid.innerHTML="";
+    for(let i=0;i<files.length;i++){
+      const file=files[i];
+      if(st) st.textContent="Upload "+(i+1)+"/"+files.length+" — "+(file.name||"");
+      try{
+        const { r2, imgbb, notes } = await dualUploadImage(file, adminPass, folder);
+        const primary=r2||imgbb||"";
+        if(primary){
+          lines.push("R2: "+(r2||"—"));
+          lines.push("ImgBB: "+(imgbb||"—"));
+          lines.push("---");
+          if(grid){
+            const img=document.createElement("img");
+            img.src=primary; img.alt=file.name||""; img.title=primary;
+            img.onclick=()=>{ try{ navigator.clipboard.writeText(primary); if(st) st.textContent="Disalin: "+primary; }catch(_){ } };
+            grid.appendChild(img);
+          }
+        }else{
+          lines.push("GAGAL "+(file.name||"")+" — "+(notes.join("; ")||""));
+          lines.push("---");
+        }
+      }catch(e){
+        lines.push("Ralat "+(file.name||"")+": "+(e.message||e));
+        lines.push("---");
+      }
+    }
+    if(out) out.value=lines.join("\n");
+    if(st) st.textContent="Selesai "+files.length+" fail. Klik thumbnail untuk salin URL R2.";
+    btnMediaUpload.disabled=false;
+  };
+}
+
 document.getElementById("btnSaveEdit").onclick=async()=>{
   const payload={password:adminPass,action:"update",id:document.getElementById("editId").value,
     nama:document.getElementById("editNama").value,harga:document.getElementById("editHarga").value,
@@ -1355,40 +1502,14 @@ fileInput.onchange=async()=>{
   uploadStatus.textContent="Upload R2 + ImgBB...";ocrStatus.textContent="";btn.disabled=true;
   const gambarImgbbInput=document.getElementById("gambarImgbb");
   const up=(async()=>{
-    let urlR2="",urlImgbb="";
-    const notes=[];
-    // 1) Cloudflare R2
-    try{
-      const fdR2=new FormData();
-      fdR2.append("password",password);
-      fdR2.append("folder","produk");
-      fdR2.append("image",file,file.name||"img.jpg");
-      const r1=await fetch(API.r2Upload,{method:"POST",body:fdR2});
-      const d1=await r1.json();
-      if((d1.ok||d1.success)&&d1.url) urlR2=d1.url;
-      else notes.push("R2: "+(d1.message||"gagal"));
-    }catch(e){ notes.push("R2: "+(e.message||"ralat")); }
-    // 2) ImgBB (endpoint sedia ada /api/upload-gambar)
-    try{
-      const fd=new FormData();fd.append("password",password);fd.append("image",file);
-      const res=await fetch(API.upload,{method:"POST",body:fd});
-      const data=await res.json();
-      const u=data.url||(data.data&&data.data.url)||"";
-      if((data.success||data.ok)&&u) urlImgbb=u;
-      else{
-        notes.push("ImgBB: "+(data.message||"gagal"));
-        await serverLog("upload_fail",data.message||"ImgBB gagal","");
-      }
-    }catch(e){
-      notes.push("ImgBB: "+(e.message||"ralat"));
-      await serverLog("upload_fail",e.message||"","");
-    }
-    // Utama = R2; fallback ImgBB jika R2 gagal
-    gambarInput.value=urlR2||urlImgbb||"";
-    if(gambarImgbbInput) gambarImgbbInput.value=urlImgbb||"";
-    if(urlR2||urlImgbb){
-      uploadStatus.textContent=(urlR2?"R2 OK":"R2 —")+" · "+(urlImgbb?"ImgBB OK":"ImgBB —")+(notes.length?" ("+notes.join("; ")+")":"");
-      if(urlR2||urlImgbb){ preview.src=urlR2||urlImgbb; preview.style.display="block"; }
+    const { r2, imgbb, notes } = await dualUploadImage(file, password, "produk");
+    if(!r2 && imgbb) await serverLog("upload_fail","R2 gagal, guna ImgBB", notes.join("; "));
+    if(!r2 && !imgbb) await serverLog("upload_fail", notes.join(" | ")||"tiada URL", "");
+    gambarInput.value = r2 || imgbb || "";
+    if(gambarImgbbInput) gambarImgbbInput.value = imgbb || "";
+    if(r2 || imgbb){
+      uploadStatus.textContent=(r2?"R2 OK":"R2 —")+" · "+(imgbb?"ImgBB OK":"ImgBB —")+(notes.length?" ("+notes.join("; ")+")":"");
+      preview.src = r2 || imgbb; preview.style.display="block";
     }else{
       uploadStatus.textContent="Upload gagal: "+(notes.join(" | ")||"tiada URL");
     }
