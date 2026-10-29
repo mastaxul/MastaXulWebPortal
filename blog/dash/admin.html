@@ -147,6 +147,15 @@
     .preview-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
     .preview-grid img{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
 
+    .img-row{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+    .img-row img{width:44px;height:44px;object-fit:cover;border-radius:8px;background:#111}
+    .img-row .meta{flex:1;min-width:0}
+    .img-row .meta strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.82rem}
+    .tag{display:inline-block;font-size:.65rem;padding:2px 6px;border-radius:6px;margin-top:3px}
+    .tag.missing{background:#f59e0b;color:#000}
+    .tag.broken{background:#ef4444;color:#fff}
+    .tag.timeout{background:#a855f7;color:#fff}
+    
   </style>
 </head>
 <body>
@@ -222,6 +231,24 @@
       <div class="stat-card"><div class="label">Blog draft</div><div class="value" id="stBlogDraft">—</div></div>
       <div class="stat-card"><div class="label">Views blog (sum)</div><div class="value" id="stBlogViews">—</div></div>
     </div>
+
+    <div class="card" id="imgHealthCard">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+        <h2 style="margin:0">🖼️ Kesihatan gambar produk</h2>
+        <button type="button" class="btn btn-ghost" id="btnScanImg" style="margin:0">Imbas gambar</button>
+      </div>
+      <p class="hint">Semak URL kosong, 404, ImgBB/host gagal, dan timeout. Tidak ubah Sheet.</p>
+      <div class="stats" style="margin-top:10px">
+        <div class="stat-card"><div class="label">Diimbas</div><div class="value" id="imgTotal">—</div></div>
+        <div class="stat-card"><div class="label">OK</div><div class="value" id="imgOk">—</div></div>
+        <div class="stat-card"><div class="label">Tiada URL</div><div class="value" id="imgMissing">—</div></div>
+        <div class="stat-card"><div class="label">Rosak / 404</div><div class="value" id="imgBroken">—</div></div>
+        <div class="stat-card"><div class="label">Timeout</div><div class="value" id="imgTimeout">—</div></div>
+      </div>
+      <p class="hint" id="imgScanStatus" style="margin-top:8px">Tekan “Imbas gambar” selepas produk dimuat.</p>
+      <div id="imgProblemList" style="max-height:300px;overflow:auto;margin-top:8px"></div>
+    </div>
+    
     <div class="card">
       <h2>Perlu perhatian</h2>
       <p class="hint" id="perhatianBox">—</p>
@@ -900,6 +927,139 @@ function updateStats(){
   document.getElementById("perhatianBox").textContent=
     "Produk tanpa gambar: "+noImg+" · tanpa affiliate: "+noLink+" · Hubungi belum balas & Edu menunggu — lihat kad statistik.";
 }
+
+  /* ===== KESIHATAN GAMBAR ===== */
+const IMG_TIMEOUT_MS = 8000;
+const IMG_BATCH = 6;
+let lastImgScan = null;
+
+function loadImgWithTimeout(url, ms) {
+  return new Promise((resolve) => {
+    const src = String(url || "").trim();
+    if (!src) return resolve({ status: "missing" });
+    if (!/^https?:\/\//i.test(src)) return resolve({ status: "broken", reason: "URL tidak sah" });
+
+    let done = false;
+    const img = new Image();
+    const timer = setTimeout(() => {
+      if (done) return;
+      done = true;
+      try { img.src = ""; } catch (_) {}
+      resolve({ status: "timeout" });
+    }, ms);
+
+    img.onload = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      resolve({ status: "ok", w: img.naturalWidth, h: img.naturalHeight });
+    };
+    img.onerror = () => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      resolve({ status: "broken", reason: "Gagal load / 404 / host" });
+    };
+    img.referrerPolicy = "no-referrer";
+    img.src = src + (src.includes("?") ? "&" : "?") + "_scan=" + Date.now();
+  });
+}
+
+async function mapPool(items, limit, fn) {
+  const out = new Array(items.length);
+  let i = 0;
+  async function worker() {
+    while (i < items.length) {
+      const idx = i++;
+      out[idx] = await fn(items[idx], idx);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, () => worker()));
+  return out;
+}
+
+async function scanProductImages(list) {
+  const statusEl = document.getElementById("imgScanStatus");
+  const listEl = document.getElementById("imgProblemList");
+  const btn = document.getElementById("btnScanImg");
+  if (!list || !list.length) {
+    if (statusEl) statusEl.textContent = "Tiada produk untuk diimbas. Muat produk dulu.";
+    return;
+  }
+  if (btn) btn.disabled = true;
+  if (statusEl) statusEl.textContent = "Mengimbas " + list.length + " gambar…";
+
+  const results = await mapPool(list, IMG_BATCH, async (p) => {
+    const url = p.gambar || p.image || "";
+    const r = await loadImgWithTimeout(url, IMG_TIMEOUT_MS);
+    return { id: p.id, nama: p.nama || "(tiada nama)", url, ...r };
+  });
+
+  lastImgScan = results;
+  const total = results.length;
+  const ok = results.filter(r => r.status === "ok").length;
+  const missing = results.filter(r => r.status === "missing").length;
+  const broken = results.filter(r => r.status === "broken").length;
+  const timeout = results.filter(r => r.status === "timeout").length;
+
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set("imgTotal", total);
+  set("imgOk", ok);
+  set("imgMissing", missing);
+  set("imgBroken", broken);
+  set("imgTimeout", timeout);
+
+  // Selaraskan kad Overview "Tanpa gambar" = kosong + rosak + timeout
+  const problemImg = missing + broken + timeout;
+  const stNo = document.getElementById("stNoImg");
+  if (stNo) animateValue(stNo, problemImg);
+
+  const perhatian = document.getElementById("perhatianBox");
+  if (perhatian) {
+    perhatian.textContent =
+      "Gambar: " + ok + " OK · " + missing + " tiada URL · " + broken + " rosak · " + timeout +
+      " timeout · Affiliate & lain — lihat kad statistik.";
+  }
+
+  const problems = results.filter(r => r.status !== "ok");
+  if (statusEl) {
+    statusEl.textContent = problems.length
+      ? ("Jumpa " + problems.length + " masalah · " + new Date().toLocaleTimeString("ms-MY"))
+      : ("Semua gambar OK · " + new Date().toLocaleTimeString("ms-MY"));
+  }
+
+  if (listEl) {
+    if (!problems.length) {
+      listEl.innerHTML = "<p class='hint'>Tiada masalah gambar.</p>";
+    } else {
+      listEl.innerHTML = problems.map(r => {
+        const tag =
+          r.status === "missing" ? "<span class='tag missing'>Tiada URL</span>" :
+          r.status === "timeout" ? "<span class='tag timeout'>Timeout / host lambat</span>" :
+          "<span class='tag broken'>Rosak / 404</span>";
+        const thumb = r.url
+          ? "<img src=\"" + esc(r.url) + "\" alt=\"\" referrerpolicy=\"no-referrer\" onerror=\"this.style.opacity=.25\">"
+          : "<div style=\"width:44px;height:44px;border-radius:8px;background:#333\"></div>";
+        return (
+          "<div class=\"img-row\">" + thumb +
+          "<div class=\"meta\"><strong>#" + esc(r.id) + " · " + esc(r.nama) + "</strong>" + tag +
+          (r.url ? "<div class=\"hint\" style=\"word-break:break-all\">" + esc(r.url) + "</div>" : "") +
+          "</div></div>"
+        );
+      }).join("");
+    }
+  }
+
+  if (btn) btn.disabled = false;
+  return results;
+}
+
+document.getElementById("btnScanImg")?.addEventListener("click", async () => {
+  if (!allProduk.length) {
+    try { await loadProduk(); } catch (_) {}
+  }
+  await scanProductImages(allProduk);
+});
 
 document.getElementById("cariProduk").oninput=applyFilters;
 document.getElementById("globalSearch").oninput=()=>{applyFilters();renderHubungi();};
