@@ -1,0 +1,721 @@
+
+
+<!DOCTYPE html>
+
+<html lang="ms">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="robots" content="noindex,nofollow">
+
+<meta name="theme-color" content="#090b10">
+
+<title>Masta Xul | Admin Dashboard</title>
+
+<style>
+
+:root {
+
+  --bg:#090b10;
+
+  --panel:#121720;
+
+  --panel2:#181f29;
+
+  --line:#2a303b;
+
+  --gold:#c7a45b;
+
+  --gold2:#e5ca89;
+
+  --text:#f3f4f6;
+
+  --muted:#929baa;
+
+  --green:#63bd91;
+
+}
+
+* {
+
+  box-sizing:border-box;
+
+  margin:0;
+
+  padding:0;
+
+}
+
+body {
+
+  background:
+
+    radial-gradient(ellipse at 80% -10%,#302718 0,transparent 38%),
+
+    var(--bg);
+
+  color:var(--text);
+
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  min-height:100vh;
+
+}
+
+button {font:inherit;cursor:pointer}
+
+.container {
+
+  max-width:1250px;
+
+  margin:auto;
+
+  padding:22px 18px 50px;
+
+}
+
+/* HEADER */
+
+header {
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:space-between;
+
+  flex-wrap:wrap;
+
+  gap:15px;
+
+  padding-bottom:22px;
+
+  border-bottom:1px solid var(--line);
+
+}
+
+.brand {
+
+  display:flex;
+
+  align-items:center;
+
+  gap:12px;
+
+}
+
+.logo {
+
+  width:46px;
+
+  height:46px;
+
+  border:1px solid var(--gold);
+
+  border-radius:50%;
+
+  display:grid;
+
+  place-items:center;
+
+  color:var(--gold2);
+
+  font-family:Georgia,serif;
+
+  font-size:21px;
+
+  box-shadow:0 0 25px #c7a45b20;
+
+}
+
+.brand-name {
+
+  font-size:14px;
+
+  font-weight:800;
+
+  letter-spacing:3px;
+
+}
+
+.brand-sub {
+
+  color:var(--muted);
+
+  font-size:10px;
+
+  letter-spacing:2px;
+
+  margin-top:3px;
+
+}
+
+.header-right {
+
+  color:var(--muted);
+
+  font-size:12px;
+
+  text-align:right;
+
+}
+
+.online {
+
+  color:var(--green);
+
+  margin-top:5px;
+
+}
+
+/* INTRO */
+
+.intro {
+
+  padding:35px 0 25px;
+
+}
+
+.eyebrow {
+
+  color:var(--gold2);
+
+  font-size:11px;
+
+  letter-spacing:3px;
+
+  text-transform:uppercase;
+
+}
+
+h1 {
+
+  font-size:clamp(28px,5vw,43px);
+
+  margin:9px 0;
+
+  letter-spacing:-1.5px;
+
+}
+
+.intro p {
+
+  color:var(--muted);
+
+  font-size:14px;
+
+  max-width:650px;
+
+  line-height:1.7;
+
+}
+
+/* NOTICE */
+
+.notice {
+
+  background:#211b11;
+
+  border:1px solid #66502a;
+
+  border-radius:12px;
+
+  padding:14px;
+
+  color:#dfc995;
+
+  font-size:13px;
+
+  line-height:1.6;
+
+  margin-bottom:28px;
+
+}
+
+/* SECTION */
+
+.section-title {
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  gap:10px;
+
+  margin:27px 0 14px;
+
+}
+
+.section-title h2 {
+
+  font-size:16px;
+
+}
+
+.section-title span {
+
+  color:var(--muted);
+
+  font-size:11px;
+
+}
+
+/* MODULES */
+
+.grid {
+
+  display:grid;
+
+  grid-template-columns:repeat(3,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+.module {
+
+  background:linear-gradient(145deg,#19212c,#10141b);
+
+  border:1px solid var(--line);
+
+  border-radius:15px;
+
+  padding:19px;
+
+  min-height:175px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  transition:.2s;
+
+}
+
+.module:hover {
+
+  border-color:var(--gold);
+
+  transform:translateY(-3px);
+
+}
+
+.module-top {
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+}
+
+.module-icon {
+
+  width:39px;
+
+  height:39px;
+
+  display:grid;
+
+  place-items:center;
+
+  border-radius:10px;
+
+  background:#c7a45b18;
+
+  color:var(--gold2);
+
+  font-size:20px;
+
+}
+
+.tag {
+
+  font-size:10px;
+
+  color:var(--gold2);
+
+  border:1px solid #655433;
+
+  padding:4px 8px;
+
+  border-radius:30px;
+
+}
+
+.module h3 {
+
+  font-size:16px;
+
+  margin:15px 0 6px;
+
+}
+
+.module p {
+
+  color:var(--muted);
+
+  font-size:12px;
+
+  line-height:1.6;
+
+}
+
+.module-footer {
+
+  color:var(--gold2);
+
+  font-size:12px;
+
+  margin-top:auto;
+
+  padding-top:15px;
+
+}
+
+/* FOOTER */
+
+footer {
+
+  margin-top:35px;
+
+  padding-top:18px;
+
+  border-top:1px solid var(--line);
+
+  display:flex;
+
+  justify-content:space-between;
+
+  flex-wrap:wrap;
+
+  gap:10px;
+
+  color:#77808e;
+
+  font-size:11px;
+
+}
+
+footer a {
+
+  color:var(--gold2);
+
+  text-decoration:none;
+
+}
+
+/* MOBILE */
+
+@media(max-width:800px) {
+
+  .grid {
+
+    grid-template-columns:repeat(2,minmax(0,1fr));
+
+  }
+
+}
+
+@media(max-width:520px) {
+
+  .container {
+
+    padding:16px 13px 35px;
+
+  }
+
+  .grid {
+
+    grid-template-columns:1fr;
+
+  }
+
+  .module {
+
+    min-height:150px;
+
+  }
+
+  .header-right {
+
+    text-align:left;
+
+  }
+
+  .section-title {
+
+    align-items:flex-start;
+
+    flex-direction:column;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<main class="container">
+
+<header>
+
+  <div class="brand">
+
+    <div class="logo">MX</div>
+
+    <div>
+
+      <div class="brand-name">MASTA XUL</div>
+
+      <div class="brand-sub">UNIVERSE CONTROL CENTRE</div>
+
+    </div>
+
+  </div>
+
+  <div class="header-right">
+
+    <div id="date"></div>
+
+    <div class="online">● Dashboard Interface</div>
+
+  </div>
+
+</header>
+
+<section class="intro">
+
+  <div class="eyebrow">Management Workspace</div>
+
+  <h1>Admin Dashboard</h1>
+
+  <p>
+
+    Selamat datang ke pusat pengurusan Masta Xul Universe.
+
+    Urus koleksi digital, produk, pelanggan dan operasi
+
+    platform melalui satu ruang kawalan.
+
+  </p>
+
+</section>
+
+<div class="notice">
+
+  <strong>◆ Mod antaramuka awal</strong><br>
+
+  Dashboard ini ialah paparan asas. Fungsi sebenar seperti
+
+  login, muat naik PDF, pengurusan data dan sambungan API
+
+  akan diaktifkan secara berperingkat.
+
+</div>
+
+<div class="section-title">
+
+  <h2>Modul Pengurusan</h2>
+
+  <span>Masta Xul Administration</span>
+
+</div>
+
+<section class="grid">
+
+  <article class="module">
+
+    <div class="module-top">
+
+      <div class="module-icon">▤</div>
+
+      <span class="tag">FASA 1</span>
+
+    </div>
+
+    <h3>Pengurusan eBook</h3>
+
+    <p>
+
+      Muat naik PDF, urus koleksi, episod,
+
+      kategori dan maklumat penerbitan.
+
+    </p>
+
+    <div class="module-footer">Backblaze B2 Storage →</div>
+
+  </article>
+
+  <article class="module">
+
+    <div class="module-top">
+
+      <div class="module-icon">◇</div>
+
+      <span class="tag">FASA 2</span>
+
+    </div>
+
+    <h3>Pengurusan Produk</h3>
+
+    <p>
+
+      Urus katalog produk, imej, harga,
+
+      kategori dan pautan jualan.
+
+    </p>
+
+    <div class="module-footer">Product Management →</div>
+
+  </article>
+
+  <article class="module">
+
+    <div class="module-top">
+
+      <div class="module-icon">▧</div>
+
+      <span class="tag">FASA 3</span>
+
+    </div>
+
+    <h3>Pesanan</h3>
+
+    <p>
+
+      Pantau pesanan, transaksi,
+
+      pembayaran dan status pembelian.
+
+    </p>
+
+    <div class="module-footer">Order Management →</div>
+
+  </article>
+
+  <article class="module">
+
+    <div class="module-top">
+
+      <div class="module-icon">◎</div>
+
+      <span class="tag">FASA 4</span>
+
+    </div>
+
+    <h3>Pelanggan</h3>
+
+    <p>
+
+      Urus profil pelanggan, akses eBook,
+
+      pembelian dan akaun pengguna.
+
+    </p>
+
+    <div class="module-footer">Customer Management →</div>
+
+  </article>
+
+  <article class="module">
+
+    <div class="module-top">
+
+      <div class="module-icon">▥</div>
+
+      <span class="tag">FASA 5</span>
+
+    </div>
+
+    <h3>Analitik</h3>
+
+    <p>
+
+      Lihat statistik jualan, muat turun,
+
+      prestasi produk dan aktiviti platform.
+
+    </p>
+
+    <div class="module-footer">Analytics →</div>
+
+  </article>
+
+  <article class="module">
+
+    <div class="module-top">
+
+      <div class="module-icon">⚙</div>
+
+      <span class="tag">FASA 6</span>
+
+    </div>
+
+    <h3>Tetapan Sistem</h3>
+
+    <p>
+
+      Konfigurasi API, storan, keselamatan
+
+      dan tetapan pentadbir.
+
+    </p>
+
+    <div class="module-footer">System Configuration →</div>
+
+  </article>
+
+</section>
+
+<footer>
+
+  <span>© <span id="year"></span> Masta Xul Universe</span>
+
+  <span>
+
+    <a href="https://www.mastaxul.my/">MASTAXUL.MY</a>
+
+  </span>
+
+</footer>
+
+</main>
+
+<script>
+
+const now = new Date();
+
+document.getElementById("date").textContent =
+
+  new Intl.DateTimeFormat("ms-MY", {
+
+    day:"numeric",
+
+    month:"long",
+
+    year:"numeric"
+
+  }).format(now);
+
+document.getElementById("year").textContent =
+
+  now.getFullYear();
+
+</script>
+
+</body>
+
+</html>
