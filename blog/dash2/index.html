@@ -1,721 +1,683 @@
 
-
 <!DOCTYPE html>
-
 <html lang="ms">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <meta name="robots" content="noindex,nofollow">
-
 <meta name="theme-color" content="#090b10">
-
 <title>Masta Xul | Admin Dashboard</title>
 
 <style>
-
 :root {
-
   --bg:#090b10;
-
   --panel:#121720;
-
   --panel2:#181f29;
-
   --line:#2a303b;
-
   --gold:#c7a45b;
-
   --gold2:#e5ca89;
-
   --text:#f3f4f6;
-
   --muted:#929baa;
-
   --green:#63bd91;
-
+  --red:#e47777;
 }
-
-* {
-
-  box-sizing:border-box;
-
-  margin:0;
-
-  padding:0;
-
-}
-
+* {box-sizing:border-box;margin:0;padding:0}
 body {
-
-  background:
-
-    radial-gradient(ellipse at 80% -10%,#302718 0,transparent 38%),
-
-    var(--bg);
-
+  background:radial-gradient(ellipse at 80% -10%,#302718 0,transparent 38%),var(--bg);
   color:var(--text);
-
   font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
-
   min-height:100vh;
-
 }
-
-button {font:inherit;cursor:pointer}
-
-.container {
-
-  max-width:1250px;
-
-  margin:auto;
-
-  padding:22px 18px 50px;
-
-}
-
-/* HEADER */
-
+button,input {font:inherit}
+button {cursor:pointer}
+.container {max-width:1150px;margin:auto;padding:22px 18px 50px}
 header {
-
-  display:flex;
-
-  align-items:center;
-
-  justify-content:space-between;
-
-  flex-wrap:wrap;
-
-  gap:15px;
-
-  padding-bottom:22px;
-
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:15px;padding-bottom:22px;
   border-bottom:1px solid var(--line);
-
 }
-
-.brand {
-
-  display:flex;
-
-  align-items:center;
-
-  gap:12px;
-
-}
-
+.brand {display:flex;align-items:center;gap:12px}
 .logo {
-
-  width:46px;
-
-  height:46px;
-
-  border:1px solid var(--gold);
-
-  border-radius:50%;
-
-  display:grid;
-
-  place-items:center;
-
-  color:var(--gold2);
-
-  font-family:Georgia,serif;
-
-  font-size:21px;
-
+  width:46px;height:46px;border:1px solid var(--gold);
+  border-radius:50%;display:grid;place-items:center;
+  color:var(--gold2);font-family:Georgia,serif;font-size:21px;
   box-shadow:0 0 25px #c7a45b20;
-
 }
-
-.brand-name {
-
-  font-size:14px;
-
-  font-weight:800;
-
-  letter-spacing:3px;
-
-}
-
-.brand-sub {
-
-  color:var(--muted);
-
-  font-size:10px;
-
-  letter-spacing:2px;
-
-  margin-top:3px;
-
-}
-
-.header-right {
-
-  color:var(--muted);
-
-  font-size:12px;
-
-  text-align:right;
-
-}
-
-.online {
-
-  color:var(--green);
-
-  margin-top:5px;
-
-}
-
-/* INTRO */
-
-.intro {
-
-  padding:35px 0 25px;
-
-}
-
-.eyebrow {
-
-  color:var(--gold2);
-
-  font-size:11px;
-
-  letter-spacing:3px;
-
-  text-transform:uppercase;
-
-}
-
-h1 {
-
-  font-size:clamp(28px,5vw,43px);
-
-  margin:9px 0;
-
-  letter-spacing:-1.5px;
-
-}
-
-.intro p {
-
-  color:var(--muted);
-
-  font-size:14px;
-
-  max-width:650px;
-
-  line-height:1.7;
-
-}
-
-/* NOTICE */
-
-.notice {
-
-  background:#211b11;
-
-  border:1px solid #66502a;
-
-  border-radius:12px;
-
-  padding:14px;
-
-  color:#dfc995;
-
-  font-size:13px;
-
-  line-height:1.6;
-
-  margin-bottom:28px;
-
-}
-
-/* SECTION */
-
-.section-title {
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  gap:10px;
-
-  margin:27px 0 14px;
-
-}
-
-.section-title h2 {
-
-  font-size:16px;
-
-}
-
-.section-title span {
-
-  color:var(--muted);
-
-  font-size:11px;
-
-}
-
-/* MODULES */
-
-.grid {
-
-  display:grid;
-
-  grid-template-columns:repeat(3,minmax(0,1fr));
-
-  gap:14px;
-
-}
-
-.module {
-
+.brand-name {font-size:14px;font-weight:800;letter-spacing:3px}
+.brand-sub {color:var(--muted);font-size:10px;letter-spacing:2px;margin-top:3px}
+.header-right {color:var(--muted);font-size:12px;text-align:right}
+.online {color:var(--green);margin-top:5px}
+.intro {padding:35px 0 25px}
+.eyebrow {color:var(--gold2);font-size:11px;letter-spacing:3px;text-transform:uppercase}
+h1 {font-size:clamp(28px,5vw,43px);margin:9px 0;letter-spacing:-1.5px}
+.intro p {color:var(--muted);font-size:14px;max-width:650px;line-height:1.7}
+.panel {
   background:linear-gradient(145deg,#19212c,#10141b);
-
-  border:1px solid var(--line);
-
-  border-radius:15px;
-
-  padding:19px;
-
-  min-height:175px;
-
-  display:flex;
-
-  flex-direction:column;
-
-  transition:.2s;
-
+  border:1px solid var(--line);border-radius:15px;padding:20px;margin-bottom:20px;
 }
-
-.module:hover {
-
-  border-color:var(--gold);
-
-  transform:translateY(-3px);
-
+.section-title {
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;margin-bottom:16px;flex-wrap:wrap;
 }
-
-.module-top {
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
+.section-title h2 {font-size:17px}
+.section-title span {color:var(--muted);font-size:11px}
+.notice {
+  background:#211b11;border:1px solid #66502a;border-radius:12px;
+  padding:13px;color:#dfc995;font-size:13px;line-height:1.6;margin-bottom:20px;
 }
-
+.hidden {display:none!important}
+.login-box {max-width:440px;margin:25px auto}
+.field {margin:14px 0}
+.field label {display:block;color:var(--muted);font-size:12px;margin-bottom:7px}
+input[type="password"],input[type="text"] {
+  width:100%;padding:13px;border-radius:9px;
+  border:1px solid var(--line);background:#090d13;color:var(--text);
+  outline:none;
+}
+input:focus {border-color:var(--gold)}
+.btn {
+  border:1px solid var(--gold);background:var(--gold);
+  color:#17130b;padding:11px 16px;border-radius:9px;
+  font-weight:700;font-size:13px;
+}
+.btn:hover {background:var(--gold2)}
+.btn:disabled {opacity:.5;cursor:not-allowed}
+.btn-secondary {
+  background:transparent;color:var(--gold2);border:1px solid #655433;
+}
+.btn-danger {background:#351b1b;color:#ffb0b0;border:1px solid #713838}
+.btn-small {padding:7px 11px;font-size:11px}
+.actions {display:flex;gap:9px;flex-wrap:wrap}
+.status {
+  padding:11px 13px;border-radius:9px;margin-top:13px;
+  font-size:12px;line-height:1.5;display:none;
+}
+.status.show {display:block}
+.status.success {background:#10251d;color:#8bd4ac;border:1px solid #285b43}
+.status.error {background:#2a1717;color:#ffaaaa;border:1px solid #713838}
+.status.info {background:#1c2230;color:#c3d1ed;border:1px solid #394963}
+.upload-area {
+  border:1px dashed #655433;background:#0d1118;
+  padding:20px;border-radius:12px;margin-top:12px;
+}
+input[type="file"] {width:100%;color:var(--muted);font-size:12px;margin:12px 0}
+.file-name {font-size:12px;color:var(--gold2);margin-bottom:12px;word-break:break-word}
+.table-wrap {overflow-x:auto}
+table {width:100%;border-collapse:collapse;min-width:520px}
+th,td {padding:13px 10px;text-align:left;border-bottom:1px solid var(--line);font-size:12px}
+th {color:var(--gold2);font-weight:600}
+td {color:#d8dce3}
+.file-title {font-weight:600;word-break:break-word}
+.muted {color:var(--muted);font-size:11px;margin-top:4px}
+.empty {padding:25px;text-align:center;color:var(--muted);font-size:13px}
+.stats {
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;
+}
+.stat {background:#0d1219;border:1px solid var(--line);padding:15px;border-radius:11px}
+.stat small {display:block;color:var(--muted);font-size:11px}
+.stat strong {display:block;font-size:23px;color:var(--gold2);margin-top:5px}
+.grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.module {
+  background:linear-gradient(145deg,#19212c,#10141b);
+  border:1px solid var(--line);border-radius:15px;padding:19px;
+  min-height:150px;display:flex;flex-direction:column;
+}
 .module-icon {
-
-  width:39px;
-
-  height:39px;
-
-  display:grid;
-
-  place-items:center;
-
-  border-radius:10px;
-
-  background:#c7a45b18;
-
-  color:var(--gold2);
-
-  font-size:20px;
-
+  width:39px;height:39px;display:grid;place-items:center;
+  border-radius:10px;background:#c7a45b18;color:var(--gold2);font-size:20px;
 }
-
-.tag {
-
-  font-size:10px;
-
-  color:var(--gold2);
-
-  border:1px solid #655433;
-
-  padding:4px 8px;
-
-  border-radius:30px;
-
-}
-
-.module h3 {
-
-  font-size:16px;
-
-  margin:15px 0 6px;
-
-}
-
-.module p {
-
-  color:var(--muted);
-
-  font-size:12px;
-
-  line-height:1.6;
-
-}
-
-.module-footer {
-
-  color:var(--gold2);
-
-  font-size:12px;
-
-  margin-top:auto;
-
-  padding-top:15px;
-
-}
-
-/* FOOTER */
-
+.tag {font-size:10px;color:var(--gold2);border:1px solid #655433;padding:4px 8px;border-radius:30px}
+.module-top {display:flex;justify-content:space-between;align-items:center}
+.module h3 {font-size:16px;margin:15px 0 6px}
+.module p {color:var(--muted);font-size:12px;line-height:1.6}
+.module-footer {color:var(--gold2);font-size:12px;margin-top:auto;padding-top:15px}
 footer {
-
-  margin-top:35px;
-
-  padding-top:18px;
-
-  border-top:1px solid var(--line);
-
-  display:flex;
-
-  justify-content:space-between;
-
-  flex-wrap:wrap;
-
-  gap:10px;
-
-  color:#77808e;
-
-  font-size:11px;
-
+  margin-top:35px;padding-top:18px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  color:#77808e;font-size:11px;
 }
-
-footer a {
-
-  color:var(--gold2);
-
-  text-decoration:none;
-
-}
-
-/* MOBILE */
-
+footer a {color:var(--gold2);text-decoration:none}
 @media(max-width:800px) {
-
-  .grid {
-
-    grid-template-columns:repeat(2,minmax(0,1fr));
-
-  }
-
+  .grid {grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-
 @media(max-width:520px) {
-
-  .container {
-
-    padding:16px 13px 35px;
-
-  }
-
-  .grid {
-
-    grid-template-columns:1fr;
-
-  }
-
-  .module {
-
-    min-height:150px;
-
-  }
-
-  .header-right {
-
-    text-align:left;
-
-  }
-
-  .section-title {
-
-    align-items:flex-start;
-
-    flex-direction:column;
-
-  }
-
+  .container {padding:16px 13px 35px}
+  .grid {grid-template-columns:1fr}
+  .header-right {text-align:left}
+  .stats {grid-template-columns:1fr 1fr}
+  .section-title {align-items:flex-start}
 }
-
 </style>
-
 </head>
 
 <body>
-
 <main class="container">
 
 <header>
-
   <div class="brand">
-
     <div class="logo">MX</div>
-
     <div>
-
       <div class="brand-name">MASTA XUL</div>
-
       <div class="brand-sub">UNIVERSE CONTROL CENTRE</div>
-
     </div>
-
   </div>
-
   <div class="header-right">
-
     <div id="date"></div>
-
-    <div class="online">● Dashboard Interface</div>
-
+    <div class="online">● Ebook API Workspace</div>
   </div>
-
 </header>
 
 <section class="intro">
-
   <div class="eyebrow">Management Workspace</div>
-
   <h1>Admin Dashboard</h1>
-
   <p>
-
     Selamat datang ke pusat pengurusan Masta Xul Universe.
-
-    Urus koleksi digital, produk, pelanggan dan operasi
-
-    platform melalui satu ruang kawalan.
-
+    Urus koleksi digital dan fail eBook melalui satu ruang kawalan.
   </p>
-
 </section>
 
 <div class="notice">
-
-  <strong>◆ Mod antaramuka awal</strong><br>
-
-  Dashboard ini ialah paparan asas. Fungsi sebenar seperti
-
-  login, muat naik PDF, pengurusan data dan sambungan API
-
-  akan diaktifkan secara berperingkat.
-
+  <strong>◆ Fasa 1 — Pengurusan eBook</strong><br>
+  Dashboard ini disambungkan kepada Masta Xul Ebook API
+  dan storan Backblaze B2. Login diperlukan untuk mengakses fungsi pentadbir.
 </div>
 
-<div class="section-title">
+<!-- LOGIN -->
+<section id="loginSection" class="panel login-box">
+  <div class="section-title">
+    <h2>Admin Login</h2>
+    <span>Secure Access</span>
+  </div>
+  <form id="loginForm">
+    <div class="field">
+      <label for="adminToken">Admin Token</label>
+      <input id="adminToken" type="password" placeholder="Masukkan Admin Token" required autocomplete="current-password">
+    </div>
+    <button id="loginButton" class="btn" type="submit">Login Dashboard</button>
+  </form>
+  <div id="loginStatus" class="status"></div>
+</section>
 
-  <h2>Modul Pengurusan</h2>
+<!-- DASHBOARD -->
+<section id="adminSection" class="hidden">
 
-  <span>Masta Xul Administration</span>
+  <div class="section-title">
+    <h2>Pengurusan eBook</h2>
+    <div class="actions">
+      <button id="refreshButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button>
+      <button id="logoutButton" class="btn btn-danger btn-small" type="button">Logout</button>
+    </div>
+  </div>
 
-</div>
+  <div class="stats">
+    <div class="stat">
+      <small>Jumlah eBook</small>
+      <strong id="totalBooks">0</strong>
+    </div>
+    <div class="stat">
+      <small>Jumlah storan</small>
+      <strong id="totalStorage">0 KB</strong>
+    </div>
+    <div class="stat">
+      <small>Status API</small>
+      <strong id="apiStatus" style="font-size:15px">Checking</strong>
+    </div>
+  </div>
 
-<section class="grid">
-
-  <article class="module">
-
-    <div class="module-top">
-
-      <div class="module-icon">▤</div>
-
-      <span class="tag">FASA 1</span>
-
+  <div class="panel">
+    <div class="section-title">
+      <h2>Upload eBook PDF</h2>
+      <span>Backblaze B2 Storage</span>
     </div>
 
-    <h3>Pengurusan eBook</h3>
-
-    <p>
-
-      Muat naik PDF, urus koleksi, episod,
-
-      kategori dan maklumat penerbitan.
-
+    <p class="muted">
+      Pilih fail PDF untuk dimuat naik ke storan. Saiz maksimum 50 MB.
     </p>
 
-    <div class="module-footer">Backblaze B2 Storage →</div>
+    <form id="uploadForm" class="upload-area">
+      <div class="field">
+        <label for="pdfFile">Pilih fail PDF</label>
+        <input id="pdfFile" type="file" accept=".pdf,application/pdf" required>
+      </div>
+      <div id="selectedFile" class="file-name">Tiada fail dipilih.</div>
+      <button id="uploadButton" class="btn" type="submit">↑ Upload PDF</button>
+    </form>
+    <div id="uploadStatus" class="status"></div>
+  </div>
 
-  </article>
-
-  <article class="module">
-
-    <div class="module-top">
-
-      <div class="module-icon">◇</div>
-
-      <span class="tag">FASA 2</span>
-
+  <div class="panel">
+    <div class="section-title">
+      <h2>Koleksi eBook</h2>
+      <span id="listCount">0 fail</span>
     </div>
 
-    <h3>Pengurusan Produk</h3>
+    <div id="listStatus" class="status"></div>
 
-    <p>
-
-      Urus katalog produk, imej, harga,
-
-      kategori dan pautan jualan.
-
-    </p>
-
-    <div class="module-footer">Product Management →</div>
-
-  </article>
-
-  <article class="module">
-
-    <div class="module-top">
-
-      <div class="module-icon">▧</div>
-
-      <span class="tag">FASA 3</span>
-
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nama Fail</th>
+            <th>Saiz</th>
+            <th>Tarikh Upload</th>
+            <th>Tindakan</th>
+          </tr>
+        </thead>
+        <tbody id="ebookList">
+          <tr><td colspan="4" class="empty">Memuatkan senarai...</td></tr>
+        </tbody>
+      </table>
     </div>
-
-    <h3>Pesanan</h3>
-
-    <p>
-
-      Pantau pesanan, transaksi,
-
-      pembayaran dan status pembelian.
-
-    </p>
-
-    <div class="module-footer">Order Management →</div>
-
-  </article>
-
-  <article class="module">
-
-    <div class="module-top">
-
-      <div class="module-icon">◎</div>
-
-      <span class="tag">FASA 4</span>
-
-    </div>
-
-    <h3>Pelanggan</h3>
-
-    <p>
-
-      Urus profil pelanggan, akses eBook,
-
-      pembelian dan akaun pengguna.
-
-    </p>
-
-    <div class="module-footer">Customer Management →</div>
-
-  </article>
-
-  <article class="module">
-
-    <div class="module-top">
-
-      <div class="module-icon">▥</div>
-
-      <span class="tag">FASA 5</span>
-
-    </div>
-
-    <h3>Analitik</h3>
-
-    <p>
-
-      Lihat statistik jualan, muat turun,
-
-      prestasi produk dan aktiviti platform.
-
-    </p>
-
-    <div class="module-footer">Analytics →</div>
-
-  </article>
-
-  <article class="module">
-
-    <div class="module-top">
-
-      <div class="module-icon">⚙</div>
-
-      <span class="tag">FASA 6</span>
-
-    </div>
-
-    <h3>Tetapan Sistem</h3>
-
-    <p>
-
-      Konfigurasi API, storan, keselamatan
-
-      dan tetapan pentadbir.
-
-    </p>
-
-    <div class="module-footer">System Configuration →</div>
-
-  </article>
+  </div>
 
 </section>
 
+<!-- MODUL AKAN DATANG -->
+<div class="section-title">
+  <h2>Modul Pengurusan</h2>
+  <span>Masta Xul Administration</span>
+</div>
+
+<section class="grid">
+  <article class="module">
+    <div class="module-top">
+      <div class="module-icon">▤</div>
+      <span class="tag">FASA 1</span>
+    </div>
+    <h3>Pengurusan eBook</h3>
+    <p>Muat naik PDF, urus koleksi dan maklumat penerbitan.</p>
+    <div class="module-footer">Backblaze B2 Storage ✓</div>
+  </article>
+
+  <article class="module">
+    <div class="module-top">
+      <div class="module-icon">◇</div>
+      <span class="tag">FASA 2</span>
+    </div>
+    <h3>Pengurusan Produk</h3>
+    <p>Urus katalog produk, imej, harga dan kategori.</p>
+    <div class="module-footer">Coming Soon →</div>
+  </article>
+
+  <article class="module">
+    <div class="module-top">
+      <div class="module-icon">▧</div>
+      <span class="tag">FASA 3</span>
+    </div>
+    <h3>Pesanan</h3>
+    <p>Pantau pesanan, transaksi dan status pembayaran.</p>
+    <div class="module-footer">Coming Soon →</div>
+  </article>
+
+  <article class="module">
+    <div class="module-top">
+      <div class="module-icon">◎</div>
+      <span class="tag">FASA 4</span>
+    </div>
+    <h3>Pelanggan</h3>
+    <p>Urus profil pelanggan, akses eBook dan akaun pengguna.</p>
+    <div class="module-footer">Coming Soon →</div>
+  </article>
+
+  <article class="module">
+    <div class="module-top">
+      <div class="module-icon">▥</div>
+      <span class="tag">FASA 5</span>
+    </div>
+    <h3>Analitik</h3>
+    <p>Lihat statistik jualan, muat turun dan prestasi produk.</p>
+    <div class="module-footer">Coming Soon →</div>
+  </article>
+
+  <article class="module">
+    <div class="module-top">
+      <div class="module-icon">⚙</div>
+      <span class="tag">FASA 6</span>
+    </div>
+    <h3>Tetapan Sistem</h3>
+    <p>Konfigurasi API, storan dan keselamatan pentadbir.</p>
+    <div class="module-footer">Coming Soon →</div>
+  </article>
+</section>
+
 <footer>
-
   <span>© <span id="year"></span> Masta Xul Universe</span>
-
-  <span>
-
-    <a href="https://www.mastaxul.my/">MASTAXUL.MY</a>
-
-  </span>
-
+  <span><a href="https://www.mastaxul.my/">MASTAXUL.MY</a></span>
 </footer>
 
 </main>
 
 <script>
+"use strict";
 
+// API CONFIGURATION
+const API_BASE = "https://mxu-ebook-api.2ulfpv.workers.dev";
+const TOKEN_KEY = "mxu_ebook_admin_session";
+
+const $ = id => document.getElementById(id);
+
+let adminToken = sessionStorage.getItem(TOKEN_KEY) || "";
+
+function showStatus(element, message, type = "info") {
+  element.textContent = message;
+  element.className = "status show " + type;
+}
+
+function hideStatus(element) {
+  element.textContent = "";
+  element.className = "status";
+}
+
+function formatSize(bytes) {
+  if (!Number.isFinite(Number(bytes))) return "-";
+  const size = Number(bytes);
+  if (size < 1024) return size + " B";
+  if (size < 1024 * 1024) return (size / 1024).toFixed(1) + " KB";
+  return (size / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+function formatDate(timestamp) {
+  if (!timestamp) return "-";
+  const date = new Date(Number(timestamp));
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toLocaleString("ms-MY", {
+    day:"2-digit",
+    month:"short",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
+
+async function apiRequest(path, options = {}) {
+  const headers = new Headers(options.headers || {});
+
+  if (adminToken) {
+    headers.set("Authorization", "Bearer " + adminToken);
+  }
+
+  const response = await fetch(API_BASE + path, {
+    ...options,
+    headers
+  });
+
+  const data = await response.json().catch(() => ({
+    status:"error",
+    message:"Respons server tidak dapat dibaca."
+  }));
+
+  if (response.status === 401) {
+    logout();
+    throw new Error("Sesi tamat atau Admin Token tidak sah. Sila login semula.");
+  }
+
+  if (!response.ok || data.status === "error") {
+    throw new Error(data.message || data.errorMessage || "Permintaan gagal.");
+  }
+
+  return data;
+}
+
+function showAdmin() {
+  $("loginSection").classList.add("hidden");
+  $("adminSection").classList.remove("hidden");
+}
+
+function showLogin() {
+  $("loginSection").classList.remove("hidden");
+  $("adminSection").classList.add("hidden");
+}
+
+function logout() {
+  adminToken = "";
+  sessionStorage.removeItem(TOKEN_KEY);
+  $("adminToken").value = "";
+  showLogin();
+  $("apiStatus").textContent = "Offline";
+}
+
+// LOGIN
+$("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const token = $("adminToken").value.trim();
+  if (!token) return;
+
+  const button = $("loginButton");
+  button.disabled = true;
+  button.textContent = "Memeriksa...";
+
+  hideStatus($("loginStatus"));
+
+  try {
+    const response = await fetch(API_BASE + "/api/login", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({token})
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.status !== "authenticated") {
+      throw new Error(data.message || "Login gagal.");
+    }
+
+    adminToken = token;
+    sessionStorage.setItem(TOKEN_KEY, token);
+
+    $("adminToken").value = "";
+    showAdmin();
+
+    await loadEbooks();
+
+  } catch (error) {
+    showStatus($("loginStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Login Dashboard";
+  }
+});
+
+// LOAD EBOOK LIST
+async function loadEbooks() {
+  const tbody = $("ebookList");
+  const status = $("listStatus");
+
+  $("refreshButton").disabled = true;
+  $("apiStatus").textContent = "Loading";
+  hideStatus(status);
+
+  tbody.innerHTML = '<tr><td colspan="4" class="empty">Sedang memuatkan senarai eBook...</td></tr>';
+
+  try {
+    const data = await apiRequest("/api/ebooks");
+
+    const files = Array.isArray(data.files) ? data.files : [];
+
+    $("totalBooks").textContent = files.length;
+    $("listCount").textContent = files.length + " fail";
+    $("apiStatus").textContent = "Connected";
+
+    const totalBytes = files.reduce((sum, file) => sum + Number(file.size || 0), 0);
+    $("totalStorage").textContent = formatSize(totalBytes);
+
+    tbody.innerHTML = "";
+
+    if (!files.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="empty">Belum ada fail PDF.</td></tr>';
+      return;
+    }
+
+    files.forEach(file => {
+      const tr = document.createElement("tr");
+
+      const nameCell = document.createElement("td");
+      const name = document.createElement("div");
+      name.className = "file-title";
+      name.textContent = file.fileName || "Unnamed PDF";
+
+      const id = document.createElement("div");
+      id.className = "muted";
+      id.textContent = "PDF Document";
+
+      nameCell.append(name, id);
+
+      const sizeCell = document.createElement("td");
+      sizeCell.textContent = formatSize(file.size);
+
+      const dateCell = document.createElement("td");
+      dateCell.textContent = formatDate(file.uploadedAt);
+
+      const actionCell = document.createElement("td");
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "btn btn-danger btn-small";
+      deleteButton.textContent = "Padam";
+
+      deleteButton.addEventListener("click", () => deleteEbook(file, deleteButton));
+
+      actionCell.appendChild(deleteButton);
+      tr.append(nameCell, sizeCell, dateCell, actionCell);
+      tbody.appendChild(tr);
+    });
+
+  } catch (error) {
+    $("apiStatus").textContent = "Error";
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">Gagal memuatkan senarai.</td></tr>';
+    showStatus(status, error.message, "error");
+  } finally {
+    $("refreshButton").disabled = false;
+  }
+}
+
+// UPLOAD PDF
+$("pdfFile").addEventListener("change", () => {
+  const file = $("pdfFile").files[0];
+
+  $("selectedFile").textContent = file
+    ? file.name + " — " + formatSize(file.size)
+    : "Tiada fail dipilih.";
+});
+
+$("uploadForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const file = $("pdfFile").files[0];
+  const status = $("uploadStatus");
+
+  if (!file) {
+    showStatus(status, "Sila pilih fail PDF.", "error");
+    return;
+  }
+
+  if (!file.name.toLowerCase().endsWith(".pdf")) {
+    showStatus(status, "Hanya fail PDF dibenarkan.", "error");
+    return;
+  }
+
+  if (file.size <= 0 || file.size > 50 * 1024 * 1024) {
+    showStatus(status, "Saiz fail mesti antara 1 byte dan 50 MB.", "error");
+    return;
+  }
+
+  const button = $("uploadButton");
+  button.disabled = true;
+  button.textContent = "Sedang upload...";
+
+  hideStatus(status);
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+
+    const data = await apiRequest("/api/ebooks/upload", {
+      method:"POST",
+      body:formData
+    });
+
+    showStatus(
+      status,
+      "Berjaya upload: " + (data.file?.fileName || file.name),
+      "success"
+    );
+
+    $("uploadForm").reset();
+    $("selectedFile").textContent = "Tiada fail dipilih.";
+
+    await loadEbooks();
+
+  } catch (error) {
+    showStatus(status, error.message, "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "↑ Upload PDF";
+  }
+});
+
+// DELETE PDF
+async function deleteEbook(file, button) {
+  const confirmed = confirm(
+    "Adakah kau pasti mahu memadam fail ini?\n\n" +
+    file.fileName +
+    "\n\nFail akan dipadam daripada Backblaze B2."
+  );
+
+  if (!confirmed) return;
+
+  button.disabled = true;
+  button.textContent = "Memadam...";
+
+  hideStatus($("listStatus"));
+
+  try {
+    const data = await apiRequest("/api/ebooks/delete", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        fileId:file.fileId,
+        fileName:file.fileName
+      })
+    });
+
+    showStatus(
+      $("listStatus"),
+      data.message || "Fail berjaya dipadam.",
+      "success"
+    );
+
+    await loadEbooks();
+
+  } catch (error) {
+    showStatus($("listStatus"), error.message, "error");
+    button.disabled = false;
+    button.textContent = "Padam";
+  }
+}
+
+// REFRESH AND LOGOUT
+$("refreshButton").addEventListener("click", loadEbooks);
+$("logoutButton").addEventListener("click", () => {
+  if (confirm("Log keluar daripada dashboard?")) logout();
+});
+
+// DATE
 const now = new Date();
 
-document.getElementById("date").textContent =
+$("date").textContent = new Intl.DateTimeFormat("ms-MY", {
+  day:"numeric",
+  month:"long",
+  year:"numeric"
+}).format(now);
 
-  new Intl.DateTimeFormat("ms-MY", {
+$("year").textContent = now.getFullYear();
 
-    day:"numeric",
-
-    month:"long",
-
-    year:"numeric"
-
-  }).format(now);
-
-document.getElementById("year").textContent =
-
-  now.getFullYear();
-
+// RESTORE SESSION FOR CURRENT TAB
+if (adminToken) {
+  showAdmin();
+  loadEbooks();
+} else {
+  showLogin();
+}
 </script>
 
 </body>
-
 </html>
