@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -6,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#090b10">
-<title>Masta Xul | Admin Dashboard</title>
+<title>Masta Xul | Admin Dashboard V8</title>
 
 <style>
 :root {
@@ -1285,7 +1286,16 @@ function renderPayments(payments) {
       customerCell.appendChild(customerAddress);
     }
 
-    const productCell = makePaymentCell(payment.product_name || "eBook");
+    const productCell = document.createElement("td");
+    const productName = document.createElement("div");
+    productName.textContent = payment.product_name || "eBook";
+    productCell.appendChild(productName);
+    if (Number(payment.item_count || 1) > 1) {
+      const itemCount = document.createElement("div");
+      itemCount.className = "muted";
+      itemCount.textContent = Number(payment.item_count) + " eBook dalam satu pesanan";
+      productCell.appendChild(itemCount);
+    }
     const amountCell = makePaymentCell(formatMoney(payment.amount_minor, payment.currency));
 
     const statusCell = document.createElement("td");
@@ -1438,8 +1448,9 @@ async function approvePayment(payment, button) {
     "Sahkan bahawa bayaran telah diterima dalam akaun Bank Islam?\n\n" +
     payment.order_reference + "\n" +
     payment.customer_email + "\n" +
+    (Number(payment.item_count || 1) > 1 ? Number(payment.item_count) + " eBook\n" : "") +
     formatMoney(payment.amount_minor, payment.currency) +
-    "\n\nAkses eBook akan diberikan selepas kelulusan."
+    "\n\nAkses semua eBook dalam pesanan ini akan diberikan selepas kelulusan."
   );
   if (!confirmed) return;
 
@@ -1452,7 +1463,7 @@ async function approvePayment(payment, button) {
       body: JSON.stringify({ submission_id: payment.submission_id })
     });
     await Promise.all([loadPayments(), loadCustomers()]);
-    showStatus($("paymentStatus"), "Pembayaran diluluskan. Akses eBook pelanggan telah diaktifkan.", "success");
+    showStatus($("paymentStatus"), "Pembayaran diluluskan. Akses semua eBook dalam pesanan telah diaktifkan.", "success");
   } catch (error) {
     showStatus($("paymentStatus"), error.message, "error");
     button.disabled = false;
