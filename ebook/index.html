@@ -216,6 +216,11 @@ background:none;border:0;color:var(--gold);
 text-decoration:underline;
 }
 .hint{font-size:11px;color:var(--muted);line-height:1.5}
+.product-detail-list{display:grid;gap:10px;margin:18px 0}
+.product-detail-row{padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#101010}
+.product-detail-row span{display:block;color:var(--muted);font-size:11px}
+.product-detail-row strong{display:block;color:var(--gold-light);font-size:14px;margin-top:5px;overflow-wrap:anywhere}
+.product-detail-note{font-size:12px;line-height:1.65;color:var(--muted);margin:12px 0}
 .hidden{display:none!important}
 @media(max-width:760px){
 .navlinks{gap:12px}
@@ -354,6 +359,27 @@ Log Masuk
 Belum mempunyai akaun?
 <button type="button" id="switchModeButton">Daftar di sini</button>
 </div>
+</div>
+</div>
+<div class="modal" id="productModal" role="dialog"
+aria-modal="true" aria-labelledby="productModalTitle">
+<div class="modal-card">
+<button class="close" id="closeProductModalButton" aria-label="Tutup">×</button>
+<div class="eyebrow">MASTA XUL EBOOK</div>
+<h2 id="productModalTitle">Maklumat eBook</h2>
+<p id="productModalDescription">Butiran eBook akan dipaparkan di sini.</p>
+<div class="product-detail-list">
+<div class="product-detail-row">
+<span>Harga</span>
+<strong id="productModalPrice">-</strong>
+</div>
+<div class="product-detail-row">
+<span>Format</span>
+<strong>PDF Digital</strong>
+</div>
+</div>
+<div class="product-detail-note" id="productModalAccessNote"></div>
+<button class="btn modal-submit" type="button" id="productModalActionButton">Tutup</button>
 </div>
 </div>
 <script>
@@ -573,6 +599,39 @@ style: "currency",
 currency: currency || "MYR"
 }).format(amount / 100);
 }
+function openProductDetails(product) {
+$("productModalTitle").textContent = product.name || "eBook";
+$("productModalDescription").textContent =
+product.description || "Koleksi digital Masta Xul.";
+$("productModalPrice").textContent = formatPrice(
+product.price_minor,
+product.currency
+);
+
+const loggedIn = Boolean(getToken());
+$("productModalAccessNote").textContent = loggedIn
+? "Anda sudah log masuk. Untuk membaca PDF, eBook ini perlu mempunyai akses aktif dalam Perpustakaan Peribadi anda. Pembelian yang belum diluluskan tidak akan membuka akses PDF."
+: "Anda boleh melihat maklumat eBook tanpa log masuk. Log masuk diperlukan untuk mengurus pembelian dan melihat Perpustakaan Peribadi.";
+
+const actionButton = $("productModalActionButton");
+actionButton.textContent = loggedIn
+? "Lihat Perpustakaan Saya"
+: "Log Masuk";
+actionButton.onclick = () => {
+$("productModal").classList.remove("show");
+if (getToken()) {
+document.querySelector("#account").scrollIntoView({ behavior: "smooth" });
+} else {
+openModal("login");
+$("email").focus();
+}
+};
+
+$("productModal").classList.add("show");
+}
+function closeProductDetails() {
+$("productModal").classList.remove("show");
+}
 function makeBookCard(product) {
 const card = document.createElement("article");
 card.className = "book";
@@ -605,8 +664,7 @@ const button = document.createElement("button");
 button.className = "btn btn-outline btn-small";
 button.textContent = "Maklumat";
 button.addEventListener("click", () => {
-openModal("login");
-$("email").focus();
+openProductDetails(product);
 });
 bottom.append(price, button);
 info.append(heading, description, bottom);
@@ -773,6 +831,10 @@ $("logoutButton").addEventListener("click", logoutCustomer);
 $("closeModalButton").addEventListener("click", closeModal);
 $("accountModal").addEventListener("click", event => {
 if (event.target === $("accountModal")) closeModal();
+});
+$("closeProductModalButton").addEventListener("click", closeProductDetails);
+$("productModal").addEventListener("click", event => {
+if (event.target === $("productModal")) closeProductDetails();
 });
 $("switchModeButton").addEventListener("click", () => {
 openModal(state.mode === "register" ? "login" : "register");
