@@ -346,15 +346,6 @@ maxlength="128" required>
 Minimum 10 aksara.
 </div>
 </div>
-<div id="otpGroup" class="hidden">
-<label class="field-label" for="otpCode">Kod pengesahan OTP</label>
-<input class="field" id="otpCode" name="otp"
-inputmode="numeric" autocomplete="one-time-code"
-maxlength="6" pattern="[0-9]{6}">
-<div class="hint">
-Masukkan kod 6 digit yang dihantar ke alamat e-mel anda.
-</div>
-</div>
 <button class="btn modal-submit" type="submit" id="submitButton">
 Log Masuk
 </button>
@@ -377,7 +368,6 @@ const SESSION_KEY = "mxu_customer_session";
 const state = {
 products: [],
 mode: "login",
-otpEmail: "",
 currentCustomer: null,
 busy: false
 };
@@ -443,16 +433,13 @@ INVALID_NAME: "Sila masukkan nama yang sah.",
 PASSWORD_MINIMUM_10_CHARACTERS:
 "Kata laluan mesti sekurang-kurangnya 10 aksara.",
 EMAIL_ALREADY_REGISTERED:
-"E-mel ini sudah mempunyai akaun aktif. Sila log masuk.",
-OTP_COOLDOWN:
-"Permintaan OTP terlalu kerap. Sila tunggu sebelum mencuba lagi.",
-INVALID_OR_EXPIRED_OTP:
-"Kod OTP salah atau telah tamat tempoh.",
-OTP_EXPIRED: "Kod OTP telah tamat tempoh.",
-OTP_ATTEMPTS_EXCEEDED:
-"Had percubaan OTP telah dicapai.",
+"E-mel ini sudah mempunyai akaun. Sila log masuk.",
+ACCOUNT_PENDING_APPROVAL:
+"Pendaftaran anda sedang menunggu kelulusan admin. Anda boleh log masuk selepas akaun diluluskan.",
 ACCOUNT_NOT_VERIFIED_OR_INACTIVE:
-"Akaun belum disahkan atau tidak aktif.",
+"Akaun anda masih menunggu kelulusan admin. Sila cuba lagi selepas diluluskan.",
+PASSWORD_HASH_REQUIRES_RESET:
+"Akaun ini menggunakan format kata laluan lama. Sila hubungi admin untuk bantuan menetapkan semula kata laluan.",
 INVALID_EMAIL_OR_PASSWORD:
 "E-mel atau kata laluan tidak betul.",
 UNAUTHORIZED: "Sesi tamat. Sila log masuk semula."
@@ -472,33 +459,20 @@ function closeModal() {
 $("accountModal").classList.remove("show");
 }
 function renderModalMode() {
-const mode = state.mode;
-const isRegister = mode === "register";
-const isOTP = mode === "otp";
+const isRegister = state.mode === "register";
 $("nameGroup").classList.toggle("hidden", !isRegister);
-$("passwordGroup").classList.toggle("hidden", isOTP);
-$("otpGroup").classList.toggle("hidden", !isOTP);
+$("passwordGroup").classList.remove("hidden");
 $("fullName").required = isRegister;
-$("password").required = !isOTP;
-$("otpCode").required = isOTP;
-$("email").readOnly = isOTP;
-if (isOTP) $("email").value = state.otpEmail;
-$("modalTitle").textContent =
-isRegister ? "Cipta Akaun" :
-isOTP ? "Pengesahan E-mel" : "Log Masuk";
-$("modalDescription").textContent =
-isRegister
-? "Daftar akaun Masta Xul menggunakan nama, e-mel dan kata laluan."
-: isOTP
-? "Semak peti masuk e-mel anda dan masukkan kod pengesahan."
+$("password").required = true;
+$("email").readOnly = false;
+$("password").autocomplete = isRegister ? "new-password" : "current-password";
+$("modalTitle").textContent = isRegister ? "Cipta Akaun" : "Log Masuk";
+$("modalDescription").textContent = isRegister
+? "Daftar akaun Masta Xul menggunakan nama, e-mel dan kata laluan. Akaun akan aktif selepas diluluskan oleh admin."
 : "Selamat kembali ke Masta Xul.";
-$("submitButton").textContent =
-isRegister ? "Daftar Akaun" :
-isOTP ? "Sahkan Kod" : "Log Masuk";
-$("switchArea").classList.toggle("hidden", isOTP);
-if (isOTP) {
-$("switchArea").innerHTML = "";
-} else if (isRegister) {
+$("submitButton").textContent = isRegister ? "Daftar Akaun" : "Log Masuk";
+$("switchArea").classList.remove("hidden");
+if (isRegister) {
 $("switchArea").textContent = "Sudah mempunyai akaun? ";
 const button = document.createElement("button");
 button.type = "button";
@@ -522,10 +496,9 @@ $("submitButton").textContent = busy
 ? "Sila tunggu..."
 : state.mode === "register"
 ? "Daftar Akaun"
-: state.mode === "otp"
-? "Sahkan Kod"
 : "Log Masuk";
 }
+
 /* ================================
 REGISTER
 ================================ */
@@ -533,45 +506,20 @@ async function registerCustomer() {
 const name = $("fullName").value.trim();
 const email = $("email").value.trim().toLowerCase();
 const password = $("password").value;
-const result = await apiRequest("/api/customer/register", {
+await apiRequest("/api/customer/register", {
 method: "POST",
 body: { name, email, password }
 });
-state.otpEmail = email;
-$("email").value = email;
-$("password").value = "";
-$("otpCode").value = "";
-openModal("otp");
-showStatus(
-$("formStatus"),
-"Permintaan pendaftaran diterima. Semak peti masuk dan folder Spam/Junk untuk kod OTP.",
-"success"
-);
-return result;
-}
-/* ================================
-VERIFY OTP
-================================ */
-async function verifyOTP() {
-const email = state.otpEmail;
-const code = $("otpCode").value.trim();
-if (!/^\d{6}$/.test(code)) {
-throw new Error("Sila masukkan kod OTP 6 digit.");
-}
-await apiRequest("/api/customer/verify-email", {
-method: "POST",
-body: { email, code }
-});
-$("otpCode").value = "";
 $("password").value = "";
 openModal("login");
 $("email").value = email;
 showStatus(
 $("formStatus"),
-"E-mel berjaya disahkan. Sekarang log masuk menggunakan kata laluan anda.",
+"Pendaftaran berjaya dihantar. Akaun anda sedang menunggu kelulusan admin. Anda boleh log masuk selepas akaun diluluskan.",
 "success"
 );
 }
+
 /* ================================
 LOGIN
 ================================ */
@@ -601,8 +549,6 @@ clearStatus($("formStatus"));
 try {
 if (state.mode === "register") {
 await registerCustomer();
-} else if (state.mode === "otp") {
-await verifyOTP();
 } else {
 await loginCustomer();
 }
