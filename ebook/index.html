@@ -1,0 +1,390 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090909">
+<title>eBook Universe | Masta Xul</title>
+<meta name="description" content="Terokai koleksi eBook digital Masta Xul.">
+<style>
+:root {
+  --bg:#090909;
+  --panel:#141414;
+  --panel2:#1b1b1b;
+  --gold:#d5ad61;
+  --gold2:#f1d69b;
+  --text:#f5f1e9;
+  --muted:#99958c;
+  --line:#302b22;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.container{width:min(1120px,92%);margin:auto}
+header{
+  position:sticky;top:0;z-index:20;
+  background:rgba(9,9,9,.94);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(14px);
+}
+.nav{
+  min-height:70px;display:flex;align-items:center;
+  justify-content:space-between;gap:18px;
+}
+.brand{font-size:20px;font-weight:800;letter-spacing:2px}
+.brand span{color:var(--gold)}
+.navlinks{display:flex;align-items:center;gap:24px}
+.navlinks a{font-size:13px;color:#c9c3b8}
+.navlinks a:hover{color:var(--gold)}
+.btn{
+  border:1px solid var(--gold);border-radius:8px;
+  padding:11px 17px;background:var(--gold);
+  color:#17120a;font-weight:700;
+}
+.btn:hover{background:var(--gold2)}
+.btn-outline{background:transparent;color:var(--gold)}
+.btn-outline:hover{background:#211b10}
+.hero{
+  padding:82px 0 70px;text-align:center;
+  background:
+  radial-gradient(ellipse at 50% 0%,rgba(179,132,52,.17),transparent 58%),
+  linear-gradient(180deg,#11100d,#090909);
+}
+.eyebrow{
+  color:var(--gold);font-size:11px;letter-spacing:4px;
+  text-transform:uppercase;font-weight:700;
+}
+.hero h1{
+  font-family:Georgia,serif;font-size:clamp(38px,7vw,68px);
+  line-height:1.08;margin:20px 0 15px;font-weight:500;
+}
+.hero h1 span{color:var(--gold)}
+.hero p{
+  max-width:570px;margin:0 auto 28px;
+  color:var(--muted);line-height:1.8;font-size:15px;
+}
+.hero-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.section{padding:58px 0}
+.section-head{
+  display:flex;justify-content:space-between;align-items:end;
+  gap:20px;margin-bottom:24px;
+}
+.section h2{font:500 30px Georgia,serif;margin:0 0 8px}
+.section-head p{margin:0;color:var(--muted);font-size:13px}
+.searchbar{
+  width:100%;max-width:360px;background:var(--panel);
+  color:var(--text);border:1px solid var(--line);
+  border-radius:8px;padding:13px 15px;outline:none;
+}
+.searchbar:focus,.field:focus{border-color:var(--gold)}
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 25px}
+.filter{
+  background:var(--panel);border:1px solid var(--line);
+  color:#c9c3b8;border-radius:30px;padding:9px 16px;font-size:12px;
+}
+.filter.active,.filter:hover{
+  background:#2b2111;color:var(--gold2);border-color:var(--gold);
+}
+.catalog{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+}
+.book{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;overflow:hidden;transition:.2s;
+}
+.book:hover{transform:translateY(-4px);border-color:#806334}
+.cover{
+  height:205px;display:grid;place-items:center;
+  background:
+    radial-gradient(circle at 50% 35%,#5c4826 0,transparent 38%),
+    linear-gradient(145deg,#252019,#090909 75%);
+  border-bottom:1px solid var(--line);
+}
+.cover-mark{
+  width:112px;height:145px;border:1px solid #a9874b;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:12px;
+  box-shadow:0 10px 35px #000;
+}
+.cover-mark strong{font:22px Georgia,serif;color:var(--gold2)}
+.cover-mark small{font-size:8px;letter-spacing:2px;color:#c6b58e;margin-top:9px}
+.book-info{padding:18px}
+.book-info h3{font:20px Georgia,serif;margin:0 0 8px}
+.book-info p{color:var(--muted);font-size:12px;line-height:1.6;min-height:38px}
+.book-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:17px}
+.price{color:var(--gold2);font-weight:700}
+.tag{font-size:10px;color:var(--gold);border:1px solid #514124;padding:5px 8px;border-radius:20px}
+.empty{
+  grid-column:1/-1;text-align:center;padding:45px 20px;
+  border:1px dashed #49402e;border-radius:12px;color:var(--muted);
+}
+.empty strong{display:block;color:var(--gold2);margin-bottom:8px}
+.account-area{
+  background:linear-gradient(145deg,#17140e,#101010);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.account-box{
+  max-width:760px;margin:auto;text-align:center;padding:35px 20px;
+}
+.account-box h2{font:30px Georgia,serif;margin:0 0 12px}
+.account-box p{color:var(--muted);line-height:1.7;font-size:14px}
+.library{
+  display:none;background:var(--panel);border:1px solid var(--line);
+  padding:24px;border-radius:12px;margin-top:25px;text-align:left;
+}
+.library.show{display:block}
+.library-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.library h3{font:22px Georgia,serif;margin:0}
+.library-empty{text-align:center;padding:25px;color:var(--muted);font-size:13px}
+footer{padding:35px 0;text-align:center;color:var(--muted);font-size:12px}
+footer strong{color:var(--gold)}
+.modal{
+  display:none;position:fixed;inset:0;z-index:50;
+  background:rgba(0,0,0,.78);padding:18px;
+  align-items:center;justify-content:center;
+}
+.modal.show{display:flex}
+.modal-card{
+  width:min(420px,100%);background:#151515;
+  border:1px solid #554326;border-radius:14px;padding:25px;
+  position:relative;
+}
+.modal-card h2{font:27px Georgia,serif;margin:0 0 7px}
+.modal-card>p{color:var(--muted);font-size:13px;margin-bottom:22px}
+.close{
+  position:absolute;right:17px;top:14px;background:none;
+  border:0;color:#aaa;font-size:25px;
+}
+.field{width:100%;padding:13px;margin:7px 0 13px;
+  border-radius:7px;border:1px solid var(--line);
+  background:#0d0d0d;color:white;outline:none}
+.field-label{font-size:12px;color:#c9c3b8}
+.modal-submit{width:100%;margin-top:8px}
+.switch{text-align:center;font-size:12px;color:var(--muted);margin-top:17px}
+.switch button{background:none;border:0;color:var(--gold);text-decoration:underline}
+.notice{font-size:12px;color:var(--gold2);margin-top:12px;line-height:1.5}
+.mobile-menu{display:none}
+@media(max-width:760px){
+  .navlinks{gap:12px}
+  .navlinks a{font-size:11px}
+  .nav .btn{padding:9px 11px;font-size:11px}
+  .catalog{grid-template-columns:repeat(2,1fr);gap:12px}
+  .cover{height:165px}
+  .book-info{padding:13px}
+  .book-info h3{font-size:17px}
+  .section-head{align-items:stretch;flex-direction:column}
+  .searchbar{max-width:none}
+}
+@media(max-width:430px){
+  .brand{font-size:16px}
+  .navlinks{gap:9px}
+  .navlinks a{font-size:10px}
+  .catalog{grid-template-columns:1fr}
+  .cover{height:190px}
+  .hero{padding:65px 0 55px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="brand" href="#home">MASTA <span>XUL</span></a>
+    <nav class="navlinks" aria-label="Navigasi utama">
+      <a href="#home">Utama</a>
+      <a href="#catalog">eBook</a>
+      <a href="#account">Akaun</a>
+    </nav>
+    <button class="btn btn-outline" onclick="openModal('login')">Log Masuk</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="home">
+    <div class="container">
+      <div class="eyebrow">Masta Xul Digital Library</div>
+      <h1>Knowledge Beyond<br><span>Boundaries.</span></h1>
+      <p>
+        Terokai dunia ilmu melalui koleksi eBook digital Masta Xul.
+        Baca, belajar dan simpan pengetahuan dalam satu perpustakaan.
+      </p>
+      <div class="hero-actions">
+        <a class="btn" href="#catalog">Terokai eBook</a>
+        <button class="btn btn-outline" onclick="openModal('register')">Cipta Akaun</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container" id="catalog">
+    <div class="section-head">
+      <div>
+        <h2>Koleksi eBook</h2>
+        <p>Pilih bahan bacaan digital daripada Masta Xul.</p>
+      </div>
+      <input class="searchbar" id="searchInput" type="search"
+        placeholder="Cari eBook..." aria-label="Cari eBook">
+    </div>
+
+    <div class="filters" aria-label="Kategori eBook">
+      <button class="filter active" data-category="all">Semua</button>
+      <button class="filter" data-category="ilmu">Ilmu</button>
+      <button class="filter" data-category="kesihatan">Kesihatan</button>
+      <button class="filter" data-category="teknologi">Teknologi</button>
+      <button class="filter" data-category="lain-lain">Lain-lain</button>
+    </div>
+
+    <div class="catalog" id="catalogGrid">
+      <div class="empty">
+        <strong>Koleksi eBook akan dipaparkan di sini.</strong>
+        Produk akan dimuatkan selepas katalog disambungkan kepada API Masta Xul.
+      </div>
+    </div>
+  </section>
+
+  <section class="account-area section" id="account">
+    <div class="container account-box">
+      <div class="eyebrow">Member Access</div>
+      <h2>Perpustakaan Peribadi</h2>
+      <p>
+        Log masuk untuk melihat koleksi eBook yang telah dibeli atau
+        diberikan kepada akaun anda.
+      </p>
+      <button class="btn" onclick="openModal('login')">Log Masuk Akaun</button>
+
+      <div class="library" id="libraryPanel">
+        <div class="library-top">
+          <h3>eBook Saya</h3>
+          <button class="btn btn-outline" onclick="logout()">Log Keluar</button>
+        </div>
+        <p id="accountEmail" class="notice"></p>
+        <div class="library-empty" id="libraryContent">
+          Perpustakaan akan dipaparkan selepas sambungan API diaktifkan.
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <strong>MASTA XUL UNIVERSE</strong><br><br>
+    © <span id="year"></span> Masta Xul. All rights reserved.
+  </div>
+</footer>
+
+<div class="modal" id="accountModal" role="dialog" aria-modal="true"
+  aria-labelledby="modalTitle" onclick="outsideClose(event)">
+  <div class="modal-card">
+    <button class="close" aria-label="Tutup" onclick="closeModal()">×</button>
+    <h2 id="modalTitle">Log Masuk</h2>
+    <p id="modalDescription">Masukkan maklumat akaun anda.</p>
+
+    <form id="accountForm">
+      <div id="nameGroup" hidden>
+        <label class="field-label" for="fullName">Nama penuh</label>
+        <input class="field" id="fullName" name="name" autocomplete="name">
+      </div>
+
+      <label class="field-label" for="email">Alamat e-mel</label>
+      <input class="field" id="email" name="email" type="email"
+        autocomplete="email" required>
+
+      <div id="passwordGroup">
+        <label class="field-label" for="password">Kata laluan</label>
+        <input class="field" id="password" name="password" type="password"
+          autocomplete="current-password" required minlength="8">
+      </div>
+
+      <button class="btn modal-submit" type="submit" id="submitButton">
+        Log Masuk
+      </button>
+      <div class="notice" id="formNotice" role="status"></div>
+    </form>
+
+    <div class="switch" id="switchArea">
+      Belum mempunyai akaun?
+      <button onclick="openModal('register')">Daftar di sini</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = "https://mxu-ebook-api.2ulfpv.workers.dev";
+
+let currentMode = "login";
+let activeCategory = "all";
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+function openModal(mode) {
+  currentMode = mode;
+  const modal = document.getElementById("accountModal");
+  const isRegister = mode === "register";
+
+  document.getElementById("modalTitle").textContent =
+    isRegister ? "Cipta Akaun" : "Log Masuk";
+  document.getElementById("modalDescription").textContent =
+    isRegister
+      ? "Daftar akaun Masta Xul untuk memiliki perpustakaan digital."
+      : "Selamat kembali ke Masta Xul.";
+  document.getElementById("nameGroup").hidden = !isRegister;
+  document.getElementById("fullName").required = isRegister;
+  document.getElementById("password").autocomplete =
+    isRegister ? "new-password" : "current-password";
+  document.getElementById("submitButton").textContent =
+    isRegister ? "Daftar Akaun" : "Log Masuk";
+  document.getElementById("switchArea").innerHTML = isRegister
+    ? 'Sudah mempunyai akaun? <button type="button" onclick="openModal(\\'login\\')">Log masuk</button>'
+    : 'Belum mempunyai akaun? <button type="button" onclick="openModal(\\'register\\')">Daftar di sini</button>';
+
+  document.getElementById("formNotice").textContent = "";
+  modal.classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("accountModal").classList.remove("show");
+}
+
+function outsideClose(event) {
+  if (event.target.id === "accountModal") closeModal();
+}
+
+document.getElementById("accountForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+  document.getElementById("formNotice").textContent =
+    "Borang paparan sudah tersedia. Sambungan daftar, OTP dan log masuk akan diaktifkan selepas pemetaan API Worker.";
+});
+
+function logout() {
+  document.getElementById("libraryPanel").classList.remove("show");
+  document.getElementById("libraryContent").textContent =
+    "Anda telah keluar daripada paparan akaun.";
+}
+
+document.querySelectorAll(".filter").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".filter").forEach(item =>
+      item.classList.remove("active")
+    );
+    button.classList.add("active");
+    activeCategory = button.dataset.category;
+    filterCatalog();
+  });
+});
+
+document.getElementById("searchInput").addEventListener("input", filterCatalog);
+
+function filterCatalog() {
+  // Kad katalog sebenar akan ditapis selepas data produk API disambungkan.
+  // Tiada produk atau harga contoh direka dalam paparan ini.
+}
+</script>
+</body>
+</html>
