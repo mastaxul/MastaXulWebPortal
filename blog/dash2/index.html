@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -223,6 +224,18 @@ footer a {color:var(--gold2);text-decoration:none}
       <small>Status API</small>
       <strong id="apiStatus" style="font-size:15px">Checking</strong>
     </div>
+  </div>
+
+  <div class="panel">
+    <div class="section-title">
+      <h2>Receipt Storage Connection</h2>
+      <span>Private Backblaze B2 Bucket</span>
+    </div>
+    <p class="muted">Uji sambungan bucket resit secara selamat. Ujian ini hanya membaca senarai maksimum satu fail di bawah prefix receipts/; ia tidak upload atau memadam fail.</p>
+    <div class="actions" style="margin-top:12px">
+      <button id="testReceiptB2Button" class="btn btn-secondary" type="button">Test Receipt Storage</button>
+    </div>
+    <div id="receiptB2Status" class="status"></div>
   </div>
 
   <div class="panel">
@@ -812,6 +825,32 @@ async function deleteEbook(file, button) {
     button.textContent = "Padam";
   }
 }
+
+// TEST PRIVATE RECEIPT STORAGE CONNECTION
+$("testReceiptB2Button").addEventListener("click", async () => {
+  const button = $("testReceiptB2Button");
+  const status = $("receiptB2Status");
+
+  button.disabled = true;
+  button.textContent = "Testing connection...";
+  hideStatus(status);
+
+  try {
+    const data = await apiRequest("/api/admin/receipts/b2-test");
+    const prefixScope = data.keyNamePrefix || "not restricted";
+    const message =
+      "Connected to " + data.bucket +
+      ". Bucket access confirmed. Upload path: " + data.prefix +
+      ". Key name prefix: " + prefixScope + ".";
+
+    showStatus(status, message, "success");
+  } catch (error) {
+    showStatus(status, error.message, "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Test Receipt Storage";
+  }
+});
 
 // REFRESH AND LOGOUT
 $("refreshButton").addEventListener("click", loadEbooks);
