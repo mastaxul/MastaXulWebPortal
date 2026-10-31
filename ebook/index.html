@@ -175,6 +175,24 @@ align-items:center;gap:12px;flex-wrap:wrap;
 text-align:center;padding:25px;color:var(--muted);
 font-size:13px;border:1px dashed var(--line);border-radius:8px;
 }
+.library-section{margin-top:24px;padding-top:22px;border-top:1px solid var(--line);text-align:left}
+.library-section h3{font:22px Georgia,serif;margin:0 0 14px;color:var(--gold-light)}
+.library-actions{display:flex;gap:8px;flex-wrap:wrap}
+.history-list{display:grid;gap:10px}
+.history-item{padding:13px;border:1px solid var(--line);border-radius:9px;background:#101010;text-align:left}
+.history-item strong{display:block;color:var(--gold-light);margin-bottom:5px}
+.history-item p{font-size:12px;color:var(--muted);line-height:1.6;margin:3px 0}
+.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px;text-align:left}
+.profile-grid .full{grid-column:1/-1}
+.profile-help{font-size:11px;color:var(--muted);line-height:1.6;margin:8px 0 14px}
+.profile-submit{margin-top:8px}
+.ebook-viewer-modal{display:none;position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.9);padding:12px;align-items:center;justify-content:center}
+.ebook-viewer-modal.show{display:flex}
+.ebook-viewer-card{width:min(1000px,100%);height:min(92vh,900px);background:#151515;border:1px solid #554326;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.ebook-viewer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--gold-light)}
+.ebook-viewer-frame{width:100%;flex:1;min-height:240px;border:1px solid var(--line);background:white;border-radius:6px}
+.ebook-viewer-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+@media(max-width:760px){.profile-grid{grid-template-columns:1fr}.profile-grid .full{grid-column:auto}.ebook-viewer-card{height:94vh;padding:8px}}
 .status{
 margin:14px 0;padding:12px;border-radius:7px;
 font-size:12px;line-height:1.6;display:none;
@@ -340,6 +358,28 @@ Log Keluar
 <div class="library-email" id="accountEmail"></div>
 <div class="status" id="libraryStatus"></div>
 <div class="library-list" id="libraryContent"></div>
+<div class="library-section">
+  <h3>Sejarah Pembelian</h3>
+  <div class="history-list" id="purchaseHistoryList"><div class="library-empty">Memuatkan sejarah pembelian...</div></div>
+</div>
+<div class="library-section">
+  <h3>Profil Saya</h3>
+  <div class="status" id="profileChangeStatus" role="status"></div>
+  <p class="profile-help">Perubahan profil tidak terus menggantikan maklumat semasa. Permohonan akan dihantar kepada admin untuk semakan. Profil lama kekal digunakan sehingga permohonan diluluskan. Alamat e-mel log masuk tidak boleh diubah melalui borang ini.</p>
+  <form id="customerProfileForm">
+    <div class="profile-grid">
+      <div><label class="field-label" for="profileFullName">Nama penuh</label><input class="field" id="profileFullName" maxlength="80" required></div>
+      <div><label class="field-label" for="profilePhone">Nombor telefon</label><input class="field" id="profilePhone" type="tel" maxlength="30" required></div>
+      <div class="full"><label class="field-label" for="profileAddress1">Alamat baris 1</label><input class="field" id="profileAddress1" maxlength="160" required></div>
+      <div class="full"><label class="field-label" for="profileAddress2">Alamat baris 2 (pilihan)</label><input class="field" id="profileAddress2" maxlength="160"></div>
+      <div><label class="field-label" for="profilePostcode">Poskod</label><input class="field" id="profilePostcode" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" required></div>
+      <div><label class="field-label" for="profileCity">Bandar</label><input class="field" id="profileCity" maxlength="80" required></div>
+      <div><label class="field-label" for="profileState">Negeri</label><select class="field" id="profileState" required><option value="">Pilih negeri</option><option>Johor</option><option>Kedah</option><option>Kelantan</option><option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option><option>Perak</option><option>Perlis</option><option>Pulau Pinang</option><option>Sabah</option><option>Sarawak</option><option>Selangor</option><option>Terengganu</option><option>W.P. Kuala Lumpur</option><option>W.P. Labuan</option><option>W.P. Putrajaya</option></select></div>
+      <div><label class="field-label" for="profileCountry">Negara</label><input class="field" id="profileCountry" value="Malaysia" maxlength="80" required></div>
+    </div>
+    <button class="btn profile-submit" id="profileSubmitButton" type="submit">Hantar Perubahan untuk Kelulusan</button>
+  </form>
+</div>
 </div>
 </div>
 </section>
@@ -529,7 +569,10 @@ busy: false,
 pendingPurchaseProductId: null,
 checkoutProduct: null,
 currentPurchase: null,
-checkoutBusy: false
+checkoutBusy: false,
+currentEbookObjectUrl: "",
+profileDirty: false,
+customerRefreshTimer: null
 };
 const $ = id => document.getElementById(id);
 $("year").textContent = new Date().getFullYear();
@@ -603,6 +646,7 @@ PASSWORD_HASH_REQUIRES_RESET:
 INVALID_EMAIL_OR_PASSWORD:
 "E-mel atau kata laluan tidak betul.",
 UNAUTHORIZED: "Sesi tamat. Sila log masuk semula.",
+ACCOUNT_BANNED: "Akaun anda telah disekat. Sila hubungi pihak Masta Xul.",
 CUSTOMER_DETAILS_REQUIRED: "Sila lengkapkan semua maklumat pembeli dan alamat dengan betul.",
 PRODUCT_ALREADY_OWNED: "eBook ini sudah tersedia dalam Perpustakaan Peribadi anda.",
 ACTIVE_EBOOK_NOT_FOUND: "eBook ini tidak lagi tersedia untuk pembelian."
@@ -698,8 +742,10 @@ throw new Error("Token sesi tidak diterima daripada API.");
 }
 saveToken(result.token);
 state.currentCustomer = result.customer || null;
+state.profileDirty = false;
 closeModal();
 await loadCustomerArea();
+startCustomerAutoRefresh();
 if (state.pendingPurchaseProductId) {
 const product = state.products.find(item => String(item.id) === String(state.pendingPurchaseProductId));
 state.pendingPurchaseProductId = null;
@@ -926,6 +972,7 @@ throw new Error(result.error || "RECEIPT_UPLOAD_FAILED");
 }
 state.currentPurchase.receipt_status = "pending";
 showStatus($("receiptUploadStatus"), "Resit berjaya dihantar. Pesanan kini menunggu semakan admin. Akses PDF akan dibuka selepas pembayaran disahkan.", "success");
+loadCustomerArea({ silent: true });
 button.textContent = "Resit Dihantar";
 $("receiptFile").disabled = true;
 } catch (error) {
@@ -1044,8 +1091,7 @@ container.replaceChildren();
 if (!items.length) {
 const empty = document.createElement("div");
 empty.className = "library-empty";
-empty.textContent =
-"Belum ada eBook dalam perpustakaan akaun ini.";
+empty.textContent = "Belum ada eBook dalam perpustakaan akaun ini. Selepas admin meluluskan pembayaran, eBook akan muncul secara automatik.";
 container.append(empty);
 return;
 }
@@ -1056,47 +1102,226 @@ const details = document.createElement("div");
 const heading = document.createElement("h4");
 heading.textContent = item.name || "eBook";
 const expiry = document.createElement("p");
-expiry.textContent = item.expires_at
-? "Akses sehingga: " + item.expires_at
-: "Akses tanpa tarikh tamat";
-const button = document.createElement("button");
-button.className = "btn btn-outline btn-small";
-button.textContent = "Muat turun";
-button.disabled = true;
-button.title = "Fungsi muat turun belum diaktifkan.";
+expiry.textContent = item.expires_at ? "Akses sehingga: " + new Date(item.expires_at).toLocaleDateString("ms-MY") : "Akses tanpa tarikh tamat";
+const actions = document.createElement("div");
+actions.className = "library-actions";
+const viewButton = document.createElement("button");
+viewButton.className = "btn btn-outline btn-small";
+viewButton.type = "button";
+viewButton.textContent = "Lihat Live PDF";
+viewButton.addEventListener("click", () => viewEbookPdf(item, viewButton));
+const downloadButton = document.createElement("button");
+downloadButton.className = "btn btn-small";
+downloadButton.type = "button";
+downloadButton.textContent = "Muat turun";
+downloadButton.addEventListener("click", () => downloadEbookPdf(item, downloadButton));
+actions.append(viewButton, downloadButton);
 details.append(heading, expiry);
-row.append(details, button);
+row.append(details, actions);
 container.append(row);
 });
 }
-async function loadCustomerArea() {
+
+function formatCustomerDate(value) {
+if (!value) return "-";
+const date = new Date(value);
+return Number.isNaN(date.getTime()) ? "-" : date.toLocaleString("ms-MY", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+function renderPurchaseHistory(purchases) {
+const container = $("purchaseHistoryList");
+container.replaceChildren();
+if (!purchases.length) {
+const empty = document.createElement("div");
+empty.className = "library-empty";
+empty.textContent = "Belum ada rekod pembelian.";
+container.append(empty);
+return;
+}
+purchases.forEach(purchase => {
+const card = document.createElement("div");
+card.className = "history-item";
+const title = document.createElement("strong");
+title.textContent = purchase.product_name || "eBook";
+const order = document.createElement("p");
+order.textContent = "Pesanan: " + (purchase.order_reference || "-");
+const amount = document.createElement("p");
+amount.textContent = "Jumlah: " + formatPrice(purchase.amount_minor, purchase.currency);
+const payment = document.createElement("p");
+payment.textContent = "Pembayaran: " + (purchase.payment_status === "paid" ? "Selesai" : purchase.payment_status === "pending" ? "Menunggu pembayaran/semakan" : purchase.payment_status || "-");
+const receipt = document.createElement("p");
+receipt.textContent = "Resit: " + (purchase.receipt_status === "approved" ? "Diluluskan" : purchase.receipt_status === "pending" ? "Menunggu semakan" : purchase.receipt_status === "rejected" ? "Ditolak" : "Belum dihantar");
+const date = document.createElement("p");
+date.textContent = "Tarikh: " + formatCustomerDate(purchase.created_at);
+card.append(title, order, amount, payment, receipt, date);
+container.append(card);
+});
+}
+
+function populateCustomerProfile(customer, pendingRequest) {
+if (state.profileDirty) return;
+const source = pendingRequest || customer || {};
+$("profileFullName").value = source.full_name || customer?.billing_name || customer?.name || "";
+$("profilePhone").value = source.phone || customer?.phone || "";
+$("profileAddress1").value = source.address_line1 || customer?.address_line1 || "";
+$("profileAddress2").value = source.address_line2 || customer?.address_line2 || "";
+$("profilePostcode").value = source.postcode || customer?.postcode || "";
+$("profileCity").value = source.city || customer?.city || "";
+$("profileState").value = source.state || customer?.state || "";
+$("profileCountry").value = source.country || customer?.country || "Malaysia";
+if (pendingRequest) {
+showStatus($("profileChangeStatus"), "Permohonan perubahan profil anda sedang menunggu kelulusan admin. Maklumat profil lama kekal aktif sehingga diluluskan.", "info");
+} else {
+clearStatus($("profileChangeStatus"));
+}
+}
+
+async function submitCustomerProfileChange(event) {
+event.preventDefault();
+const form = $("customerProfileForm");
+if (!form.reportValidity()) return;
+const button = $("profileSubmitButton");
+button.disabled = true;
+button.textContent = "Menghantar permohonan...";
+clearStatus($("profileChangeStatus"));
+try {
+await apiRequest("/api/customer/profile/change-request", {
+method: "POST",
+body: {
+full_name: $("profileFullName").value.trim(),
+phone: $("profilePhone").value.trim(),
+address_line1: $("profileAddress1").value.trim(),
+address_line2: $("profileAddress2").value.trim(),
+postcode: $("profilePostcode").value.trim(),
+city: $("profileCity").value.trim(),
+state: $("profileState").value.trim(),
+country: $("profileCountry").value.trim()
+}
+});
+state.profileDirty = false;
+showStatus($("profileChangeStatus"), "Permohonan berjaya dihantar. Profil akan dikemas kini selepas admin meluluskannya.", "success");
+await loadCustomerArea({ silent: true });
+} catch (error) {
+showStatus($("profileChangeStatus"), friendlyError(error), "error");
+} finally {
+button.disabled = false;
+button.textContent = "Hantar Perubahan untuk Kelulusan";
+}
+}
+
+async function getEbookBlob(item, download = false) {
+if (!item?.ebook_id || !getToken()) throw new Error("Sila log masuk semula untuk mengakses eBook.");
+const query = new URLSearchParams({ ebook_id: item.ebook_id });
+if (download) query.set("download", "1");
+const response = await fetch(API_BASE + "/api/customer/ebooks/file?" + query.toString(), {
+method: "GET",
+headers: { Authorization: "Bearer " + getToken() }
+});
+if (!response.ok) {
+const data = await response.json().catch(() => ({}));
+throw new Error(data.message || data.error || "Fail eBook tidak dapat dibuka.");
+}
+const blob = await response.blob();
+if (blob.size <= 0) throw new Error("Fail PDF kosong atau tidak lengkap.");
+return blob;
+}
+
+async function viewEbookPdf(item, button) {
+button.disabled = true;
+const original = button.textContent;
+button.textContent = "Membuka PDF...";
+try {
+const blob = await getEbookBlob(item, false);
+if (state.currentEbookObjectUrl) URL.revokeObjectURL(state.currentEbookObjectUrl);
+state.currentEbookObjectUrl = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
+$("ebookViewerTitle").textContent = item.name || "eBook PDF";
+$("ebookViewerFrame").src = state.currentEbookObjectUrl;
+$("ebookViewerDownload").href = state.currentEbookObjectUrl;
+$("ebookViewerDownload").download = item.file_name || "Masta-Xul-eBook.pdf";
+$("ebookViewerModal").classList.add("show");
+} catch (error) {
+showStatus($("libraryStatus"), error.message, "error");
+} finally {
+button.disabled = false;
+button.textContent = original;
+}
+}
+
+async function downloadEbookPdf(item, button) {
+button.disabled = true;
+const original = button.textContent;
+button.textContent = "Menyediakan PDF...";
+try {
+const blob = await getEbookBlob(item, true);
+const objectUrl = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
+const link = document.createElement("a");
+link.href = objectUrl;
+link.download = item.file_name || "Masta-Xul-eBook.pdf";
+document.body.appendChild(link);
+link.click();
+link.remove();
+setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
+showStatus($("libraryStatus"), "Muat turun eBook dimulakan.", "success");
+} catch (error) {
+showStatus($("libraryStatus"), error.message, "error");
+} finally {
+button.disabled = false;
+button.textContent = original;
+}
+}
+
+function closeEbookViewer() {
+$("ebookViewerModal").classList.remove("show");
+$("ebookViewerFrame").removeAttribute("src");
+$("ebookViewerDownload").removeAttribute("href");
+if (state.currentEbookObjectUrl) {
+URL.revokeObjectURL(state.currentEbookObjectUrl);
+state.currentEbookObjectUrl = "";
+}
+}
+
+async function loadCustomerArea(options = {}) {
 const token = getToken();
 if (!token) {
 $("libraryPanel").classList.remove("show");
 return;
 }
 try {
-const [profile, library] = await Promise.all([
+const [profile, library, purchases] = await Promise.all([
 apiRequest("/api/customer/me"),
-apiRequest("/api/customer/library")
+apiRequest("/api/customer/library"),
+apiRequest("/api/customer/purchases")
 ]);
 state.currentCustomer = profile.customer || null;
-$("accountEmail").textContent =
-state.currentCustomer
-? state.currentCustomer.email
-: "";
+$("accountEmail").textContent = state.currentCustomer?.email || "";
 renderLibrary(library.library || []);
+renderPurchaseHistory(purchases.purchases || []);
+populateCustomerProfile(state.currentCustomer, profile.profile_change_request || null);
 $("libraryPanel").classList.add("show");
 $("accountMainButton").classList.add("hidden");
 $("headerAccountButton").textContent = "Akaun Saya";
+if (!options.silent) clearStatus($("libraryStatus"));
 } catch (error) {
+if (error.status === 401 || error.status === 403) {
 clearToken();
 state.currentCustomer = null;
 $("libraryPanel").classList.remove("show");
 $("accountMainButton").classList.remove("hidden");
 $("headerAccountButton").textContent = "Log Masuk";
+showStatus($("libraryStatus"), error.message || "Sesi tidak sah. Sila log masuk semula.", "error");
+} else if (!options.silent) {
+showStatus($("libraryStatus"), "Maklumat akaun belum dapat dimuatkan. Sila cuba refresh.", "error");
 }
 }
+}
+
+function startCustomerAutoRefresh() {
+if (state.customerRefreshTimer) clearInterval(state.customerRefreshTimer);
+state.customerRefreshTimer = setInterval(() => {
+if (getToken() && !document.hidden && !state.checkoutBusy) loadCustomerArea({ silent: true });
+}, 20000);
+}
+
 /* ================================
 LOGOUT
 ================================ */
@@ -1113,6 +1338,8 @@ method: "POST"
 } finally {
 clearToken();
 state.currentCustomer = null;
+if (state.customerRefreshTimer) clearInterval(state.customerRefreshTimer);
+closeEbookViewer();
 $("libraryPanel").classList.remove("show");
 $("accountMainButton").classList.remove("hidden");
 $("headerAccountButton").textContent = "Log Masuk";
@@ -1158,6 +1385,12 @@ if (event.target === $("checkoutModal")) closeCheckoutModal();
 });
 $("checkoutForm").addEventListener("submit", createCheckoutPurchase);
 $("receiptUploadButton").addEventListener("click", uploadPaymentReceipt);
+$("customerProfileForm").addEventListener("submit", submitCustomerProfileChange);
+$("customerProfileForm").addEventListener("input", () => { state.profileDirty = true; });
+$("closeEbookViewerButton").addEventListener("click", closeEbookViewer);
+$("ebookViewerModal").addEventListener("click", event => { if (event.target === $("ebookViewerModal")) closeEbookViewer(); });
+window.addEventListener("focus", () => { if (getToken()) loadCustomerArea({ silent: true }); });
+document.addEventListener("visibilitychange", () => { if (!document.hidden && getToken()) loadCustomerArea({ silent: true }); });
 $("switchModeButton").addEventListener("click", () => {
 openModal(state.mode === "register" ? "login" : "register");
 });
@@ -1167,8 +1400,17 @@ INITIAL LOAD
 async function initialisePage() {
 await loadCatalog();
 await loadCustomerArea();
+if (getToken()) startCustomerAutoRefresh();
 }
 initialisePage();
 </script>
+
+<div class="ebook-viewer-modal" id="ebookViewerModal" role="dialog" aria-modal="true" aria-label="Paparan eBook PDF">
+  <div class="ebook-viewer-card">
+    <div class="ebook-viewer-head"><strong id="ebookViewerTitle">eBook PDF</strong><button class="btn btn-outline btn-small" type="button" id="closeEbookViewerButton">Tutup ✕</button></div>
+    <iframe class="ebook-viewer-frame" id="ebookViewerFrame" title="Paparan eBook PDF"></iframe>
+    <div class="ebook-viewer-actions"><a class="btn" id="ebookViewerDownload" href="#" download>Muat turun PDF</a></div>
+  </div>
+</div>
 </body>
 </html>
