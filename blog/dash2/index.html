@@ -887,6 +887,28 @@ function renderPayments(payments) {
     customerEmail.textContent = payment.customer_email || "-";
     customerCell.append(customerName, customerEmail);
 
+    if (payment.customer_phone) {
+      const customerPhone = document.createElement("div");
+      customerPhone.className = "muted";
+      customerPhone.textContent = "Telefon: " + payment.customer_phone;
+      customerCell.appendChild(customerPhone);
+    }
+
+    const addressParts = [
+      payment.customer_address_line1,
+      payment.customer_address_line2,
+      payment.customer_postcode,
+      payment.customer_city,
+      payment.customer_state,
+      payment.customer_country
+    ].filter(Boolean);
+    if (addressParts.length) {
+      const customerAddress = document.createElement("div");
+      customerAddress.className = "muted";
+      customerAddress.textContent = "Alamat: " + addressParts.join(", ");
+      customerCell.appendChild(customerAddress);
+    }
+
     const productCell = makePaymentCell(payment.product_name || "eBook");
     const amountCell = makePaymentCell(formatMoney(payment.amount_minor, payment.currency));
 
