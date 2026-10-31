@@ -69,13 +69,11 @@ h1 {font-size:clamp(28px,5vw,43px);margin:9px 0;letter-spacing:-1.5px}
 .login-box {max-width:440px;margin:25px auto}
 .field {margin:14px 0}
 .field label {display:block;color:var(--muted);font-size:12px;margin-bottom:7px}
-input[type="password"],input[type="text"],input[type="number"],select,textarea {
+input[type="password"],input[type="text"] {
   width:100%;padding:13px;border-radius:9px;
   border:1px solid var(--line);background:#090d13;color:var(--text);
   outline:none;
 }
-select {min-height:45px}
-textarea {min-height:92px;resize:vertical;line-height:1.5}
 input:focus {border-color:var(--gold)}
 .btn {
   border:1px solid var(--gold);background:var(--gold);
@@ -133,6 +131,21 @@ td {color:#d8dce3}
 .module h3 {font-size:16px;margin:15px 0 6px}
 .module p {color:var(--muted);font-size:12px;line-height:1.6}
 .module-footer {color:var(--gold2);font-size:12px;margin-top:auto;padding-top:15px}
+.payment-summary {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:15px 0 18px}
+.payment-filter {background:#090d13;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12px;min-width:145px}
+.payment-table table {min-width:1000px}
+.payment-badge {display:inline-block;border-radius:30px;padding:5px 9px;font-size:10px;font-weight:700;white-space:nowrap;border:1px solid var(--line)}
+.payment-badge.pending {color:#e5ca89;background:#2b2417;border-color:#66502a}
+.payment-badge.approved {color:#8bd4ac;background:#10251d;border-color:#285b43}
+.payment-badge.rejected {color:#ffaaaa;background:#2a1717;border-color:#713838}
+.payment-badge.none {color:#aab2bf;background:#1b2029;border-color:#343d4b}
+.payment-actions {display:flex;gap:6px;flex-wrap:wrap;min-width:150px}
+.receipt-modal {display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.88);padding:14px;align-items:center;justify-content:center}
+.receipt-modal.show {display:flex}
+.receipt-card {width:min(920px,100%);max-height:94vh;overflow:auto;background:#121720;border:1px solid #655433;border-radius:14px;padding:15px}
+.receipt-viewer {background:#080b10;border:1px solid var(--line);border-radius:9px;min-height:220px;max-height:78vh;overflow:auto;display:flex;align-items:center;justify-content:center;padding:8px}
+.receipt-viewer iframe {width:100%;height:75vh;border:0;background:white}
+.receipt-viewer img {display:block;max-width:100%;max-height:75vh;object-fit:contain}
 footer {
   margin-top:35px;padding-top:18px;border-top:1px solid var(--line);
   display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
@@ -147,7 +160,9 @@ footer a {color:var(--gold2);text-decoration:none}
   .grid {grid-template-columns:1fr}
   .header-right {text-align:left}
   .stats {grid-template-columns:1fr 1fr}
+  .payment-summary {grid-template-columns:1fr 1fr}
   .section-title {align-items:flex-start}
+  .receipt-card {padding:10px}
 }
 </style>
 </head>
@@ -228,18 +243,6 @@ footer a {color:var(--gold2);text-decoration:none}
 
   <div class="panel">
     <div class="section-title">
-      <h2>Receipt Storage Connection</h2>
-      <span>Private Backblaze B2 Bucket</span>
-    </div>
-    <p class="muted">Uji sambungan bucket resit secara selamat. Ujian ini hanya membaca senarai maksimum satu fail di bawah prefix receipts/; ia tidak upload atau memadam fail.</p>
-    <div class="actions" style="margin-top:12px">
-      <button id="testReceiptB2Button" class="btn btn-secondary" type="button">Test Receipt Storage</button>
-    </div>
-    <div id="receiptB2Status" class="status"></div>
-  </div>
-
-  <div class="panel">
-    <div class="section-title">
       <h2>Upload eBook PDF</h2>
       <span>Backblaze B2 Storage</span>
     </div>
@@ -261,41 +264,6 @@ footer a {color:var(--gold2);text-decoration:none}
 
   <div class="panel">
     <div class="section-title">
-      <h2>Daftarkan PDF sebagai Produk</h2>
-      <span>Katalog Website</span>
-    </div>
-
-    <p class="muted">
-      Pilih PDF yang telah di-upload, lengkapkan maklumat produk dan terbitkan ke katalog utama.
-      PDF yang sudah dipautkan kepada produk tidak boleh dipilih sekali lagi.
-    </p>
-
-    <form id="productForm" class="upload-area">
-      <div class="field">
-        <label for="productPdf">Pilih fail PDF</label>
-        <select id="productPdf" required>
-          <option value="">Memuatkan fail PDF...</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="productName">Nama eBook</label>
-        <input id="productName" type="text" maxlength="160" placeholder="Nama produk yang akan dipaparkan" required>
-      </div>
-      <div class="field">
-        <label for="productDescription">Penerangan produk</label>
-        <textarea id="productDescription" maxlength="5000" rows="3" placeholder="Penerangan ringkas tentang eBook..."></textarea>
-      </div>
-      <div class="field">
-        <label for="productPrice">Harga (RM)</label>
-        <input id="productPrice" type="number" min="0" step="0.01" value="0.00" required>
-      </div>
-      <button id="publishProductButton" class="btn" type="submit">Terbitkan ke Katalog</button>
-    </form>
-    <div id="productStatus" class="status"></div>
-  </div>
-
-  <div class="panel">
-    <div class="section-title">
       <h2>Koleksi eBook</h2>
       <span id="listCount">0 fail</span>
     </div>
@@ -309,14 +277,80 @@ footer a {color:var(--gold2);text-decoration:none}
             <th>Nama Fail</th>
             <th>Saiz</th>
             <th>Tarikh Upload</th>
-            <th>Status Katalog</th>
             <th>Tindakan</th>
           </tr>
         </thead>
         <tbody id="ebookList">
-          <tr><td colspan="5" class="empty">Memuatkan senarai...</td></tr>
+          <tr><td colspan="4" class="empty">Memuatkan senarai...</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- PAYMENT REVIEW -->
+  <div class="panel">
+    <div class="section-title">
+      <div>
+        <h2>Semakan Pembayaran</h2>
+        <span>Manual QR · Bank Islam</span>
+      </div>
+      <div class="actions">
+        <select id="paymentFilter" class="payment-filter" aria-label="Tapis pembayaran">
+          <option value="pending">Menunggu semakan</option>
+          <option value="approved">Diluluskan</option>
+          <option value="rejected">Ditolak</option>
+          <option value="all">Semua pesanan</option>
+        </select>
+        <button id="refreshPaymentsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button>
+      </div>
+    </div>
+
+    <div class="payment-summary">
+      <div class="stat">
+        <small>Menunggu semakan</small>
+        <strong id="pendingPaymentCount">0</strong>
+      </div>
+      <div class="stat">
+        <small>Diluluskan</small>
+        <strong id="approvedPaymentCount">0</strong>
+      </div>
+      <div class="stat">
+        <small>Ditolak</small>
+        <strong id="rejectedPaymentCount">0</strong>
+      </div>
+    </div>
+
+    <div id="paymentStatus" class="status"></div>
+
+    <div class="table-wrap payment-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Pesanan</th>
+            <th>Pelanggan</th>
+            <th>Produk</th>
+            <th>Jumlah</th>
+            <th>Status Resit</th>
+            <th>Resit</th>
+            <th>Tindakan</th>
+          </tr>
+        </thead>
+        <tbody id="paymentList">
+          <tr><td colspan="7" class="empty">Memuatkan senarai pembayaran...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="receiptModal" class="receipt-modal" role="dialog" aria-modal="true" aria-label="Paparan resit pembayaran">
+    <div class="receipt-card">
+      <div class="section-title">
+        <h2>Resit Pembayaran</h2>
+        <button id="closeReceiptButton" class="btn btn-secondary btn-small" type="button">Tutup ✕</button>
+      </div>
+      <div id="receiptViewer" class="receipt-viewer">
+        <span class="muted">Pilih resit untuk dipaparkan.</span>
+      </div>
     </div>
   </div>
 
@@ -354,9 +388,9 @@ footer a {color:var(--gold2);text-decoration:none}
       <div class="module-icon">▧</div>
       <span class="tag">FASA 3</span>
     </div>
-    <h3>Pesanan</h3>
-    <p>Pantau pesanan, transaksi dan status pembayaran.</p>
-    <div class="module-footer">Coming Soon →</div>
+    <h3>Semakan Pembayaran</h3>
+    <p>Semak resit, luluskan transaksi dan aktifkan akses eBook pelanggan.</p>
+    <div class="module-footer">Payment Review Active ✓</div>
   </article>
 
   <article class="module">
@@ -407,8 +441,6 @@ const TOKEN_KEY = "mxu_ebook_admin_session";
 const $ = id => document.getElementById(id);
 
 let adminToken = sessionStorage.getItem(TOKEN_KEY) || "";
-let ebookFiles = [];
-let adminProducts = [];
 
 function showStatus(element, message, type = "info") {
   element.textContent = message;
@@ -430,7 +462,8 @@ function formatSize(bytes) {
 
 function formatDate(timestamp) {
   if (!timestamp) return "-";
-  const date = new Date(Number(timestamp));
+  const raw = String(timestamp);
+  const date = new Date(/^\d+$/.test(raw) ? Number(raw) : raw);
   if (Number.isNaN(date.getTime())) return "-";
   return date.toLocaleString("ms-MY", {
     day:"2-digit",
@@ -464,7 +497,7 @@ async function apiRequest(path, options = {}) {
   }
 
   if (!response.ok || data.status === "error") {
-    throw new Error(data.message || data.errorMessage || "Permintaan gagal.");
+    throw new Error(data.message || data.errorMessage || data.error || "Permintaan gagal.");
   }
 
   return data;
@@ -520,7 +553,7 @@ $("loginForm").addEventListener("submit", async event => {
     $("adminToken").value = "";
     showAdmin();
 
-    await loadEbooks();
+    await Promise.all([loadEbooks(), loadPayments()]);
 
   } catch (error) {
     showStatus($("loginStatus"), error.message, "error");
@@ -530,40 +563,7 @@ $("loginForm").addEventListener("submit", async event => {
   }
 });
 
-// RENDER PDF OPTIONS THAT HAVE NOT BEEN LINKED TO A PRODUCT
-function renderProductFileOptions() {
-  const select = $("productPdf");
-  const button = $("publishProductButton");
-  const linkedIds = new Set(
-    adminProducts
-      .filter(product => product.b2_file_id)
-      .map(product => product.b2_file_id)
-  );
-  const availableFiles = ebookFiles.filter(file => !linkedIds.has(file.fileId));
-
-  select.replaceChildren();
-
-  const placeholder = document.createElement("option");
-  placeholder.value = "";
-  placeholder.textContent = availableFiles.length
-    ? "-- Pilih PDF --"
-    : "Tiada PDF yang belum dipautkan";
-  placeholder.disabled = true;
-  placeholder.selected = true;
-  select.appendChild(placeholder);
-
-  availableFiles.forEach(file => {
-    const option = document.createElement("option");
-    option.value = file.fileId;
-    option.textContent = `${file.fileName} (${formatSize(file.size)})`;
-    select.appendChild(option);
-  });
-
-  select.disabled = availableFiles.length === 0;
-  button.disabled = availableFiles.length === 0;
-}
-
-// LOAD EBOOK FILES AND PRODUCT LINKS
+// LOAD EBOOK LIST
 async function loadEbooks() {
   const tbody = $("ebookList");
   const status = $("listStatus");
@@ -572,40 +572,28 @@ async function loadEbooks() {
   $("apiStatus").textContent = "Loading";
   hideStatus(status);
 
-  tbody.innerHTML = '<tr><td colspan="5" class="empty">Sedang memuatkan senarai eBook...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="4" class="empty">Sedang memuatkan senarai eBook...</td></tr>';
 
   try {
-    const [fileData, productData] = await Promise.all([
-      apiRequest("/api/ebooks"),
-      apiRequest("/api/admin/products")
-    ]);
+    const data = await apiRequest("/api/ebooks");
 
-    ebookFiles = Array.isArray(fileData.files) ? fileData.files : [];
-    adminProducts = Array.isArray(productData.products) ? productData.products : [];
+    const files = Array.isArray(data.files) ? data.files : [];
 
-    const linkedProducts = new Map();
-    adminProducts.forEach(product => {
-      if (product.b2_file_id) linkedProducts.set(product.b2_file_id, product.name || "Produk");
-    });
-
-    $("totalBooks").textContent = ebookFiles.length;
-    $("listCount").textContent = ebookFiles.length + " fail";
+    $("totalBooks").textContent = files.length;
+    $("listCount").textContent = files.length + " fail";
     $("apiStatus").textContent = "Connected";
 
-    const totalBytes = ebookFiles.reduce((sum, file) => sum + Number(file.size || 0), 0);
+    const totalBytes = files.reduce((sum, file) => sum + Number(file.size || 0), 0);
     $("totalStorage").textContent = formatSize(totalBytes);
 
-    renderProductFileOptions();
-    tbody.replaceChildren();
+    tbody.innerHTML = "";
 
-    if (!ebookFiles.length) {
-      const row = document.createElement("tr");
-      row.innerHTML = '<td colspan="5" class="empty">Belum ada fail PDF.</td>';
-      tbody.appendChild(row);
+    if (!files.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="empty">Belum ada fail PDF.</td></tr>';
       return;
     }
 
-    ebookFiles.forEach(file => {
+    files.forEach(file => {
       const tr = document.createElement("tr");
 
       const nameCell = document.createElement("td");
@@ -616,6 +604,7 @@ async function loadEbooks() {
       const id = document.createElement("div");
       id.className = "muted";
       id.textContent = "PDF Document";
+
       nameCell.append(name, id);
 
       const sizeCell = document.createElement("td");
@@ -624,31 +613,301 @@ async function loadEbooks() {
       const dateCell = document.createElement("td");
       dateCell.textContent = formatDate(file.uploadedAt);
 
-      const statusCell = document.createElement("td");
-      const linkedName = linkedProducts.get(file.fileId);
-      statusCell.textContent = linkedName
-        ? "Dalam katalog: " + linkedName
-        : "Belum dipautkan";
-
       const actionCell = document.createElement("td");
       const deleteButton = document.createElement("button");
       deleteButton.className = "btn btn-danger btn-small";
       deleteButton.textContent = "Padam";
-      deleteButton.addEventListener("click", () => deleteEbook(file, deleteButton));
-      actionCell.appendChild(deleteButton);
 
-      tr.append(nameCell, sizeCell, dateCell, statusCell, actionCell);
+      deleteButton.addEventListener("click", () => deleteEbook(file, deleteButton));
+
+      actionCell.appendChild(deleteButton);
+      tr.append(nameCell, sizeCell, dateCell, actionCell);
       tbody.appendChild(tr);
     });
 
   } catch (error) {
     $("apiStatus").textContent = "Error";
-    tbody.innerHTML = '<tr><td colspan="5" class="empty">Gagal memuatkan senarai.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">Gagal memuatkan senarai.</td></tr>';
     showStatus(status, error.message, "error");
   } finally {
     $("refreshButton").disabled = false;
   }
 }
+
+// =====================================
+// PAYMENT REVIEW
+// =====================================
+
+let receiptObjectUrl = "";
+
+function formatMoney(amountMinor, currency) {
+  const amount = Number(amountMinor);
+  if (!Number.isFinite(amount)) return "-";
+  return new Intl.NumberFormat("ms-MY", {
+    style: "currency",
+    currency: currency || "MYR"
+  }).format(amount / 100);
+}
+
+function makePaymentBadge(label, kind) {
+  const badge = document.createElement("span");
+  badge.className = "payment-badge " + kind;
+  badge.textContent = label;
+  return badge;
+}
+
+function makePaymentCell(text, className = "") {
+  const cell = document.createElement("td");
+  if (className) cell.className = className;
+  cell.textContent = text || "-";
+  return cell;
+}
+
+function renderPayments(payments) {
+  const tbody = $("paymentList");
+  tbody.replaceChildren();
+
+  if (!payments.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 7;
+    cell.className = "empty";
+    cell.textContent = "Tiada rekod pembayaran untuk kategori ini.";
+    row.appendChild(cell);
+    tbody.appendChild(row);
+    return;
+  }
+
+  payments.forEach(payment => {
+    const row = document.createElement("tr");
+
+    const orderCell = document.createElement("td");
+    const order = document.createElement("div");
+    order.className = "file-title";
+    order.textContent = payment.order_reference || "-";
+    const orderDate = document.createElement("div");
+    orderDate.className = "muted";
+    orderDate.textContent = formatDate(payment.order_created_at);
+    orderCell.append(order, orderDate);
+
+    const customerCell = document.createElement("td");
+    const customerName = document.createElement("div");
+    customerName.className = "file-title";
+    customerName.textContent = payment.customer_name || "Pelanggan";
+    const customerEmail = document.createElement("div");
+    customerEmail.className = "muted";
+    customerEmail.textContent = payment.customer_email || "-";
+    customerCell.append(customerName, customerEmail);
+
+    const productCell = makePaymentCell(payment.product_name || "eBook");
+    const amountCell = makePaymentCell(formatMoney(payment.amount_minor, payment.currency));
+
+    const statusCell = document.createElement("td");
+    if (payment.receipt_status === "pending") {
+      statusCell.appendChild(makePaymentBadge("Menunggu", "pending"));
+    } else if (payment.receipt_status === "approved") {
+      statusCell.appendChild(makePaymentBadge("Diluluskan", "approved"));
+    } else if (payment.receipt_status === "rejected") {
+      statusCell.appendChild(makePaymentBadge("Ditolak", "rejected"));
+      if (payment.rejection_reason) {
+        const reason = document.createElement("div");
+        reason.className = "muted";
+        reason.textContent = payment.rejection_reason;
+        statusCell.appendChild(reason);
+      }
+    } else {
+      statusCell.appendChild(makePaymentBadge("Belum hantar", "none"));
+    }
+
+    const receiptCell = document.createElement("td");
+    if (payment.submission_id) {
+      const receiptButton = document.createElement("button");
+      receiptButton.className = "btn btn-secondary btn-small";
+      receiptButton.type = "button";
+      receiptButton.textContent = "Lihat resit";
+      receiptButton.addEventListener("click", () => viewPaymentReceipt(payment.submission_id, receiptButton));
+      receiptCell.appendChild(receiptButton);
+      const receiptDate = document.createElement("div");
+      receiptDate.className = "muted";
+      receiptDate.textContent = formatDate(payment.receipt_uploaded_at);
+      receiptCell.appendChild(receiptDate);
+    } else {
+      receiptCell.textContent = "Belum dihantar";
+    }
+
+    const actionCell = document.createElement("td");
+    const actions = document.createElement("div");
+    actions.className = "payment-actions";
+
+    if (payment.submission_id && payment.receipt_status === "pending") {
+      const approveButton = document.createElement("button");
+      approveButton.className = "btn btn-small";
+      approveButton.type = "button";
+      approveButton.textContent = "Approve";
+      approveButton.addEventListener("click", () => approvePayment(payment, approveButton));
+
+      const rejectButton = document.createElement("button");
+      rejectButton.className = "btn btn-danger btn-small";
+      rejectButton.type = "button";
+      rejectButton.textContent = "Reject";
+      rejectButton.addEventListener("click", () => rejectPayment(payment, rejectButton));
+
+      actions.append(approveButton, rejectButton);
+    } else {
+      actions.textContent = "-";
+    }
+
+    actionCell.appendChild(actions);
+    row.append(orderCell, customerCell, productCell, amountCell, statusCell, receiptCell, actionCell);
+    tbody.appendChild(row);
+  });
+}
+
+async function loadPayments() {
+  const button = $("refreshPaymentsButton");
+  const filter = $("paymentFilter").value || "pending";
+  button.disabled = true;
+  hideStatus($("paymentStatus"));
+
+  const tbody = $("paymentList");
+  tbody.innerHTML = '<tr><td colspan="7" class="empty">Sedang memuatkan pembayaran...</td></tr>';
+
+  try {
+    const data = await apiRequest("/api/admin/payments?status=" + encodeURIComponent(filter));
+    const summary = data.summary || {};
+    $("pendingPaymentCount").textContent = Number(summary.pending_count || 0);
+    $("approvedPaymentCount").textContent = Number(summary.approved_count || 0);
+    $("rejectedPaymentCount").textContent = Number(summary.rejected_count || 0);
+    renderPayments(Array.isArray(data.payments) ? data.payments : []);
+  } catch (error) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">Gagal memuatkan pembayaran.</td></tr>';
+    showStatus($("paymentStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function viewPaymentReceipt(submissionId, button) {
+  button.disabled = true;
+  button.textContent = "Membuka...";
+
+  try {
+    const response = await fetch(
+      API_BASE + "/api/admin/payments/receipt?submission_id=" + encodeURIComponent(submissionId),
+      { headers: { Authorization: "Bearer " + adminToken } }
+    );
+
+    if (response.status === 401) {
+      logout();
+      throw new Error("Sesi admin tamat. Sila login semula.");
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || errorData.error || "Resit tidak dapat dibuka.");
+    }
+
+    const blob = await response.blob();
+    if (receiptObjectUrl) URL.revokeObjectURL(receiptObjectUrl);
+    receiptObjectUrl = URL.createObjectURL(blob);
+
+    const viewer = $("receiptViewer");
+    viewer.replaceChildren();
+    const contentType = blob.type || response.headers.get("Content-Type") || "";
+
+    if (contentType.includes("pdf")) {
+      const frame = document.createElement("iframe");
+      frame.src = receiptObjectUrl;
+      frame.title = "Resit pembayaran pelanggan";
+      viewer.appendChild(frame);
+    } else if (contentType.startsWith("image/")) {
+      const image = document.createElement("img");
+      image.src = receiptObjectUrl;
+      image.alt = "Resit pembayaran pelanggan";
+      viewer.appendChild(image);
+    } else {
+      throw new Error("Format resit tidak disokong untuk paparan.");
+    }
+
+    $("receiptModal").classList.add("show");
+  } catch (error) {
+    showStatus($("paymentStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Lihat resit";
+  }
+}
+
+function closeReceiptPreview() {
+  $("receiptModal").classList.remove("show");
+  $("receiptViewer").replaceChildren();
+  if (receiptObjectUrl) {
+    URL.revokeObjectURL(receiptObjectUrl);
+    receiptObjectUrl = "";
+  }
+}
+
+async function approvePayment(payment, button) {
+  const confirmed = confirm(
+    "Sahkan bahawa bayaran telah diterima dalam akaun Bank Islam?\n\n" +
+    payment.order_reference + "\n" +
+    payment.customer_email + "\n" +
+    formatMoney(payment.amount_minor, payment.currency) +
+    "\n\nAkses eBook akan diberikan selepas kelulusan."
+  );
+  if (!confirmed) return;
+
+  button.disabled = true;
+  button.textContent = "Approving...";
+  try {
+    await apiRequest("/api/admin/payments/approve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ submission_id: payment.submission_id })
+    });
+    await loadPayments();
+    showStatus($("paymentStatus"), "Pembayaran diluluskan. Akses eBook pelanggan telah diaktifkan.", "success");
+  } catch (error) {
+    showStatus($("paymentStatus"), error.message, "error");
+    button.disabled = false;
+    button.textContent = "Approve";
+  }
+}
+
+async function rejectPayment(payment, button) {
+  const reason = prompt(
+    "Masukkan sebab resit ditolak. Pelanggan boleh menghantar resit baharu.",
+    "Resit tidak jelas atau maklumat pembayaran tidak sepadan."
+  );
+  if (reason === null) return;
+  if (reason.trim().length < 3) {
+    alert("Sila masukkan sebab penolakan sekurang-kurangnya 3 aksara.");
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Rejecting...";
+  try {
+    await apiRequest("/api/admin/payments/reject", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ submission_id: payment.submission_id, reason: reason.trim() })
+    });
+    await loadPayments();
+    showStatus($("paymentStatus"), "Resit ditolak. Pesanan kekal pending supaya pelanggan boleh menghantar resit baharu.", "success");
+  } catch (error) {
+    showStatus($("paymentStatus"), error.message, "error");
+    button.disabled = false;
+    button.textContent = "Reject";
+  }
+}
+
+$("paymentFilter").addEventListener("change", loadPayments);
+$("refreshPaymentsButton").addEventListener("click", loadPayments);
+$("closeReceiptButton").addEventListener("click", closeReceiptPreview);
+$("receiptModal").addEventListener("click", event => {
+  if (event.target === $("receiptModal")) closeReceiptPreview();
+});
 
 // UPLOAD PDF
 $("pdfFile").addEventListener("change", () => {
@@ -714,78 +973,6 @@ $("uploadForm").addEventListener("submit", async event => {
   }
 });
 
-// AUTO-FILL PRODUCT NAME FROM SELECTED PDF
-$("productPdf").addEventListener("change", () => {
-  const selected = ebookFiles.find(file => file.fileId === $("productPdf").value);
-  if (selected && !$("productName").value.trim()) {
-    $("productName").value = String(selected.fileName || "")
-      .replace(/\.pdf$/i, "")
-      .replace(/[_-]+/g, " ")
-      .trim();
-  }
-});
-
-// CREATE A PRODUCT AND ATTACH ITS PDF IN ONE API REQUEST
-$("productForm").addEventListener("submit", async event => {
-  event.preventDefault();
-
-  const file = ebookFiles.find(item => item.fileId === $("productPdf").value);
-  const name = $("productName").value.trim();
-  const description = $("productDescription").value.trim();
-  const priceRM = Number($("productPrice").value);
-  const status = $("productStatus");
-  const button = $("publishProductButton");
-
-  if (!file) {
-    showStatus(status, "Sila pilih fail PDF yang belum dipautkan.", "error");
-    return;
-  }
-
-  if (!name || name.length > 160) {
-    showStatus(status, "Sila masukkan nama produk yang sah.", "error");
-    return;
-  }
-
-  if (!Number.isFinite(priceRM) || priceRM < 0 || !Number.isSafeInteger(Math.round(priceRM * 100))) {
-    showStatus(status, "Sila masukkan harga RM yang sah.", "error");
-    return;
-  }
-
-  button.disabled = true;
-  button.textContent = "Sedang menerbitkan...";
-  hideStatus(status);
-
-  try {
-    const data = await apiRequest("/api/admin/ebooks/create-product", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        name,
-        description,
-        price_minor: Math.round(priceRM * 100),
-        b2_file_id: file.fileId
-      })
-    });
-
-    showStatus(
-      status,
-      "Berjaya! " + (data.product?.name || name) + " kini dipautkan kepada PDF dan diterbitkan dalam katalog website.",
-      "success"
-    );
-
-    $("productForm").reset();
-    $("productPrice").value = "0.00";
-    await loadEbooks();
-
-  } catch (error) {
-    showStatus(status, error.message, "error");
-  } finally {
-    button.textContent = "Terbitkan ke Katalog";
-    button.disabled = $("productPdf").disabled;
-  }
-});
-
-
 // DELETE PDF
 async function deleteEbook(file, button) {
   const confirmed = confirm(
@@ -826,32 +1013,6 @@ async function deleteEbook(file, button) {
   }
 }
 
-// TEST PRIVATE RECEIPT STORAGE CONNECTION
-$("testReceiptB2Button").addEventListener("click", async () => {
-  const button = $("testReceiptB2Button");
-  const status = $("receiptB2Status");
-
-  button.disabled = true;
-  button.textContent = "Testing connection...";
-  hideStatus(status);
-
-  try {
-    const data = await apiRequest("/api/admin/receipts/b2-test");
-    const prefixScope = data.keyNamePrefix || "not restricted";
-    const message =
-      "Connected to " + data.bucket +
-      ". Bucket access confirmed. Upload path: " + data.prefix +
-      ". Key name prefix: " + prefixScope + ".";
-
-    showStatus(status, message, "success");
-  } catch (error) {
-    showStatus(status, error.message, "error");
-  } finally {
-    button.disabled = false;
-    button.textContent = "Test Receipt Storage";
-  }
-});
-
 // REFRESH AND LOGOUT
 $("refreshButton").addEventListener("click", loadEbooks);
 $("logoutButton").addEventListener("click", () => {
@@ -873,6 +1034,7 @@ $("year").textContent = now.getFullYear();
 if (adminToken) {
   showAdmin();
   loadEbooks();
+  loadPayments();
 } else {
   showLogin();
 }
