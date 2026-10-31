@@ -134,6 +134,8 @@ td {color:#d8dce3}
 .payment-summary {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:15px 0 18px}
 .payment-filter {background:#090d13;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12px;min-width:145px}
 .payment-table table {min-width:1000px}
+.account-table table {min-width:760px}
+.account-actions {display:flex;gap:6px;flex-wrap:wrap;min-width:110px}
 .payment-badge {display:inline-block;border-radius:30px;padding:5px 9px;font-size:10px;font-weight:700;white-space:nowrap;border:1px solid var(--line)}
 .payment-badge.pending {color:#e5ca89;background:#2b2417;border-color:#66502a}
 .payment-badge.approved {color:#8bd4ac;background:#10251d;border-color:#285b43}
@@ -238,6 +240,63 @@ footer a {color:var(--gold2);text-decoration:none}
     <div class="stat">
       <small>Status API</small>
       <strong id="apiStatus" style="font-size:15px">Checking</strong>
+    </div>
+  </div>
+
+  <!-- CUSTOMER ACCOUNT APPROVAL -->
+  <div class="panel">
+    <div class="section-title">
+      <div>
+        <h2>Kelulusan Pendaftaran Akaun</h2>
+        <span>Semakan akaun pelanggan · Mod kelulusan manual</span>
+      </div>
+      <div class="actions">
+        <select id="accountFilter" class="payment-filter" aria-label="Tapis akaun pelanggan">
+          <option value="pending">Menunggu kelulusan</option>
+          <option value="active">Akaun aktif</option>
+          <option value="all">Semua akaun</option>
+        </select>
+        <button id="refreshAccountsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button>
+      </div>
+    </div>
+
+    <div class="notice">
+      <strong>Mod ujian sementara:</strong> penghantaran e-mel/OTP dinyahaktifkan.
+      Semak permohonan dan pastikan alamat e-mel dimiliki oleh pemohon sebelum menekan Approve.
+    </div>
+
+    <div class="payment-summary">
+      <div class="stat">
+        <small>Menunggu kelulusan</small>
+        <strong id="pendingAccountCount">0</strong>
+      </div>
+      <div class="stat">
+        <small>Akaun aktif</small>
+        <strong id="activeAccountCount">0</strong>
+      </div>
+      <div class="stat">
+        <small>Jumlah akaun</small>
+        <strong id="totalAccountCount">0</strong>
+      </div>
+    </div>
+
+    <div id="accountStatus" class="status"></div>
+
+    <div class="table-wrap account-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>Alamat e-mel</th>
+            <th>Tarikh daftar</th>
+            <th>Status</th>
+            <th>Tindakan</th>
+          </tr>
+        </thead>
+        <tbody id="accountList">
+          <tr><td colspan="5" class="empty">Memuatkan pendaftaran akaun...</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -553,7 +612,7 @@ $("loginForm").addEventListener("submit", async event => {
     $("adminToken").value = "";
     showAdmin();
 
-    await Promise.all([loadEbooks(), loadPayments()]);
+    await Promise.all([loadEbooks(), loadAccounts(), loadPayments()]);
 
   } catch (error) {
     showStatus($("loginStatus"), error.message, "error");
@@ -633,6 +692,135 @@ async function loadEbooks() {
     $("refreshButton").disabled = false;
   }
 }
+
+// =====================================
+// CUSTOMER ACCOUNT APPROVAL
+// =====================================
+
+function renderAccounts(accounts) {
+  const tbody = $("accountList");
+  tbody.replaceChildren();
+
+  if (!accounts.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 5;
+    cell.className = "empty";
+    cell.textContent = "Tiada pendaftaran akaun untuk kategori ini.";
+    row.appendChild(cell);
+    tbody.appendChild(row);
+    return;
+  }
+
+  accounts.forEach(account => {
+    const row = document.createElement("tr");
+
+    const nameCell = document.createElement("td");
+    const name = document.createElement("div");
+    name.className = "file-title";
+    name.textContent = account.name || "Pelanggan";
+    const date = document.createElement("div");
+    date.className = "muted";
+    date.textContent = "Dikemas kini: " + formatDate(account.updated_at);
+    nameCell.append(name, date);
+
+    const emailCell = document.createElement("td");
+    emailCell.textContent = account.email || "-";
+
+    const createdCell = document.createElement("td");
+    createdCell.textContent = formatDate(account.created_at);
+
+    const statusCell = document.createElement("td");
+    if (account.account_status === "pending") {
+      statusCell.appendChild(makePaymentBadge("Menunggu kelulusan", "pending"));
+    } else if (account.account_status === "active" && account.email_verified_at) {
+      statusCell.appendChild(makePaymentBadge("Aktif · E-mel disahkan", "approved"));
+    } else if (account.account_status === "active") {
+      statusCell.appendChild(makePaymentBadge("Aktif · Manual", "approved"));
+    } else {
+      statusCell.appendChild(makePaymentBadge(account.account_status || "Tidak diketahui", "none"));
+    }
+
+    const actionCell = document.createElement("td");
+    const actions = document.createElement("div");
+    actions.className = "account-actions";
+
+    if (account.account_status === "pending") {
+      const approveButton = document.createElement("button");
+      approveButton.className = "btn btn-small";
+      approveButton.type = "button";
+      approveButton.textContent = "Approve";
+      approveButton.addEventListener("click", () => approveAccount(account, approveButton));
+      actions.appendChild(approveButton);
+    } else {
+      actions.textContent = "-";
+    }
+
+    actionCell.appendChild(actions);
+    row.append(nameCell, emailCell, createdCell, statusCell, actionCell);
+    tbody.appendChild(row);
+  });
+}
+
+async function loadAccounts() {
+  const button = $("refreshAccountsButton");
+  const filter = $("accountFilter").value || "pending";
+  button.disabled = true;
+  hideStatus($("accountStatus"));
+  $("accountList").innerHTML = '<tr><td colspan="5" class="empty">Sedang memuatkan pendaftaran...</td></tr>';
+
+  try {
+    const data = await apiRequest("/api/admin/accounts?status=" + encodeURIComponent(filter));
+    const summary = data.summary || {};
+    $("pendingAccountCount").textContent = Number(summary.pending_count || 0);
+    $("activeAccountCount").textContent = Number(summary.active_count || 0);
+    $("totalAccountCount").textContent = Number(summary.total_count || 0);
+    renderAccounts(Array.isArray(data.accounts) ? data.accounts : []);
+  } catch (error) {
+    $("accountList").innerHTML = '<tr><td colspan="5" class="empty">Gagal memuatkan pendaftaran akaun.</td></tr>';
+    showStatus($("accountStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function approveAccount(account, button) {
+  const confirmed = confirm(
+    "Luluskan pendaftaran akaun ini?\n\n" +
+    (account.name || "Pelanggan") + "\n" +
+    (account.email || "-") +
+    "\n\nSelepas diluluskan, pelanggan boleh log masuk. Pastikan permohonan telah disemak."
+  );
+  if (!confirmed) return;
+
+  button.disabled = true;
+  button.textContent = "Approving...";
+
+  try {
+    const result = await apiRequest("/api/admin/accounts/approve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ account_id: account.id })
+    });
+
+    await loadAccounts();
+    showStatus(
+      $("accountStatus"),
+      result.message === "ACCOUNT_ALREADY_ACTIVE"
+        ? "Akaun ini sudah aktif."
+        : "Akaun pelanggan berjaya diluluskan. Pelanggan kini boleh log masuk.",
+      "success"
+    );
+  } catch (error) {
+    showStatus($("accountStatus"), error.message, "error");
+    button.disabled = false;
+    button.textContent = "Approve";
+  }
+}
+
+$("accountFilter").addEventListener("change", loadAccounts);
+$("refreshAccountsButton").addEventListener("click", loadAccounts);
+
 
 // =====================================
 // PAYMENT REVIEW
@@ -1014,7 +1202,11 @@ async function deleteEbook(file, button) {
 }
 
 // REFRESH AND LOGOUT
-$("refreshButton").addEventListener("click", loadEbooks);
+$("refreshButton").addEventListener("click", () => {
+  loadEbooks();
+  loadAccounts();
+  loadPayments();
+});
 $("logoutButton").addEventListener("click", () => {
   if (confirm("Log keluar daripada dashboard?")) logout();
 });
@@ -1034,6 +1226,7 @@ $("year").textContent = now.getFullYear();
 if (adminToken) {
   showAdmin();
   loadEbooks();
+  loadAccounts();
   loadPayments();
 } else {
   showLogin();
