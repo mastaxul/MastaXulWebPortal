@@ -221,8 +221,33 @@ text-decoration:underline;
 .product-detail-row span{display:block;color:var(--muted);font-size:11px}
 .product-detail-row strong{display:block;color:var(--gold-light);font-size:14px;margin-top:5px;overflow-wrap:anywhere}
 .product-detail-note{font-size:12px;line-height:1.65;color:var(--muted);margin:12px 0}
+.book-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.checkout-card{width:min(680px,100%)}
+.checkout-card h2{padding-right:28px}
+.checkout-summary{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;margin:16px 0 20px;border:1px solid #514124;border-radius:9px;background:#101010}
+.checkout-summary strong{color:var(--gold-light)}
+.checkout-summary span{color:var(--muted);font-size:12px}
+.checkout-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.checkout-field{min-width:0}
+.checkout-field.full{grid-column:1/-1}
+.checkout-field .field{margin-bottom:13px}
+.checkout-section-title{font:18px Georgia,serif;margin:18px 0 12px;color:var(--gold-light)}
+.checkout-note{font-size:11px;line-height:1.6;color:var(--muted);margin:8px 0 16px}
+.checkout-payment{margin-top:14px}
+.checkout-payment-card{border:1px solid var(--line);background:#101010;border-radius:10px;padding:16px;margin:14px 0}
+.checkout-payment-card h3{font:20px Georgia,serif;margin:0 0 10px}
+.checkout-order-ref{font-size:13px;color:var(--gold-light);font-weight:700;letter-spacing:1px;overflow-wrap:anywhere}
+.checkout-qr{display:grid;place-items:center;min-height:220px;padding:14px;border:1px dashed #65502b;border-radius:10px;background:#0c0c0c;text-align:center}
+.checkout-qr img{display:block;max-width:min(100%,300px);max-height:340px;object-fit:contain;background:#fff;border-radius:8px;padding:8px}
+.checkout-qr-placeholder{max-width:360px;color:var(--muted);font-size:13px;line-height:1.7}
+.checkout-qr-placeholder strong{display:block;color:var(--gold-light);margin-bottom:6px}
+.checkout-payment .field{margin-top:8px}
+.checkout-payment .btn{margin-top:8px}
+.checkout-status{margin:12px 0}
 .hidden{display:none!important}
 @media(max-width:760px){
+.checkout-grid{grid-template-columns:1fr}
+.checkout-field.full{grid-column:auto}
 .navlinks{gap:12px}
 .navlinks a{font-size:11px}
 .nav .btn{padding:9px 11px;font-size:11px}
@@ -382,6 +407,101 @@ aria-modal="true" aria-labelledby="productModalTitle">
 <button class="btn modal-submit" type="button" id="productModalActionButton">Tutup</button>
 </div>
 </div>
+<div class="modal" id="checkoutModal" role="dialog"
+aria-modal="true" aria-labelledby="checkoutTitle">
+<div class="modal-card checkout-card">
+<button class="close" id="closeCheckoutButton" aria-label="Tutup">×</button>
+<div class="eyebrow">MASTA XUL CHECKOUT</div>
+<h2 id="checkoutTitle">Maklumat Pembelian</h2>
+<p id="checkoutDescription">Lengkapkan maklumat pembeli sebelum meneruskan pembayaran eBook digital.</p>
+<div class="checkout-summary" id="checkoutSummary">
+  <div><span>eBook dipilih</span><br><strong id="checkoutProductName">-</strong></div>
+  <div><span>Jumlah perlu dibayar</span><br><strong id="checkoutProductPrice">-</strong></div>
+</div>
+<form id="checkoutForm">
+  <h3 class="checkout-section-title">Maklumat pembeli</h3>
+  <div class="checkout-grid">
+    <div class="checkout-field">
+      <label class="field-label" for="checkoutFullName">Nama penuh</label>
+      <input class="field" id="checkoutFullName" maxlength="100" autocomplete="name" required>
+    </div>
+    <div class="checkout-field">
+      <label class="field-label" for="checkoutEmail">Alamat e-mel</label>
+      <input class="field" id="checkoutEmail" type="email" autocomplete="email" readonly required>
+    </div>
+    <div class="checkout-field full">
+      <label class="field-label" for="checkoutPhone">Nombor telefon</label>
+      <input class="field" id="checkoutPhone" type="tel" maxlength="30" autocomplete="tel" placeholder="Contoh: 0123456789" required>
+    </div>
+  </div>
+  <h3 class="checkout-section-title">Alamat untuk rekod pembelian</h3>
+  <div class="checkout-grid">
+    <div class="checkout-field full">
+      <label class="field-label" for="checkoutAddress1">Alamat baris 1</label>
+      <input class="field" id="checkoutAddress1" maxlength="160" autocomplete="address-line1" placeholder="No. rumah, nama jalan" required>
+    </div>
+    <div class="checkout-field full">
+      <label class="field-label" for="checkoutAddress2">Alamat baris 2 (pilihan)</label>
+      <input class="field" id="checkoutAddress2" maxlength="160" autocomplete="address-line2" placeholder="Taman, pangsapuri, unit atau tingkat">
+    </div>
+    <div class="checkout-field">
+      <label class="field-label" for="checkoutPostcode">Poskod</label>
+      <input class="field" id="checkoutPostcode" inputmode="numeric" maxlength="5" pattern="[0-9]{5}" autocomplete="postal-code" placeholder="Contoh: 43000" required>
+    </div>
+    <div class="checkout-field">
+      <label class="field-label" for="checkoutCity">Bandar</label>
+      <input class="field" id="checkoutCity" maxlength="80" autocomplete="address-level2" required>
+    </div>
+    <div class="checkout-field">
+      <label class="field-label" for="checkoutState">Negeri</label>
+      <select class="field" id="checkoutState" autocomplete="address-level1" required>
+        <option value="">Pilih negeri</option>
+        <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+        <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+        <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+        <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+        <option>Terengganu</option><option>W.P. Kuala Lumpur</option>
+        <option>W.P. Labuan</option><option>W.P. Putrajaya</option>
+      </select>
+    </div>
+    <div class="checkout-field">
+      <label class="field-label" for="checkoutCountry">Negara</label>
+      <input class="field" id="checkoutCountry" value="Malaysia" maxlength="80" autocomplete="country-name" required>
+    </div>
+  </div>
+  <p class="checkout-note">eBook ialah produk digital. Alamat ini disimpan sebagai maklumat pembeli dan rekod pesanan; tiada penghantaran fizikal dibuat.</p>
+  <div class="status" id="checkoutFormStatus" role="status"></div>
+  <button class="btn modal-submit" type="submit" id="checkoutSubmitButton">Teruskan ke Pembayaran</button>
+</form>
+<div class="checkout-payment hidden" id="checkoutPaymentStep">
+  <div class="checkout-payment-card">
+    <h3>Pesanan berjaya dicipta</h3>
+    <div class="checkout-order-ref" id="checkoutOrderReference">-</div>
+    <p class="checkout-note" id="checkoutOrderMessage">Sila buat pembayaran menggunakan QR rasmi Masta Xul.</p>
+    <div class="checkout-summary">
+      <div><span>eBook</span><br><strong id="paymentProductName">-</strong></div>
+      <div><span>Jumlah</span><br><strong id="paymentAmount">-</strong></div>
+    </div>
+    <div class="checkout-qr">
+      <img id="paymentQrImage" class="hidden" alt="QR pembayaran rasmi Masta Xul">
+      <div class="checkout-qr-placeholder" id="paymentQrPlaceholder">
+        <strong>QR pembayaran belum dipasang</strong>
+        QR rasmi Bank Islam / DuitNow Masta Xul akan dipaparkan di sini. Jangan buat pembayaran sehingga QR rasmi dipaparkan.
+      </div>
+    </div>
+  </div>
+  <div class="checkout-payment-card hidden" id="receiptUploadPanel">
+    <h3>Muat naik resit pembayaran</h3>
+    <p class="checkout-note">Format diterima: JPG, PNG atau PDF. Saiz maksimum 5 MB. Resit akan disemak oleh admin; akses eBook hanya diberikan selepas pembayaran disahkan.</p>
+    <label class="field-label" for="receiptFile">Pilih fail resit</label>
+    <input class="field" id="receiptFile" type="file" accept="image/jpeg,image/png,application/pdf,.jpg,.jpeg,.png,.pdf">
+    <div class="status" id="receiptUploadStatus" role="status"></div>
+    <button class="btn modal-submit" type="button" id="receiptUploadButton">Hantar Resit untuk Semakan</button>
+  </div>
+  <button class="btn btn-outline modal-submit" type="button" id="checkoutDoneButton">Tutup</button>
+</div>
+</div>
+</div>
 <script>
 "use strict";
 /*
@@ -391,11 +511,17 @@ telah disahkan redirect ke www.
 */
 const API_BASE = "https://mxu-ebook-api.2ulfpv.workers.dev";
 const SESSION_KEY = "mxu_customer_session";
+// Leave empty until the owner supplies the official Bank Islam / DuitNow QR image.
+const PAYMENT_QR_IMAGE_URL = "";
 const state = {
 products: [],
 mode: "login",
 currentCustomer: null,
-busy: false
+busy: false,
+pendingPurchaseProductId: null,
+checkoutProduct: null,
+currentPurchase: null,
+checkoutBusy: false
 };
 const $ = id => document.getElementById(id);
 $("year").textContent = new Date().getFullYear();
@@ -468,7 +594,10 @@ PASSWORD_HASH_REQUIRES_RESET:
 "Akaun ini menggunakan format kata laluan lama. Sila hubungi admin untuk bantuan menetapkan semula kata laluan.",
 INVALID_EMAIL_OR_PASSWORD:
 "E-mel atau kata laluan tidak betul.",
-UNAUTHORIZED: "Sesi tamat. Sila log masuk semula."
+UNAUTHORIZED: "Sesi tamat. Sila log masuk semula.",
+CUSTOMER_DETAILS_REQUIRED: "Sila lengkapkan semua maklumat pembeli dan alamat dengan betul.",
+PRODUCT_ALREADY_OWNED: "eBook ini sudah tersedia dalam Perpustakaan Peribadi anda.",
+ACTIVE_EBOOK_NOT_FOUND: "eBook ini tidak lagi tersedia untuk pembelian."
 };
 return messages[error.message] ||
 "Permintaan gagal. Sila cuba lagi sebentar nanti.";
@@ -563,6 +692,11 @@ saveToken(result.token);
 state.currentCustomer = result.customer || null;
 closeModal();
 await loadCustomerArea();
+if (state.pendingPurchaseProductId) {
+const product = state.products.find(item => String(item.id) === String(state.pendingPurchaseProductId));
+state.pendingPurchaseProductId = null;
+if (product && getToken()) await openCheckoutModal(product);
+}
 }
 /* ================================
 FORM SUBMIT
@@ -600,6 +734,7 @@ currency: currency || "MYR"
 }).format(amount / 100);
 }
 function openProductDetails(product) {
+state.checkoutProduct = product;
 $("productModalTitle").textContent = product.name || "eBook";
 $("productModalDescription").textContent =
 product.description || "Koleksi digital Masta Xul.";
@@ -610,27 +745,191 @@ product.currency
 
 const loggedIn = Boolean(getToken());
 $("productModalAccessNote").textContent = loggedIn
-? "Anda sudah log masuk. Untuk membaca PDF, eBook ini perlu mempunyai akses aktif dalam Perpustakaan Peribadi anda. Pembelian yang belum diluluskan tidak akan membuka akses PDF."
-: "Anda boleh melihat maklumat eBook tanpa log masuk. Log masuk diperlukan untuk mengurus pembelian dan melihat Perpustakaan Peribadi.";
+? "Anda sudah log masuk. Tekan Beli Sekarang untuk melengkapkan maklumat pembeli dan membuat pesanan. Akses PDF hanya dibuka selepas pembayaran disahkan oleh admin."
+: "Anda boleh melihat maklumat eBook tanpa log masuk. Log masuk atau cipta akaun diperlukan sebelum meneruskan pembelian.";
 
 const actionButton = $("productModalActionButton");
-actionButton.textContent = loggedIn
-? "Lihat Perpustakaan Saya"
-: "Log Masuk";
-actionButton.onclick = () => {
-$("productModal").classList.remove("show");
-if (getToken()) {
-document.querySelector("#account").scrollIntoView({ behavior: "smooth" });
-} else {
-openModal("login");
-$("email").focus();
-}
-};
+actionButton.textContent = loggedIn ? "Beli Sekarang" : "Log Masuk untuk Beli";
+actionButton.onclick = () => startPurchase(product);
 
 $("productModal").classList.add("show");
 }
 function closeProductDetails() {
 $("productModal").classList.remove("show");
+}
+async function startPurchase(product) {
+closeProductDetails();
+if (!getToken()) {
+state.pendingPurchaseProductId = product.id;
+openModal("login");
+showStatus($("formStatus"), "Log masuk untuk meneruskan pembelian eBook ini. Jika belum mempunyai akaun, daftar dahulu dan tunggu kelulusan admin.", "info");
+$("email").focus();
+return;
+}
+await openCheckoutModal(product);
+}
+async function openCheckoutModal(product) {
+state.checkoutProduct = product;
+state.currentPurchase = null;
+try {
+const profileResult = await apiRequest("/api/customer/me");
+state.currentCustomer = profileResult.customer || state.currentCustomer;
+} catch (error) {
+clearToken();
+state.currentCustomer = null;
+openModal("login");
+showStatus($("formStatus"), "Sesi log masuk tidak sah. Sila log masuk semula sebelum membeli.", "error");
+return;
+}
+const customer = state.currentCustomer || {};
+$("checkoutProductName").textContent = product.name || "eBook";
+$("checkoutProductPrice").textContent = formatPrice(product.price_minor, product.currency);
+$("checkoutFullName").value = customer.billing_name || customer.name || "";
+$("checkoutEmail").value = customer.email || "";
+$("checkoutPhone").value = customer.phone || "";
+$("checkoutAddress1").value = customer.address_line1 || "";
+$("checkoutAddress2").value = customer.address_line2 || "";
+$("checkoutPostcode").value = customer.postcode || "";
+$("checkoutCity").value = customer.city || "";
+$("checkoutState").value = customer.state || "";
+$("checkoutCountry").value = customer.country || "Malaysia";
+$("checkoutForm").classList.remove("hidden");
+$("checkoutPaymentStep").classList.add("hidden");
+$("checkoutSubmitButton").disabled = false;
+$("checkoutSubmitButton").textContent = "Teruskan ke Pembayaran";
+clearStatus($("checkoutFormStatus"));
+clearStatus($("receiptUploadStatus"));
+$("receiptFile").value = "";
+$("receiptFile").disabled = false;
+$("receiptUploadButton").disabled = false;
+$("receiptUploadButton").textContent = "Hantar Resit untuk Semakan";
+$("checkoutModal").classList.add("show");
+}
+function closeCheckoutModal() {
+$("checkoutModal").classList.remove("show");
+}
+async function createCheckoutPurchase(event) {
+event.preventDefault();
+if (state.checkoutBusy || !state.checkoutProduct) return;
+const form = $("checkoutForm");
+if (!form.reportValidity()) return;
+state.checkoutBusy = true;
+$("checkoutSubmitButton").disabled = true;
+$("checkoutSubmitButton").textContent = "Menyediakan pesanan...";
+clearStatus($("checkoutFormStatus"));
+try {
+const result = await apiRequest("/api/customer/purchases/create", {
+method: "POST",
+body: {
+product_id: state.checkoutProduct.id,
+customer_details: {
+full_name: $("checkoutFullName").value.trim(),
+phone: $("checkoutPhone").value.trim(),
+address_line1: $("checkoutAddress1").value.trim(),
+address_line2: $("checkoutAddress2").value.trim(),
+postcode: $("checkoutPostcode").value.trim(),
+city: $("checkoutCity").value.trim(),
+state: $("checkoutState").value.trim(),
+country: $("checkoutCountry").value.trim()
+}
+}
+});
+state.currentPurchase = result.purchase;
+await renderCheckoutPayment(result.purchase);
+} catch (error) {
+if (error.message === "PRODUCT_ALREADY_OWNED") {
+showStatus($("checkoutFormStatus"), "eBook ini sudah dimiliki. Semak Perpustakaan Peribadi anda.", "info");
+} else {
+showStatus($("checkoutFormStatus"), friendlyError(error), "error");
+}
+} finally {
+state.checkoutBusy = false;
+if ($("checkoutForm").classList.contains("hidden") === false) {
+$("checkoutSubmitButton").disabled = false;
+$("checkoutSubmitButton").textContent = "Teruskan ke Pembayaran";
+}
+}
+}
+async function renderCheckoutPayment(purchase) {
+$("checkoutForm").classList.add("hidden");
+$("checkoutPaymentStep").classList.remove("hidden");
+$("checkoutOrderReference").textContent = purchase.order_reference || "-";
+$("paymentProductName").textContent = purchase.product_name || state.checkoutProduct?.name || "eBook";
+$("paymentAmount").textContent = formatPrice(purchase.amount_minor, purchase.currency);
+
+const image = $("paymentQrImage");
+const placeholder = $("paymentQrPlaceholder");
+const receiptPanel = $("receiptUploadPanel");
+if (PAYMENT_QR_IMAGE_URL) {
+image.src = PAYMENT_QR_IMAGE_URL;
+image.classList.remove("hidden");
+placeholder.classList.add("hidden");
+receiptPanel.classList.remove("hidden");
+} else {
+image.removeAttribute("src");
+image.classList.add("hidden");
+placeholder.classList.remove("hidden");
+receiptPanel.classList.add("hidden");
+}
+
+if (purchase.receipt_status === "pending") {
+$("checkoutOrderMessage").textContent = "Resit untuk pesanan ini telah diterima dan sedang menunggu semakan admin.";
+receiptPanel.classList.add("hidden");
+} else if (purchase.receipt_status === "rejected") {
+$("checkoutOrderMessage").textContent = "Resit terdahulu ditolak. Sila hubungi admin atau hantar resit yang betul selepas QR pembayaran dipaparkan.";
+} else {
+$("checkoutOrderMessage").textContent = "Pesanan anda telah direkodkan. Buat pembayaran menggunakan QR rasmi dan muat naik resit untuk semakan admin.";
+}
+}
+async function uploadPaymentReceipt() {
+if (!state.currentPurchase || !getToken()) return;
+const file = $("receiptFile").files[0];
+if (!file) {
+showStatus($("receiptUploadStatus"), "Sila pilih fail resit terlebih dahulu.", "error");
+return;
+}
+if (file.size <= 0 || file.size > 5 * 1024 * 1024) {
+showStatus($("receiptUploadStatus"), "Saiz fail mesti tidak melebihi 5 MB.", "error");
+return;
+}
+const allowed = ["image/jpeg", "image/png", "application/pdf"];
+const allowedExtension = /\.(jpe?g|png|pdf)$/i.test(file.name || "");
+if (!allowed.includes(file.type) && !allowedExtension) {
+showStatus($("receiptUploadStatus"), "Format fail yang diterima ialah JPG, PNG atau PDF.", "error");
+return;
+}
+const button = $("receiptUploadButton");
+button.disabled = true;
+button.textContent = "Memuat naik...";
+clearStatus($("receiptUploadStatus"));
+try {
+const formData = new FormData();
+formData.append("purchase_id", state.currentPurchase.id);
+formData.append("receipt", file, file.name);
+const headers = { Authorization: "Bearer " + getToken() };
+const response = await fetch(API_BASE + "/api/customer/payments/receipt", {
+method: "POST",
+headers,
+body: formData
+});
+const result = await response.json().catch(() => ({}));
+if (!response.ok || result.success === false) {
+throw new Error(result.error || "RECEIPT_UPLOAD_FAILED");
+}
+state.currentPurchase.receipt_status = "pending";
+showStatus($("receiptUploadStatus"), "Resit berjaya dihantar. Pesanan kini menunggu semakan admin. Akses PDF akan dibuka selepas pembayaran disahkan.", "success");
+button.textContent = "Resit Dihantar";
+$("receiptFile").disabled = true;
+} catch (error) {
+const message = error.message === "RECEIPT_ALREADY_AWAITING_REVIEW"
+? "Resit untuk pesanan ini sudah dihantar dan sedang menunggu semakan admin."
+: error.message === "DUPLICATE_RECEIPT"
+? "Resit yang sama telah pernah dihantar. Sila gunakan resit transaksi yang betul."
+: "Resit belum dapat dihantar. Sila cuba lagi atau hubungi admin.";
+showStatus($("receiptUploadStatus"), message, "error");
+button.disabled = false;
+button.textContent = "Hantar Resit untuk Semakan";
+} 
 }
 function makeBookCard(product) {
 const card = document.createElement("article");
@@ -666,7 +965,15 @@ button.textContent = "Maklumat";
 button.addEventListener("click", () => {
 openProductDetails(product);
 });
-bottom.append(price, button);
+const buyButton = document.createElement("button");
+buyButton.className = "btn btn-small";
+buyButton.type = "button";
+buyButton.textContent = "Beli";
+buyButton.addEventListener("click", () => startPurchase(product));
+const actions = document.createElement("div");
+actions.className = "book-actions";
+actions.append(button, buyButton);
+bottom.append(price, actions);
 info.append(heading, description, bottom);
 card.append(cover, info);
 return card;
@@ -836,6 +1143,13 @@ $("closeProductModalButton").addEventListener("click", closeProductDetails);
 $("productModal").addEventListener("click", event => {
 if (event.target === $("productModal")) closeProductDetails();
 });
+$("closeCheckoutButton").addEventListener("click", closeCheckoutModal);
+$("checkoutDoneButton").addEventListener("click", closeCheckoutModal);
+$("checkoutModal").addEventListener("click", event => {
+if (event.target === $("checkoutModal")) closeCheckoutModal();
+});
+$("checkoutForm").addEventListener("submit", createCheckoutPurchase);
+$("receiptUploadButton").addEventListener("click", uploadPaymentReceipt);
 $("switchModeButton").addEventListener("click", () => {
 openModal(state.mode === "register" ? "login" : "register");
 });
