@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#090b10">
-<title>Masta Xul | Admin Dashboard V8</title>
+<title>Masta Xul | Admin Dashboard V9</title>
 
 <style>
 :root {
@@ -130,6 +130,30 @@ td {color:#d8dce3}
 .module h3 {font-size:16px;margin:15px 0 6px}
 .module p {color:var(--muted);font-size:12px;line-height:1.6}
 .module-footer {color:var(--gold2);font-size:12px;margin-top:auto;padding-top:15px}
+.module-link{width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer;transition:transform .15s,border-color .15s}
+.module-link:hover,.module-link:focus-visible{transform:translateY(-2px);border-color:var(--gold);outline:none}
+.module-link .module-footer{color:var(--gold2)}
+.notification-list{display:grid;gap:9px;margin-top:12px}
+.notification-item{width:100%;display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:start;text-align:left;padding:13px;border:1px solid var(--line);border-radius:10px;background:#0d1219;color:var(--text);cursor:pointer}
+.notification-item.unread{border-color:#806334;background:#17140f}
+.notification-dot{width:8px;height:8px;border-radius:50%;background:transparent;margin-top:5px}
+.notification-item.unread .notification-dot{background:var(--gold2);box-shadow:0 0 0 3px #c7a45b22}
+.notification-item strong{display:block;font-size:13px;color:var(--gold2);margin-bottom:4px}
+.notification-item span{display:block;font-size:12px;line-height:1.5;color:var(--muted)}
+.notification-item time{font-size:10px;color:var(--muted);white-space:nowrap}
+.product-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.product-form-grid .full{grid-column:1/-1}
+.product-form-grid input,.product-form-grid select,.product-form-grid textarea{width:100%;padding:11px;margin:7px 0 13px;border-radius:8px;border:1px solid var(--line);background:#090d13;color:var(--text);font:inherit}
+.product-form-grid textarea{min-height:82px;resize:vertical}
+.product-table table{min-width:850px}
+.analytics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:15px 0}
+.analytics-top-list{display:grid;gap:8px;margin-top:12px}
+.analytics-top-item{display:flex;justify-content:space-between;gap:12px;padding:11px 13px;border:1px solid var(--line);border-radius:8px;background:#0d1219;font-size:12px}
+.health-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:12px}
+.health-item{border:1px solid var(--line);border-radius:8px;padding:11px;background:#0d1219;font-size:12px;display:flex;justify-content:space-between;gap:8px}
+.health-item strong.ok{color:var(--green)}.health-item strong.bad{color:var(--red)}
+@media(max-width:760px){.analytics-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.health-list{grid-template-columns:1fr}.product-form-grid{grid-template-columns:1fr}.product-form-grid .full{grid-column:auto}.notification-item{grid-template-columns:10px 1fr}.notification-item time{grid-column:2}}
+
 .payment-summary {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:15px 0 18px}
 .payment-filter {background:#090d13;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12px;min-width:145px}
 .payment-table table {min-width:1000px}
@@ -199,15 +223,14 @@ footer a {color:var(--gold2);text-decoration:none}
   <div class="eyebrow">Management Workspace</div>
   <h1>Admin Dashboard</h1>
   <p>
-    Selamat datang ke pusat pengurusan Masta Xul Universe.
-    Urus koleksi digital dan fail eBook melalui satu ruang kawalan.
+    Selamat datang ke pusat operasi Masta Xul Universe.
+    Urus katalog, pelanggan, pesanan, pembayaran, notifikasi dan prestasi jualan melalui satu ruang kawalan.
   </p>
 </section>
 
 <div class="notice">
-  <strong>◆ Fasa 1 — Pengurusan eBook</strong><br>
-  Dashboard ini disambungkan kepada Masta Xul Ebook API
-  dan storan Backblaze B2. Login diperlukan untuk mengakses fungsi pentadbir.
+  <strong>◆ Masta Xul Business Control Centre — V9</strong><br>
+  Pusat operasi untuk pengurusan produk, pelanggan, pembayaran manual QR, perpustakaan digital, notifikasi dan analitik. Akses pentadbir memerlukan Admin Token yang sah.
 </div>
 
 <!-- LOGIN -->
@@ -252,8 +275,20 @@ footer a {color:var(--gold2);text-decoration:none}
     </div>
   </div>
 
+  <div class="panel" id="notificationsPanel">
+    <div class="section-title">
+      <div><h2>Pusat Notifikasi</h2><span><strong id="notificationUnreadCount">0</strong> notifikasi belum dibaca</span></div>
+      <div class="actions">
+        <button id="refreshNotificationsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button>
+        <button id="markAllNotificationsReadButton" class="btn btn-secondary btn-small" type="button">Tandakan semua dibaca</button>
+      </div>
+    </div>
+    <div id="notificationStatus" class="status"></div>
+    <div id="notificationList" class="notification-list"><div class="empty">Memuatkan notifikasi...</div></div>
+  </div>
+
   <!-- CUSTOMER ACCOUNT APPROVAL -->
-  <div class="panel">
+  <div class="panel" id="accountsPanel">
     <div class="section-title">
       <div>
         <h2>Kelulusan Pendaftaran Akaun</h2>
@@ -310,7 +345,7 @@ footer a {color:var(--gold2);text-decoration:none}
     </div>
   </div>
 
-  <div class="panel">
+  <div class="panel" id="customersPanel">
     <div class="section-title">
       <div><h2>Senarai Pelanggan & Pembeli</h2><span>Maklumat akaun, jumlah pesanan dan jumlah pembayaran yang diluluskan</span></div>
       <div class="actions">
@@ -327,13 +362,13 @@ footer a {color:var(--gold2);text-decoration:none}
     <div class="table-wrap account-table"><table><thead><tr><th>Pelanggan</th><th>Telefon</th><th>Pesanan</th><th>Jumlah dibayar</th><th>Status</th><th>Tindakan</th></tr></thead><tbody id="customerList"><tr><td colspan="6" class="empty">Memuatkan senarai pelanggan...</td></tr></tbody></table></div>
   </div>
 
-  <div class="panel">
+  <div class="panel" id="profileRequestsPanel">
     <div class="section-title"><div><h2>Kelulusan Perubahan Profil</h2><span>Perubahan maklumat pelanggan tidak aktif sehingga admin meluluskannya</span></div><button id="refreshProfileRequestsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button></div>
     <div id="profileRequestStatus" class="status"></div>
     <div class="table-wrap account-table"><table><thead><tr><th>Pelanggan</th><th>Maklumat baharu</th><th>Tarikh permohonan</th><th>Tindakan</th></tr></thead><tbody id="profileRequestList"><tr><td colspan="4" class="empty">Memuatkan permohonan profil...</td></tr></tbody></table></div>
   </div>
 
-  <div class="panel">
+  <div class="panel" id="uploadPanel">
     <div class="section-title">
       <h2>Upload eBook PDF</h2>
       <span>Backblaze B2 Storage</span>
@@ -354,7 +389,7 @@ footer a {color:var(--gold2);text-decoration:none}
     <div id="uploadStatus" class="status"></div>
   </div>
 
-  <div class="panel">
+  <div class="panel" id="ebookListPanel">
     <div class="section-title">
       <h2>Koleksi eBook</h2>
       <span id="listCount">0 fail</span>
@@ -379,8 +414,25 @@ footer a {color:var(--gold2);text-decoration:none}
     </div>
   </div>
 
+  <div class="panel" id="productManagementPanel">
+    <div class="section-title"><div><h2>Pengurusan Produk eBook</h2><span>Terbitkan PDF yang sudah dimuat naik, ubah harga dan status katalog</span></div><button id="refreshProductsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button></div>
+    <form id="productCreateForm" class="upload-area">
+      <h3 style="font-size:14px;color:var(--gold2);margin-bottom:10px">Terbitkan eBook baharu</h3>
+      <div class="product-form-grid">
+        <div><label for="productCreateName">Tajuk eBook</label><input id="productCreateName" maxlength="160" required></div>
+        <div><label for="productCreatePrice">Harga (RM)</label><input id="productCreatePrice" type="number" min="0.01" max="99999" step="0.01" required></div>
+        <div class="full"><label for="productCreateDescription">Penerangan</label><textarea id="productCreateDescription" maxlength="5000" placeholder="Penerangan ringkas eBook"></textarea></div>
+        <div class="full"><label for="productPdfFile">Pilih PDF daripada Backblaze B2</label><select id="productPdfFile" required><option value="">Memuatkan fail PDF...</option></select></div>
+      </div>
+      <div id="productCreateStatus" class="status"></div>
+      <button id="productCreateButton" class="btn" type="submit">Terbitkan Produk ke Katalog</button>
+    </form>
+    <div id="productListStatus" class="status"></div>
+    <div class="table-wrap product-table"><table><thead><tr><th>Produk</th><th>Fail PDF</th><th>Harga</th><th>Status</th><th>Tindakan</th></tr></thead><tbody id="adminProductList"><tr><td colspan="5" class="empty">Memuatkan produk...</td></tr></tbody></table></div>
+  </div>
+
   <!-- PAYMENT REVIEW -->
-  <div class="panel">
+  <div class="panel" id="paymentsPanel">
     <div class="section-title">
       <div>
         <h2>Semakan Pembayaran</h2>
@@ -434,6 +486,25 @@ footer a {color:var(--gold2);text-decoration:none}
     </div>
   </div>
 
+  <div class="panel" id="analyticsPanel">
+    <div class="section-title"><div><h2>Analitik Jualan</h2><span>Ringkasan berdasarkan transaksi yang telah diluluskan</span></div><button id="refreshAnalyticsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button></div>
+    <div id="analyticsStatus" class="status"></div>
+    <div class="analytics-grid">
+      <div class="stat"><small>Jumlah jualan</small><strong id="analyticsRevenue">RM0.00</strong></div>
+      <div class="stat"><small>Pesanan dibayar</small><strong id="analyticsOrders">0</strong></div>
+      <div class="stat"><small>Pelanggan berdaftar</small><strong id="analyticsCustomers">0</strong></div>
+      <div class="stat"><small>Resit menunggu</small><strong id="analyticsPendingReceipts">0</strong></div>
+    </div>
+    <h3 style="font-size:13px;color:var(--gold2);margin-top:10px">eBook paling laris</h3>
+    <div id="analyticsTopProducts" class="analytics-top-list"><div class="empty">Memuatkan analitik...</div></div>
+  </div>
+
+  <div class="panel" id="systemPanel">
+    <div class="section-title"><div><h2>Status Sistem & Diagnostik</h2><span>Pemeriksaan konfigurasi asas sahaja. Nilai rahsia tidak dipaparkan.</span></div><button id="refreshSystemButton" class="btn btn-secondary btn-small" type="button">↻ Periksa</button></div>
+    <div id="systemStatus" class="status"></div>
+    <div id="systemHealthList" class="health-list"><div class="empty">Menunggu pemeriksaan sistem...</div></div>
+  </div>
+
   <div id="customerEditModal" class="management-modal" role="dialog" aria-modal="true" aria-label="Edit pelanggan">
     <div class="management-card">
       <div class="section-title"><h2>Edit Maklumat Pelanggan</h2><button id="closeCustomerEditButton" class="btn btn-secondary btn-small" type="button">Tutup ✕</button></div>
@@ -464,6 +535,23 @@ footer a {color:var(--gold2);text-decoration:none}
     </div>
   </div>
 
+  <div id="productEditModal" class="management-modal" role="dialog" aria-modal="true" aria-label="Edit produk eBook">
+    <div class="management-card">
+      <div class="section-title"><h2>Edit Produk eBook</h2><button id="closeProductEditButton" class="btn btn-secondary btn-small" type="button">Tutup ✕</button></div>
+      <form id="productEditForm">
+        <input type="hidden" id="editProductId">
+        <div class="product-form-grid">
+          <div><label for="editProductName">Tajuk</label><input id="editProductName" maxlength="160" required></div>
+          <div><label for="editProductPrice">Harga (RM)</label><input id="editProductPrice" type="number" min="0.01" max="99999" step="0.01" required></div>
+          <div class="full"><label for="editProductDescription">Penerangan</label><textarea id="editProductDescription" maxlength="5000"></textarea></div>
+          <div class="full"><label for="editProductStatus">Status katalog</label><select id="editProductStatus"><option value="active">Aktif</option><option value="draft">Draf</option><option value="archived">Arkib</option></select></div>
+        </div>
+        <div id="productEditStatus" class="status"></div>
+        <button id="saveProductEditButton" class="btn" type="submit">Simpan Perubahan</button>
+      </form>
+    </div>
+  </div>
+
   <div id="receiptModal" class="receipt-modal" role="dialog" aria-modal="true" aria-label="Paparan resit pembayaran">
     <div class="receipt-card">
       <div class="section-title">
@@ -478,72 +566,17 @@ footer a {color:var(--gold2);text-decoration:none}
 
 </section>
 
-<!-- MODUL AKAN DATANG -->
-<div class="section-title">
-  <h2>Modul Pengurusan</h2>
-  <span>Masta Xul Administration</span>
-</div>
-
-<section class="grid">
-  <article class="module">
-    <div class="module-top">
-      <div class="module-icon">▤</div>
-      <span class="tag">FASA 1</span>
-    </div>
-    <h3>Pengurusan eBook</h3>
-    <p>Muat naik PDF, urus koleksi dan maklumat penerbitan.</p>
-    <div class="module-footer">Backblaze B2 Storage ✓</div>
-  </article>
-
-  <article class="module">
-    <div class="module-top">
-      <div class="module-icon">◇</div>
-      <span class="tag">FASA 2</span>
-    </div>
-    <h3>Pengurusan Produk</h3>
-    <p>Urus katalog produk, imej, harga dan kategori.</p>
-    <div class="module-footer">Coming Soon →</div>
-  </article>
-
-  <article class="module">
-    <div class="module-top">
-      <div class="module-icon">▧</div>
-      <span class="tag">FASA 3</span>
-    </div>
-    <h3>Semakan Pembayaran</h3>
-    <p>Semak resit, luluskan transaksi dan aktifkan akses eBook pelanggan.</p>
-    <div class="module-footer">Payment Review Active ✓</div>
-  </article>
-
-  <article class="module">
-    <div class="module-top">
-      <div class="module-icon">◎</div>
-      <span class="tag">FASA 4</span>
-    </div>
-    <h3>Pelanggan</h3>
-    <p>Urus profil pelanggan, akses eBook dan akaun pengguna.</p>
-    <div class="module-footer">Coming Soon →</div>
-  </article>
-
-  <article class="module">
-    <div class="module-top">
-      <div class="module-icon">▥</div>
-      <span class="tag">FASA 5</span>
-    </div>
-    <h3>Analitik</h3>
-    <p>Lihat statistik jualan, muat turun dan prestasi produk.</p>
-    <div class="module-footer">Coming Soon →</div>
-  </article>
-
-  <article class="module">
-    <div class="module-top">
-      <div class="module-icon">⚙</div>
-      <span class="tag">FASA 6</span>
-    </div>
-    <h3>Tetapan Sistem</h3>
-    <p>Konfigurasi API, storan dan keselamatan pentadbir.</p>
-    <div class="module-footer">Coming Soon →</div>
-  </article>
+<!-- MODUL AKTIF: SHORTCUT KE FUNGSI SEBENAR -->
+<section id="moduleGrid" class="grid hidden" aria-label="Modul pengurusan aktif">
+  <button class="module module-link" type="button" data-target="notificationsPanel"><div class="module-top"><div class="module-icon">♢</div><span class="tag">AKTIF</span></div><h3>Pusat Notifikasi</h3><p>Makluman pendaftaran, resit baharu dan permohonan profil.</p><div class="module-footer">Buka notifikasi →</div></button>
+  <button class="module module-link" type="button" data-target="uploadPanel"><div class="module-top"><div class="module-icon">▤</div><span class="tag">AKTIF</span></div><h3>Pengurusan Fail eBook</h3><p>Muat naik PDF dan urus fail di Backblaze B2.</p><div class="module-footer">Buka pengurusan fail →</div></button>
+  <button class="module module-link" type="button" data-target="productManagementPanel"><div class="module-top"><div class="module-icon">◇</div><span class="tag">AKTIF</span></div><h3>Pengurusan Produk</h3><p>Terbitkan eBook ke katalog, ubah harga, penerangan dan status.</p><div class="module-footer">Buka produk →</div></button>
+  <button class="module module-link" type="button" data-target="paymentsPanel"><div class="module-top"><div class="module-icon">▧</div><span class="tag">AKTIF</span></div><h3>Semakan Pembayaran</h3><p>Semak resit yang benar-benar dihantar dan luluskan transaksi.</p><div class="module-footer">Buka pembayaran →</div></button>
+  <button class="module module-link" type="button" data-target="customersPanel"><div class="module-top"><div class="module-icon">◎</div><span class="tag">AKTIF</span></div><h3>Pengurusan Pelanggan</h3><p>Lihat pelanggan, sejarah pembelian, edit profil dan sekat akaun.</p><div class="module-footer">Buka pelanggan →</div></button>
+  <button class="module module-link" type="button" data-target="accountsPanel"><div class="module-top"><div class="module-icon">♙</div><span class="tag">AKTIF</span></div><h3>Kelulusan Akaun</h3><p>Semak dan luluskan pendaftaran pelanggan baharu.</p><div class="module-footer">Buka kelulusan akaun →</div></button>
+  <button class="module module-link" type="button" data-target="profileRequestsPanel"><div class="module-top"><div class="module-icon">✎</div><span class="tag">AKTIF</span></div><h3>Permohonan Profil</h3><p>Semak perubahan nama, telefon dan alamat pelanggan.</p><div class="module-footer">Buka permohonan →</div></button>
+  <button class="module module-link" type="button" data-target="analyticsPanel"><div class="module-top"><div class="module-icon">▥</div><span class="tag">AKTIF</span></div><h3>Analitik Jualan</h3><p>Lihat hasil jualan, pesanan dibayar dan produk paling laris.</p><div class="module-footer">Buka analitik →</div></button>
+  <button class="module module-link" type="button" data-target="systemPanel"><div class="module-top"><div class="module-icon">⚙</div><span class="tag">READ ONLY</span></div><h3>Status Sistem</h3><p>Periksa konfigurasi asas API, D1 dan storan.</p><div class="module-footer">Buka diagnostik →</div></button>
 </section>
 
 <footer>
@@ -563,6 +596,9 @@ const TOKEN_KEY = "mxu_ebook_admin_session";
 const $ = id => document.getElementById(id);
 
 let adminToken = sessionStorage.getItem(TOKEN_KEY) || "";
+let adminNotificationTimer = null;
+let adminB2Files = [];
+let adminProducts = [];
 
 function showStatus(element, message, type = "info") {
   element.textContent = message;
@@ -628,11 +664,23 @@ async function apiRequest(path, options = {}) {
 function showAdmin() {
   $("loginSection").classList.add("hidden");
   $("adminSection").classList.remove("hidden");
+  $("moduleGrid").classList.remove("hidden");
+  startAdminNotificationPolling();
 }
 
 function showLogin() {
   $("loginSection").classList.remove("hidden");
   $("adminSection").classList.add("hidden");
+  $("moduleGrid").classList.add("hidden");
+  if (adminNotificationTimer) clearInterval(adminNotificationTimer);
+  adminNotificationTimer = null;
+}
+
+function startAdminNotificationPolling() {
+  if (adminNotificationTimer) clearInterval(adminNotificationTimer);
+  adminNotificationTimer = setInterval(() => {
+    if (adminToken) loadNotifications({ silent: true });
+  }, 30000);
 }
 
 function logout() {
@@ -675,7 +723,7 @@ $("loginForm").addEventListener("submit", async event => {
     $("adminToken").value = "";
     showAdmin();
 
-    await Promise.all([loadEbooks(), loadAccounts(), loadPayments(), loadCustomers(), loadProfileChangeRequests()]);
+    await Promise.all([loadEbooks(), loadAdminProducts(), loadAccounts(), loadPayments(), loadCustomers(), loadProfileChangeRequests(), loadNotifications(), loadAnalytics(), loadSystemHealth()]);
 
   } catch (error) {
     showStatus($("loginStatus"), error.message, "error");
@@ -700,6 +748,8 @@ async function loadEbooks() {
     const data = await apiRequest("/api/ebooks");
 
     const files = Array.isArray(data.files) ? data.files : [];
+    adminB2Files = files;
+    populateProductPdfOptions();
 
     $("totalBooks").textContent = files.length;
     $("listCount").textContent = files.length + " fail";
@@ -755,6 +805,111 @@ async function loadEbooks() {
     $("refreshButton").disabled = false;
   }
 }
+
+// =====================================
+// PRODUCT MANAGEMENT
+// =====================================
+function populateProductPdfOptions() {
+  const select = $("productPdfFile");
+  if (!select) return;
+  const current = select.value;
+  const linked = new Set(adminProducts.map(product => String(product.b2_file_id || "")).filter(Boolean));
+  select.replaceChildren(new Option("Pilih fail PDF yang belum dipautkan", ""));
+  adminB2Files.filter(file => !linked.has(String(file.fileId)) && String(file.fileName || "").toLowerCase().endsWith(".pdf")).forEach(file => {
+    const option = new Option(`${file.fileName} — ${formatSize(file.size)}`, file.fileId);
+    select.add(option);
+  });
+  if (current && [...select.options].some(option => option.value === current)) select.value = current;
+  if (select.options.length === 1) select.options[0].textContent = "Tiada fail PDF belum dipautkan. Upload PDF dahulu.";
+}
+
+async function loadAdminProducts() {
+  const tbody = $("adminProductList");
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="5" class="empty">Memuatkan produk...</td></tr>';
+  hideStatus($("productListStatus"));
+  try {
+    const data = await apiRequest("/api/admin/products");
+    adminProducts = Array.isArray(data.products) ? data.products : [];
+    populateProductPdfOptions();
+    tbody.replaceChildren();
+    if (!adminProducts.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">Belum ada produk diterbitkan. Upload PDF dan terbitkan produk baharu.</td></tr>';
+      return;
+    }
+    adminProducts.forEach(product => {
+      const row = document.createElement("tr");
+      const nameCell = document.createElement("td");
+      const name = document.createElement("strong"); name.textContent = product.name || "eBook";
+      const description = document.createElement("div"); description.className = "muted"; description.textContent = product.description || "Tiada penerangan";
+      nameCell.append(name, description);
+      const fileCell = document.createElement("td"); fileCell.textContent = product.file_name || "PDF belum dipautkan";
+      const priceCell = document.createElement("td"); priceCell.textContent = formatMoney(product.price_minor, product.currency);
+      const statusCell = document.createElement("td");
+      const status = document.createElement("span"); status.className = "payment-badge " + (product.product_status === "active" ? "approved" : product.product_status === "archived" ? "rejected" : "none");
+      status.textContent = product.product_status === "active" ? "Aktif" : product.product_status === "archived" ? "Arkib" : "Draf"; statusCell.append(status);
+      const actionCell = document.createElement("td");
+      const edit = document.createElement("button"); edit.type = "button"; edit.className = "btn btn-secondary btn-small"; edit.textContent = "Edit";
+      edit.addEventListener("click", () => openProductEdit(product)); actionCell.append(edit);
+      row.append(nameCell, fileCell, priceCell, statusCell, actionCell); tbody.append(row);
+    });
+  } catch (error) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Gagal memuatkan produk.</td></tr>';
+    showStatus($("productListStatus"), error.message, "error");
+  }
+}
+
+$("productCreateForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = $("productCreateButton"); button.disabled = true; button.textContent = "Menerbitkan...";
+  hideStatus($("productCreateStatus"));
+  try {
+    const price = Number($("productCreatePrice").value);
+    if (!Number.isFinite(price) || price <= 0) throw new Error("Masukkan harga yang sah.");
+    const data = await apiRequest("/api/admin/ebooks/create-product", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: $("productCreateName").value.trim(),
+        description: $("productCreateDescription").value.trim(),
+        price_minor: Math.round(price * 100),
+        b2_file_id: $("productPdfFile").value
+      })
+    });
+    showStatus($("productCreateStatus"), data.message === "EBOOK_PRODUCT_CREATED" ? "Produk berjaya diterbitkan ke katalog." : "Produk berjaya dicipta.", "success");
+    $("productCreateForm").reset();
+    await Promise.all([loadAdminProducts(), loadEbooks()]);
+  } catch (error) { showStatus($("productCreateStatus"), error.message, "error"); }
+  finally { button.disabled = false; button.textContent = "Terbitkan Produk ke Katalog"; }
+});
+
+function openProductEdit(product) {
+  $("editProductId").value = product.id;
+  $("editProductName").value = product.name || "";
+  $("editProductDescription").value = product.description || "";
+  $("editProductPrice").value = (Number(product.price_minor || 0) / 100).toFixed(2);
+  $("editProductStatus").value = product.product_status || "draft";
+  hideStatus($("productEditStatus"));
+  $("productEditModal").classList.add("show");
+}
+function closeProductEdit() { $("productEditModal").classList.remove("show"); }
+$("closeProductEditButton").addEventListener("click", closeProductEdit);
+$("productEditModal").addEventListener("click", event => { if (event.target === $("productEditModal")) closeProductEdit(); });
+$("productEditForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = $("saveProductEditButton"); button.disabled = true; button.textContent = "Menyimpan...";
+  hideStatus($("productEditStatus"));
+  try {
+    const price = Number($("editProductPrice").value);
+    if (!Number.isFinite(price) || price <= 0) throw new Error("Harga eBook mesti lebih daripada RM0.00.");
+    await apiRequest("/api/admin/products/update", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ product_id: $("editProductId").value, name: $("editProductName").value.trim(), description: $("editProductDescription").value.trim(), price_minor: Math.round(price * 100), product_status: $("editProductStatus").value })
+    });
+    closeProductEdit(); showStatus($("productListStatus"), "Maklumat produk berjaya dikemas kini.", "success"); await loadAdminProducts();
+  } catch (error) { showStatus($("productEditStatus"), error.message, "error"); }
+  finally { button.disabled = false; button.textContent = "Simpan Perubahan"; }
+});
+$("refreshProductsButton").addEventListener("click", () => Promise.all([loadAdminProducts(), loadEbooks()]));
 
 // =====================================
 // CUSTOMER ACCOUNT APPROVAL
@@ -1198,6 +1353,92 @@ $("refreshProfileRequestsButton").addEventListener("click", loadProfileChangeReq
 
 
 // =====================================
+// ADMIN NOTIFICATIONS
+function notificationTarget(type) {
+  if (type === "customer_registered") return "accountsPanel";
+  if (type === "profile_change_requested") return "profileRequestsPanel";
+  return "paymentsPanel";
+}
+function renderNotifications(notifications) {
+  const list = $("notificationList"); list.replaceChildren();
+  if (!notifications.length) { const empty = document.createElement("div"); empty.className = "empty"; empty.textContent = "Tiada notifikasi buat masa ini."; list.append(empty); return; }
+  notifications.forEach(item => {
+    const button = document.createElement("button"); button.type = "button"; button.className = "notification-item" + (Number(item.is_read) === 0 ? " unread" : "");
+    const dot = document.createElement("i"); dot.className = "notification-dot";
+    const content = document.createElement("div");
+    const title = document.createElement("strong"); title.textContent = item.title || "Notifikasi Masta Xul";
+    const message = document.createElement("span"); message.textContent = item.message || "";
+    content.append(title, message);
+    const time = document.createElement("time"); time.textContent = formatDate(item.created_at);
+    button.append(dot, content, time);
+    button.addEventListener("click", async () => {
+      try { await apiRequest("/api/admin/notifications/read", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ notification_id: item.id }) }); } catch (error) {}
+      const target = notificationTarget(item.notification_type);
+      if (item.notification_type === "customer_registered") { $("accountFilter").value = "pending"; await loadAccounts(); }
+      else if (item.notification_type === "profile_change_requested") await loadProfileChangeRequests();
+      else { $("paymentFilter").value = "pending"; await loadPayments(); }
+      await loadNotifications({ silent: true });
+      $(target).scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    list.append(button);
+  });
+}
+async function loadNotifications(options = {}) {
+  if (!adminToken) return;
+  if (!options.silent) hideStatus($("notificationStatus"));
+  try {
+    const data = await apiRequest("/api/admin/notifications?limit=60");
+    $("notificationUnreadCount").textContent = String(Number(data.unread_count || 0));
+    renderNotifications(Array.isArray(data.notifications) ? data.notifications : []);
+  } catch (error) {
+    if (!options.silent) showStatus($("notificationStatus"), error.message, "error");
+  }
+}
+$("refreshNotificationsButton").addEventListener("click", () => loadNotifications());
+$("markAllNotificationsReadButton").addEventListener("click", async () => {
+  try {
+    await apiRequest("/api/admin/notifications/read", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mark_all: true }) });
+    await loadNotifications();
+  } catch (error) { showStatus($("notificationStatus"), error.message, "error"); }
+});
+
+// ANALYTICS AND SYSTEM DIAGNOSTICS
+async function loadAnalytics() {
+  try {
+    const data = await apiRequest("/api/admin/analytics");
+    $("analyticsRevenue").textContent = formatMoney(data.sales?.revenue_minor || 0, "MYR");
+    $("analyticsOrders").textContent = String(Number(data.sales?.paid_order_count || 0));
+    $("analyticsCustomers").textContent = String(Number(data.customers?.total_customers || 0));
+    $("analyticsPendingReceipts").textContent = String(Number(data.pending_receipts || 0));
+    const list = $("analyticsTopProducts"); list.replaceChildren();
+    const products = Array.isArray(data.top_products) ? data.top_products : [];
+    if (!products.length) { const empty = document.createElement("div"); empty.className = "empty"; empty.textContent = "Belum ada jualan yang diluluskan untuk dianalisis."; list.append(empty); }
+    products.forEach((product, index) => {
+      const row = document.createElement("div"); row.className = "analytics-top-item";
+      const name = document.createElement("strong"); name.textContent = `${index + 1}. ${product.name}`;
+      const stats = document.createElement("span"); stats.textContent = `${Number(product.units_sold || 0)} unit · ${formatMoney(product.revenue_minor, "MYR")}`;
+      row.append(name, stats); list.append(row);
+    });
+    hideStatus($("analyticsStatus"));
+  } catch (error) { showStatus($("analyticsStatus"), error.message, "error"); }
+}
+async function loadSystemHealth() {
+  const list = $("systemHealthList");
+  try {
+    const data = await apiRequest("/health");
+    list.replaceChildren();
+    Object.entries(data.checks || {}).forEach(([key, value]) => {
+      const item = document.createElement("div"); item.className = "health-item";
+      const label = document.createElement("span"); label.textContent = key;
+      const status = document.createElement("strong"); status.className = value ? "ok" : "bad"; status.textContent = value ? "Dikonfigurasi" : "Belum dikonfigurasi";
+      item.append(label, status); list.append(item);
+    });
+    showStatus($("systemStatus"), data.status === "ready" ? "Konfigurasi asas Worker lengkap. Ini bukan ujian transaksi B2/D1 secara menyeluruh." : "Ada konfigurasi asas yang belum lengkap.", data.status === "ready" ? "success" : "error");
+  } catch (error) { list.replaceChildren(); showStatus($("systemStatus"), error.message, "error"); }
+}
+$("refreshAnalyticsButton").addEventListener("click", loadAnalytics);
+$("refreshSystemButton").addEventListener("click", loadSystemHealth);
+
 // PAYMENT REVIEW
 // =====================================
 
@@ -1610,14 +1851,19 @@ async function deleteEbook(file, button) {
 
 // REFRESH AND LOGOUT
 $("refreshButton").addEventListener("click", () => {
-  loadEbooks();
-  loadAccounts();
-  loadPayments();
-  loadCustomers();
-  loadProfileChangeRequests();
+  loadEbooks(); loadAdminProducts(); loadAccounts(); loadPayments(); loadCustomers();
+  loadProfileChangeRequests(); loadNotifications(); loadAnalytics(); loadSystemHealth();
 });
 $("logoutButton").addEventListener("click", () => {
   if (confirm("Log keluar daripada dashboard?")) logout();
+});
+
+// MODULE SHORTCUTS
+$("moduleGrid").querySelectorAll("[data-target]").forEach(button => {
+  button.addEventListener("click", () => {
+    const target = $(button.dataset.target);
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 });
 
 // DATE
@@ -1634,11 +1880,8 @@ $("year").textContent = now.getFullYear();
 // RESTORE SESSION FOR CURRENT TAB
 if (adminToken) {
   showAdmin();
-  loadEbooks();
-  loadAccounts();
-  loadPayments();
-  loadCustomers();
-  loadProfileChangeRequests();
+  loadEbooks(); loadAdminProducts(); loadAccounts(); loadPayments(); loadCustomers();
+  loadProfileChangeRequests(); loadNotifications(); loadAnalytics(); loadSystemHealth();
 } else {
   showLogin();
 }
