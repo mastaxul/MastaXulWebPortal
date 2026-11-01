@@ -1663,21 +1663,34 @@ if (blob.size <= 0) throw new Error("Fail PDF kosong atau tidak lengkap.");
 return blob;
 }
 async function viewEbookPdf(item, button) {
+// Buka tab kosong secara serta-merta ketika pengguna menekan butang.
+// Ini membantu Safari iPad membenarkan tab PDF selepas proses fetch selesai.
+const previewTab = window.open("about:blank", "_blank");
+if (!previewTab) {
+showStatus($("libraryStatus"), "Safari menyekat tab PDF. Benarkan pop-up untuk laman Masta Xul dan cuba lagi.", "error");
+return;
+}
+
 button.disabled = true;
 const original = button.textContent;
 button.textContent = "Membuka PDF...";
+
 try {
+previewTab.document.title = "Masta Xul | Memuatkan PDF";
+previewTab.document.body.innerHTML = '<main style="font-family:system-ui,sans-serif;padding:32px;color:#f5f1e9;background:#090909;min-height:100vh;box-sizing:border-box"><h2 style="color:#d5ad61">Masta Xul</h2><p>PDF sedang dimuatkan. Sila tunggu sebentar...</p></main>';
+
 const blob = await getEbookBlob(item, false);
+if (blob.size <= 0) throw new Error("Fail PDF kosong atau tidak lengkap.");
+
+const objectUrl = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
 if (state.currentEbookObjectUrl) URL.revokeObjectURL(state.currentEbookObjectUrl);
-state.currentEbookObjectUrl = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
-$("ebookViewerTitle").textContent = item.name || "eBook PDF";
-$("ebookViewerFrame").src = state.currentEbookObjectUrl;
-$("ebookViewerDownload").href = state.currentEbookObjectUrl;
-$("ebookViewerDownload").download = item.file_name || "Masta-Xul-eBook.pdf";
-$("ebookViewerModal").classList.add("show");
-document.body.style.overflow = "hidden";
+state.currentEbookObjectUrl = objectUrl;
+
+// Gunakan paparan PDF native Safari dalam tab baharu, bukan iframe dalam modal.
+previewTab.location.replace(objectUrl);
 } catch (error) {
-showStatus($("libraryStatus"), error.message, "error");
+try { previewTab.close(); } catch (closeError) {}
+showStatus($("libraryStatus"), error.message || "Fail eBook tidak dapat dibuka.", "error");
 } finally {
 button.disabled = false;
 button.textContent = original;
