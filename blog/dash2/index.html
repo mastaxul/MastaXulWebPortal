@@ -2,16 +2,214 @@
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
+<!-- Isi origin HTTPS Worker jika halaman ini dihoskan di domain berasingan. -->
+<meta name="mxu-api-origin" content="">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#090b10">
-<title>Masta Xul | Ruang pentadbir</title>
+<title>Masta Xul | Admin Dashboard V11</title>
 
-<link rel="stylesheet" href="assets/admin.css">
-<link rel="stylesheet" href="assets/studio.css">
+<style>
+:root {
+  --bg:#090b10;
+  --panel:#121720;
+  --panel2:#181f29;
+  --line:#2a303b;
+  --gold:#c7a45b;
+  --gold2:#e5ca89;
+  --text:#f3f4f6;
+  --muted:#929baa;
+  --green:#63bd91;
+  --red:#e47777;
+}
+* {box-sizing:border-box;margin:0;padding:0}
+body {
+  background:radial-gradient(ellipse at 80% -10%,#302718 0,transparent 38%),var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  min-height:100vh;
+}
+button,input {font:inherit}
+button {cursor:pointer}
+.container {max-width:1150px;margin:auto;padding:22px 18px 50px}
+header {
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:15px;padding-bottom:22px;
+  border-bottom:1px solid var(--line);
+}
+.brand {display:flex;align-items:center;gap:12px}
+.logo {
+  width:46px;height:46px;border:1px solid var(--gold);
+  border-radius:50%;display:grid;place-items:center;
+  color:var(--gold2);font-family:Georgia,serif;font-size:21px;
+  box-shadow:0 0 25px #c7a45b20;
+}
+.brand-name {font-size:14px;font-weight:800;letter-spacing:3px}
+.brand-sub {color:var(--muted);font-size:10px;letter-spacing:2px;margin-top:3px}
+.header-right {color:var(--muted);font-size:12px;text-align:right}
+.online {color:var(--green);margin-top:5px}
+.intro {padding:35px 0 25px}
+.eyebrow {color:var(--gold2);font-size:11px;letter-spacing:3px;text-transform:uppercase}
+h1 {font-size:clamp(28px,5vw,43px);margin:9px 0;letter-spacing:-1.5px}
+.intro p {color:var(--muted);font-size:14px;max-width:650px;line-height:1.7}
+.panel {
+  background:linear-gradient(145deg,#19212c,#10141b);
+  border:1px solid var(--line);border-radius:15px;padding:20px;margin-bottom:20px;
+}
+.section-title {
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;margin-bottom:16px;flex-wrap:wrap;
+}
+.section-title h2 {font-size:17px}
+.section-title span {color:var(--muted);font-size:11px}
+.notice {
+  background:#211b11;border:1px solid #66502a;border-radius:12px;
+  padding:13px;color:#dfc995;font-size:13px;line-height:1.6;margin-bottom:20px;
+}
+.hidden {display:none!important}
+.login-box {max-width:440px;margin:25px auto}
+.field {margin:14px 0}
+.field label {display:block;color:var(--muted);font-size:12px;margin-bottom:7px}
+input[type="password"],input[type="text"] {
+  width:100%;padding:13px;border-radius:9px;
+  border:1px solid var(--line);background:#090d13;color:var(--text);
+  outline:none;
+}
+input:focus {border-color:var(--gold)}
+.btn {
+  border:1px solid var(--gold);background:var(--gold);
+  color:#17130b;padding:11px 16px;border-radius:9px;
+  font-weight:700;font-size:13px;
+}
+.btn:hover {background:var(--gold2)}
+.btn:disabled {opacity:.5;cursor:not-allowed}
+.btn-secondary {
+  background:transparent;color:var(--gold2);border:1px solid #655433;
+}
+.btn-danger {background:#351b1b;color:#ffb0b0;border:1px solid #713838}
+.btn-small {padding:7px 11px;font-size:11px}
+.actions {display:flex;gap:9px;flex-wrap:wrap}
+.status {
+  padding:11px 13px;border-radius:9px;margin-top:13px;
+  font-size:12px;line-height:1.5;display:none;
+}
+.status.show {display:block}
+.status.success {background:#10251d;color:#8bd4ac;border:1px solid #285b43}
+.status.error {background:#2a1717;color:#ffaaaa;border:1px solid #713838}
+.status.info {background:#1c2230;color:#c3d1ed;border:1px solid #394963}
+.upload-area {
+  border:1px dashed #655433;background:#0d1118;
+  padding:20px;border-radius:12px;margin-top:12px;
+}
+input[type="file"] {width:100%;color:var(--muted);font-size:12px;margin:12px 0}
+.file-name {font-size:12px;color:var(--gold2);margin-bottom:12px;word-break:break-word}
+.table-wrap {overflow-x:auto}
+table {width:100%;border-collapse:collapse;min-width:520px}
+th,td {padding:13px 10px;text-align:left;border-bottom:1px solid var(--line);font-size:12px}
+th {color:var(--gold2);font-weight:600}
+td {color:#d8dce3}
+.file-title {font-weight:600;word-break:break-word}
+.muted {color:var(--muted);font-size:11px;margin-top:4px}
+.empty {padding:25px;text-align:center;color:var(--muted);font-size:13px}
+.stats {
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;
+}
+.stat {background:#0d1219;border:1px solid var(--line);padding:15px;border-radius:11px}
+.stat small {display:block;color:var(--muted);font-size:11px}
+.stat strong {display:block;font-size:23px;color:var(--gold2);margin-top:5px}
+.grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.module {
+  background:linear-gradient(145deg,#19212c,#10141b);
+  border:1px solid var(--line);border-radius:15px;padding:19px;
+  min-height:150px;display:flex;flex-direction:column;
+}
+.module-icon {
+  width:39px;height:39px;display:grid;place-items:center;
+  border-radius:10px;background:#c7a45b18;color:var(--gold2);font-size:20px;
+}
+.tag {font-size:10px;color:var(--gold2);border:1px solid #655433;padding:4px 8px;border-radius:30px}
+.module-top {display:flex;justify-content:space-between;align-items:center}
+.module h3 {font-size:16px;margin:15px 0 6px}
+.module p {color:var(--muted);font-size:12px;line-height:1.6}
+.module-footer {color:var(--gold2);font-size:12px;margin-top:auto;padding-top:15px}
+.module-link{width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer;transition:transform .15s,border-color .15s}
+.module-link:hover,.module-link:focus-visible{transform:translateY(-2px);border-color:var(--gold);outline:none}
+.module-link .module-footer{color:var(--gold2)}
+.notification-list{display:grid;gap:9px;margin-top:12px}
+.notification-item{width:100%;display:grid;grid-template-columns:10px 1fr auto;gap:10px;align-items:start;text-align:left;padding:13px;border:1px solid var(--line);border-radius:10px;background:#0d1219;color:var(--text);cursor:pointer}
+.notification-item.unread{border-color:#806334;background:#17140f}
+.notification-dot{width:8px;height:8px;border-radius:50%;background:transparent;margin-top:5px}
+.notification-item.unread .notification-dot{background:var(--gold2);box-shadow:0 0 0 3px #c7a45b22}
+.notification-item strong{display:block;font-size:13px;color:var(--gold2);margin-bottom:4px}
+.notification-item span{display:block;font-size:12px;line-height:1.5;color:var(--muted)}
+.notification-item time{font-size:10px;color:var(--muted);white-space:nowrap}
+.product-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.product-form-grid .full{grid-column:1/-1}
+.product-form-grid input,.product-form-grid select,.product-form-grid textarea{width:100%;padding:11px;margin:7px 0 13px;border-radius:8px;border:1px solid var(--line);background:#090d13;color:var(--text);font:inherit}
+.product-form-grid textarea{min-height:82px;resize:vertical}
+.product-table table{min-width:850px}
+.analytics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:15px 0}
+.analytics-top-list{display:grid;gap:8px;margin-top:12px}
+.analytics-top-item{display:flex;justify-content:space-between;gap:12px;padding:11px 13px;border:1px solid var(--line);border-radius:8px;background:#0d1219;font-size:12px}
+.health-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:12px}
+.health-item{border:1px solid var(--line);border-radius:8px;padding:11px;background:#0d1219;font-size:12px;display:flex;justify-content:space-between;gap:8px}
+.health-item strong.ok{color:var(--green)}.health-item strong.bad{color:var(--red)}
+@media(max-width:760px){.analytics-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.health-list{grid-template-columns:1fr}.product-form-grid{grid-template-columns:1fr}.product-form-grid .full{grid-column:auto}.notification-item{grid-template-columns:10px 1fr}.notification-item time{grid-column:2}}
+
+.payment-summary {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:15px 0 18px}
+.payment-filter {background:#090d13;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12px;min-width:145px}
+.payment-table table {min-width:1000px}
+.account-table table {min-width:760px}
+.account-actions {display:flex;gap:6px;flex-wrap:wrap;min-width:110px}
+.payment-badge {display:inline-block;border-radius:30px;padding:5px 9px;font-size:10px;font-weight:700;white-space:nowrap;border:1px solid var(--line)}
+.payment-badge.pending {color:#e5ca89;background:#2b2417;border-color:#66502a}
+.payment-badge.approved {color:#8bd4ac;background:#10251d;border-color:#285b43}
+.payment-badge.rejected {color:#ffaaaa;background:#2a1717;border-color:#713838}
+.payment-badge.none {color:#aab2bf;background:#1b2029;border-color:#343d4b}
+.payment-actions {display:flex;gap:6px;flex-wrap:wrap;min-width:150px}
+.receipt-modal {display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.88);padding:14px;align-items:center;justify-content:center}
+.receipt-modal.show {display:flex}
+.management-modal{display:none;position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.88);padding:14px;align-items:center;justify-content:center}
+.management-modal.show{display:flex}
+.management-card{width:min(900px,100%);max-height:94vh;overflow:auto;background:#121720;border:1px solid #655433;border-radius:14px;padding:18px}
+.management-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.management-grid .full{grid-column:1/-1}
+.management-field{width:100%;padding:11px;margin:7px 0 13px;border-radius:8px;border:1px solid var(--line);background:#090d13;color:var(--text)}
+.management-orders{display:grid;gap:10px}
+.management-order{border:1px solid var(--line);border-radius:9px;padding:12px;background:#0d1219}
+.management-order p{color:var(--muted);font-size:12px;line-height:1.6;margin:4px 0}
+@media(max-width:520px){.management-grid{grid-template-columns:1fr}.management-grid .full{grid-column:auto}.management-card{padding:11px}}
+.receipt-card {width:min(920px,100%);max-height:94vh;overflow:auto;background:#121720;border:1px solid #655433;border-radius:14px;padding:15px}
+.receipt-viewer {background:#080b10;border:1px solid var(--line);border-radius:9px;min-height:220px;max-height:78vh;overflow:auto;display:flex;align-items:center;justify-content:center;padding:8px}
+.receipt-viewer iframe {width:100%;height:75vh;border:0;background:white}
+.receipt-viewer img {display:block;max-width:100%;max-height:75vh;object-fit:contain}
+footer {
+  margin-top:35px;padding-top:18px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  color:#77808e;font-size:11px;
+}
+footer a {color:var(--gold2);text-decoration:none}
+@media(max-width:800px) {
+  .grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:520px) {
+  .container {padding:16px 13px 35px}
+  .grid {grid-template-columns:1fr}
+  .header-right {text-align:left}
+  .stats {grid-template-columns:1fr 1fr}
+  .payment-summary {grid-template-columns:1fr 1fr}
+  .section-title {align-items:flex-start}
+  .receipt-card {padding:10px}
+}
+
+.cover-generation-row{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:10px;background:#101319}
+.cover-generation-row>div{flex:1;min-width:0}
+.publish-cover-preview{width:120px;max-height:170px;object-fit:contain;border:1px solid var(--gold);border-radius:7px;background:#090909}
+.legacy-workflow{display:none!important}
+</style>
 </head>
 
-<body class="admin-page">
+<body>
 <main class="container">
 
 <header>
@@ -24,33 +222,36 @@
   </div>
   <div class="header-right">
     <div id="date"></div>
-    <div class="online">● Studio setempat</div>
+    <div class="online">● Ebook API Workspace</div>
   </div>
 </header>
 
 <section class="intro">
-  <div class="eyebrow">MASTA XUL &nbsp; / &nbsp; STUDIO</div>
-  <h1>Ruang pentadbir</h1>
+  <div class="eyebrow">Management Workspace</div>
+  <h1>Admin Dashboard</h1>
   <p>
     Selamat datang ke pusat operasi Masta Xul Universe.
     Urus katalog, pelanggan, pesanan, pembayaran, notifikasi dan prestasi jualan melalui satu ruang kawalan.
   </p>
 </section>
 
-<div class="notice"><strong>Studio demo setempat</strong><br>Katalog, akaun dan pesanan disimpan pada pelayar ini. <a href="index.html">Buka kedai eBook ↗</a></div>
+<div class="notice">
+  <strong>◆ Masta Xul Business Control Centre — V11</strong><br>
+  Pusat operasi untuk pengurusan produk, pelanggan, pembayaran manual QR, perpustakaan digital, notifikasi dan analitik. Akses pentadbir memerlukan Admin Token yang sah.
+</div>
 
 <!-- LOGIN -->
 <section id="loginSection" class="panel login-box">
   <div class="section-title">
-    <h2>Akses pentadbir</h2>
-    <span>Pada pelayar ini</span>
+    <h2>Admin Login</h2>
+    <span>Secure Access</span>
   </div>
-  <p class="login-help" id="setupHelp">Pada penggunaan pertama, cipta kata laluan untuk studio ini.</p><form id="loginForm">
+  <form id="loginForm">
     <div class="field">
-      <label for="adminToken">kata laluan pentadbir</label>
-      <input id="adminToken" minlength="10" maxlength="128" type="password" placeholder="Sekurang-kurangnya 10 aksara" required autocomplete="current-password">
+      <label for="adminToken">Admin Token</label>
+      <input id="adminToken" type="password" placeholder="Masukkan Admin Token" required autocomplete="current-password">
     </div>
-    <button id="loginButton" class="btn" type="submit">Buka studio</button>
+    <button id="loginButton" class="btn" type="submit">Login Dashboard</button>
   </form>
   <div id="loginStatus" class="status"></div>
 </section>
@@ -61,7 +262,7 @@
   <div class="section-title">
     <h2>Pengurusan eBook</h2>
     <div class="actions">
-      <button id="refreshButton" class="btn btn-secondary btn-small" type="button">↻ Muat semula</button>
+      <button id="refreshButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button>
       <button id="logoutButton" class="btn btn-danger btn-small" type="button">Logout</button>
     </div>
   </div>
@@ -76,27 +277,16 @@
       <strong id="totalStorage">0 KB</strong>
     </div>
     <div class="stat">
-      <small>Status storan</small>
+      <small>Status API</small>
       <strong id="apiStatus" style="font-size:15px">Checking</strong>
     </div>
   </div>
 
-  <section id="moduleGrid" class="grid hidden" aria-label="Modul pengurusan aktif">
-  <button class="module module-link" type="button" data-target="notificationsPanel"><div class="module-top"><div class="module-icon">♢</div><span class="tag">AKTIF</span></div><h3>Pusat Notifikasi</h3><p>Makluman pendaftaran, resit baharu dan permohonan profil.</p><div class="module-footer">Buka notifikasi →</div></button>
-  <button class="module module-link" type="button" data-target="uploadPanel"><div class="module-top"><div class="module-icon">▤</div><span class="tag">AKTIF</span></div><h3>Pengurusan Fail eBook</h3><p>Muat naik PDF dan urus fail di storan pelayar.</p><div class="module-footer">Buka pengurusan fail →</div></button>
-  <button class="module module-link" type="button" data-target="productManagementPanel"><div class="module-top"><div class="module-icon">◇</div><span class="tag">AKTIF</span></div><h3>Pengurusan Produk</h3><p>Terbitkan eBook ke katalog, ubah harga, penerangan dan status.</p><div class="module-footer">Buka produk →</div></button>
-  <button class="module module-link" type="button" data-target="paymentsPanel"><div class="module-top"><div class="module-icon">▧</div><span class="tag">AKTIF</span></div><h3>Semakan Pembayaran</h3><p>Semak resit yang benar-benar dihantar dan luluskan transaksi.</p><div class="module-footer">Buka pembayaran →</div></button>
-  <button class="module module-link" type="button" data-target="customersPanel"><div class="module-top"><div class="module-icon">◎</div><span class="tag">AKTIF</span></div><h3>Pengurusan Pelanggan</h3><p>Lihat pelanggan, sejarah pembelian, edit profil dan sekat akaun.</p><div class="module-footer">Buka pelanggan →</div></button>
-  <button class="module module-link" type="button" data-target="accountsPanel"><div class="module-top"><div class="module-icon">♙</div><span class="tag">AKTIF</span></div><h3>Kelulusan Akaun</h3><p>Semak dan luluskan pendaftaran pelanggan baharu.</p><div class="module-footer">Buka kelulusan akaun →</div></button>
-  <button class="module module-link" type="button" data-target="profileRequestsPanel"><div class="module-top"><div class="module-icon">✎</div><span class="tag">AKTIF</span></div><h3>Permohonan Profil</h3><p>Semak perubahan nama, telefon dan alamat pelanggan.</p><div class="module-footer">Buka permohonan →</div></button>
-  <button class="module module-link" type="button" data-target="analyticsPanel"><div class="module-top"><div class="module-icon">▥</div><span class="tag">AKTIF</span></div><h3>Analitik Jualan</h3><p>Lihat hasil jualan, pesanan dibayar dan produk paling laris.</p><div class="module-footer">Buka analitik →</div></button>
-  <button class="module module-link" type="button" data-target="systemPanel"><div class="module-top"><div class="module-icon">⚙</div><span class="tag">READ ONLY</span></div><h3>Status Sistem</h3><p>Periksa konfigurasi asas sesi dan storan pelayar.</p><div class="module-footer">Buka diagnostik →</div></button>
-</section>
-<div class="panel" id="notificationsPanel">
+  <div class="panel" id="notificationsPanel">
     <div class="section-title">
       <div><h2>Pusat Notifikasi</h2><span><strong id="notificationUnreadCount">0</strong> notifikasi belum dibaca</span></div>
       <div class="actions">
-        <button id="refreshNotificationsButton" class="btn btn-secondary btn-small" type="button">↻ Muat semula</button>
+        <button id="refreshNotificationsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button>
         <button id="markAllNotificationsReadButton" class="btn btn-secondary btn-small" type="button">Tandakan semua dibaca</button>
       </div>
     </div>
@@ -118,7 +308,7 @@
           <option value="banned">Akaun disekat</option>
           <option value="all">Semua akaun</option>
         </select>
-        <button id="refreshAccountsButton" class="btn btn-secondary btn-small" type="button">↻ Muat semula</button>
+        <button id="refreshAccountsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button>
       </div>
     </div>
 
@@ -167,7 +357,7 @@
       <div><h2>Senarai Pelanggan & Pembeli</h2><span>Maklumat akaun, jumlah pesanan dan jumlah pembayaran yang diluluskan</span></div>
       <div class="actions">
         <select id="customerFilter" class="payment-filter" aria-label="Tapis pelanggan"><option value="all">Semua pelanggan</option><option value="active">Aktif</option><option value="pending">Menunggu kelulusan</option><option value="banned">Disekat</option></select>
-        <button id="refreshCustomersButton" class="btn btn-secondary btn-small" type="button">↻ Muat semula</button>
+        <button id="refreshCustomersButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button>
       </div>
     </div>
     <div class="payment-summary">
@@ -180,7 +370,7 @@
   </div>
 
   <div class="panel" id="profileRequestsPanel">
-    <div class="section-title"><div><h2>Kelulusan Perubahan Profil</h2><span>Perubahan maklumat pelanggan tidak aktif sehingga admin meluluskannya</span></div><button id="refreshProfileRequestsButton" class="btn btn-secondary btn-small" type="button">↻ Muat semula</button></div>
+    <div class="section-title"><div><h2>Kelulusan Perubahan Profil</h2><span>Perubahan maklumat pelanggan tidak aktif sehingga admin meluluskannya</span></div><button id="refreshProfileRequestsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button></div>
     <div id="profileRequestStatus" class="status"></div>
     <div class="table-wrap account-table"><table><thead><tr><th>Pelanggan</th><th>Maklumat baharu</th><th>Tarikh permohonan</th><th>Tindakan</th></tr></thead><tbody id="profileRequestList"><tr><td colspan="4" class="empty">Memuatkan permohonan profil...</td></tr></tbody></table></div>
   </div>
@@ -188,7 +378,7 @@
   <div class="panel" id="publishPanel">
     <div class="section-title">
       <div><h2>Penerbitan eBook — Satu Langkah</h2><span>Upload PDF, jana cover halaman pertama dan terbitkan produk secara bersepadu</span></div>
-      <span>Storan setempat</span>
+      <span>Backblaze B2 · D1</span>
     </div>
     <form id="publishEbookForm" class="upload-area">
       <div class="field">
@@ -216,17 +406,17 @@
 
   <div class="panel" id="orphanPanel">
     <div class="section-title">
-      <div><h2>Pengesanan Fail PDF Tidak Dipautkan</h2><span>Fail yang tiada rekod produk dan berusia sekurang-kurangnya 24 jam</span></div>
+      <div><h2>Pengesanan Fail B2 Tidak Dipautkan</h2><span>Fail yang tiada rekod produk dan berusia sekurang-kurangnya 24 jam</span></div>
       <button id="scanOrphansButton" class="btn btn-secondary btn-small" type="button">Periksa Fail Orphan</button>
     </div>
     <div id="orphanStatus" class="status"></div>
     <div class="table-wrap"><table><thead><tr><th>Nama Fail</th><th>Saiz</th><th>Tarikh Upload</th><th>Tindakan</th></tr></thead><tbody id="orphanList"><tr><td colspan="4" class="empty">Tekan Periksa Fail Orphan untuk memulakan imbasan.</td></tr></tbody></table></div>
   </div>
 
-  <div class="panel" id="uploadPanel">
+  <div class="panel legacy-workflow hidden" id="uploadPanel">
     <div class="section-title">
       <h2>Upload eBook PDF</h2>
-      <span>Storan pelayar</span>
+      <span>Backblaze B2 Storage</span>
     </div>
 
     <p class="muted">
@@ -270,14 +460,14 @@
   </div>
 
   <div class="panel" id="productManagementPanel">
-    <div class="section-title"><div><h2>Pengurusan Produk eBook</h2><span>Terbitkan PDF yang sudah dimuat naik, ubah harga dan status katalog</span></div><button id="refreshProductsButton" class="btn btn-secondary btn-small" type="button">↻ Muat semula</button></div>
-    <form id="productCreateForm" class="upload-area">
+    <div class="section-title"><div><h2>Pengurusan Produk eBook</h2><span>Terbitkan PDF yang sudah dimuat naik, ubah harga dan status katalog</span></div><button id="refreshProductsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button></div>
+    <form id="productCreateForm" class="upload-area legacy-workflow hidden">
       <h3 style="font-size:14px;color:var(--gold2);margin-bottom:10px">Terbitkan eBook baharu</h3>
       <div class="product-form-grid">
         <div><label for="productCreateName">Tajuk eBook</label><input id="productCreateName" maxlength="160" required></div>
         <div><label for="productCreatePrice">Harga (RM)</label><input id="productCreatePrice" type="number" min="0.01" max="99999" step="0.01" required></div>
         <div class="full"><label for="productCreateDescription">Penerangan</label><textarea id="productCreateDescription" maxlength="5000" placeholder="Penerangan ringkas eBook"></textarea></div>
-        <div class="full"><label for="productPdfFile">Pilih PDF daripada storan pelayar</label><select id="productPdfFile" required><option value="">Memuatkan fail PDF...</option></select></div>
+        <div class="full"><label for="productPdfFile">Pilih PDF daripada Backblaze B2</label><select id="productPdfFile" required><option value="">Memuatkan fail PDF...</option></select></div>
       </div>
       <div id="productCreateStatus" class="status"></div>
       <button id="productCreateButton" class="btn" type="submit">Terbitkan Produk ke Katalog</button>
@@ -291,7 +481,7 @@
     <div class="section-title">
       <div>
         <h2>Semakan Pembayaran</h2>
-        <span>Resit contoh · simulasi</span>
+        <span>Manual QR · Bank Islam</span>
       </div>
       <div class="actions">
         <select id="paymentFilter" class="payment-filter" aria-label="Tapis pembayaran">
@@ -300,7 +490,7 @@
           <option value="rejected">Ditolak</option>
           <option value="all">Semua pesanan</option>
         </select>
-        <button id="refreshPaymentsButton" class="btn btn-secondary btn-small" type="button">↻ Muat semula</button>
+        <button id="refreshPaymentsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button>
       </div>
     </div>
 
@@ -342,7 +532,7 @@
   </div>
 
   <div class="panel" id="analyticsPanel">
-    <div class="section-title"><div><h2>Analitik Jualan</h2><span>Ringkasan berdasarkan transaksi yang telah diluluskan</span></div><button id="refreshAnalyticsButton" class="btn btn-secondary btn-small" type="button">↻ Muat semula</button></div>
+    <div class="section-title"><div><h2>Analitik Jualan</h2><span>Ringkasan berdasarkan transaksi yang telah diluluskan</span></div><button id="refreshAnalyticsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button></div>
     <div id="analyticsStatus" class="status"></div>
     <div class="analytics-grid">
       <div class="stat"><small>Jumlah jualan</small><strong id="analyticsRevenue">RM0.00</strong></div>
@@ -422,17 +612,1514 @@
 </section>
 
 <!-- MODUL AKTIF: SHORTCUT KE FUNGSI SEBENAR -->
-
+<section id="moduleGrid" class="grid hidden" aria-label="Modul pengurusan aktif">
+  <button class="module module-link" type="button" data-target="notificationsPanel"><div class="module-top"><div class="module-icon">♢</div><span class="tag">AKTIF</span></div><h3>Pusat Notifikasi</h3><p>Makluman pendaftaran, resit baharu dan permohonan profil.</p><div class="module-footer">Buka notifikasi →</div></button>
+  <button class="module module-link" type="button" data-target="uploadPanel"><div class="module-top"><div class="module-icon">▤</div><span class="tag">AKTIF</span></div><h3>Pengurusan Fail eBook</h3><p>Muat naik PDF dan urus fail di Backblaze B2.</p><div class="module-footer">Buka pengurusan fail →</div></button>
+  <button class="module module-link" type="button" data-target="productManagementPanel"><div class="module-top"><div class="module-icon">◇</div><span class="tag">AKTIF</span></div><h3>Pengurusan Produk</h3><p>Terbitkan eBook ke katalog, ubah harga, penerangan dan status.</p><div class="module-footer">Buka produk →</div></button>
+  <button class="module module-link" type="button" data-target="paymentsPanel"><div class="module-top"><div class="module-icon">▧</div><span class="tag">AKTIF</span></div><h3>Semakan Pembayaran</h3><p>Semak resit yang benar-benar dihantar dan luluskan transaksi.</p><div class="module-footer">Buka pembayaran →</div></button>
+  <button class="module module-link" type="button" data-target="customersPanel"><div class="module-top"><div class="module-icon">◎</div><span class="tag">AKTIF</span></div><h3>Pengurusan Pelanggan</h3><p>Lihat pelanggan, sejarah pembelian, edit profil dan sekat akaun.</p><div class="module-footer">Buka pelanggan →</div></button>
+  <button class="module module-link" type="button" data-target="accountsPanel"><div class="module-top"><div class="module-icon">♙</div><span class="tag">AKTIF</span></div><h3>Kelulusan Akaun</h3><p>Semak dan luluskan pendaftaran pelanggan baharu.</p><div class="module-footer">Buka kelulusan akaun →</div></button>
+  <button class="module module-link" type="button" data-target="profileRequestsPanel"><div class="module-top"><div class="module-icon">✎</div><span class="tag">AKTIF</span></div><h3>Permohonan Profil</h3><p>Semak perubahan nama, telefon dan alamat pelanggan.</p><div class="module-footer">Buka permohonan →</div></button>
+  <button class="module module-link" type="button" data-target="analyticsPanel"><div class="module-top"><div class="module-icon">▥</div><span class="tag">AKTIF</span></div><h3>Analitik Jualan</h3><p>Lihat hasil jualan, pesanan dibayar dan produk paling laris.</p><div class="module-footer">Buka analitik →</div></button>
+  <button class="module module-link" type="button" data-target="systemPanel"><div class="module-top"><div class="module-icon">⚙</div><span class="tag">READ ONLY</span></div><h3>Status Sistem</h3><p>Periksa konfigurasi asas API, D1 dan storan.</p><div class="module-footer">Buka diagnostik →</div></button>
+</section>
 
 <footer>
   <span>© <span id="year"></span> Masta Xul Universe</span>
-  <span><a href="index.html">Ke kedai eBook ↗</a></span>
+  <span><a href="https://www.mastaxul.my/">MASTAXUL.MY</a></span>
 </footer>
 
 </main>
 
-<script src="assets/samples.js"></script>
-<script src="assets/local-store.js"></script>
-<script src="assets/admin.js"></script>
+<script>
+"use strict";
+
+// API CONFIGURATION
+const API_BASE = (document.querySelector('meta[name="mxu-api-origin"]').content.trim() || window.location.origin).replace(/\/+$/, "");
+const TOKEN_KEY = "mxu_ebook_admin_session";
+
+const $ = id => document.getElementById(id);
+
+let adminToken = sessionStorage.getItem(TOKEN_KEY) || "";
+let adminNotificationTimer = null;
+let adminB2Files = [];
+let adminProducts = [];
+
+function showStatus(element, message, type = "info") {
+  element.textContent = message;
+  element.className = "status show " + type;
+}
+
+function hideStatus(element) {
+  element.textContent = "";
+  element.className = "status";
+}
+
+function formatSize(bytes) {
+  if (!Number.isFinite(Number(bytes))) return "-";
+  const size = Number(bytes);
+  if (size < 1024) return size + " B";
+  if (size < 1024 * 1024) return (size / 1024).toFixed(1) + " KB";
+  return (size / (1024 * 1024)).toFixed(2) + " MB";
+}
+
+function formatDate(timestamp) {
+  if (!timestamp) return "-";
+  const raw = String(timestamp);
+  const date = new Date(/^\d+$/.test(raw) ? Number(raw) : raw);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toLocaleString("ms-MY", {
+    day:"2-digit",
+    month:"short",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
+
+async function apiRequest(path, options = {}) {
+  const headers = new Headers(options.headers || {});
+
+  if (adminToken) {
+    headers.set("Authorization", "Bearer " + adminToken);
+  }
+
+  const response = await fetch(API_BASE + path, {
+    ...options,
+    headers
+  });
+
+  const data = await response.json().catch(() => ({
+    status:"error",
+    message:"Respons server tidak dapat dibaca."
+  }));
+
+  if (response.status === 401) {
+    logout();
+    throw new Error("Sesi tamat atau Admin Token tidak sah. Sila login semula.");
+  }
+
+  if (!response.ok || data.status === "error" || data.success === false) {
+    throw new Error(data.message || data.errorMessage || data.error || "Permintaan gagal.");
+  }
+
+  return data;
+}
+
+function showAdmin() {
+  $("loginSection").classList.add("hidden");
+  $("adminSection").classList.remove("hidden");
+  $("moduleGrid").classList.remove("hidden");
+  startAdminNotificationPolling();
+}
+
+function showLogin() {
+  $("loginSection").classList.remove("hidden");
+  $("adminSection").classList.add("hidden");
+  $("moduleGrid").classList.add("hidden");
+  if (adminNotificationTimer) clearInterval(adminNotificationTimer);
+  adminNotificationTimer = null;
+}
+
+function startAdminNotificationPolling() {
+  if (adminNotificationTimer) clearInterval(adminNotificationTimer);
+  adminNotificationTimer = setInterval(() => {
+    if (adminToken) loadNotifications({ silent: true });
+  }, 30000);
+}
+
+function logout() {
+  const tokenToRevoke = adminToken;
+  if (tokenToRevoke) {
+    fetch(API_BASE + "/api/logout", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + tokenToRevoke }
+    }).catch(() => {});
+  }
+  adminToken = "";
+  sessionStorage.removeItem(TOKEN_KEY);
+  $("adminToken").value = "";
+  showLogin();
+  $("apiStatus").textContent = "Offline";
+}
+
+// LOGIN
+$("loginForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const token = $("adminToken").value.trim();
+  if (!token) return;
+
+  const button = $("loginButton");
+  button.disabled = true;
+  button.textContent = "Memeriksa...";
+
+  hideStatus($("loginStatus"));
+
+  try {
+    const response = await fetch(API_BASE + "/api/login", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({token})
+    });
+
+    const data = await response.json().catch(() => {
+      throw new Error("API tidak memulangkan JSON. Semak URL Worker pada tetapan mxu-api-origin.");
+    });
+
+    if (!response.ok || data.status !== "authenticated" || !data.token) {
+      throw new Error(data.message || data.error || "Login gagal.");
+    }
+
+    adminToken = data.token;
+    sessionStorage.setItem(TOKEN_KEY, data.token);
+
+    $("adminToken").value = "";
+    showAdmin();
+
+    await Promise.all([loadEbooks(), loadAdminProducts(), loadAccounts(), loadPayments(), loadCustomers(), loadProfileChangeRequests(), loadNotifications(), loadAnalytics(), loadSystemHealth()]);
+
+  } catch (error) {
+    showStatus($("loginStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Login Dashboard";
+  }
+});
+
+// V11.1 ONE-STEP EBOOK PUBLISHING
+let generatedCoverBlob = null;
+let generatedCoverUrl = "";
+let pdfjsModulePromise = null;
+
+async function generateFirstPageCover(file) {
+  if (!pdfjsModulePromise) {
+    pdfjsModulePromise = import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs").then(pdfjs => {
+      pdfjs.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+      return pdfjs;
+    });
+  }
+  const pdfjs = await pdfjsModulePromise;
+  const pdf = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+  const page = await pdf.getPage(1);
+  const baseViewport = page.getViewport({ scale: 1 });
+  const scale = Math.min(1.5, 900 / baseViewport.width, 1200 / baseViewport.height);
+  const viewport = page.getViewport({ scale });
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.ceil(viewport.width));
+  canvas.height = Math.max(1, Math.ceil(viewport.height));
+  const context = canvas.getContext("2d", { alpha: false });
+  if (!context) throw new Error("Pelayar tidak dapat menyediakan canvas untuk cover PDF.");
+  await page.render({ canvasContext: context, viewport }).promise;
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.88));
+  if (!blob || blob.size <= 0) throw new Error("Cover halaman pertama tidak dapat dijana.");
+  return blob;
+}
+
+function clearGeneratedCover() {
+  generatedCoverBlob = null;
+  if (generatedCoverUrl) URL.revokeObjectURL(generatedCoverUrl);
+  generatedCoverUrl = "";
+  const preview = $("publishCoverPreview");
+  preview.removeAttribute("src");
+  preview.classList.add("hidden");
+  $("publishButton").disabled = true;
+}
+
+$("publishName").addEventListener("input", () => {
+  $("publishName").dataset.manuallyEdited = "true";
+});
+
+$("publishPdfFile").addEventListener("change", async () => {
+  const file = $("publishPdfFile").files[0];
+  clearGeneratedCover();
+  if (!file) {
+    $("publishSelectedFile").textContent = "Tiada fail dipilih.";
+    hideStatus($("publishCoverStatus"));
+    return;
+  }
+  $("publishSelectedFile").textContent = file.name + " — " + formatSize(file.size);
+  if (!$("publishName").dataset.manuallyEdited || !$("publishName").value.trim()) {
+    $("publishName").value = file.name.replace(/\.pdf$/i, "").replace(/[._-]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
+  }
+  showStatus($("publishCoverStatus"), "Sedang menjana cover daripada halaman pertama PDF...", "info");
+  try {
+    const cover = await generateFirstPageCover(file);
+    if ($("publishPdfFile").files[0] !== file) return;
+    generatedCoverBlob = cover;
+    generatedCoverUrl = URL.createObjectURL(generatedCoverBlob);
+    $("publishCoverPreview").src = generatedCoverUrl;
+    $("publishCoverPreview").classList.remove("hidden");
+    showStatus($("publishCoverStatus"), "Cover berjaya dijana. PDF dan cover sedia untuk diterbitkan.", "success");
+    $("publishButton").disabled = false;
+  } catch (error) {
+    if ($("publishPdfFile").files[0] !== file) return;
+    clearGeneratedCover();
+    showStatus($("publishCoverStatus"), error.message || "Gagal menjana cover. Cuba fail PDF lain.", "error");
+  }
+});
+
+$("publishEbookForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const pdf = $("publishPdfFile").files[0];
+  if (!pdf || !generatedCoverBlob) {
+    showStatus($("publishStatus"), "Pilih PDF dan pastikan cover halaman pertama berjaya dijana.", "error");
+    return;
+  }
+  const price = Number($("publishPrice").value);
+  if (!Number.isFinite(price) || price <= 0) {
+    showStatus($("publishStatus"), "Harga mesti lebih besar daripada RM0.00.", "error");
+    return;
+  }
+  const button = $("publishButton");
+  button.disabled = true;
+  button.textContent = "Memuat naik PDF, cover dan menerbitkan...";
+  hideStatus($("publishStatus"));
+  try {
+    const formData = new FormData();
+    formData.append("pdf", pdf, pdf.name);
+    formData.append("cover", generatedCoverBlob, "generated-cover.jpg");
+    formData.append("name", $("publishName").value.trim());
+    formData.append("price_minor", String(Math.round(price * 100)));
+    formData.append("description", $("publishDescription").value.trim());
+    const response = await fetch(API_BASE + "/api/admin/ebooks/publish", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + adminToken },
+      body: formData
+    });
+    const data = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      logout();
+      throw new Error("Sesi admin tamat. Sila login semula.");
+    }
+    if (!response.ok || data.success !== true) throw new Error(data.message || data.error || "Penerbitan eBook gagal.");
+    showStatus($("publishStatus"), "eBook berjaya diterbitkan. PDF dan cover telah dipautkan kepada produk.", "success");
+    $("publishEbookForm").reset();
+    $("publishPrice").value = "6.90";
+    $("publishName").dataset.manuallyEdited = "";
+    $("publishSelectedFile").textContent = "Tiada fail dipilih.";
+    clearGeneratedCover();
+    await Promise.all([loadEbooks(), loadAdminProducts()]);
+  } catch (error) {
+    showStatus($("publishStatus"), error.message || "Penerbitan eBook gagal.", "error");
+  } finally {
+    button.disabled = !generatedCoverBlob;
+    button.textContent = "↑ Upload & Terbitkan eBook";
+  }
+});
+
+// B2 ORPHAN FILE REVIEW
+async function loadOrphanFiles() {
+  const button = $("scanOrphansButton");
+  const tbody = $("orphanList");
+  button.disabled = true;
+  button.textContent = "Mengimbas...";
+  hideStatus($("orphanStatus"));
+  tbody.innerHTML = '<tr><td colspan="4" class="empty">Sedang mengimbas semua halaman fail B2...</td></tr>';
+  try {
+    const data = await apiRequest("/api/admin/b2/orphans");
+    const files = Array.isArray(data.orphan_files) ? data.orphan_files : [];
+    tbody.replaceChildren();
+    if (!files.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="empty">Tiada fail orphan yang melepasi tempoh keselamatan 24 jam.</td></tr>';
+    } else {
+      files.forEach(file => {
+        const tr = document.createElement("tr");
+        const name = document.createElement("td"); name.textContent = file.fileName || "Unnamed file";
+        const size = document.createElement("td"); size.textContent = formatSize(file.size);
+        const date = document.createElement("td"); date.textContent = formatDate(file.uploadedAt);
+        const action = document.createElement("td");
+        const remove = document.createElement("button");
+        remove.type = "button"; remove.className = "btn btn-danger btn-small"; remove.textContent = "Padam orphan";
+        remove.addEventListener("click", () => deleteOrphanFile(file, remove));
+        action.appendChild(remove); tr.append(name, size, date, action); tbody.appendChild(tr);
+      });
+    }
+    showStatus($("orphanStatus"), `${data.scanned_files || 0} fail diperiksa. ${files.length} fail orphan dikenal pasti. Tiada fail dipadam secara automatik.`, "success");
+  } catch (error) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">Imbasan fail orphan gagal.</td></tr>';
+    showStatus($("orphanStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Periksa Fail Orphan";
+  }
+}
+
+async function deleteOrphanFile(file, button) {
+  if (!confirm("Padam fail B2 yang tidak dipautkan ini?\n\n" + file.fileName + "\n\nSistem akan menyemak semula pautan D1 sebelum pemadaman.")) return;
+  button.disabled = true; button.textContent = "Memadam...";
+  try {
+    await apiRequest("/api/admin/b2/orphans/delete", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ file_id: file.fileId, file_name: file.fileName })
+    });
+    await loadOrphanFiles();
+    await loadEbooks();
+  } catch (error) {
+    showStatus($("orphanStatus"), error.message, "error");
+    button.disabled = false; button.textContent = "Padam orphan";
+  }
+}
+
+$("scanOrphansButton").addEventListener("click", loadOrphanFiles);
+
+// LOAD EBOOK LIST
+async function loadEbooks() {
+  const tbody = $("ebookList");
+  const status = $("listStatus");
+
+  $("refreshButton").disabled = true;
+  $("apiStatus").textContent = "Loading";
+  hideStatus(status);
+
+  tbody.innerHTML = '<tr><td colspan="4" class="empty">Sedang memuatkan senarai eBook...</td></tr>';
+
+  try {
+    const data = await apiRequest("/api/ebooks");
+
+    const files = Array.isArray(data.files) ? data.files : [];
+    adminB2Files = files;
+    populateProductPdfOptions();
+
+    $("totalBooks").textContent = files.length;
+    $("listCount").textContent = files.length + " fail";
+    $("apiStatus").textContent = "Connected";
+
+    const totalBytes = files.reduce((sum, file) => sum + Number(file.size || 0), 0);
+    $("totalStorage").textContent = formatSize(totalBytes);
+
+    tbody.innerHTML = "";
+
+    if (!files.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="empty">Belum ada fail PDF.</td></tr>';
+      return;
+    }
+
+    files.forEach(file => {
+      const tr = document.createElement("tr");
+
+      const nameCell = document.createElement("td");
+      const name = document.createElement("div");
+      name.className = "file-title";
+      name.textContent = file.fileName || "Unnamed PDF";
+
+      const id = document.createElement("div");
+      id.className = "muted";
+      id.textContent = "PDF Document";
+
+      nameCell.append(name, id);
+
+      const sizeCell = document.createElement("td");
+      sizeCell.textContent = formatSize(file.size);
+
+      const dateCell = document.createElement("td");
+      dateCell.textContent = formatDate(file.uploadedAt);
+
+      const actionCell = document.createElement("td");
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "btn btn-danger btn-small";
+      deleteButton.textContent = "Padam";
+
+      deleteButton.addEventListener("click", () => deleteEbook(file, deleteButton));
+
+      actionCell.appendChild(deleteButton);
+      tr.append(nameCell, sizeCell, dateCell, actionCell);
+      tbody.appendChild(tr);
+    });
+
+  } catch (error) {
+    $("apiStatus").textContent = "Error";
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">Gagal memuatkan senarai.</td></tr>';
+    showStatus(status, error.message, "error");
+  } finally {
+    $("refreshButton").disabled = false;
+  }
+}
+
+// =====================================
+// PRODUCT MANAGEMENT
+// =====================================
+function populateProductPdfOptions() {
+  const select = $("productPdfFile");
+  if (!select) return;
+  const current = select.value;
+  const linked = new Set(adminProducts.map(product => String(product.b2_file_id || "")).filter(Boolean));
+  select.replaceChildren(new Option("Pilih fail PDF yang belum dipautkan", ""));
+  adminB2Files.filter(file => !linked.has(String(file.fileId)) && String(file.fileName || "").toLowerCase().endsWith(".pdf")).forEach(file => {
+    const option = new Option(`${file.fileName} — ${formatSize(file.size)}`, file.fileId);
+    select.add(option);
+  });
+  if (current && [...select.options].some(option => option.value === current)) select.value = current;
+  if (select.options.length === 1) select.options[0].textContent = "Tiada fail PDF belum dipautkan. Upload PDF dahulu.";
+}
+
+async function loadAdminProducts() {
+  const tbody = $("adminProductList");
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="5" class="empty">Memuatkan produk...</td></tr>';
+  hideStatus($("productListStatus"));
+  try {
+    const data = await apiRequest("/api/admin/products");
+    adminProducts = Array.isArray(data.products) ? data.products : [];
+    populateProductPdfOptions();
+    tbody.replaceChildren();
+    if (!adminProducts.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">Belum ada produk diterbitkan. Upload PDF dan terbitkan produk baharu.</td></tr>';
+      return;
+    }
+    adminProducts.forEach(product => {
+      const row = document.createElement("tr");
+      const nameCell = document.createElement("td");
+      const name = document.createElement("strong"); name.textContent = product.name || "eBook";
+      const description = document.createElement("div"); description.className = "muted"; description.textContent = product.description || "Tiada penerangan";
+      nameCell.append(name, description);
+      const fileCell = document.createElement("td"); fileCell.textContent = product.file_name || "PDF belum dipautkan";
+      const priceCell = document.createElement("td"); priceCell.textContent = formatMoney(product.price_minor, product.currency);
+      const statusCell = document.createElement("td");
+      const status = document.createElement("span"); status.className = "payment-badge " + (product.product_status === "active" ? "approved" : product.product_status === "archived" ? "rejected" : "none");
+      status.textContent = product.product_status === "active" ? "Aktif" : product.product_status === "archived" ? "Arkib" : "Draf"; statusCell.append(status);
+      const actionCell = document.createElement("td");
+      const edit = document.createElement("button"); edit.type = "button"; edit.className = "btn btn-secondary btn-small"; edit.textContent = "Edit";
+      edit.addEventListener("click", () => openProductEdit(product)); actionCell.append(edit);
+      row.append(nameCell, fileCell, priceCell, statusCell, actionCell); tbody.append(row);
+    });
+  } catch (error) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Gagal memuatkan produk.</td></tr>';
+    showStatus($("productListStatus"), error.message, "error");
+  }
+}
+
+$("productCreateForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = $("productCreateButton"); button.disabled = true; button.textContent = "Menerbitkan...";
+  hideStatus($("productCreateStatus"));
+  try {
+    const price = Number($("productCreatePrice").value);
+    if (!Number.isFinite(price) || price <= 0) throw new Error("Masukkan harga yang sah.");
+    const data = await apiRequest("/api/admin/ebooks/create-product", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: $("productCreateName").value.trim(),
+        description: $("productCreateDescription").value.trim(),
+        price_minor: Math.round(price * 100),
+        b2_file_id: $("productPdfFile").value
+      })
+    });
+    showStatus($("productCreateStatus"), data.message === "EBOOK_PRODUCT_CREATED" ? "Produk berjaya diterbitkan ke katalog." : "Produk berjaya dicipta.", "success");
+    $("productCreateForm").reset();
+    await Promise.all([loadAdminProducts(), loadEbooks()]);
+  } catch (error) { showStatus($("productCreateStatus"), error.message, "error"); }
+  finally { button.disabled = false; button.textContent = "Terbitkan Produk ke Katalog"; }
+});
+
+function openProductEdit(product) {
+  $("editProductId").value = product.id;
+  $("editProductName").value = product.name || "";
+  $("editProductDescription").value = product.description || "";
+  $("editProductPrice").value = (Number(product.price_minor || 0) / 100).toFixed(2);
+  $("editProductStatus").value = product.product_status || "draft";
+  hideStatus($("productEditStatus"));
+  $("productEditModal").classList.add("show");
+}
+function closeProductEdit() { $("productEditModal").classList.remove("show"); }
+$("closeProductEditButton").addEventListener("click", closeProductEdit);
+$("productEditModal").addEventListener("click", event => { if (event.target === $("productEditModal")) closeProductEdit(); });
+$("productEditForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = $("saveProductEditButton"); button.disabled = true; button.textContent = "Menyimpan...";
+  hideStatus($("productEditStatus"));
+  try {
+    const price = Number($("editProductPrice").value);
+    if (!Number.isFinite(price) || price <= 0) throw new Error("Harga eBook mesti lebih daripada RM0.00.");
+    await apiRequest("/api/admin/products/update", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ product_id: $("editProductId").value, name: $("editProductName").value.trim(), description: $("editProductDescription").value.trim(), price_minor: Math.round(price * 100), product_status: $("editProductStatus").value })
+    });
+    closeProductEdit(); showStatus($("productListStatus"), "Maklumat produk berjaya dikemas kini.", "success"); await loadAdminProducts();
+  } catch (error) { showStatus($("productEditStatus"), error.message, "error"); }
+  finally { button.disabled = false; button.textContent = "Simpan Perubahan"; }
+});
+$("refreshProductsButton").addEventListener("click", () => Promise.all([loadAdminProducts(), loadEbooks()]));
+
+// =====================================
+// CUSTOMER ACCOUNT APPROVAL
+// =====================================
+
+function renderAccounts(accounts) {
+  const tbody = $("accountList");
+  tbody.replaceChildren();
+
+  if (!accounts.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 5;
+    cell.className = "empty";
+    cell.textContent = "Tiada pendaftaran akaun untuk kategori ini.";
+    row.appendChild(cell);
+    tbody.appendChild(row);
+    return;
+  }
+
+  accounts.forEach(account => {
+    const row = document.createElement("tr");
+
+    const nameCell = document.createElement("td");
+    const name = document.createElement("div");
+    name.className = "file-title";
+    name.textContent = account.name || "Pelanggan";
+    const date = document.createElement("div");
+    date.className = "muted";
+    date.textContent = "Dikemas kini: " + formatDate(account.updated_at);
+    nameCell.append(name, date);
+
+    const emailCell = document.createElement("td");
+    emailCell.textContent = account.email || "-";
+
+    const createdCell = document.createElement("td");
+    createdCell.textContent = formatDate(account.created_at);
+
+    const statusCell = document.createElement("td");
+    if (account.account_status === "pending") {
+      statusCell.appendChild(makePaymentBadge("Menunggu kelulusan", "pending"));
+    } else if (account.account_status === "active" && account.email_verified_at) {
+      statusCell.appendChild(makePaymentBadge("Aktif · E-mel disahkan", "approved"));
+    } else if (account.account_status === "active") {
+      statusCell.appendChild(makePaymentBadge("Aktif · Manual", "approved"));
+    } else {
+      statusCell.appendChild(makePaymentBadge(account.account_status || "Tidak diketahui", "none"));
+    }
+
+    const actionCell = document.createElement("td");
+    const actions = document.createElement("div");
+    actions.className = "account-actions";
+
+    if (account.account_status === "pending") {
+      const approveButton = document.createElement("button");
+      approveButton.className = "btn btn-small";
+      approveButton.type = "button";
+      approveButton.textContent = "Approve";
+      approveButton.addEventListener("click", () => approveAccount(account, approveButton));
+      actions.appendChild(approveButton);
+    } else {
+      actions.textContent = "-";
+    }
+
+    actionCell.appendChild(actions);
+    row.append(nameCell, emailCell, createdCell, statusCell, actionCell);
+    tbody.appendChild(row);
+  });
+}
+
+async function loadAccounts() {
+  const button = $("refreshAccountsButton");
+  const filter = $("accountFilter").value || "pending";
+  button.disabled = true;
+  hideStatus($("accountStatus"));
+  $("accountList").innerHTML = '<tr><td colspan="5" class="empty">Sedang memuatkan pendaftaran...</td></tr>';
+
+  try {
+    const data = await apiRequest("/api/admin/accounts?status=" + encodeURIComponent(filter));
+    const summary = data.summary || {};
+    $("pendingAccountCount").textContent = Number(summary.pending_count || 0);
+    $("activeAccountCount").textContent = Number(summary.active_count || 0);
+    $("totalAccountCount").textContent = Number(summary.total_count || 0);
+    renderAccounts(Array.isArray(data.accounts) ? data.accounts : []);
+  } catch (error) {
+    $("accountList").innerHTML = '<tr><td colspan="5" class="empty">Gagal memuatkan pendaftaran akaun.</td></tr>';
+    showStatus($("accountStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function approveAccount(account, button) {
+  const confirmed = confirm(
+    "Luluskan pendaftaran akaun ini?\n\n" +
+    (account.name || "Pelanggan") + "\n" +
+    (account.email || "-") +
+    "\n\nSelepas diluluskan, pelanggan boleh log masuk. Pastikan permohonan telah disemak."
+  );
+  if (!confirmed) return;
+
+  button.disabled = true;
+  button.textContent = "Approving...";
+
+  try {
+    const result = await apiRequest("/api/admin/accounts/approve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ account_id: account.id })
+    });
+
+    await Promise.all([loadAccounts(), loadCustomers()]);
+    showStatus(
+      $("accountStatus"),
+      result.message === "ACCOUNT_ALREADY_ACTIVE"
+        ? "Akaun ini sudah aktif."
+        : "Akaun pelanggan berjaya diluluskan. Pelanggan kini boleh log masuk.",
+      "success"
+    );
+  } catch (error) {
+    showStatus($("accountStatus"), error.message, "error");
+    button.disabled = false;
+    button.textContent = "Approve";
+  }
+}
+
+$("accountFilter").addEventListener("change", loadAccounts);
+$("refreshAccountsButton").addEventListener("click", loadAccounts);
+
+// =====================================
+// CUSTOMER DIRECTORY / MANAGEMENT
+// =====================================
+
+let editingCustomer = null;
+let activeCustomerOrders = null;
+
+function renderCustomers(customers) {
+  const tbody = $("customerList");
+  tbody.replaceChildren();
+  if (!customers.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 6;
+    cell.className = "empty";
+    cell.textContent = "Belum ada pelanggan dalam kategori ini.";
+    row.appendChild(cell);
+    tbody.appendChild(row);
+    return;
+  }
+  customers.forEach(customer => {
+    const row = document.createElement("tr");
+    const customerCell = document.createElement("td");
+    const name = document.createElement("strong");
+    name.textContent = customer.billing_name || customer.name || "Pelanggan";
+    const email = document.createElement("div");
+    email.className = "muted";
+    email.textContent = customer.email || "-";
+    customerCell.append(name, email);
+    const phoneCell = makePaymentCell(customer.phone || "-");
+    const countCell = makePaymentCell(String(customer.purchase_count || 0));
+    const paidCell = makePaymentCell(formatMoney(customer.total_paid_minor || 0, "MYR"));
+    const statusCell = document.createElement("td");
+    const statusMap = { active: ["Aktif", "approved"], pending: ["Menunggu", "pending"], banned: ["Disekat", "rejected"] };
+    const statusInfo = statusMap[customer.account_status] || [customer.account_status || "-", "none"];
+    statusCell.appendChild(makePaymentBadge(statusInfo[0], statusInfo[1]));
+    const actionCell = document.createElement("td");
+    const actions = document.createElement("div");
+    actions.className = "account-actions";
+    const ordersButton = document.createElement("button");
+    ordersButton.className = "btn btn-secondary btn-small";
+    ordersButton.type = "button";
+    ordersButton.textContent = "Pesanan";
+    ordersButton.addEventListener("click", () => viewCustomerOrders(customer, ordersButton));
+    const editButton = document.createElement("button");
+    editButton.className = "btn btn-secondary btn-small";
+    editButton.type = "button";
+    editButton.textContent = "Edit";
+    editButton.addEventListener("click", () => openCustomerEdit(customer));
+    actions.append(ordersButton, editButton);
+    if (customer.account_status === "active") {
+      const banButton = document.createElement("button");
+      banButton.className = "btn btn-danger btn-small";
+      banButton.type = "button";
+      banButton.textContent = "Ban";
+      banButton.addEventListener("click", () => setCustomerStatus(customer, "banned", banButton));
+      actions.appendChild(banButton);
+    } else if (customer.account_status === "banned") {
+      const unbanButton = document.createElement("button");
+      unbanButton.className = "btn btn-small";
+      unbanButton.type = "button";
+      unbanButton.textContent = "Unban";
+      unbanButton.addEventListener("click", () => setCustomerStatus(customer, "active", unbanButton));
+      actions.appendChild(unbanButton);
+    }
+    actionCell.appendChild(actions);
+    row.append(customerCell, phoneCell, countCell, paidCell, statusCell, actionCell);
+    tbody.appendChild(row);
+  });
+}
+
+async function loadCustomers() {
+  const button = $("refreshCustomersButton");
+  const filter = $("customerFilter").value || "all";
+  button.disabled = true;
+  hideStatus($("customerStatus"));
+  $("customerList").innerHTML = '<tr><td colspan="6" class="empty">Memuatkan pelanggan...</td></tr>';
+  try {
+    const data = await apiRequest("/api/admin/customers?status=" + encodeURIComponent(filter));
+    const summary = data.summary || {};
+    $("customerTotalCount").textContent = Number(summary.total_count || 0);
+    $("customerActiveCount").textContent = Number(summary.active_count || 0);
+    $("customerBannedCount").textContent = Number(summary.banned_count || 0);
+    renderCustomers(Array.isArray(data.customers) ? data.customers : []);
+  } catch (error) {
+    $("customerList").innerHTML = '<tr><td colspan="6" class="empty">Gagal memuatkan pelanggan.</td></tr>';
+    showStatus($("customerStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function openCustomerEdit(customer) {
+  editingCustomer = customer;
+  $("editCustomerId").value = customer.id;
+  $("editCustomerName").value = customer.billing_name || customer.name || "";
+  $("editCustomerPhone").value = customer.phone || "";
+  $("editCustomerAddress1").value = customer.address_line1 || "";
+  $("editCustomerAddress2").value = customer.address_line2 || "";
+  $("editCustomerPostcode").value = customer.postcode || "";
+  $("editCustomerCity").value = customer.city || "";
+  $("editCustomerState").value = customer.state || "";
+  $("editCustomerCountry").value = customer.country || "Malaysia";
+  hideStatus($("customerEditStatus"));
+  $("customerEditModal").classList.add("show");
+}
+
+function closeCustomerEdit() {
+  $("customerEditModal").classList.remove("show");
+  editingCustomer = null;
+}
+
+$("customerEditForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = $("saveCustomerEditButton");
+  button.disabled = true;
+  button.textContent = "Menyimpan...";
+  try {
+    await apiRequest("/api/admin/customers/update", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        account_id: $("editCustomerId").value,
+        name: $("editCustomerName").value.trim(),
+        phone: $("editCustomerPhone").value.trim(),
+        address_line1: $("editCustomerAddress1").value.trim(),
+        address_line2: $("editCustomerAddress2").value.trim(),
+        postcode: $("editCustomerPostcode").value.trim(),
+        city: $("editCustomerCity").value.trim(),
+        state: $("editCustomerState").value.trim(),
+        country: $("editCustomerCountry").value.trim()
+      })
+    });
+    closeCustomerEdit();
+    await Promise.all([loadCustomers(), loadAccounts()]);
+    showStatus($("customerStatus"), "Maklumat pelanggan berjaya dikemas kini.", "success");
+  } catch (error) {
+    showStatus($("customerEditStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Simpan Perubahan";
+  }
+});
+
+async function setCustomerStatus(customer, nextStatus, button) {
+  const action = nextStatus === "banned" ? "menyekat" : "mengaktifkan semula";
+  const reason = nextStatus === "banned" ? prompt("Sebab akaun disekat (pilihan):", "") : "";
+  if (nextStatus === "banned" && reason === null) return;
+  if (!confirm("Anda pasti mahu " + action + " akaun " + (customer.email || "pelanggan ini") + "?")) return;
+  button.disabled = true;
+  try {
+    await apiRequest("/api/admin/customers/status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ account_id: customer.id, account_status: nextStatus, reason: reason || "" })
+    });
+    await Promise.all([loadCustomers(), loadAccounts()]);
+    showStatus($("customerStatus"), nextStatus === "banned" ? "Akaun disekat dan semua sesi pelanggan telah ditamatkan." : "Akaun diaktifkan semula. Pelanggan perlu log masuk semula.", "success");
+  } catch (error) {
+    showStatus($("customerStatus"), error.message, "error");
+    button.disabled = false;
+  }
+}
+
+async function viewCustomerOrders(customer, button) {
+  activeCustomerOrders = customer;
+  $("customerOrdersTitle").textContent = "Pesanan: " + (customer.billing_name || customer.name || "Pelanggan");
+  $("customerOrdersEmail").textContent = customer.email || "";
+  $("customerOrdersList").innerHTML = '<div class="empty">Memuatkan pesanan...</div>';
+  hideStatus($("customerOrdersStatus"));
+  $("customerOrdersModal").classList.add("show");
+  button.disabled = true;
+  try {
+    const data = await apiRequest("/api/admin/customers/purchases?account_id=" + encodeURIComponent(customer.id));
+    renderCustomerOrders(Array.isArray(data.purchases) ? data.purchases : []);
+  } catch (error) {
+    showStatus($("customerOrdersStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function renderCustomerOrders(purchases) {
+  const container = $("customerOrdersList");
+  container.replaceChildren();
+  if (!purchases.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "Pelanggan ini belum mempunyai pesanan.";
+    container.append(empty);
+    return;
+  }
+  purchases.forEach(purchase => {
+    const card = document.createElement("div");
+    card.className = "management-order";
+    const title = document.createElement("strong");
+    title.textContent = purchase.product_name || "eBook";
+    const order = document.createElement("p");
+    order.textContent = "Pesanan: " + (purchase.order_reference || "-");
+    const amount = document.createElement("p");
+    amount.textContent = "Jumlah: " + formatMoney(purchase.amount_minor, purchase.currency);
+    const status = document.createElement("p");
+    status.textContent = "Pembayaran: " + (purchase.payment_status || "-") + " · Resit: " + (purchase.receipt_status || "Belum dihantar");
+    const date = document.createElement("p");
+    date.textContent = "Tarikh: " + formatDate(purchase.created_at);
+    card.append(title, order, amount, status, date);
+    if (purchase.submission_id) {
+      const receiptButton = document.createElement("button");
+      receiptButton.className = "btn btn-secondary btn-small";
+      receiptButton.type = "button";
+      receiptButton.textContent = "Lihat Resit";
+      receiptButton.addEventListener("click", () => viewPaymentReceipt(purchase.submission_id, receiptButton));
+      card.appendChild(receiptButton);
+    }
+    container.append(card);
+  });
+}
+
+function closeCustomerOrders() {
+  $("customerOrdersModal").classList.remove("show");
+  activeCustomerOrders = null;
+}
+
+$("customerFilter").addEventListener("change", loadCustomers);
+$("refreshCustomersButton").addEventListener("click", loadCustomers);
+$("closeCustomerEditButton").addEventListener("click", closeCustomerEdit);
+$("closeCustomerOrdersButton").addEventListener("click", closeCustomerOrders);
+$("customerEditModal").addEventListener("click", event => { if (event.target === $("customerEditModal")) closeCustomerEdit(); });
+$("customerOrdersModal").addEventListener("click", event => { if (event.target === $("customerOrdersModal")) closeCustomerOrders(); });
+
+// =====================================
+// CUSTOMER PROFILE CHANGE APPROVALS
+// =====================================
+
+function renderProfileRequests(requests) {
+  const tbody = $("profileRequestList");
+  tbody.replaceChildren();
+  if (!requests.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 4;
+    cell.className = "empty";
+    cell.textContent = "Tiada permohonan perubahan profil yang menunggu.";
+    row.appendChild(cell);
+    tbody.appendChild(row);
+    return;
+  }
+  requests.forEach(request => {
+    const row = document.createElement("tr");
+    const customerCell = document.createElement("td");
+    customerCell.textContent = (request.current_name || "Pelanggan") + " · " + (request.email || "-");
+    const detailsCell = document.createElement("td");
+    detailsCell.textContent = [request.full_name, request.phone, request.address_line1, request.postcode, request.city, request.state].filter(Boolean).join(" | ");
+    const dateCell = document.createElement("td");
+    dateCell.textContent = formatDate(request.submitted_at);
+    const actionCell = document.createElement("td");
+    const approve = document.createElement("button");
+    approve.className = "btn btn-small";
+    approve.type = "button";
+    approve.textContent = "Approve";
+    approve.addEventListener("click", () => reviewProfileRequest(request, "approve", approve));
+    const reject = document.createElement("button");
+    reject.className = "btn btn-danger btn-small";
+    reject.type = "button";
+    reject.textContent = "Reject";
+    reject.addEventListener("click", () => reviewProfileRequest(request, "reject", reject));
+    const actions = document.createElement("div");
+    actions.className = "account-actions";
+    actions.append(approve, reject);
+    actionCell.append(actions);
+    row.append(customerCell, detailsCell, dateCell, actionCell);
+    tbody.appendChild(row);
+  });
+}
+
+async function loadProfileChangeRequests() {
+  hideStatus($("profileRequestStatus"));
+  $("profileRequestList").innerHTML = '<tr><td colspan="4" class="empty">Memuatkan permohonan profil...</td></tr>';
+  try {
+    const data = await apiRequest("/api/admin/profile-change-requests?status=pending");
+    renderProfileRequests(Array.isArray(data.requests) ? data.requests : []);
+  } catch (error) {
+    $("profileRequestList").innerHTML = '<tr><td colspan="4" class="empty">Gagal memuatkan permohonan profil.</td></tr>';
+    showStatus($("profileRequestStatus"), error.message, "error");
+  }
+}
+
+async function reviewProfileRequest(request, action, button) {
+  let reason = "";
+  if (action === "reject") {
+    reason = prompt("Nyatakan sebab permohonan profil ditolak:", "Sila semak semula maklumat yang diberikan.");
+    if (reason === null) return;
+    if (reason.trim().length < 3) { alert("Sebab penolakan sekurang-kurangnya 3 aksara."); return; }
+  } else if (!confirm("Luluskan perubahan profil untuk " + (request.email || "pelanggan") + "?")) {
+    return;
+  }
+  button.disabled = true;
+  try {
+    await apiRequest("/api/admin/profile-change-requests/" + action, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ request_id: request.id, reason: reason.trim() })
+    });
+    await Promise.all([loadProfileChangeRequests(), loadCustomers()]);
+    showStatus($("profileRequestStatus"), action === "approve" ? "Perubahan profil diluluskan dan telah dikemas kini." : "Permohonan perubahan profil ditolak.", "success");
+  } catch (error) {
+    showStatus($("profileRequestStatus"), error.message, "error");
+    button.disabled = false;
+  }
+}
+$("refreshProfileRequestsButton").addEventListener("click", loadProfileChangeRequests);
+
+
+// =====================================
+// ADMIN NOTIFICATIONS
+function notificationTarget(type) {
+  if (type === "customer_registered") return "accountsPanel";
+  if (type === "profile_change_requested") return "profileRequestsPanel";
+  return "paymentsPanel";
+}
+function renderNotifications(notifications) {
+  const list = $("notificationList"); list.replaceChildren();
+  if (!notifications.length) { const empty = document.createElement("div"); empty.className = "empty"; empty.textContent = "Tiada notifikasi buat masa ini."; list.append(empty); return; }
+  notifications.forEach(item => {
+    const button = document.createElement("button"); button.type = "button"; button.className = "notification-item" + (Number(item.is_read) === 0 ? " unread" : "");
+    const dot = document.createElement("i"); dot.className = "notification-dot";
+    const content = document.createElement("div");
+    const title = document.createElement("strong"); title.textContent = item.title || "Notifikasi Masta Xul";
+    const message = document.createElement("span"); message.textContent = item.message || "";
+    content.append(title, message);
+    const time = document.createElement("time"); time.textContent = formatDate(item.created_at);
+    button.append(dot, content, time);
+    button.addEventListener("click", async () => {
+      try { await apiRequest("/api/admin/notifications/read", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ notification_id: item.id }) }); } catch (error) {}
+      const target = notificationTarget(item.notification_type);
+      if (item.notification_type === "customer_registered") { $("accountFilter").value = "pending"; await loadAccounts(); }
+      else if (item.notification_type === "profile_change_requested") await loadProfileChangeRequests();
+      else { $("paymentFilter").value = "pending"; await loadPayments(); }
+      await loadNotifications({ silent: true });
+      $(target).scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    list.append(button);
+  });
+}
+async function loadNotifications(options = {}) {
+  if (!adminToken) return;
+  if (!options.silent) hideStatus($("notificationStatus"));
+  try {
+    const data = await apiRequest("/api/admin/notifications?limit=60");
+    $("notificationUnreadCount").textContent = String(Number(data.unread_count || 0));
+    renderNotifications(Array.isArray(data.notifications) ? data.notifications : []);
+  } catch (error) {
+    if (!options.silent) showStatus($("notificationStatus"), error.message, "error");
+  }
+}
+$("refreshNotificationsButton").addEventListener("click", () => loadNotifications());
+$("markAllNotificationsReadButton").addEventListener("click", async () => {
+  try {
+    await apiRequest("/api/admin/notifications/read", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mark_all: true }) });
+    await loadNotifications();
+  } catch (error) { showStatus($("notificationStatus"), error.message, "error"); }
+});
+
+// ANALYTICS AND SYSTEM DIAGNOSTICS
+async function loadAnalytics() {
+  try {
+    const data = await apiRequest("/api/admin/analytics");
+    $("analyticsRevenue").textContent = formatMoney(data.sales?.revenue_minor || 0, "MYR");
+    $("analyticsOrders").textContent = String(Number(data.sales?.paid_order_count || 0));
+    $("analyticsCustomers").textContent = String(Number(data.customers?.total_customers || 0));
+    $("analyticsPendingReceipts").textContent = String(Number(data.pending_receipts || 0));
+    const list = $("analyticsTopProducts"); list.replaceChildren();
+    const products = Array.isArray(data.top_products) ? data.top_products : [];
+    if (!products.length) { const empty = document.createElement("div"); empty.className = "empty"; empty.textContent = "Belum ada jualan yang diluluskan untuk dianalisis."; list.append(empty); }
+    products.forEach((product, index) => {
+      const row = document.createElement("div"); row.className = "analytics-top-item";
+      const name = document.createElement("strong"); name.textContent = `${index + 1}. ${product.name}`;
+      const stats = document.createElement("span"); stats.textContent = `${Number(product.units_sold || 0)} unit · ${formatMoney(product.revenue_minor, "MYR")}`;
+      row.append(name, stats); list.append(row);
+    });
+    hideStatus($("analyticsStatus"));
+  } catch (error) { showStatus($("analyticsStatus"), error.message, "error"); }
+}
+async function loadSystemHealth() {
+  const list = $("systemHealthList");
+  try {
+    const data = await apiRequest("/health");
+    list.replaceChildren();
+    Object.entries(data.checks || {}).forEach(([key, value]) => {
+      const item = document.createElement("div"); item.className = "health-item";
+      const label = document.createElement("span"); label.textContent = key;
+      const status = document.createElement("strong"); status.className = value ? "ok" : "bad"; status.textContent = value ? "Dikonfigurasi" : "Belum dikonfigurasi";
+      item.append(label, status); list.append(item);
+    });
+    const missing = data.missing_tables || [];
+    const message = missing.length
+      ? "Jadual D1 yang tiada: " + missing.join(", ") + ". Semak pilihan database pada binding DB."
+      : data.status === "ready" ? "Konfigurasi asas lengkap. Semak katalog dan buka satu eBook lama untuk menguji akses sebenar." : "Ada konfigurasi asas yang belum lengkap.";
+    showStatus($("systemStatus"), message, data.status === "ready" ? "success" : "error");
+  } catch (error) { list.replaceChildren(); showStatus($("systemStatus"), error.message, "error"); }
+}
+$("refreshAnalyticsButton").addEventListener("click", loadAnalytics);
+$("refreshSystemButton").addEventListener("click", loadSystemHealth);
+
+// PAYMENT REVIEW
+// =====================================
+
+let receiptObjectUrl = "";
+
+function formatMoney(amountMinor, currency) {
+  const amount = Number(amountMinor);
+  if (!Number.isFinite(amount)) return "-";
+  return new Intl.NumberFormat("ms-MY", {
+    style: "currency",
+    currency: currency || "MYR"
+  }).format(amount / 100);
+}
+
+function makePaymentBadge(label, kind) {
+  const badge = document.createElement("span");
+  badge.className = "payment-badge " + kind;
+  badge.textContent = label;
+  return badge;
+}
+
+function makePaymentCell(text, className = "") {
+  const cell = document.createElement("td");
+  if (className) cell.className = className;
+  cell.textContent = text || "-";
+  return cell;
+}
+
+function renderPayments(payments) {
+  const tbody = $("paymentList");
+  tbody.replaceChildren();
+
+  if (!payments.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 7;
+    cell.className = "empty";
+    cell.textContent = "Tiada rekod pembayaran untuk kategori ini.";
+    row.appendChild(cell);
+    tbody.appendChild(row);
+    return;
+  }
+
+  payments.forEach(payment => {
+    const row = document.createElement("tr");
+
+    const orderCell = document.createElement("td");
+    const order = document.createElement("div");
+    order.className = "file-title";
+    order.textContent = payment.order_reference || "-";
+    const orderDate = document.createElement("div");
+    orderDate.className = "muted";
+    orderDate.textContent = formatDate(payment.order_created_at);
+    orderCell.append(order, orderDate);
+
+    const customerCell = document.createElement("td");
+    const customerName = document.createElement("div");
+    customerName.className = "file-title";
+    customerName.textContent = payment.customer_name || "Pelanggan";
+    const customerEmail = document.createElement("div");
+    customerEmail.className = "muted";
+    customerEmail.textContent = payment.customer_email || "-";
+    customerCell.append(customerName, customerEmail);
+
+    if (payment.customer_phone) {
+      const customerPhone = document.createElement("div");
+      customerPhone.className = "muted";
+      customerPhone.textContent = "Telefon: " + payment.customer_phone;
+      customerCell.appendChild(customerPhone);
+    }
+
+    const addressParts = [
+      payment.customer_address_line1,
+      payment.customer_address_line2,
+      payment.customer_postcode,
+      payment.customer_city,
+      payment.customer_state,
+      payment.customer_country
+    ].filter(Boolean);
+    if (addressParts.length) {
+      const customerAddress = document.createElement("div");
+      customerAddress.className = "muted";
+      customerAddress.textContent = "Alamat: " + addressParts.join(", ");
+      customerCell.appendChild(customerAddress);
+    }
+
+    const productCell = document.createElement("td");
+    const productName = document.createElement("div");
+    productName.textContent = payment.product_name || "eBook";
+    productCell.appendChild(productName);
+    if (Number(payment.item_count || 1) > 1) {
+      const itemCount = document.createElement("div");
+      itemCount.className = "muted";
+      itemCount.textContent = Number(payment.item_count) + " eBook dalam satu pesanan";
+      productCell.appendChild(itemCount);
+    }
+    const amountCell = makePaymentCell(formatMoney(payment.amount_minor, payment.currency));
+
+    const statusCell = document.createElement("td");
+    if (payment.receipt_status === "pending") {
+      statusCell.appendChild(makePaymentBadge("Menunggu", "pending"));
+    } else if (payment.receipt_status === "approved") {
+      statusCell.appendChild(makePaymentBadge("Diluluskan", "approved"));
+    } else if (payment.receipt_status === "rejected") {
+      statusCell.appendChild(makePaymentBadge("Ditolak", "rejected"));
+      if (payment.rejection_reason) {
+        const reason = document.createElement("div");
+        reason.className = "muted";
+        reason.textContent = payment.rejection_reason;
+        statusCell.appendChild(reason);
+      }
+    } else {
+      statusCell.appendChild(makePaymentBadge("Belum hantar", "none"));
+    }
+
+    const receiptCell = document.createElement("td");
+    if (payment.submission_id) {
+      const receiptButton = document.createElement("button");
+      receiptButton.className = "btn btn-secondary btn-small";
+      receiptButton.type = "button";
+      receiptButton.textContent = "Lihat resit";
+      receiptButton.addEventListener("click", () => viewPaymentReceipt(payment.submission_id, receiptButton));
+      receiptCell.appendChild(receiptButton);
+      const receiptDate = document.createElement("div");
+      receiptDate.className = "muted";
+      receiptDate.textContent = formatDate(payment.receipt_uploaded_at);
+      receiptCell.appendChild(receiptDate);
+    } else {
+      receiptCell.textContent = "Belum dihantar";
+    }
+
+    const actionCell = document.createElement("td");
+    const actions = document.createElement("div");
+    actions.className = "payment-actions";
+
+    if (payment.submission_id && payment.receipt_status === "pending") {
+      const approveButton = document.createElement("button");
+      approveButton.className = "btn btn-small";
+      approveButton.type = "button";
+      approveButton.textContent = "Approve";
+      approveButton.addEventListener("click", () => approvePayment(payment, approveButton));
+
+      const rejectButton = document.createElement("button");
+      rejectButton.className = "btn btn-danger btn-small";
+      rejectButton.type = "button";
+      rejectButton.textContent = "Reject";
+      rejectButton.addEventListener("click", () => rejectPayment(payment, rejectButton));
+
+      actions.append(approveButton, rejectButton);
+    } else {
+      actions.textContent = "-";
+    }
+
+    actionCell.appendChild(actions);
+    row.append(orderCell, customerCell, productCell, amountCell, statusCell, receiptCell, actionCell);
+    tbody.appendChild(row);
+  });
+}
+
+async function loadPayments() {
+  const button = $("refreshPaymentsButton");
+  const filter = $("paymentFilter").value || "pending";
+  button.disabled = true;
+  hideStatus($("paymentStatus"));
+
+  const tbody = $("paymentList");
+  tbody.innerHTML = '<tr><td colspan="7" class="empty">Sedang memuatkan pembayaran...</td></tr>';
+
+  try {
+    const data = await apiRequest("/api/admin/payments?status=" + encodeURIComponent(filter));
+    const summary = data.summary || {};
+    $("pendingPaymentCount").textContent = Number(summary.pending_count || 0);
+    $("approvedPaymentCount").textContent = Number(summary.approved_count || 0);
+    $("rejectedPaymentCount").textContent = Number(summary.rejected_count || 0);
+    renderPayments(Array.isArray(data.payments) ? data.payments : []);
+  } catch (error) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">Gagal memuatkan pembayaran.</td></tr>';
+    showStatus($("paymentStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function viewPaymentReceipt(submissionId, button) {
+  button.disabled = true;
+  button.textContent = "Membuka...";
+
+  try {
+    const response = await fetch(
+      API_BASE + "/api/admin/payments/receipt?submission_id=" + encodeURIComponent(submissionId),
+      { headers: { Authorization: "Bearer " + adminToken } }
+    );
+
+    if (response.status === 401) {
+      logout();
+      throw new Error("Sesi admin tamat. Sila login semula.");
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || errorData.error || "Resit tidak dapat dibuka.");
+    }
+
+    const blob = await response.blob();
+    if (receiptObjectUrl) URL.revokeObjectURL(receiptObjectUrl);
+    receiptObjectUrl = URL.createObjectURL(blob);
+
+    const viewer = $("receiptViewer");
+    viewer.replaceChildren();
+    const contentType = blob.type || response.headers.get("Content-Type") || "";
+
+    if (contentType.includes("pdf")) {
+      const frame = document.createElement("iframe");
+      frame.src = receiptObjectUrl;
+      frame.title = "Resit pembayaran pelanggan";
+      viewer.appendChild(frame);
+    } else if (contentType.startsWith("image/")) {
+      const image = document.createElement("img");
+      image.src = receiptObjectUrl;
+      image.alt = "Resit pembayaran pelanggan";
+      viewer.appendChild(image);
+    } else {
+      throw new Error("Format resit tidak disokong untuk paparan.");
+    }
+
+    $("receiptModal").classList.add("show");
+  } catch (error) {
+    showStatus($("paymentStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Lihat resit";
+  }
+}
+
+function closeReceiptPreview() {
+  $("receiptModal").classList.remove("show");
+  $("receiptViewer").replaceChildren();
+  if (receiptObjectUrl) {
+    URL.revokeObjectURL(receiptObjectUrl);
+    receiptObjectUrl = "";
+  }
+}
+
+async function approvePayment(payment, button) {
+  const confirmed = confirm(
+    "Sahkan bahawa bayaran telah diterima dalam akaun Bank Islam?\n\n" +
+    payment.order_reference + "\n" +
+    payment.customer_email + "\n" +
+    (Number(payment.item_count || 1) > 1 ? Number(payment.item_count) + " eBook\n" : "") +
+    formatMoney(payment.amount_minor, payment.currency) +
+    "\n\nAkses semua eBook dalam pesanan ini akan diberikan selepas kelulusan."
+  );
+  if (!confirmed) return;
+
+  button.disabled = true;
+  button.textContent = "Approving...";
+  try {
+    await apiRequest("/api/admin/payments/approve", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ submission_id: payment.submission_id })
+    });
+    await Promise.all([loadPayments(), loadCustomers()]);
+    showStatus($("paymentStatus"), "Pembayaran diluluskan. Akses semua eBook dalam pesanan telah diaktifkan.", "success");
+  } catch (error) {
+    showStatus($("paymentStatus"), error.message, "error");
+    button.disabled = false;
+    button.textContent = "Approve";
+  }
+}
+
+async function rejectPayment(payment, button) {
+  const reason = prompt(
+    "Masukkan sebab resit ditolak. Pelanggan boleh menghantar resit baharu.",
+    "Resit tidak jelas atau maklumat pembayaran tidak sepadan."
+  );
+  if (reason === null) return;
+  if (reason.trim().length < 3) {
+    alert("Sila masukkan sebab penolakan sekurang-kurangnya 3 aksara.");
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Rejecting...";
+  try {
+    await apiRequest("/api/admin/payments/reject", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ submission_id: payment.submission_id, reason: reason.trim() })
+    });
+    await loadPayments();
+    showStatus($("paymentStatus"), "Resit ditolak. Pesanan kekal pending supaya pelanggan boleh menghantar resit baharu.", "success");
+  } catch (error) {
+    showStatus($("paymentStatus"), error.message, "error");
+    button.disabled = false;
+    button.textContent = "Reject";
+  }
+}
+
+$("paymentFilter").addEventListener("change", loadPayments);
+$("refreshPaymentsButton").addEventListener("click", loadPayments);
+$("closeReceiptButton").addEventListener("click", closeReceiptPreview);
+$("receiptModal").addEventListener("click", event => {
+  if (event.target === $("receiptModal")) closeReceiptPreview();
+});
+
+// UPLOAD PDF
+$("pdfFile").addEventListener("change", () => {
+  const file = $("pdfFile").files[0];
+
+  $("selectedFile").textContent = file
+    ? file.name + " — " + formatSize(file.size)
+    : "Tiada fail dipilih.";
+});
+
+$("uploadForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const file = $("pdfFile").files[0];
+  const status = $("uploadStatus");
+
+  if (!file) {
+    showStatus(status, "Sila pilih fail PDF.", "error");
+    return;
+  }
+
+  if (!file.name.toLowerCase().endsWith(".pdf")) {
+    showStatus(status, "Hanya fail PDF dibenarkan.", "error");
+    return;
+  }
+
+  if (file.size <= 0 || file.size > 50 * 1024 * 1024) {
+    showStatus(status, "Saiz fail mesti antara 1 byte dan 50 MB.", "error");
+    return;
+  }
+
+  const button = $("uploadButton");
+  button.disabled = true;
+  button.textContent = "Sedang upload...";
+
+  hideStatus(status);
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+
+    const data = await apiRequest("/api/ebooks/upload", {
+      method:"POST",
+      body:formData
+    });
+
+    showStatus(
+      status,
+      "Berjaya upload: " + (data.file?.fileName || file.name),
+      "success"
+    );
+
+    $("uploadForm").reset();
+    $("selectedFile").textContent = "Tiada fail dipilih.";
+
+    await loadEbooks();
+
+  } catch (error) {
+    showStatus(status, error.message, "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "↑ Upload PDF";
+  }
+});
+
+// DELETE PDF
+async function deleteEbook(file, button) {
+  const confirmed = confirm(
+    "Adakah kau pasti mahu memadam fail ini?\n\n" +
+    file.fileName +
+    "\n\nFail akan dipadam daripada Backblaze B2."
+  );
+
+  if (!confirmed) return;
+
+  button.disabled = true;
+  button.textContent = "Memadam...";
+
+  hideStatus($("listStatus"));
+
+  try {
+    const data = await apiRequest("/api/ebooks/delete", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        fileId:file.fileId,
+        fileName:file.fileName
+      })
+    });
+
+    showStatus(
+      $("listStatus"),
+      data.message || "Fail berjaya dipadam.",
+      "success"
+    );
+
+    await loadEbooks();
+
+  } catch (error) {
+    showStatus($("listStatus"), error.message, "error");
+    button.disabled = false;
+    button.textContent = "Padam";
+  }
+}
+
+// REFRESH AND LOGOUT
+$("refreshButton").addEventListener("click", () => {
+  loadEbooks(); loadAdminProducts(); loadAccounts(); loadPayments(); loadCustomers(); loadOrphanFiles();
+  loadProfileChangeRequests(); loadNotifications(); loadAnalytics(); loadSystemHealth();
+});
+$("logoutButton").addEventListener("click", () => {
+  if (confirm("Log keluar daripada dashboard?")) logout();
+});
+
+// MODULE SHORTCUTS
+$("moduleGrid").querySelectorAll("[data-target]").forEach(button => {
+  button.addEventListener("click", () => {
+    const target = $(button.dataset.target);
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});
+
+// DATE
+const now = new Date();
+
+$("date").textContent = new Intl.DateTimeFormat("ms-MY", {
+  day:"numeric",
+  month:"long",
+  year:"numeric"
+}).format(now);
+
+$("year").textContent = now.getFullYear();
+
+// RESTORE SESSION FOR CURRENT TAB
+if (adminToken) {
+  showAdmin();
+  loadEbooks(); loadAdminProducts(); loadAccounts(); loadPayments(); loadCustomers();
+  loadProfileChangeRequests(); loadNotifications(); loadAnalytics(); loadSystemHealth();
+} else {
+  showLogin();
+}
+</script>
+
 </body>
 </html>
