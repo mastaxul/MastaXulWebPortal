@@ -199,6 +199,11 @@ footer a {color:var(--gold2);text-decoration:none}
   .section-title {align-items:flex-start}
   .receipt-card {padding:10px}
 }
+
+.cover-generation-row{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:10px;background:#101319}
+.cover-generation-row>div{flex:1;min-width:0}
+.publish-cover-preview{width:120px;max-height:170px;object-fit:contain;border:1px solid var(--gold);border-radius:7px;background:#090909}
+.legacy-workflow{display:none!important}
 </style>
 </head>
 
@@ -368,7 +373,45 @@ footer a {color:var(--gold2);text-decoration:none}
     <div class="table-wrap account-table"><table><thead><tr><th>Pelanggan</th><th>Maklumat baharu</th><th>Tarikh permohonan</th><th>Tindakan</th></tr></thead><tbody id="profileRequestList"><tr><td colspan="4" class="empty">Memuatkan permohonan profil...</td></tr></tbody></table></div>
   </div>
 
-  <div class="panel" id="uploadPanel">
+  <div class="panel" id="publishPanel">
+    <div class="section-title">
+      <div><h2>Penerbitan eBook — Satu Langkah</h2><span>Upload PDF, jana cover halaman pertama dan terbitkan produk secara bersepadu</span></div>
+      <span>Backblaze B2 · D1</span>
+    </div>
+    <form id="publishEbookForm" class="upload-area">
+      <div class="field">
+        <label for="publishPdfFile">Pilih fail PDF</label>
+        <input id="publishPdfFile" type="file" accept=".pdf,application/pdf" required>
+      </div>
+      <div id="publishSelectedFile" class="file-name">Tiada fail dipilih.</div>
+      <div class="product-form-grid">
+        <div><label for="publishName">Tajuk eBook</label><input id="publishName" maxlength="160" required></div>
+        <div><label for="publishPrice">Harga (RM)</label><input id="publishPrice" type="number" min="0.01" max="99999" step="0.01" value="6.90" required></div>
+        <div class="full"><label for="publishDescription">Penerangan</label><textarea id="publishDescription" maxlength="5000" placeholder="Penerangan ringkas eBook"></textarea></div>
+      </div>
+      <div class="cover-generation-row">
+        <div>
+          <strong>Cover eBook automatik</strong>
+          <p class="muted">Cover dijana daripada halaman pertama PDF. Produk hanya diterbitkan selepas PDF dan cover berjaya dimuat naik.</p>
+          <div id="publishCoverStatus" class="status"></div>
+        </div>
+        <img id="publishCoverPreview" class="publish-cover-preview hidden" alt="Pratonton cover eBook daripada halaman pertama PDF">
+      </div>
+      <div id="publishStatus" class="status"></div>
+      <button id="publishButton" class="btn" type="submit" disabled>↑ Upload & Terbitkan eBook</button>
+    </form>
+  </div>
+
+  <div class="panel" id="orphanPanel">
+    <div class="section-title">
+      <div><h2>Pengesanan Fail B2 Tidak Dipautkan</h2><span>Fail yang tiada rekod produk dan berusia sekurang-kurangnya 24 jam</span></div>
+      <button id="scanOrphansButton" class="btn btn-secondary btn-small" type="button">Periksa Fail Orphan</button>
+    </div>
+    <div id="orphanStatus" class="status"></div>
+    <div class="table-wrap"><table><thead><tr><th>Nama Fail</th><th>Saiz</th><th>Tarikh Upload</th><th>Tindakan</th></tr></thead><tbody id="orphanList"><tr><td colspan="4" class="empty">Tekan Periksa Fail Orphan untuk memulakan imbasan.</td></tr></tbody></table></div>
+  </div>
+
+  <div class="panel legacy-workflow hidden" id="uploadPanel">
     <div class="section-title">
       <h2>Upload eBook PDF</h2>
       <span>Backblaze B2 Storage</span>
@@ -416,7 +459,7 @@ footer a {color:var(--gold2);text-decoration:none}
 
   <div class="panel" id="productManagementPanel">
     <div class="section-title"><div><h2>Pengurusan Produk eBook</h2><span>Terbitkan PDF yang sudah dimuat naik, ubah harga dan status katalog</span></div><button id="refreshProductsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button></div>
-    <form id="productCreateForm" class="upload-area">
+    <form id="productCreateForm" class="upload-area legacy-workflow hidden">
       <h3 style="font-size:14px;color:var(--gold2);margin-bottom:10px">Terbitkan eBook baharu</h3>
       <div class="product-form-grid">
         <div><label for="productCreateName">Tajuk eBook</label><input id="productCreateName" maxlength="160" required></div>
@@ -684,6 +727,13 @@ function startAdminNotificationPolling() {
 }
 
 function logout() {
+  const tokenToRevoke = adminToken;
+  if (tokenToRevoke) {
+    fetch(API_BASE + "/api/logout", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + tokenToRevoke }
+    }).catch(() => {});
+  }
   adminToken = "";
   sessionStorage.removeItem(TOKEN_KEY);
   $("adminToken").value = "";
@@ -713,12 +763,12 @@ $("loginForm").addEventListener("submit", async event => {
 
     const data = await response.json();
 
-    if (!response.ok || data.status !== "authenticated") {
+    if (!response.ok || data.status !== "authenticated" || !data.token) {
       throw new Error(data.message || "Login gagal.");
     }
 
-    adminToken = token;
-    sessionStorage.setItem(TOKEN_KEY, token);
+    adminToken = data.token;
+    sessionStorage.setItem(TOKEN_KEY, data.token);
 
     $("adminToken").value = "";
     showAdmin();
@@ -732,6 +782,179 @@ $("loginForm").addEventListener("submit", async event => {
     button.textContent = "Login Dashboard";
   }
 });
+
+// V11.1 ONE-STEP EBOOK PUBLISHING
+let generatedCoverBlob = null;
+let generatedCoverUrl = "";
+let pdfjsModulePromise = null;
+
+async function generateFirstPageCover(file) {
+  if (!pdfjsModulePromise) {
+    pdfjsModulePromise = import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs").then(pdfjs => {
+      pdfjs.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+      return pdfjs;
+    });
+  }
+  const pdfjs = await pdfjsModulePromise;
+  const pdf = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+  const page = await pdf.getPage(1);
+  const baseViewport = page.getViewport({ scale: 1 });
+  const scale = Math.min(1.5, 900 / baseViewport.width, 1200 / baseViewport.height);
+  const viewport = page.getViewport({ scale });
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.ceil(viewport.width));
+  canvas.height = Math.max(1, Math.ceil(viewport.height));
+  const context = canvas.getContext("2d", { alpha: false });
+  if (!context) throw new Error("Pelayar tidak dapat menyediakan canvas untuk cover PDF.");
+  await page.render({ canvasContext: context, viewport }).promise;
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.88));
+  if (!blob || blob.size <= 0) throw new Error("Cover halaman pertama tidak dapat dijana.");
+  return blob;
+}
+
+function clearGeneratedCover() {
+  generatedCoverBlob = null;
+  if (generatedCoverUrl) URL.revokeObjectURL(generatedCoverUrl);
+  generatedCoverUrl = "";
+  const preview = $("publishCoverPreview");
+  preview.removeAttribute("src");
+  preview.classList.add("hidden");
+  $("publishButton").disabled = true;
+}
+
+$("publishName").addEventListener("input", () => {
+  $("publishName").dataset.manuallyEdited = "true";
+});
+
+$("publishPdfFile").addEventListener("change", async () => {
+  const file = $("publishPdfFile").files[0];
+  clearGeneratedCover();
+  if (!file) {
+    $("publishSelectedFile").textContent = "Tiada fail dipilih.";
+    hideStatus($("publishCoverStatus"));
+    return;
+  }
+  $("publishSelectedFile").textContent = file.name + " — " + formatSize(file.size);
+  if (!$("publishName").dataset.manuallyEdited || !$("publishName").value.trim()) {
+    $("publishName").value = file.name.replace(/\.pdf$/i, "").replace(/[._-]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
+  }
+  showStatus($("publishCoverStatus"), "Sedang menjana cover daripada halaman pertama PDF...", "info");
+  try {
+    generatedCoverBlob = await generateFirstPageCover(file);
+    generatedCoverUrl = URL.createObjectURL(generatedCoverBlob);
+    $("publishCoverPreview").src = generatedCoverUrl;
+    $("publishCoverPreview").classList.remove("hidden");
+    showStatus($("publishCoverStatus"), "Cover berjaya dijana. PDF dan cover sedia untuk diterbitkan.", "success");
+    $("publishButton").disabled = false;
+  } catch (error) {
+    clearGeneratedCover();
+    showStatus($("publishCoverStatus"), error.message || "Gagal menjana cover. Cuba fail PDF lain.", "error");
+  }
+});
+
+$("publishEbookForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const pdf = $("publishPdfFile").files[0];
+  if (!pdf || !generatedCoverBlob) {
+    showStatus($("publishStatus"), "Pilih PDF dan pastikan cover halaman pertama berjaya dijana.", "error");
+    return;
+  }
+  const price = Number($("publishPrice").value);
+  if (!Number.isFinite(price) || price <= 0) {
+    showStatus($("publishStatus"), "Harga mesti lebih besar daripada RM0.00.", "error");
+    return;
+  }
+  const button = $("publishButton");
+  button.disabled = true;
+  button.textContent = "Memuat naik PDF, cover dan menerbitkan...";
+  hideStatus($("publishStatus"));
+  try {
+    const formData = new FormData();
+    formData.append("pdf", pdf, pdf.name);
+    formData.append("cover", generatedCoverBlob, "generated-cover.jpg");
+    formData.append("name", $("publishName").value.trim());
+    formData.append("price_minor", String(Math.round(price * 100)));
+    formData.append("description", $("publishDescription").value.trim());
+    const response = await fetch(API_BASE + "/api/admin/ebooks/publish", {
+      method: "POST",
+      headers: { Authorization: "Bearer " + adminToken },
+      body: formData
+    });
+    const data = await response.json().catch(() => ({}));
+    if (response.status === 401) {
+      logout();
+      throw new Error("Sesi admin tamat. Sila login semula.");
+    }
+    if (!response.ok || data.success !== true) throw new Error(data.message || data.error || "Penerbitan eBook gagal.");
+    showStatus($("publishStatus"), "eBook berjaya diterbitkan. PDF dan cover telah dipautkan kepada produk.", "success");
+    $("publishEbookForm").reset();
+    $("publishPrice").value = "6.90";
+    $("publishName").dataset.manuallyEdited = "";
+    $("publishSelectedFile").textContent = "Tiada fail dipilih.";
+    clearGeneratedCover();
+    await Promise.all([loadEbooks(), loadAdminProducts()]);
+  } catch (error) {
+    showStatus($("publishStatus"), error.message || "Penerbitan eBook gagal.", "error");
+  } finally {
+    button.disabled = !generatedCoverBlob;
+    button.textContent = "↑ Upload & Terbitkan eBook";
+  }
+});
+
+// B2 ORPHAN FILE REVIEW
+async function loadOrphanFiles() {
+  const button = $("scanOrphansButton");
+  const tbody = $("orphanList");
+  button.disabled = true;
+  button.textContent = "Mengimbas...";
+  hideStatus($("orphanStatus"));
+  tbody.innerHTML = '<tr><td colspan="4" class="empty">Sedang mengimbas semua halaman fail B2...</td></tr>';
+  try {
+    const data = await apiRequest("/api/admin/b2/orphans");
+    const files = Array.isArray(data.orphan_files) ? data.orphan_files : [];
+    tbody.replaceChildren();
+    if (!files.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="empty">Tiada fail orphan yang melepasi tempoh keselamatan 24 jam.</td></tr>';
+    } else {
+      files.forEach(file => {
+        const tr = document.createElement("tr");
+        const name = document.createElement("td"); name.textContent = file.fileName || "Unnamed file";
+        const size = document.createElement("td"); size.textContent = formatSize(file.size);
+        const date = document.createElement("td"); date.textContent = formatDate(file.uploadedAt);
+        const action = document.createElement("td");
+        const remove = document.createElement("button");
+        remove.type = "button"; remove.className = "btn btn-danger btn-small"; remove.textContent = "Padam orphan";
+        remove.addEventListener("click", () => deleteOrphanFile(file, remove));
+        action.appendChild(remove); tr.append(name, size, date, action); tbody.appendChild(tr);
+      });
+    }
+    showStatus($("orphanStatus"), `${data.scanned_files || 0} fail diperiksa. ${files.length} fail orphan dikenal pasti. Tiada fail dipadam secara automatik.`, "success");
+  } catch (error) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">Imbasan fail orphan gagal.</td></tr>';
+    showStatus($("orphanStatus"), error.message, "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Periksa Fail Orphan";
+  }
+}
+
+async function deleteOrphanFile(file, button) {
+  if (!confirm("Padam fail B2 yang tidak dipautkan ini?\n\n" + file.fileName + "\n\nSistem akan menyemak semula pautan D1 sebelum pemadaman.")) return;
+  button.disabled = true; button.textContent = "Memadam...";
+  try {
+    await apiRequest("/api/admin/b2/orphans/delete", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ file_id: file.fileId, file_name: file.fileName })
+    });
+    await loadOrphanFiles();
+    await loadEbooks();
+  } catch (error) {
+    showStatus($("orphanStatus"), error.message, "error");
+    button.disabled = false; button.textContent = "Padam orphan";
+  }
+}
+
+$("scanOrphansButton").addEventListener("click", loadOrphanFiles);
 
 // LOAD EBOOK LIST
 async function loadEbooks() {
@@ -1851,7 +2074,7 @@ async function deleteEbook(file, button) {
 
 // REFRESH AND LOGOUT
 $("refreshButton").addEventListener("click", () => {
-  loadEbooks(); loadAdminProducts(); loadAccounts(); loadPayments(); loadCustomers();
+  loadEbooks(); loadAdminProducts(); loadAccounts(); loadPayments(); loadCustomers(); loadOrphanFiles();
   loadProfileChangeRequests(); loadNotifications(); loadAnalytics(); loadSystemHealth();
 });
 $("logoutButton").addEventListener("click", () => {
