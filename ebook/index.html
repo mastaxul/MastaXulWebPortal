@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#090909">
-<title>eBook Universe | Masta Xul V9</title>
+<title>eBook Universe | Masta Xul V11</title>
 <meta name="description" content="Perpustakaan digital rasmi Masta Xul.">
 <style>
 :root {
@@ -670,6 +670,7 @@ currentPurchase: null,
 currentCheckoutGroup: null,
 checkoutBusy: false,
 currentEbookObjectUrl: "",
+currentEbookPreviewTab: null,
 profileDirty: false,
 customerRefreshTimer: null,
 cartIds: loadSavedCartIds(),
@@ -950,6 +951,7 @@ const profileResult = await apiRequest("/api/customer/me");
 state.currentCustomer = profileResult.customer || state.currentCustomer;
 } catch (error) {
 if (error.status === 401 || error.status === 403) {
+closeEbookViewer();
 clearToken();
 state.currentCustomer = null;
 openModal("login");
@@ -1663,17 +1665,28 @@ if (blob.size <= 0) throw new Error("Fail PDF kosong atau tidak lengkap.");
 return blob;
 }
 async function viewEbookPdf(item, button) {
-// Buka tab kosong secara serta-merta ketika pengguna menekan butang.
-// Ini membantu Safari iPad membenarkan tab PDF selepas proses fetch selesai.
+// Close any previous preview opened by this page before creating another one.
+if (state.currentEbookPreviewTab && !state.currentEbookPreviewTab.closed) {
+try { state.currentEbookPreviewTab.close(); } catch (closeError) {}
+}
+state.currentEbookPreviewTab = null;
+if (state.currentEbookObjectUrl) {
+try { URL.revokeObjectURL(state.currentEbookObjectUrl); } catch (revokeError) {}
+state.currentEbookObjectUrl = "";
+}
+
+// Open synchronously during the click so Safari does not block the PDF tab.
 const previewTab = window.open("about:blank", "_blank");
 if (!previewTab) {
 showStatus($("libraryStatus"), "Safari menyekat tab PDF. Benarkan pop-up untuk laman Masta Xul dan cuba lagi.", "error");
 return;
 }
+state.currentEbookPreviewTab = previewTab;
 
 button.disabled = true;
 const original = button.textContent;
 button.textContent = "Membuka PDF...";
+let objectUrl = "";
 
 try {
 previewTab.document.title = "Masta Xul | Memuatkan PDF";
@@ -1682,14 +1695,18 @@ previewTab.document.body.innerHTML = '<main style="font-family:system-ui,sans-se
 const blob = await getEbookBlob(item, false);
 if (blob.size <= 0) throw new Error("Fail PDF kosong atau tidak lengkap.");
 
-const objectUrl = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
-if (state.currentEbookObjectUrl) URL.revokeObjectURL(state.currentEbookObjectUrl);
+objectUrl = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
 state.currentEbookObjectUrl = objectUrl;
 
-// Gunakan paparan PDF native Safari dalam tab baharu, bukan iframe dalam modal.
+// Use Safari's native PDF viewer in the tab opened by this page.
 previewTab.location.replace(objectUrl);
 } catch (error) {
-try { previewTab.close(); } catch (closeError) {}
+try { if (!previewTab.closed) previewTab.close(); } catch (closeError) {}
+if (state.currentEbookPreviewTab === previewTab) state.currentEbookPreviewTab = null;
+if (objectUrl) {
+try { URL.revokeObjectURL(objectUrl); } catch (revokeError) {}
+if (state.currentEbookObjectUrl === objectUrl) state.currentEbookObjectUrl = "";
+}
 showStatus($("libraryStatus"), error.message || "Fail eBook tidak dapat dibuka.", "error");
 } finally {
 button.disabled = false;
@@ -1737,7 +1754,10 @@ link.hidden = false;
 try { link.click(); } catch (error) {}
 }
 }
-setTimeout(() => { try { URL.revokeObjectURL(objectUrl); } catch (error) {} }, 10 * 60 * 1000);
+setTimeout(() => {
+try { URL.revokeObjectURL(objectUrl); } catch (error) {}
+if (state.downloadObjectUrl === objectUrl) state.downloadObjectUrl = "";
+}, 10 * 60 * 1000);
 } catch (error) {
 if (error.name === "AbortError") {
 showStatus($("downloadProgressStatus"), "Muat turun dibatalkan.", "info");
@@ -1770,8 +1790,16 @@ $("ebookViewerModal").classList.remove("show");
 document.body.style.overflow = "";
 $("ebookViewerFrame").removeAttribute("src");
 $("ebookViewerDownload").removeAttribute("href");
+
+// The native Safari PDF tab was opened by this page; close it on logout/session expiry.
+if (state.currentEbookPreviewTab) {
+try {
+if (!state.currentEbookPreviewTab.closed) state.currentEbookPreviewTab.close();
+} catch (closeError) {}
+state.currentEbookPreviewTab = null;
+}
 if (state.currentEbookObjectUrl) {
-URL.revokeObjectURL(state.currentEbookObjectUrl);
+try { URL.revokeObjectURL(state.currentEbookObjectUrl); } catch (revokeError) {}
 state.currentEbookObjectUrl = "";
 }
 }
@@ -1846,6 +1874,17 @@ LOGOUT
 ================================ */
 async function logoutCustomer() {
 const token = getToken();
+// Close private PDF preview and cancel/clear any in-progress private download first.
+closeEbookViewer();
+if (state.downloadAbortController) {
+try { state.downloadAbortController.abort(); } catch (abortError) {}
+state.downloadAbortController = null;
+}
+if (state.downloadObjectUrl) {
+try { URL.revokeObjectURL(state.downloadObjectUrl); } catch (revokeError) {}
+state.downloadObjectUrl = "";
+}
+closeDownloadProgress();
 try {
 if (token) {
 await apiRequest("/api/customer/logout", {
@@ -1860,7 +1899,6 @@ state.currentCustomer = null;
 state.ownedProductIds = [];
 renderCatalog();
 if (state.customerRefreshTimer) clearInterval(state.customerRefreshTimer);
-closeEbookViewer();
 $("libraryPanel").classList.remove("show");
 $("accountMainButton").classList.remove("hidden");
 $("headerAccountButton").textContent = "Log Masuk";
