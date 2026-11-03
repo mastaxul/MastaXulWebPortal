@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <!-- Isi origin HTTPS Worker jika halaman ini dihoskan di domain berasingan. -->
 <meta name="mxu-api-origin" content="https://mxu-ebook-produk.2ulfpv.workers.dev">
+<script data-mxu-external src="./mxu-config.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#090b10">
-<title>Masta Xul | Admin Dashboard V11</title>
+<title>Masta Xul | Admin R2</title>
 
 <style>
 :root {
@@ -205,7 +206,6 @@ footer a {color:var(--gold2);text-decoration:none}
 .cover-generation-row{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:10px;background:#101319}
 .cover-generation-row>div{flex:1;min-width:0}
 .publish-cover-preview{width:120px;max-height:170px;object-fit:contain;border:1px solid var(--gold);border-radius:7px;background:#090909}
-.legacy-workflow{display:none!important}
 </style>
 </head>
 
@@ -378,7 +378,7 @@ footer a {color:var(--gold2);text-decoration:none}
   <div class="panel" id="publishPanel">
     <div class="section-title">
       <div><h2>Penerbitan eBook — Satu Langkah</h2><span>Upload PDF, jana cover halaman pertama dan terbitkan produk secara bersepadu</span></div>
-      <span>Backblaze B2 · D1</span>
+      <span>Cloudflare R2 · D1</span>
     </div>
     <form id="publishEbookForm" class="upload-area">
       <div class="field">
@@ -404,19 +404,34 @@ footer a {color:var(--gold2);text-decoration:none}
     </form>
   </div>
 
+  <div class="panel" id="legacyR2Panel">
+    <div class="section-title"><div><h2>Pautan D1 Lama</h2><span>Untuk rekod sedia ada yang masih merujuk versi fail Backblaze.</span></div></div>
+    <p class="muted">Semak ID versi asal sebelum memilih fail R2. Jika D1 baharu kosong, terbitkan PDF melalui Pengurusan Produk eBook.</p>
+    <div class="actions">
+      <label for="legacyKind">Jenis rekod</label>
+      <select id="legacyKind"><option value="ebook">PDF eBook</option><option value="cover">Cover</option><option value="receipt">Resit bayaran</option></select>
+      <button id="legacyLoad" type="button" class="btn btn-secondary">Semak rekod</button>
+      <button id="legacyNext" type="button" class="btn btn-secondary" disabled>Seterusnya</button>
+    </div>
+    <div id="legacyStatus" class="status" aria-live="polite"></div>
+    <div class="table-wrap"><table><thead><tr><th>Rekod asal</th><th>Key objek R2</th><th>Tindakan</th></tr></thead>
+      <tbody id="legacyRows"><tr><td colspan="3" class="empty">Tekan Semak rekod.</td></tr></tbody>
+    </table></div>
+  </div>
+
   <div class="panel" id="orphanPanel">
     <div class="section-title">
-      <div><h2>Pengesanan Fail B2 Tidak Dipautkan</h2><span>Fail yang tiada rekod produk dan berusia sekurang-kurangnya 24 jam</span></div>
+      <div><h2>Pengesanan Fail R2 Tidak Dipautkan</h2><span>Fail yang tiada rekod produk dan berusia sekurang-kurangnya 24 jam</span></div>
       <button id="scanOrphansButton" class="btn btn-secondary btn-small" type="button">Periksa Fail Orphan</button>
     </div>
     <div id="orphanStatus" class="status"></div>
     <div class="table-wrap"><table><thead><tr><th>Nama Fail</th><th>Saiz</th><th>Tarikh Upload</th><th>Tindakan</th></tr></thead><tbody id="orphanList"><tr><td colspan="4" class="empty">Tekan Periksa Fail Orphan untuk memulakan imbasan.</td></tr></tbody></table></div>
   </div>
 
-  <div class="panel legacy-workflow hidden" id="uploadPanel">
+  <div class="panel" id="uploadPanel">
     <div class="section-title">
       <h2>Upload eBook PDF</h2>
-      <span>Backblaze B2 Storage</span>
+      <span>Cloudflare R2 Storage</span>
     </div>
 
     <p class="muted">
@@ -461,13 +476,14 @@ footer a {color:var(--gold2);text-decoration:none}
 
   <div class="panel" id="productManagementPanel">
     <div class="section-title"><div><h2>Pengurusan Produk eBook</h2><span>Terbitkan PDF yang sudah dimuat naik, ubah harga dan status katalog</span></div><button id="refreshProductsButton" class="btn btn-secondary btn-small" type="button">↻ Refresh</button></div>
-    <form id="productCreateForm" class="upload-area legacy-workflow hidden">
-      <h3 style="font-size:14px;color:var(--gold2);margin-bottom:10px">Terbitkan eBook baharu</h3>
+    <form id="productCreateForm" class="upload-area">
+      <h3 style="font-size:14px;color:var(--gold2);margin-bottom:10px">Terbitkan PDF sedia ada dari R2</h3>
+      <p class="muted">Pilih PDF sumber dalam bucket mxu-ebooks. Worker menyimpan salinan untuk produk ini.</p>
       <div class="product-form-grid">
         <div><label for="productCreateName">Tajuk eBook</label><input id="productCreateName" maxlength="160" required></div>
         <div><label for="productCreatePrice">Harga (RM)</label><input id="productCreatePrice" type="number" min="0.01" max="99999" step="0.01" required></div>
         <div class="full"><label for="productCreateDescription">Penerangan</label><textarea id="productCreateDescription" maxlength="5000" placeholder="Penerangan ringkas eBook"></textarea></div>
-        <div class="full"><label for="productPdfFile">Pilih PDF daripada Backblaze B2</label><select id="productPdfFile" required><option value="">Memuatkan fail PDF...</option></select></div>
+        <div class="full"><label for="productPdfFile">Pilih PDF daripada Cloudflare R2</label><select id="productPdfFile" required><option value="">Memuatkan fail PDF...</option></select></div>
       </div>
       <div id="productCreateStatus" class="status"></div>
       <button id="productCreateButton" class="btn" type="submit">Terbitkan Produk ke Katalog</button>
@@ -614,7 +630,8 @@ footer a {color:var(--gold2);text-decoration:none}
 <!-- MODUL AKTIF: SHORTCUT KE FUNGSI SEBENAR -->
 <section id="moduleGrid" class="grid hidden" aria-label="Modul pengurusan aktif">
   <button class="module module-link" type="button" data-target="notificationsPanel"><div class="module-top"><div class="module-icon">♢</div><span class="tag">AKTIF</span></div><h3>Pusat Notifikasi</h3><p>Makluman pendaftaran, resit baharu dan permohonan profil.</p><div class="module-footer">Buka notifikasi →</div></button>
-  <button class="module module-link" type="button" data-target="uploadPanel"><div class="module-top"><div class="module-icon">▤</div><span class="tag">AKTIF</span></div><h3>Pengurusan Fail eBook</h3><p>Muat naik PDF dan urus fail di Backblaze B2.</p><div class="module-footer">Buka pengurusan fail →</div></button>
+  <button class="module module-link" type="button" data-target="uploadPanel"><div class="module-top"><div class="module-icon">▤</div><span class="tag">AKTIF</span></div><h3>Pengurusan Fail eBook</h3><p>Muat naik PDF dan urus fail di Cloudflare R2.</p><div class="module-footer">Buka pengurusan fail →</div></button>
+  <button class="module module-link" type="button" data-target="legacyR2Panel"><h3>Pautan D1 Lama</h3><p>Sahkan objek R2 untuk PDF, cover dan resit sedia ada.</p></button>
   <button class="module module-link" type="button" data-target="productManagementPanel"><div class="module-top"><div class="module-icon">◇</div><span class="tag">AKTIF</span></div><h3>Pengurusan Produk</h3><p>Terbitkan eBook ke katalog, ubah harga, penerangan dan status.</p><div class="module-footer">Buka produk →</div></button>
   <button class="module module-link" type="button" data-target="paymentsPanel"><div class="module-top"><div class="module-icon">▧</div><span class="tag">AKTIF</span></div><h3>Semakan Pembayaran</h3><p>Semak resit yang benar-benar dihantar dan luluskan transaksi.</p><div class="module-footer">Buka pembayaran →</div></button>
   <button class="module module-link" type="button" data-target="customersPanel"><div class="module-top"><div class="module-icon">◎</div><span class="tag">AKTIF</span></div><h3>Pengurusan Pelanggan</h3><p>Lihat pelanggan, sejarah pembelian, edit profil dan sekat akaun.</p><div class="module-footer">Buka pelanggan →</div></button>
@@ -635,14 +652,27 @@ footer a {color:var(--gold2);text-decoration:none}
 "use strict";
 
 // API CONFIGURATION
-const API_BASE = (document.querySelector('meta[name="mxu-api-origin"]').content.trim() || window.location.origin).replace(/\/+$/, "");
+function apiUrl(path) {
+  const external = document.querySelector("script[data-mxu-external]");
+  const raw = external ? (window.MXU_WORKER_ORIGIN || document.querySelector('meta[name="mxu-api-origin"]').content || "").trim() : window.location.origin;
+  let origin;
+  try {
+    const url = new URL(raw);
+    if ((external && url.protocol !== "https:") || url.origin !== raw.replace(/\/+$/, "")) throw new Error();
+    origin = url.origin;
+  } catch {
+    throw new Error("Isi URL HTTPS Worker dari butang Visit dalam mxu-config.js, kemudian muat semula halaman.");
+  }
+  if (!path.startsWith("/") || path.startsWith("//")) throw new Error("Laluan API tidak sah.");
+  return origin + path;
+}
 const TOKEN_KEY = "mxu_ebook_admin_session";
 
 const $ = id => document.getElementById(id);
 
 let adminToken = sessionStorage.getItem(TOKEN_KEY) || "";
 let adminNotificationTimer = null;
-let adminB2Files = [];
+let adminStorageFiles = [];
 let adminProducts = [];
 
 function showStatus(element, message, type = "info") {
@@ -684,7 +714,7 @@ async function apiRequest(path, options = {}) {
     headers.set("Authorization", "Bearer " + adminToken);
   }
 
-  const response = await fetch(API_BASE + path, {
+  const response = await fetch(apiUrl(path), {
     ...options,
     headers
   });
@@ -704,6 +734,20 @@ async function apiRequest(path, options = {}) {
   }
 
   return data;
+}
+
+async function verifyR2Worker() {
+  const endpoint = apiUrl("/api/status");
+  let response;
+  try {
+    response = await fetch(endpoint, { cache: "no-store", redirect: "error" });
+  } catch {
+    throw new Error("Worker tidak dapat dicapai. Semak URL Visit, sambungan internet dan ALLOWED_ORIGINS jika admin di GitHub.");
+  }
+  const info = await response.json().catch(() => ({}));
+  if (!response.ok || info.storage !== "r2") {
+    throw new Error("Alamat API ini belum menjalankan Worker R2. Semak Deploy dan mxu-config.js.");
+  }
 }
 
 function showAdmin() {
@@ -731,7 +775,7 @@ function startAdminNotificationPolling() {
 function logout() {
   const tokenToRevoke = adminToken;
   if (tokenToRevoke) {
-    fetch(API_BASE + "/api/logout", {
+    fetch(apiUrl("/api/logout"), {
       method: "POST",
       headers: { Authorization: "Bearer " + tokenToRevoke }
     }).catch(() => {});
@@ -757,14 +801,16 @@ $("loginForm").addEventListener("submit", async event => {
   hideStatus($("loginStatus"));
 
   try {
-    const response = await fetch(API_BASE + "/api/login", {
+    await verifyR2Worker();
+    const response = await fetch(apiUrl("/api/login"), {
+      redirect: "error",
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body:JSON.stringify({token})
     });
 
     const data = await response.json().catch(() => {
-      throw new Error("API tidak memulangkan JSON. Semak URL Worker pada tetapan mxu-api-origin.");
+      throw new Error("API tidak memulangkan JSON. Semak URL Worker dan laluan /api/status.");
     });
 
     if (!response.ok || data.status !== "authenticated" || !data.token) {
@@ -882,7 +928,7 @@ $("publishEbookForm").addEventListener("submit", async event => {
     formData.append("name", $("publishName").value.trim());
     formData.append("price_minor", String(Math.round(price * 100)));
     formData.append("description", $("publishDescription").value.trim());
-    const response = await fetch(API_BASE + "/api/admin/ebooks/publish", {
+    const response = await fetch(apiUrl("/api/admin/ebooks/publish"), {
       method: "POST",
       headers: { Authorization: "Bearer " + adminToken },
       body: formData
@@ -908,16 +954,84 @@ $("publishEbookForm").addEventListener("submit", async event => {
   }
 });
 
-// B2 ORPHAN FILE REVIEW
+let legacyAfter = "";
+let legacyNext = null;
+let legacyRequest = 0;
+
+async function loadLegacy(after = "") {
+  const requestId = ++legacyRequest;
+  const kind = $("legacyKind").value;
+  legacyAfter = after;
+  legacyNext = null;
+  $("legacyNext").disabled = true;
+  $("legacyRows").replaceChildren();
+  showStatus($("legacyStatus"), "Sedang membaca rekod lama daripada D1...");
+  try {
+    const query = new URLSearchParams({ kind, after });
+    const data = await apiRequest("/api/admin/r2/legacy?" + query);
+    if (requestId !== legacyRequest) return;
+    legacyNext = data.next;
+    $("legacyNext").disabled = !legacyNext;
+    for (const record of data.rows) {
+      const tr = document.createElement("tr");
+      const original = document.createElement("td");
+      const name = document.createElement("strong");
+      name.textContent = record.old_key || "(tiada nama fail)";
+      const version = document.createElement("div");
+      version.className = "muted";
+      version.textContent = "Versi B2: " + (record.old_id || "—") + " | " + formatSize(record.stored_size);
+      original.append(name, version);
+      const keyCell = document.createElement("td");
+      const key = document.createElement("input");
+      key.setAttribute("aria-label", "Key R2 untuk " + name.textContent);
+      key.value = record.old_key || "";
+      keyCell.append(key);
+      const action = document.createElement("td");
+      const link = document.createElement("button");
+      link.className = "btn btn-small";
+      link.type = "button";
+      link.textContent = "Sahkan pautan";
+      link.addEventListener("click", async () => {
+        if (!key.value || !confirm("Saya sudah menyemak bahawa objek R2 ini ialah versi fail asal yang betul.\n\n" + key.value)) return;
+        link.disabled = true;
+        try {
+          await apiRequest("/api/admin/r2/legacy?kind=" + encodeURIComponent(kind), {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ row_id: record.row_id, old_id: record.old_id, object_key: key.value, verified: true })
+          });
+          if (requestId === legacyRequest) {
+            await loadLegacy(legacyAfter);
+            await Promise.all([loadAdminProducts(), loadEbooks()]);
+          }
+        } catch (error) {
+          if (requestId === legacyRequest) showStatus($("legacyStatus"), error.message, "error");
+          link.disabled = false;
+        }
+      });
+      action.append(link);
+      tr.append(original, keyCell, action);
+      $("legacyRows").append(tr);
+    }
+    showStatus($("legacyStatus"), data.rows.length ? "Semak key, saiz dan versi asal sebelum mengesahkan." : "Tiada lagi rekod lama dalam halaman ini.", "info");
+  } catch (error) {
+    if (requestId === legacyRequest) showStatus($("legacyStatus"), error.message, "error");
+  }
+}
+
+$("legacyKind").addEventListener("change", () => loadLegacy());
+$("legacyLoad").addEventListener("click", () => loadLegacy());
+$("legacyNext").addEventListener("click", () => { if (legacyNext) loadLegacy(legacyNext); });
+
+// R2 ORPHAN FILE REVIEW
 async function loadOrphanFiles() {
   const button = $("scanOrphansButton");
   const tbody = $("orphanList");
   button.disabled = true;
   button.textContent = "Mengimbas...";
   hideStatus($("orphanStatus"));
-  tbody.innerHTML = '<tr><td colspan="4" class="empty">Sedang mengimbas semua halaman fail B2...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="4" class="empty">Sedang mengimbas semua halaman fail R2...</td></tr>';
   try {
-    const data = await apiRequest("/api/admin/b2/orphans");
+    const data = await apiRequest("/api/admin/r2/orphans");
     const files = Array.isArray(data.orphan_files) ? data.orphan_files : [];
     tbody.replaceChildren();
     if (!files.length) {
@@ -932,7 +1046,9 @@ async function loadOrphanFiles() {
         const remove = document.createElement("button");
         remove.type = "button"; remove.className = "btn btn-danger btn-small"; remove.textContent = "Padam orphan";
         remove.addEventListener("click", () => deleteOrphanFile(file, remove));
-        action.appendChild(remove); tr.append(name, size, date, action); tbody.appendChild(tr);
+        if (file.canDelete) action.appendChild(remove);
+        else action.textContent = "Dilindungi";
+        tr.append(name, size, date, action); tbody.appendChild(tr);
       });
     }
     showStatus($("orphanStatus"), `${data.scanned_files || 0} fail diperiksa. ${files.length} fail orphan dikenal pasti. Tiada fail dipadam secara automatik.`, "success");
@@ -946,10 +1062,10 @@ async function loadOrphanFiles() {
 }
 
 async function deleteOrphanFile(file, button) {
-  if (!confirm("Padam fail B2 yang tidak dipautkan ini?\n\n" + file.fileName + "\n\nSistem akan menyemak semula pautan D1 sebelum pemadaman.")) return;
+  if (!confirm("Padam fail R2 yang tidak dipautkan ini?\n\n" + file.fileName + "\n\nSistem akan menyemak semula pautan D1 sebelum pemadaman.")) return;
   button.disabled = true; button.textContent = "Memadam...";
   try {
-    await apiRequest("/api/admin/b2/orphans/delete", {
+    await apiRequest("/api/admin/r2/orphans/delete", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ file_id: file.fileId, file_name: file.fileName })
     });
@@ -978,7 +1094,7 @@ async function loadEbooks() {
     const data = await apiRequest("/api/ebooks");
 
     const files = Array.isArray(data.files) ? data.files : [];
-    adminB2Files = files;
+    adminStorageFiles = files;
     populateProductPdfOptions();
 
     $("totalBooks").textContent = files.length;
@@ -991,7 +1107,7 @@ async function loadEbooks() {
     tbody.innerHTML = "";
 
     if (!files.length) {
-      tbody.innerHTML = '<tr><td colspan="4" class="empty">Belum ada fail PDF.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" class="empty">R2 boleh dibaca. Belum ada PDF di mxu-ebooks. Salin fail ke R2 atau muat naik dahulu.</td></tr>';
       return;
     }
 
@@ -1005,7 +1121,7 @@ async function loadEbooks() {
 
       const id = document.createElement("div");
       id.className = "muted";
-      id.textContent = "PDF Document";
+      id.textContent = file.canLink ? "PDF sumber" : "Salinan terbitan";
 
       nameCell.append(name, id);
 
@@ -1022,7 +1138,8 @@ async function loadEbooks() {
 
       deleteButton.addEventListener("click", () => deleteEbook(file, deleteButton));
 
-      actionCell.appendChild(deleteButton);
+      if (file.canDelete) actionCell.appendChild(deleteButton);
+      else actionCell.textContent = "Dilindungi";
       tr.append(nameCell, sizeCell, dateCell, actionCell);
       tbody.appendChild(tr);
     });
@@ -1045,7 +1162,7 @@ function populateProductPdfOptions() {
   const current = select.value;
   const linked = new Set(adminProducts.map(product => String(product.b2_file_id || "")).filter(Boolean));
   select.replaceChildren(new Option("Pilih fail PDF yang belum dipautkan", ""));
-  adminB2Files.filter(file => !linked.has(String(file.fileId)) && String(file.fileName || "").toLowerCase().endsWith(".pdf")).forEach(file => {
+  adminStorageFiles.filter(file => file.canLink && !linked.has(String(file.fileId)) && !adminProducts.some(p => p.b2_file_name === file.fileName) && String(file.fileName || "").toLowerCase().endsWith(".pdf")).forEach(file => {
     const option = new Option(`${file.fileName} — ${formatSize(file.size)}`, file.fileId);
     select.add(option);
   });
@@ -1102,7 +1219,7 @@ $("productCreateForm").addEventListener("submit", async event => {
         name: $("productCreateName").value.trim(),
         description: $("productCreateDescription").value.trim(),
         price_minor: Math.round(price * 100),
-        b2_file_id: $("productPdfFile").value
+        object_key: $("productPdfFile").value.slice(3)
       })
     });
     showStatus($("productCreateStatus"), data.message === "EBOOK_PRODUCT_CREATED" ? "Produk berjaya diterbitkan ke katalog." : "Produk berjaya dicipta.", "success");
@@ -1667,7 +1784,9 @@ async function loadSystemHealth() {
     const message = missing.length
       ? "Jadual D1 yang tiada: " + missing.join(", ") + ". Semak pilihan database pada binding DB."
       : data.status === "ready" ? "Konfigurasi asas lengkap. Semak katalog dan buka satu eBook lama untuk menguji akses sebenar." : "Ada konfigurasi asas yang belum lengkap.";
-    showStatus($("systemStatus"), message, data.status === "ready" ? "success" : "error");
+    const storage = data.storage;
+    const storageText = storage ? " eBook: " + storage.books.message + " Resit: " + storage.receipts.message : "";
+    showStatus($("systemStatus"), message + storageText, data.status === "ready" ? "success" : "error");
   } catch (error) { list.replaceChildren(); showStatus($("systemStatus"), error.message, "error"); }
 }
 $("refreshAnalyticsButton").addEventListener("click", loadAnalytics);
@@ -1862,7 +1981,7 @@ async function viewPaymentReceipt(submissionId, button) {
 
   try {
     const response = await fetch(
-      API_BASE + "/api/admin/payments/receipt?submission_id=" + encodeURIComponent(submissionId),
+      apiUrl("/api/admin/payments/receipt?submission_id=" + encodeURIComponent(submissionId)),
       { headers: { Authorization: "Bearer " + adminToken } }
     );
 
@@ -2048,7 +2167,7 @@ async function deleteEbook(file, button) {
   const confirmed = confirm(
     "Adakah kau pasti mahu memadam fail ini?\n\n" +
     file.fileName +
-    "\n\nFail akan dipadam daripada Backblaze B2."
+    "\n\nFail akan dipadam daripada Cloudflare R2."
   );
 
   if (!confirmed) return;
@@ -2113,9 +2232,16 @@ $("year").textContent = now.getFullYear();
 
 // RESTORE SESSION FOR CURRENT TAB
 if (adminToken) {
-  showAdmin();
-  loadEbooks(); loadAdminProducts(); loadAccounts(); loadPayments(); loadCustomers();
-  loadProfileChangeRequests(); loadNotifications(); loadAnalytics(); loadSystemHealth();
+  verifyR2Worker().then(() => {
+    showAdmin();
+    loadEbooks(); loadAdminProducts(); loadAccounts(); loadPayments(); loadCustomers();
+    loadProfileChangeRequests(); loadNotifications(); loadAnalytics(); loadSystemHealth();
+  }).catch(error => {
+    adminToken = "";
+    sessionStorage.removeItem(TOKEN_KEY);
+    showLogin();
+    showStatus($("loginStatus"), error.message, "error");
+  });
 } else {
   showLogin();
 }
