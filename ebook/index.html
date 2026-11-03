@@ -1,12 +1,13 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="ms">
 <head>
 <meta charset="UTF-8">
 <!-- Isi origin HTTPS Worker jika halaman ini dihoskan di domain berasingan. -->
 <meta name="mxu-api-origin" content="https://mxu-ebook-produk.2ulfpv.workers.dev">
+<script data-mxu-external src="./mxu-config.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#090909">
-<title>eBook Universe | Masta Xul V11</title>
+<title>eBook Universe | Masta Xul</title>
 <meta name="description" content="Perpustakaan digital rasmi Masta Xul.">
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 <style>
@@ -646,7 +647,20 @@ aria-modal="true" aria-labelledby="checkoutTitle">
 
 <script>
 "use strict";
-const API_BASE = (document.querySelector('meta[name="mxu-api-origin"]').content.trim() || window.location.origin).replace(/\/+$/, "");
+function apiUrl(path) {
+  const external = document.querySelector("script[data-mxu-external]");
+  const raw = external ? (window.MXU_WORKER_ORIGIN || document.querySelector('meta[name="mxu-api-origin"]').content || "").trim() : window.location.origin;
+  let origin;
+  try {
+    const url = new URL(raw);
+    if ((external && url.protocol !== "https:") || url.origin !== raw.replace(/\/+$/, "")) throw new Error();
+    origin = url.origin;
+  } catch {
+    throw new Error("Isi URL HTTPS Worker dari butang Visit dalam mxu-config.js, kemudian muat semula halaman.");
+  }
+  if (!path.startsWith("/") || path.startsWith("//")) throw new Error("Laluan API tidak sah.");
+  return origin + path;
+}
 const SESSION_KEY = "mxu_customer_session";
 // Static DuitNow QR supplied for Masta Xul. Verify the recipient name before accepting payment.
 const PAYMENT_QR_RECIPIENT = "ENCIK ZULKARNAIN BIN HAID";
@@ -714,7 +728,7 @@ if (token) headers.Authorization = "Bearer " + token;
 const controller = new AbortController();
 const timeout = setTimeout(() => controller.abort(), 20000);
 try {
-const response = await fetch(API_BASE + path, {
+const response = await fetch(apiUrl(path), {
 method: options.method || "GET",
 headers,
 body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
@@ -723,7 +737,7 @@ cache: "no-store"
 });
 let data;
 try { data = await response.json(); }
-catch { throw new Error("API tidak memulangkan JSON. Semak URL Worker pada tetapan mxu-api-origin."); }
+catch { throw new Error("API tidak memulangkan JSON. Semak URL Worker dan laluan /api/status."); }
 if (!response.ok || data.success === false) {
 const error = new Error(data.error || data.message || "REQUEST_FAILED");
 error.status = response.status;
@@ -1240,14 +1254,14 @@ const formData = new FormData();
 formData.append("purchase_id", state.currentPurchase.id);
 formData.append("receipt", file, file.name);
 const headers = { Authorization: "Bearer " + getToken() };
-const response = await fetch(API_BASE + "/api/customer/payments/receipt", {
+const response = await fetch(apiUrl("/api/customer/payments/receipt"), {
 method: "POST",
 headers,
 body: formData
 });
 const result = await response.json().catch(() => ({}));
 if (!response.ok || result.success === false) {
-throw new Error(result.error || "RECEIPT_UPLOAD_FAILED");
+throw new Error(result.message || result.error || "Resit gagal dimuat naik.");
 }
 state.currentPurchase.receipt_status = "pending";
 if (state.checkoutMode === "cart" && state.checkoutItems.length) {
@@ -1311,7 +1325,7 @@ label.textContent = "MASTA XUL";
 mark.append(title, label);
 if (product.cover_url) {
   const coverImage = document.createElement("img");
-  coverImage.src = new URL(product.cover_url, API_BASE).toString();
+  coverImage.src = apiUrl(product.cover_url);
   coverImage.alt = "Kulit eBook " + (product.name || "Masta Xul");
   coverImage.loading = "lazy";
   coverImage.addEventListener("error", () => {
@@ -1759,7 +1773,7 @@ const query = new URLSearchParams({ ebook_id: item.ebook_id });
 if (download) query.set("download", "1");
 const controller = new AbortController();
 if (download) state.downloadAbortController = controller;
-const response = await fetch(API_BASE + "/api/customer/ebooks/file?" + query.toString(), {
+const response = await fetch(apiUrl("/api/customer/ebooks/file?" + query.toString()), {
 method: "GET",
 headers: { Authorization: "Bearer " + getToken() },
 signal: controller.signal,
