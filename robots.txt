@@ -2,9 +2,9 @@ User-agent: *
 Allow: /
 
 # Jangan index halaman admin
-Disallow: /draqualinine/
-Disallow: /tools/kulit/
-Disallow: /tentang/
+Disallow: /draqulanine/
+Disallow: /blog/dash2/admin.html
+Disallow: /blog/dash/admin.html
 
 Allow: /edugame/Game5/beli.html
 Allow: /edugame/og-image.jpg
